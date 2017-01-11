@@ -1,6 +1,8 @@
 #ifndef Character_h
 #define Character_h
 
+#include "cocos2d.h"
+
 /**
  * @brief Class for interactive characters
  */
