@@ -1,20 +1,26 @@
-#ifndef __HELLOWORLD_SCENE_H__
-#define __HELLOWORLD_SCENE_H__
+#ifndef HelloWorldScene_h
+#define HelloWorldScene_h
 
 #include "cocos2d.h"
+#include "Character.h"
 
+namespace JTTW {
 class HelloWorld : public cocos2d::Layer
 {
 public:
     static cocos2d::Scene* createScene();
-
-    virtual bool init();
-    
-    // a selector callback
+    virtual bool init() override;
     void menuCloseCallback(cocos2d::Ref* pSender);
     
-    // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
+    
+    void update(float) override;
+    
+private:
+    static std::set<cocos2d::EventKeyboard::KeyCode> keyPresses;
+    Character *transformer;
+    
 };
+}; // JTTW
 
-#endif // __HELLOWORLD_SCENE_H__
+#endif // HelloWorldScene_h
