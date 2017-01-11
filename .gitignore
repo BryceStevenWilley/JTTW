@@ -55,3 +55,6 @@ out/
 .classpath
 .project
 .cproject
+
+# Stop all build folders.
+cocos2d/build
