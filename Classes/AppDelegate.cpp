@@ -39,9 +39,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto glview = director->getOpenGLView();
     if(!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-        glview = GLViewImpl::createWithRect("HelloCpp", cocos2d::Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+        // glview = GLViewImpl::createWithRect("SampleGame", cocos2d::Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+	glview = GLViewImpl::createWithRect("Changed Name!", Rect(0, 0, 480, 320), 1.0);
 #else
-        glview = GLViewImpl::create("HelloCpp");
+        glview = GLViewImpl::create("Not WIN/MAC/LINUX");
 #endif
         director->setOpenGLView(glview);
     }
