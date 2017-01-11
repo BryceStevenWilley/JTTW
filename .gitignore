@@ -27,3 +27,31 @@
 *.exe
 *.out
 *.app
+
+# Taken from http://stackoverflow.com/questions/23764083/git-cocos2d-x-what-files-can-i-add-to-gitignore
+# XCode
+*.moved-aside
+build/*
+*.xcworkspace
+*.mode1v3
+*.mode2v3
+*.pbxuser
+!default.xcworkspace
+!default.mode1v3
+!default.mode2v3
+!default.pbxuser
+*.perspectivev3
+profile
+xcuserdata
+.idea/*
+
+#cocos2d-x
+libs/
+bin/
+obj/
+assets/
+gen/
+out/
+.classpath
+.project
+.cproject
