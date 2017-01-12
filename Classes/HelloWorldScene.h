@@ -17,8 +17,8 @@ public:
     void update(float) override;
     
 private:
-    static std::set<cocos2d::EventKeyboard::KeyCode> keyPresses;
-    Character *transformer;
+    static std::vector<Character *> characters;
+    static std::vector<Character *>::iterator player;
     
 };
 }; // JTTW

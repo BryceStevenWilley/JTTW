@@ -5,6 +5,9 @@
 using namespace cocos2d;
 using namespace JTTW;
 
+std::vector<Character *> HelloWorld::characters;
+std::vector<Character *>::iterator HelloWorld::player;
+
 Scene* HelloWorld::createScene() {
     // 'scene' and layer are autorelease objects.
     auto scene = Scene::create();
@@ -47,25 +50,39 @@ bool HelloWorld::init() {
 
     // add the label as a child to this layer with Z-order of 0.
     this->addChild(label, 0);
-
-    transformer = new Character("image.png");
-    transformer->sprite->setAnchorPoint(Vec2(0.0, 0.0));
-    transformer->sprite->setPosition(0, 0);
-    this->addChild(transformer->sprite, -2);
+    
+    for (int i = 0; i < 4; i++) {
+        Character *buddy = new Character("image.png", Vec2(40.0, 40.0));
+        buddy->sprite->setPosition(50 * i, 0.0);
+        this->addChild(buddy->sprite, i);
+        characters.push_back(buddy);
+    }
+    
+    player = characters.begin();
     
     auto eventListener = EventListenerKeyboard::create();
     
     eventListener->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event) {
         switch(keyCode) {
             case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-                transformer->velocities.x -= 1; // move left
+                (*player)->velocities.x -= 1; // move left
                 break;
             case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-                transformer->velocities.x += 1; // move right
+                (*player)->velocities.x += 1; // move right
                 break;
             case EventKeyboard::KeyCode::KEY_SPACE:
-                transformer->velocities.y = 1;
-                transformer->currentState = Character::State::MID_AIR;
+                (*player)->velocities.y = 1;
+                (*player)->currentState = Character::State::MID_AIR;
+                break;
+            case EventKeyboard::KeyCode::KEY_TAB:
+                (*player)->velocities.x = 0;
+                player++;
+                if (player == characters.end()) {
+                    player = characters.begin();
+                }
+                break;
+            case EventKeyboard::KeyCode::KEY_ESCAPE:
+                this->menuCloseCallback(nullptr); // TODO: should I be doing this?
             default:
                 // do nothing.
                 break;
@@ -75,10 +92,14 @@ bool HelloWorld::init() {
     eventListener->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event* event) {
         switch(keyCode) {
             case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-                transformer->velocities.x += 1; // stop moving left
+                if ((*player)->velocities.x == -1) {
+                    (*player)->velocities.x += 1; // stop moving left
+                }
                 break;
             case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-                transformer->velocities.x -= 1; // stop moving right
+                if ((*player)->velocities.x == 1) {
+                    (*player)->velocities.x -= 1; // stop moving right
+                }
                 break;
             default:
                 // do nothing.
@@ -86,7 +107,7 @@ bool HelloWorld::init() {
         }
     };
 
-    this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListener, transformer->sprite);
+    this->_eventDispatcher->addEventListenerWithFixedPriority(eventListener, 1);
     this->scheduleUpdate();
     return true;
 }
@@ -100,8 +121,9 @@ void HelloWorld::menuCloseCallback(Ref* pSender) {
     #endif
 }
 
-
 void HelloWorld::update(float delta) {
-    transformer->move(delta);
+    for (int i = 0; i < 4; i++) {
+        characters[i]->move(delta);
+    }
 }
 

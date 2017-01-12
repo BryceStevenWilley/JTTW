@@ -13,7 +13,7 @@ public:
         STANDING,
         MID_AIR
     };
-    Character(const std::string artFileName);
+    Character(const std::string artFileName, cocos2d::Vec2 dimensions);
     ~Character();
     
     State currentState = State::STANDING;

@@ -3,7 +3,17 @@
 
 using namespace JTTW;
 
-Character::Character(const std::string artFileName) : sprite(cocos2d::Sprite::create(artFileName)) {}
+Character::Character(const std::string artFileName, cocos2d::Vec2 dimensions) : sprite(cocos2d::Sprite::create(artFileName)), dimensions(dimensions) {
+    
+    sprite->setAnchorPoint(cocos2d::Vec2(0.5, 0.0));
+
+    
+    cocos2d::Size imgDim = sprite->getTextureRect().size;
+    float xScale = dimensions.x / imgDim.width;
+    float yScale = dimensions.y / imgDim.height;
+    sprite->setScaleX(xScale);
+    sprite->setScaleY(yScale);
+}
 
 Character::~Character() {}
 
