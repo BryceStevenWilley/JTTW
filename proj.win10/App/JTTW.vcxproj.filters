@@ -56,7 +56,7 @@
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="HelloCpp_TemporaryKey.pfx" />
+    <None Include="JTTW_TemporaryKey.pfx" />
     <None Include="$(AngleBinPath)libEGL.dll" />
     <None Include="$(AngleBinPath)libGLESv2.dll" />
     <None Include="$(ZLibBinPath)zlib.dll" />

@@ -57,7 +57,10 @@ out/
 .cproject
 
 # Stop all build folders.
-cocos2d/build
+cocos2d/build/build
+proj.ios_mac/build
+
+
 
 !proj.ios_mac/mac/Prefix.pch
 !proj.ios_mac/ios/Prefix.pch

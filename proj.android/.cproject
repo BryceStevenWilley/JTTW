@@ -171,14 +171,14 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="HelloCpp.null.31159645" name="HelloCpp"/>
+		<project id="JTTW.null.31159645" name="JTTW"/>
 	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/HelloCpp"/>
+			<resource resourceType="PROJECT" workspacePath="/JTTW"/>
 		</configuration>
 		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="/HelloCpp"/>
+			<resource resourceType="PROJECT" workspacePath="/JTTW"/>
 		</configuration>
 	</storageModule>
 </cproject>

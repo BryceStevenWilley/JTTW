@@ -1,4 +1,3 @@
-
 #include "Character.h"
 #include <stdio.h>
 
