@@ -318,11 +318,11 @@
 			isa = PBXGroup;
 			children = (
 				9F31896F1E26E2520005B84E /* Character.h */,
+				9F3189741E272A570005B84E /* Character.cpp */,
 				46880B8419C43A87006E1F66 /* AppDelegate.cpp */,
 				46880B8519C43A87006E1F66 /* AppDelegate.h */,
 				46880B8619C43A87006E1F66 /* HelloWorldScene.cpp */,
 				46880B8719C43A87006E1F66 /* HelloWorldScene.h */,
-				9F3189741E272A570005B84E /* Character.cpp */,
 			);
 			name = Classes;
 			path = ../Classes;

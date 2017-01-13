@@ -13,10 +13,24 @@ public:
         STANDING,
         MID_AIR
     };
+
     Character(const std::string artFileName, cocos2d::Vec2 dimensions);
     ~Character();
     
-    State currentState = State::STANDING;
+    /**
+     * Controls for moving the character around.
+     * Call these instead of manually changing the velocities member to ensure
+     * Comprehensible movement.
+     */
+    void accelerateLeft(float deltaVel);
+    void accelerateRight(float deltaVel);
+    void stop();
+    void jump(float percent);
+
+    bool isMovingLeft() const;
+    bool isMovingRight() const;
+    
+    const State getCurrentState() const;
     
     /**
      * Moves the character left and right.
@@ -31,11 +45,18 @@ public:
     // A box that encompasses the character.
     cocos2d::Vec2 dimensions;
     
-    // The max speed that the character should move laterally in pixels per second.
-    cocos2d::Vec2 maxVelocities = cocos2d::Vec2(400.0, 400.0);
+private:
+    State currentState = State::STANDING;
     
     // Vector of x and y velocities, normalized so that 1 moves right/up at max speed, -1 moves left/down at max speed.
     cocos2d::Vec2 velocities = cocos2d::Vec2(0.0, 0.0);
+    
+    
+    // The max speed that the character should move laterally in pixels per second.
+    cocos2d::Vec2 maxVelocities = cocos2d::Vec2(400.0, 1000.0);
+
+
+    
 };
 }; // JTTW
 

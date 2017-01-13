@@ -65,24 +65,23 @@ bool HelloWorld::init() {
     eventListener->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event) {
         switch(keyCode) {
             case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-                (*player)->velocities.x -= 1; // move left
+                (*player)->accelerateLeft(1.0);
                 break;
             case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-                (*player)->velocities.x += 1; // move right
+                (*player)->accelerateRight(1.0);
                 break;
             case EventKeyboard::KeyCode::KEY_SPACE:
-                (*player)->velocities.y = 1;
-                (*player)->currentState = Character::State::MID_AIR;
+                (*player)->jump(1.0);
                 break;
             case EventKeyboard::KeyCode::KEY_TAB:
-                (*player)->velocities.x = 0;
+                (*player)->stop();
                 player++;
                 if (player == characters.end()) {
                     player = characters.begin();
                 }
                 break;
             case EventKeyboard::KeyCode::KEY_ESCAPE:
-                this->menuCloseCallback(nullptr); // TODO: should I be doing this?
+                this->menuCloseCallback(nullptr); // TODO: should I be using this nullptr?
             default:
                 // do nothing.
                 break;
@@ -92,13 +91,15 @@ bool HelloWorld::init() {
     eventListener->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event* event) {
         switch(keyCode) {
             case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-                if ((*player)->velocities.x == -1) {
-                    (*player)->velocities.x += 1; // stop moving left
+                if ((*player)->isMovingLeft()) {
+                    (*player)->stop(); // stop moving left
+                } else if (!(*player)->isMovingRight()) {
+                    (*player)->accelerateRight(1.0);
                 }
                 break;
             case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-                if ((*player)->velocities.x == 1) {
-                    (*player)->velocities.x -= 1; // stop moving right
+                if ((*player)->isMovingRight()) {
+                    (*player)->stop(); // stop moving right
                 }
                 break;
             default:
