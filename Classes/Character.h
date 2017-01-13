@@ -26,7 +26,8 @@ public:
     void accelerateRight(float deltaVel);
     void stop();
     void jump(float percent);
-
+    void transferVelocity(Character *reciever);
+    
     bool isMovingLeft() const;
     bool isMovingRight() const;
     

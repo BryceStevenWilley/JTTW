@@ -52,10 +52,10 @@ bool HelloWorld::init() {
     this->addChild(label, 0);
     
     for (int i = 0; i < 4; i++) {
-        Character *buddy = new Character("image.png", Vec2(40.0, 40.0));
-        buddy->sprite->setPosition(50 * i, 0.0);
-        this->addChild(buddy->sprite, i);
-        characters.push_back(buddy);
+        Character *body = new Character("image.png", Vec2(40.0, 40.0));
+        body->sprite->setPosition(50 * i, 0.0);
+        this->addChild(body->sprite, i);
+        characters.push_back(body);
     }
     
     player = characters.begin();
@@ -74,10 +74,10 @@ bool HelloWorld::init() {
                 (*player)->jump(1.0);
                 break;
             case EventKeyboard::KeyCode::KEY_TAB:
-                (*player)->stop();
-                player++;
-                if (player == characters.end()) {
-                    player = characters.begin();
+                {
+                    std::vector<Character *>::iterator nextPlayer = (player + 1 == characters.end()) ? characters.begin() : player + 1;
+                    (*player)->transferVelocity(*nextPlayer);
+                    player = nextPlayer;
                 }
                 break;
             case EventKeyboard::KeyCode::KEY_ESCAPE:
@@ -100,6 +100,8 @@ bool HelloWorld::init() {
             case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
                 if ((*player)->isMovingRight()) {
                     (*player)->stop(); // stop moving right
+                } else if (!(*player)->isMovingLeft()) {
+                    (*player)->accelerateLeft(1.0);
                 }
                 break;
             default:

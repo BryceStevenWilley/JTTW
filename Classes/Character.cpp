@@ -33,6 +33,11 @@ void Character::jump(float percent) {
     currentState = State::MID_AIR;
 }
 
+void Character::transferVelocity(Character *reciever) {
+    reciever->accelerateRight(velocities.x);
+    this->stop();
+}
+
 bool Character::isMovingLeft() const {
     return velocities.x < 0.0;
 }
