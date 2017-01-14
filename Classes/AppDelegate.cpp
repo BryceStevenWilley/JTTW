@@ -39,8 +39,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto glview = director->getOpenGLView();
     if(!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-         glview = GLViewImpl::createWithRect("SampleGame", cocos2d::Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
-	//g lview = GLViewImpl::createWithRect("Changed Name!", Rect(0, 0, 480, 320), 1.0);
+         //glview = GLViewImpl::createWithRect("SampleGame", cocos2d::Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+        glview = GLViewImpl::createWithFullScreen("SampleGame");
 #else
         glview = GLViewImpl::create("Not WIN/MAC/LINUX");
 #endif
@@ -54,7 +54,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(1.0f / 60);
 
     // Set the design resolution
-    glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
+    // Don't set design resolution since we're full screening. See if that's an issue.
+    //glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
     auto frameSize = glview->getFrameSize();
     // if the frame's height is larger than the height of medium size.
     if (frameSize.height > mediumResolutionSize.height)

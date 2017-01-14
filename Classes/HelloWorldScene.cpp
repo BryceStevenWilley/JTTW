@@ -1,5 +1,6 @@
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
+#include "SyncronizedAgent.hpp"
 #include <iostream>
 
 using namespace cocos2d;
@@ -7,6 +8,7 @@ using namespace JTTW;
 
 std::vector<Character *> HelloWorld::characters;
 std::vector<Character *>::iterator HelloWorld::player;
+std::vector<AiAgent *> HelloWorld::agents;
 
 Scene* HelloWorld::createScene() {
     // 'scene' and layer are autorelease objects.
@@ -56,6 +58,8 @@ bool HelloWorld::init() {
         body->sprite->setPosition(50 * i, 0.0);
         this->addChild(body->sprite, i);
         characters.push_back(body);
+        AiAgent *agent = new SyncronizedAgent(body);
+        agents.push_back(agent);
     }
     
     player = characters.begin();
@@ -82,9 +86,17 @@ bool HelloWorld::init() {
                 break;
             case EventKeyboard::KeyCode::KEY_ESCAPE:
                 this->menuCloseCallback(nullptr); // TODO: should I be using this nullptr?
+                break;
             default:
                 // do nothing.
                 break;
+        }
+        if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW ||
+            keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW ||
+            keyCode == EventKeyboard::KeyCode::KEY_SPACE) {
+            for (int i = 0; i < 4; i++) {
+                agents[i]->plan(*player, characters);
+            }
         }
     };
     
@@ -108,6 +120,12 @@ bool HelloWorld::init() {
                 // do nothing.
                 break;
         }
+        if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW ||
+            keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW) {
+            for (int i = 0; i < 4; i++) {
+                agents[i]->plan(*player, characters);
+            }
+        }
     };
 
     this->_eventDispatcher->addEventListenerWithFixedPriority(eventListener, 1);
@@ -126,7 +144,8 @@ void HelloWorld::menuCloseCallback(Ref* pSender) {
 
 void HelloWorld::update(float delta) {
     for (int i = 0; i < 4; i++) {
-        characters[i]->move(delta);
+        agents[i]->executePlan(delta);
+         characters[i]->move(delta);
     }
 }
 
