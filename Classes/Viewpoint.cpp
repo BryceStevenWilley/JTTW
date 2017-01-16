@@ -13,10 +13,10 @@ using namespace JTTW;
 Viewpoint::Viewpoint(cocos2d::Size dims, double metersPerPixel) :
         _screenDims(dims), _metersPerPixel(metersPerPixel) {}
 
-int Viewpoint::metersToPixels(double meters) {
+int Viewpoint::metersToPixels(double meters) const {
     return meters / _metersPerPixel;
 }
 
-double Viewpoint::pixelsToMeters(int pixels) {
+double Viewpoint::pixelsToMeters(int pixels) const {
     return pixels * _metersPerPixel;
 }

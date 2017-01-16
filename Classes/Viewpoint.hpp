@@ -16,8 +16,8 @@ class Viewpoint {
 public:
     Viewpoint(cocos2d::Size screenDims, double metersPerPixel);
     
-    int metersToPixels(double meters);
-    double pixelsToMeters(int pixels);
+    int metersToPixels(double meters) const;
+    double pixelsToMeters(int pixels) const;
     
 private:
     cocos2d::Size _screenDims; // The dimensions of the screen at the time.

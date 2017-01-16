@@ -67,10 +67,14 @@ bool HelloWorld::init() {
     }
     
     player = characters.begin();
+    auto charLabel = Label::createWithTTF("v", "fonts/Marker Felt.ttf", 100);
+    charLabel->setPositionY(vp.metersToPixels(12.4));
+    charLabel->setPositionX(vp.metersToPixels(1.7));
+    (*player)->sprite->addChild(charLabel, -5);
     
     auto eventListener = EventListenerKeyboard::create();
     
-    eventListener->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event) {
+    eventListener->onKeyPressed = [this, vp](EventKeyboard::KeyCode keyCode, Event* event) {
         switch(keyCode) {
             case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
                 (*player)->accelerateLeft(1.0);
@@ -85,7 +89,13 @@ bool HelloWorld::init() {
                 {
                     std::vector<Character *>::iterator nextPlayer = (player + 1 == characters.end()) ? characters.begin() : player + 1;
                     (*player)->transferVelocity(*nextPlayer);
+                    (*player)->sprite->removeAllChildren();
+                    
                     player = nextPlayer;
+                    auto newLabel = Label::createWithTTF("v", "fonts/Marker Felt.ttf", 100);
+                    newLabel->setPositionY(vp.metersToPixels(12.4));
+                    newLabel->setPositionX(vp.metersToPixels(1.7));
+                    (*player)->sprite->addChild(newLabel, -5);
                 }
                 break;
             case EventKeyboard::KeyCode::KEY_ESCAPE:

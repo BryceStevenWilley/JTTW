@@ -53,7 +53,6 @@ private:
     // Vector of x and y velocities, normalized so that 1 moves right/up at max speed, -1 moves left/down at max speed.
     cocos2d::Vec2 velocities = cocos2d::Vec2(0.0, 0.0);
     
-    
     // The max speed that the character should move laterally in pixels per second.
     cocos2d::Vec2 _maxVelocities;
 
