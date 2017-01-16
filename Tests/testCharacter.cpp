@@ -36,4 +36,15 @@ TEST_CASE("Testing Character") {
         c.accelerateRight(1.0);
         REQUIRE(c.isMovingRight());
     }
+    
+    SECTION("Gravity/ update tests") {
+        REQUIRE(c.getYVelocity() == 0.0);
+        
+        c.jump(1.0); // Should be exactly at 400px now.
+        REQUIRE(c.getYVelocity() == 400.0);
+        
+        // Half a second later, velocitity should be 400 - 1/2 * 4.
+        c.move(.5);
+        REQUIRE(c.getYVelocity() == 398.0);
+    }
 }
