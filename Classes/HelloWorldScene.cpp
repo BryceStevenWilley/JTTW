@@ -42,7 +42,7 @@ bool HelloWorld::init() {
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
 
-    Viewpoint vp(visibleSize, 1.7/40.0);
+    Viewpoint vp(visibleSize, 1.7/80.0);
     
     // add a label shows "Hello World"
     // create and initialize a label
@@ -58,7 +58,8 @@ bool HelloWorld::init() {
     int characterHeight = vp.metersToPixels(1.7);
     
     for (int i = 0; i < 4; i++) {
-        Character *body = new Character("image.png", Vec2(characterHeight, characterHeight), cocos2d::Vec2(vp.metersToPixels(17), vp.metersToPixels(42.5)));
+        Character *body = new Character("image.png", Vec2(characterHeight, characterHeight),
+                                        cocos2d::Vec2(vp.metersToPixels(17), vp.metersToPixels(102.5)), vp.metersToPixels(3.8));
         body->sprite->setPosition(50 * i, 0.0);
         this->addChild(body->sprite, i);
         characters.push_back(body);

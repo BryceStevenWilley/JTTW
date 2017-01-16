@@ -14,7 +14,7 @@ public:
         MID_AIR
     };
 
-    Character(const std::string artFileName, cocos2d::Vec2 dimensions, cocos2d::Vec2 maxVelocities);
+    Character(const std::string artFileName, cocos2d::Vec2 dimensions, cocos2d::Vec2 maxVelocities, double gravity);
     ~Character();
     
     /**
@@ -56,6 +56,7 @@ private:
     // The max speed that the character should move laterally in pixels per second.
     cocos2d::Vec2 _maxVelocities;
 
+    double _gravity;
 };
 }; // JTTW
 

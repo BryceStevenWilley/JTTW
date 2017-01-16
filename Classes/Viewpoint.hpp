@@ -9,7 +9,7 @@
 #ifndef Viewpoint_hpp
 #define Viewpoint_hpp
 
-#include <stdio.h>
+#include <iostream>
 
 namespace JTTW {
 class Viewpoint {

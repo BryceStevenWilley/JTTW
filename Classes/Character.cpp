@@ -3,10 +3,11 @@
 
 using namespace JTTW;
 
-Character::Character(const std::string artFileName, cocos2d::Vec2 dimensions, cocos2d::Vec2 maxVelocities) :
+Character::Character(const std::string artFileName, cocos2d::Vec2 dimensions, cocos2d::Vec2 maxVelocities, double gravity) :
         sprite(cocos2d::Sprite::create(artFileName)),
         dimensions(dimensions),
-        _maxVelocities(maxVelocities) {
+        _maxVelocities(maxVelocities),
+        _gravity(gravity) {
     
     sprite->setAnchorPoint(cocos2d::Vec2(0.5, 0.0));
     
@@ -62,7 +63,7 @@ void Character::move(float deltaTime) {
     position.x += velocities.x * _maxVelocities.x * deltaTime;
     position.y += velocities.y * _maxVelocities.y * deltaTime;
     if (currentState == State::MID_AIR) {
-        velocities.y -= 5.0 * deltaTime; // TODO: figure out units, and stop dealing with pixels.
+        velocities.y -= (_gravity * deltaTime); // TODO: figure out units, and stop dealing with pixels.
     }
     if (position.y <= 0.0) {
         position.y = 0.0;
