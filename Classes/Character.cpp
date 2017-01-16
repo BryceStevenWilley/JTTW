@@ -54,6 +54,14 @@ bool Character::justJumped() const {
     return velocities.y == 1.0;
 }
 
+double Character::getXVelocity() const {
+    return velocities.x * _maxVelocities.x;
+}
+
+double Character::getYVelocity() const {
+    return velocities.y * _maxVelocities.y;
+}
+
 const Character::State Character::getCurrentState() const {
     return currentState;
 }
@@ -63,7 +71,7 @@ void Character::move(float deltaTime) {
     position.x += velocities.x * _maxVelocities.x * deltaTime;
     position.y += velocities.y * _maxVelocities.y * deltaTime;
     if (currentState == State::MID_AIR) {
-        velocities.y -= (_gravity * deltaTime); // TODO: figure out units, and stop dealing with pixels.
+        velocities.y -= (_gravity * deltaTime) / _maxVelocities.y; // TODO: figure out units, and stop dealing with pixels.
     }
     if (position.y <= 0.0) {
         position.y = 0.0;

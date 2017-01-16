@@ -28,9 +28,14 @@ public:
     void jump(float percent);
     void transferVelocity(Character *reciever);
     
+    // Convience/ readable functions for checking velocities.
     bool isMovingLeft() const;
     bool isMovingRight() const;
     bool justJumped() const;
+    
+    // Getters for velocity.
+    double getXVelocity() const;
+    double getYVelocity() const;
     
     const State getCurrentState() const;
     
