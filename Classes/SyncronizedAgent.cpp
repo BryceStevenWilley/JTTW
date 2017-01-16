@@ -13,7 +13,7 @@ void SyncronizedAgent::plan(Character *player, std::vector<Character *> otherCha
     } else if (player->isMovingRight() && !_controlledCharacter->isMovingRight()) {
         plannedActions.push(ActionAndTrigger(Action::STOP, 0.0));
         plannedActions.push(ActionAndTrigger(Action::MOVE_RIGHT, 0.0));
-    } else if (player->getCurrentState() == Character::State::MID_AIR) { // TODO: causes agents to jump more than they should, fix
+    } else if (player->getCurrentState() == Character::State::MID_AIR && player->justJumped()) { // TODO: causes agents to jump more than they should, fix
         plannedActions.push(ActionAndTrigger(Action::JUMP, 0.0));
     }
     if (!player->isMovingLeft() && !player->isMovingRight()) {

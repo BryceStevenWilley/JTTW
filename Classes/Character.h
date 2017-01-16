@@ -30,6 +30,7 @@ public:
     
     bool isMovingLeft() const;
     bool isMovingRight() const;
+    bool justJumped() const;
     
     const State getCurrentState() const;
     

@@ -46,6 +46,10 @@ bool Character::isMovingRight() const {
     return velocities.x > 0.0;
 }
 
+bool Character::justJumped() const {
+    return velocities.y == 1.0;
+}
+
 const Character::State Character::getCurrentState() const {
     return currentState;
 }
