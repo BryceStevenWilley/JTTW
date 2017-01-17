@@ -24,6 +24,23 @@ bool HelloWorld::init() {
         return false;
     }
     
+    skeletonNode = spine::SkeletonAnimation::createWithJsonFile("spineboy.json", "spineboy.atlas", 1.0f);
+  
+    skeletonNode->setAnimation(0, "walk", true);
+    skeletonNode->setAnimation(1, "empty", false);
+    skeletonNode->addAnimation(1, "gungrab", false, 2);
+    
+    skeletonNode->setPosition(Vec2(_contentSize.width / 2, 20));
+    addChild(skeletonNode);
+    
+    std::cout << "Width: " << skeletonNode->getContentSize().width << std::endl;
+    std::cout << "Height: " << skeletonNode->getContentSize().height << std::endl;
+    
+    std::cout << "Width: " << skeletonNode->getBoundingBox().size.width << std::endl;
+    std::cout << "Height: " << skeletonNode->getBoundingBox().size.height << std::endl;
+    
+
+    
     // aka window dimensions
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
