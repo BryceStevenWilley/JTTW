@@ -38,8 +38,14 @@ bool HelloWorld::init() {
                                 origin.y + closeItem->getContentSize().height/2));
     
     // draw background
-    //auto background = Sprite::createWithTexture(Texture2D::initWithImage("image.png"));
-    auto background = DrawNode::create();
+    /*
+     * positioning code line taken from
+     * http://discuss.cocos2d-x.org/t/solved-background-image-is-not-covering-full-screen-on-android-device-in-coco2dx-v3-3/19376/3
+     */;
+    auto background = Sprite::create("platforms/Rock1.png");
+    background->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
+    
+    //auto background = DrawNode::create();
     this->addChild(background);
 
     // create menu with the "X" image, it's an autorelease object
