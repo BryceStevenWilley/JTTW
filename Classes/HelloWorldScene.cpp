@@ -69,9 +69,10 @@ bool HelloWorld::init() {
         agents.push_back(agent);
     }
     
+    player = characters.begin();
+    
     // Put a marker (the letter 'v') over the active character.
     // TODO: when Viewpoint is finished, just center camera on active character.
-    player = characters.begin();
     auto charLabel = Label::createWithTTF("v", "fonts/Marker Felt.ttf", 100);
     charLabel->setPositionY(vp.metersToPixels(27.4));
     charLabel->setPositionX(vp.metersToPixels(1.3));
