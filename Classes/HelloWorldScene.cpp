@@ -36,6 +36,11 @@ bool HelloWorld::init() {
     
     closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
                                 origin.y + closeItem->getContentSize().height/2));
+    
+    // draw background
+    //auto background = Sprite::createWithTexture(Texture2D::initWithImage("image.png"));
+    auto background = DrawNode::create();
+    this->addChild(background);
 
     // create menu with the "X" image, it's an autorelease object
     auto menu = Menu::create(closeItem, NULL);

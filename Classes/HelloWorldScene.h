@@ -19,6 +19,7 @@ public:
     void update(float) override;
     
 private:
+    cocos2d::Sprite* testPlayer;
     static std::vector<Character *> characters;
     static std::vector<AiAgent *> agents;
     static std::vector<Character *>::iterator player;
