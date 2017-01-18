@@ -37,14 +37,11 @@ bool HelloWorld::init() {
     closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
                                 origin.y + closeItem->getContentSize().height/2));
     
-    // draw background
+    // draw and add background
     auto background = Sprite::create("backgrounds/VecteezyBackground.png");
     background->setAnchorPoint(Vec2(origin.x, origin.y));
     background->setPosition(0,0);
-    
-    // add background
     this->addChild(background, 0);
-     
 
     // create menu with the "X" image, it's an autorelease object
     auto menu = Menu::create(closeItem, NULL);
