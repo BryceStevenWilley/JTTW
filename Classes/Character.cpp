@@ -71,7 +71,7 @@ void Character::move(float deltaTime) {
     position.x += velocities.x * _maxVelocities.x * deltaTime;
     position.y += velocities.y * _maxVelocities.y * deltaTime;
     if (currentState == State::MID_AIR) {
-        velocities.y -= (_gravity * deltaTime) / _maxVelocities.y; // TODO: figure out units, and stop dealing with pixels.
+        velocities.y -= (_gravity * deltaTime) / _maxVelocities.y;
     }
     if (position.y <= 0.0) {
         position.y = 0.0;
