@@ -91,15 +91,19 @@ void Character::updateAnimation() {
     if (currentState == STANDING) {
         ani->setTimeScale(1.0);
         if (velocities.x > 0.0) {
+            // If moving right, make the x scale positive so animation is facing right.
             ani->setScaleX(std::abs(ani->getScaleX()));
             ani->setAnimation(0, "run", true);
         } else if (velocities.x < 0.0) {
+            // If moving left, make the x scale negative so the animation is facing left.
             ani->setScaleX(-1 * std::abs(ani->getScaleX()));
             ani->setAnimation(0, "run", true);
         } else { // x == 0.0
             ani->setAnimation(0, "idle", true);
         }
     } else if (currentState == MID_AIR && velocities.y > 0.0) {
+        // If the character is in mid air and traveling upwards (usually happens right after jumping)
+        // then set the jump animation and slow it down so it lasts the whole time you're in the air.
         ani->setAnimation(0, "jump", false);
         ani->setTimeScale(0.5);
     }
