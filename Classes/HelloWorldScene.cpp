@@ -42,6 +42,8 @@ bool HelloWorld::init() {
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
 
+    // Creates the camera, or viewpoint for this scene.
+    // 1.7/80.0 means that 1.7 meters in the game world (average human male height) is represented by 80 pixels on screen.
     Viewpoint vp(visibleSize, 1.7/80.0);
     
     // add a label shows "Hello World"
