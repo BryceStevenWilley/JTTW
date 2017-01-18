@@ -15,7 +15,7 @@
 using namespace JTTW;
 
 TEST_CASE("Testing Character") {
-    Character c("image.png", cocos2d::Vec2(40, 40), cocos2d::Vec2(400, 400), 4);
+    Character c("spineboy", cocos2d::Vec2(40, 40), cocos2d::Vec2(400, 400), 4);
     
     SECTION("Checking velocity changes") {
         // Should start off stopped.
@@ -47,4 +47,5 @@ TEST_CASE("Testing Character") {
         c.move(.5);
         REQUIRE(c.getYVelocity() == 398.0);
     }
+    
 }

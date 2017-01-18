@@ -100,6 +100,15 @@
 		9FD41C101E2D55920077779E /* testCharacter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C0E1E2D55920077779E /* testCharacter.cpp */; };
 		9FD41C131E2D55C80077779E /* TestDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C111E2D55C80077779E /* TestDelegate.cpp */; };
 		9FD41C151E2D56220077779E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C141E2D56220077779E /* main.cpp */; };
+		9FD41CC71E2DB2A60077779E /* spineboy.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 9FD41CC41E2DB2A60077779E /* spineboy.atlas */; };
+		9FD41CC81E2DB2A60077779E /* spineboy.json in Resources */ = {isa = PBXBuildFile; fileRef = 9FD41CC51E2DB2A60077779E /* spineboy.json */; };
+		9FD41CC91E2DB2A60077779E /* spineboy.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FD41CC61E2DB2A60077779E /* spineboy.png */; };
+		9FD41CCA1E2DB2AF0077779E /* spineboy.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 9FD41CC41E2DB2A60077779E /* spineboy.atlas */; };
+		9FD41CCB1E2DB2AF0077779E /* spineboy.json in Resources */ = {isa = PBXBuildFile; fileRef = 9FD41CC51E2DB2A60077779E /* spineboy.json */; };
+		9FD41CCC1E2DB2AF0077779E /* spineboy.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FD41CC61E2DB2A60077779E /* spineboy.png */; };
+		9FD41CCD1E2DB2B70077779E /* spineboy.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 9FD41CC41E2DB2A60077779E /* spineboy.atlas */; };
+		9FD41CCE1E2DB2B70077779E /* spineboy.json in Resources */ = {isa = PBXBuildFile; fileRef = 9FD41CC51E2DB2A60077779E /* spineboy.json */; };
+		9FD41CCF1E2DB2B70077779E /* spineboy.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FD41CC61E2DB2A60077779E /* spineboy.png */; };
 		BF171245129291EC00B8313A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB012928DE900B8313A /* OpenGLES.framework */; };
 		BF1712471292920000B8313A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB412928DE900B8313A /* libz.dylib */; };
 		BF1C47F01293687400B63C5D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1C47EA1293683800B63C5D /* QuartzCore.framework */; };
@@ -228,6 +237,9 @@
 		9FD41C111E2D55C80077779E /* TestDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestDelegate.cpp; path = ../Tests/TestDelegate.cpp; sourceTree = SOURCE_ROOT; };
 		9FD41C121E2D55C80077779E /* TestDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestDelegate.h; path = ../Tests/TestDelegate.h; sourceTree = SOURCE_ROOT; };
 		9FD41C141E2D56220077779E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../Tests/main.cpp; sourceTree = SOURCE_ROOT; };
+		9FD41CC41E2DB2A60077779E /* spineboy.atlas */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spineboy.atlas; sourceTree = "<group>"; };
+		9FD41CC51E2DB2A60077779E /* spineboy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = spineboy.json; sourceTree = "<group>"; };
+		9FD41CC61E2DB2A60077779E /* spineboy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spineboy.png; sourceTree = "<group>"; };
 		BF170DB012928DE900B8313A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BF170DB412928DE900B8313A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		BF1C47EA1293683800B63C5D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -383,6 +395,9 @@
 		458972511E2DE568007D98F3 /* TestArt */ = {
 			isa = PBXGroup;
 			children = (
+				9FD41CC41E2DB2A60077779E /* spineboy.atlas */,
+				9FD41CC51E2DB2A60077779E /* spineboy.json */,
+				9FD41CC61E2DB2A60077779E /* spineboy.png */,
 				46880B7619C43A67006E1F66 /* CloseNormal.png */,
 				46880B7719C43A67006E1F66 /* CloseSelected.png */,
 				46880B7A19C43A67006E1F66 /* HelloWorld.png */,
@@ -608,14 +623,17 @@
 				5087E78117EB970100C73F5D /* Icon-120.png in Resources */,
 				454B17121E2FC6D30035467D /* backgrounds in Resources */,
 				5087E78617EB970100C73F5D /* Icon-76.png in Resources */,
+				9FD41CC81E2DB2A60077779E /* spineboy.json in Resources */,
 				5087E77F17EB970100C73F5D /* Default@2x.png in Resources */,
 				50EF629917ECD46A001EB2F8 /* Icon-100.png in Resources */,
 				5087E78317EB970100C73F5D /* Icon-152.png in Resources */,
 				46880B8119C43A67006E1F66 /* HelloWorld.png in Resources */,
 				46880B7D19C43A67006E1F66 /* CloseSelected.png in Resources */,
+				9FD41CC91E2DB2A60077779E /* spineboy.png in Resources */,
 				5087E77D17EB970100C73F5D /* Default-568h@2x.png in Resources */,
 				5087E78517EB970100C73F5D /* Icon-72.png in Resources */,
 				521A8E6519F0C34300D177D7 /* Default-736h@3x.png in Resources */,
+				9FD41CC71E2DB2A60077779E /* spineboy.atlas in Resources */,
 				521A8EA919F11F5000D177D7 /* fonts in Resources */,
 				50EF62A317ECD613001EB2F8 /* Icon-50.png in Resources */,
 				5087E78017EB970100C73F5D /* Icon-114.png in Resources */,
@@ -638,6 +656,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FD41CCD1E2DB2B70077779E /* spineboy.atlas in Resources */,
+				9FD41CCE1E2DB2B70077779E /* spineboy.json in Resources */,
+				9FD41CCF1E2DB2B70077779E /* spineboy.png in Resources */,
 				46880B8219C43A67006E1F66 /* HelloWorld.png in Resources */,
 				503AE0F817EB97AB00D1A890 /* Icon.icns in Resources */,
 				3EACC99019EE6D4300EB3C5E /* res in Resources */,
@@ -654,6 +675,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FD41CCA1E2DB2AF0077779E /* spineboy.atlas in Resources */,
+				9FD41CCB1E2DB2AF0077779E /* spineboy.json in Resources */,
+				9FD41CCC1E2DB2AF0077779E /* spineboy.png in Resources */,
 				9FD41BE71E2D54490077779E /* HelloWorld.png in Resources */,
 				9FD41BE81E2D54490077779E /* Icon.icns in Resources */,
 				9FD41BE91E2D54490077779E /* res in Resources */,
@@ -949,6 +973,7 @@
 					"$(SRCROOT)/../cocos2d/cocos/audio/include",
 					"$(SRCROOT)/../cocos2d/cocos",
 					"$(SRCROOT)/../cocos2d/extensions",
+					"$(SRCROOT)/../cocos2d/cocos/editor-support/**",
 					"$(SRCROOT)/../cocos2d/external",
 					"$(SRCROOT)/../cocos2d/external/chipmunk/include/chipmunk",
 				);

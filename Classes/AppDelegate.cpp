@@ -35,11 +35,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto glview = director->getOpenGLView();
     if(!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-         //glview = GLViewImpl::createWithRect("SampleGame", cocos2d::Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
-        glview = GLViewImpl::createWithFullScreen("SampleGame");
         /*
          * Screen size / resolution changed here. See https://www.raywenderlich.com/95835/cocos2d-x-tutorial-beginners
          */
+        //glview = GLViewImpl::createWithRect("SampleGame", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+        glview = GLViewImpl::createWithFullScreen("SampleGame");
         //glview = GLViewImpl::createWithRect("SampleGame", Rect(0,0,700,400), 1.0);
 #else
         glview = GLViewImpl::create("Not WIN/MAC/LINUX");

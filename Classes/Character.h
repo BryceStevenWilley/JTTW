@@ -2,6 +2,7 @@
 #define Character_h
 
 #include "cocos2d.h"
+#include <spine/spine-cocos2dx.h>
 
 /**
  * @brief Class for interactive characters.
@@ -58,12 +59,14 @@ public:
     void move(float deltaTime);
     
     // TODO: integrate Mei's art with this.
-    cocos2d::Sprite *sprite;
+    spine::SkeletonAnimation *ani;
     
     // A box that encompasses the character.
     cocos2d::Vec2 dimensions;
     
 private:
+    void updateAnimation();
+    
     State currentState = State::STANDING;
     
     // Vector of x and y velocities, normalized so that 1 moves right/up at max speed, -1 moves left/down at max speed.

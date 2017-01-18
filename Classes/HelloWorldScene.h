@@ -5,6 +5,7 @@
 #include "Character.h"
 #include "AiAgent.hpp"
 #include "Viewpoint.hpp"
+#include <spine/spine-cocos2dx.h>
 
 namespace JTTW {
 class HelloWorld : public cocos2d::Layer
@@ -23,8 +24,6 @@ private:
     static std::vector<Character *> characters;
     static std::vector<AiAgent *> agents;
     static std::vector<Character *>::iterator player;
-    //static Viewpoint *vp;
-    
 };
 }; // JTTW
 
