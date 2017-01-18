@@ -36,12 +36,25 @@ bool HelloWorld::init() {
     
     closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
                                 origin.y + closeItem->getContentSize().height/2));
+    
+    // draw background
+    auto background = Sprite::create("backgrounds/VecteezyBackground.png");
+    background->setAnchorPoint(Vec2(origin.x, origin.y));
+    background->setPosition(0,0);
+    
+    // add background
+    this->addChild(background, 0);
+     
 
     // create menu with the "X" image, it's an autorelease object
     auto menu = Menu::create(closeItem, NULL);
     menu->setPosition(Vec2::ZERO);
+    
+    // add menu with Z-order 1.
     this->addChild(menu, 1);
 
+    // Creates the camera, or viewpoint for this scene.
+    // 1.7/80.0 means that 1.7 meters in the game world (average human male height) is represented by 80 pixels on screen.
     Viewpoint vp(visibleSize, 1.7/80.0);
     
     int characterHeight = vp.metersToPixels(1.7);
