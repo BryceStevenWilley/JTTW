@@ -27,8 +27,8 @@ void SyncronizedAgent::executePlan(float delta) {
         bool doAction = false;
         if (a.trigger.usePosition) {
             // TODO: add a tolerance to this positioning system.
-            if (a.trigger.position.x == _controlledCharacter->sprite->getPosition().x &&
-                a.trigger.position.y == _controlledCharacter->sprite->getPosition().y) {
+            if (a.trigger.position.x == _controlledCharacter->ani->getPosition().x &&
+                a.trigger.position.y == _controlledCharacter->ani->getPosition().y) {
                 doAction = true;
             }
         } else {

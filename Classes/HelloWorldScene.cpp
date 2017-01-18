@@ -24,23 +24,6 @@ bool HelloWorld::init() {
         return false;
     }
     
-    skeletonNode = spine::SkeletonAnimation::createWithJsonFile("spineboy.json", "spineboy.atlas", 1.0f);
-  
-    skeletonNode->setAnimation(0, "walk", true);
-    skeletonNode->setAnimation(1, "empty", false);
-    skeletonNode->addAnimation(1, "gungrab", false, 2);
-    
-    skeletonNode->setPosition(Vec2(_contentSize.width / 2, 20));
-    addChild(skeletonNode);
-    
-    std::cout << "Width: " << skeletonNode->getContentSize().width << std::endl;
-    std::cout << "Height: " << skeletonNode->getContentSize().height << std::endl;
-    
-    std::cout << "Width: " << skeletonNode->getBoundingBox().size.width << std::endl;
-    std::cout << "Height: " << skeletonNode->getBoundingBox().size.height << std::endl;
-    
-
-    
     // aka window dimensions
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -61,24 +44,13 @@ bool HelloWorld::init() {
 
     Viewpoint vp(visibleSize, 1.7/80.0);
     
-    // add a label shows "Hello World"
-    // create and initialize a label
-    auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
-    
-    // position the label on the center of the screen
-    label->setPosition(Vec2(origin.x + visibleSize.width/2,
-                            origin.y + visibleSize.height - label->getContentSize().height));
-
-    // add the label as a child to this layer with Z-order of 0.
-    this->addChild(label, 0);
-    
     int characterHeight = vp.metersToPixels(1.7);
     
     for (int i = 0; i < 4; i++) {
-        Character *body = new Character("image.png", Vec2(characterHeight, characterHeight),
+        Character *body = new Character("spineboy", Vec2(characterHeight, characterHeight),
                                         cocos2d::Vec2(vp.metersToPixels(17), vp.metersToPixels(12.5)), vp.metersToPixels(9.8));
-        body->sprite->setPosition(vp.metersToPixels(1.7) * i, 0.0);
-        this->addChild(body->sprite, i);
+        body->ani->setPosition(vp.metersToPixels(1.7) * i, 0.0);
+        this->addChild(body->ani, i);
         characters.push_back(body);
         AiAgent *agent = new SyncronizedAgent(body);
         agents.push_back(agent);
@@ -86,9 +58,9 @@ bool HelloWorld::init() {
     
     player = characters.begin();
     auto charLabel = Label::createWithTTF("v", "fonts/Marker Felt.ttf", 100);
-    charLabel->setPositionY(vp.metersToPixels(12.4));
-    charLabel->setPositionX(vp.metersToPixels(1.7));
-    (*player)->sprite->addChild(charLabel, -5);
+    charLabel->setPositionY(vp.metersToPixels(27.4));
+    charLabel->setPositionX(vp.metersToPixels(1.3));
+    (*player)->ani->addChild(charLabel, -5);
     
     auto eventListener = EventListenerKeyboard::create();
     
@@ -107,13 +79,13 @@ bool HelloWorld::init() {
                 {
                     std::vector<Character *>::iterator nextPlayer = (player + 1 == characters.end()) ? characters.begin() : player + 1;
                     (*player)->transferVelocity(*nextPlayer);
-                    (*player)->sprite->removeAllChildren();
+                    (*player)->ani->removeAllChildren();
                     
                     player = nextPlayer;
                     auto newLabel = Label::createWithTTF("v", "fonts/Marker Felt.ttf", 100);
                     newLabel->setPositionY(vp.metersToPixels(12.4));
                     newLabel->setPositionX(vp.metersToPixels(1.7));
-                    (*player)->sprite->addChild(newLabel, -5);
+                    (*player)->ani->addChild(newLabel, -5);
                 }
                 break;
             case EventKeyboard::KeyCode::KEY_ESCAPE:
