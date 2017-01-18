@@ -53,7 +53,9 @@ bool HelloWorld::init() {
     // add menu with Z-order 1.
     this->addChild(menu, 1);
 
-    Viewpoint vp(visibleSize, 1.7/40.0);
+    // Creates the camera, or viewpoint for this scene.
+    // 1.7/80.0 means that 1.7 meters in the game world (average human male height) is represented by 80 pixels on screen.
+    Viewpoint vp(visibleSize, 1.7/80.0);
     
     // add a label shows "Hello World"
     // create and initialize a label
@@ -69,8 +71,9 @@ bool HelloWorld::init() {
     int characterHeight = vp.metersToPixels(1.7);
     
     for (int i = 0; i < 4; i++) {
-        Character *body = new Character("image.png", Vec2(characterHeight, characterHeight), cocos2d::Vec2(vp.metersToPixels(17), vp.metersToPixels(42.5)));
-        body->sprite->setPosition(50 * i, 0.0);
+        Character *body = new Character("image.png", Vec2(characterHeight, characterHeight),
+                                        cocos2d::Vec2(vp.metersToPixels(17), vp.metersToPixels(12.5)), vp.metersToPixels(9.8));
+        body->sprite->setPosition(vp.metersToPixels(1.7) * i, 0.0);
         this->addChild(body->sprite, i);
         characters.push_back(body);
         AiAgent *agent = new SyncronizedAgent(body);
@@ -130,14 +133,14 @@ bool HelloWorld::init() {
             case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
                 if ((*player)->isMovingLeft()) {
                     (*player)->stop(); // stop moving left
-                } else if (!(*player)->isMovingRight()) {
+                } else if ((*player)->getXVelocity() == 0.0) {
                     (*player)->accelerateRight(1.0);
                 }
                 break;
             case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
                 if ((*player)->isMovingRight()) {
                     (*player)->stop(); // stop moving right
-                } else if (!(*player)->isMovingLeft()) {
+                } else if ((*player)->getXVelocity() == 0.0) {
                     (*player)->accelerateLeft(1.0);
                 }
                 break;

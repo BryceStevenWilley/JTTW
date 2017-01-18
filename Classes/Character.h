@@ -14,7 +14,7 @@ public:
         MID_AIR
     };
 
-    Character(const std::string artFileName, cocos2d::Vec2 dimensions, cocos2d::Vec2 maxVelocities);
+    Character(const std::string artFileName, cocos2d::Vec2 dimensions, cocos2d::Vec2 maxVelocities, double gravity);
     ~Character();
     
     /**
@@ -28,9 +28,14 @@ public:
     void jump(float percent);
     void transferVelocity(Character *reciever);
     
+    // Convience/ readable functions for checking velocities.
     bool isMovingLeft() const;
     bool isMovingRight() const;
     bool justJumped() const;
+    
+    // Getters for velocity.
+    double getXVelocity() const;
+    double getYVelocity() const;
     
     const State getCurrentState() const;
     
@@ -56,6 +61,7 @@ private:
     // The max speed that the character should move laterally in pixels per second.
     cocos2d::Vec2 _maxVelocities;
 
+    double _gravity;
 };
 }; // JTTW
 
