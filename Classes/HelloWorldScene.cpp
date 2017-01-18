@@ -38,19 +38,19 @@ bool HelloWorld::init() {
                                 origin.y + closeItem->getContentSize().height/2));
     
     // draw background
-    /*
-     * positioning code line taken from
-     * http://discuss.cocos2d-x.org/t/solved-background-image-is-not-covering-full-screen-on-android-device-in-coco2dx-v3-3/19376/3
-     */;
-    auto background = Sprite::create("platforms/Rock1.png");
-    background->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
+    auto background = Sprite::create("backgrounds/VecteezyBackground.png");
+    background->setAnchorPoint(Vec2(origin.x, origin.y));
+    background->setPosition(0,0);
     
-    //auto background = DrawNode::create();
-    this->addChild(background);
+    // add background
+    this->addChild(background, 0);
+     
 
     // create menu with the "X" image, it's an autorelease object
     auto menu = Menu::create(closeItem, NULL);
     menu->setPosition(Vec2::ZERO);
+    
+    // add menu with Z-order 1.
     this->addChild(menu, 1);
 
     Viewpoint vp(visibleSize, 1.7/40.0);
