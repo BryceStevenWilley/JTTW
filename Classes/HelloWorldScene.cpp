@@ -1,6 +1,5 @@
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
-#include "SyncronizedAgent.hpp"
 #include <iostream>
 
 using namespace cocos2d;
@@ -52,7 +51,7 @@ bool HelloWorld::init() {
         body->ani->setPosition(vp.metersToPixels(1.7) * i, 0.0);
         this->addChild(body->ani, i);
         characters.push_back(body);
-        AiAgent *agent = new SyncronizedAgent(body);
+        AiAgent *agent = new AiAgent(body);
         agents.push_back(agent);
     }
     
@@ -97,9 +96,11 @@ bool HelloWorld::init() {
         }
         if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW ||
             keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW ||
-            keyCode == EventKeyboard::KeyCode::KEY_SPACE) {
+            keyCode == EventKeyboard::KeyCode::KEY_SPACE ||
+            keyCode == EventKeyboard::KeyCode::KEY_A ||
+            keyCode == EventKeyboard::KeyCode::KEY_O) {
             for (int i = 0; i < 4; i++) {
-                agents[i]->plan(*player, characters);
+                agents[i]->plan(*player, characters, keyCode);
             }
         }
     };
@@ -127,7 +128,7 @@ bool HelloWorld::init() {
         if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW ||
             keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW) {
             for (int i = 0; i < 4; i++) {
-                agents[i]->plan(*player, characters);
+                agents[i]->plan(*player, characters, keyCode);
             }
         }
     };

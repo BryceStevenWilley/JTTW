@@ -15,8 +15,6 @@ Character::Character(const std::string artFilePrefix, cocos2d::Vec2 dimensions, 
     ani->setScaleY(dimensions.y / 720.0f);
             
     ani->setAnimation(0, "idle", true);
-    ani->setAnimation(1, "empty", false);
-    ani->addAnimation(1, "gungrab", false, 2);
 }
 
 Character::~Character() {}

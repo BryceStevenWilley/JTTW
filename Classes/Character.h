@@ -8,6 +8,18 @@
  * @brief Class for interactive characters
  */
 namespace JTTW {
+    
+/**
+ * The possible actions that a character can do. Should correspond 1:1
+ * to methods in the character class.
+ */
+enum Action {
+    STOP,
+    MOVE_LEFT,
+    MOVE_RIGHT,
+    JUMP
+};
+    
 class Character {
 public:
     enum State {
