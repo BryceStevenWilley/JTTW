@@ -68,7 +68,7 @@ public:
      *
      *  direction is either 1 or -1, to make the character move left or right respectively.
      */
-    void move(float deltaTime);
+    void move(float deltaTime, std::vector<cocos2d::Sprite *> platforms);
     
     // TODO: integrate Mei's art with this.
     spine::SkeletonAnimation *ani;

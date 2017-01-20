@@ -8,6 +8,7 @@ using namespace JTTW;
 std::vector<Character *> HelloWorld::characters;
 std::vector<Character *>::iterator HelloWorld::player;
 std::vector<AiAgent *> HelloWorld::agents;
+std::vector<cocos2d::Sprite *> HelloWorld::platforms;
 
 Scene* HelloWorld::createScene() {
     // 'scene' and layer are autorelease objects.
@@ -42,7 +43,7 @@ bool HelloWorld::init() {
     background->setScale(6);
     background->setPosition(0,0);
     this->addChild(background, 0);
-
+    
     // create menu with the "X" image, it's an autorelease object
     auto menu = Menu::create(closeItem, NULL);
     menu->setPosition(Vec2::ZERO);
@@ -53,6 +54,10 @@ bool HelloWorld::init() {
     // Creates the camera, or viewpoint for this scene.
     // 1.7/180.0 means that 1.7 meters in the game world (average human male height) is represented by 180 pixels on screen.
     Viewpoint vp(visibleSize, 1.7/180.0);
+    
+    cocos2d::Sprite *plat = cocos2d::Sprite::create("platforms/Cloud1_2.png", cocos2d::Rect(vp.metersToPixels(0.0), vp.metersToPixels(0.0), vp.metersToPixels(5.0), vp.metersToPixels(5.0)));
+    this->addChild(plat, 3);
+    platforms.push_back(plat);
     
     int characterHeight = vp.metersToPixels(1.7);
     
@@ -166,7 +171,7 @@ void HelloWorld::menuCloseCallback(Ref* pSender) {
 void HelloWorld::update(float delta) {
     for (int i = 0; i < 4; i++) {
         agents[i]->executePlan(delta);
-         characters[i]->move(delta);
+         characters[i]->move(delta, platforms);
     }
 }
 
