@@ -74,7 +74,7 @@ void Character::move(float deltaTime) {
     position.x += velocities.x * _maxVelocities.x * deltaTime;
     position.y += velocities.y * _maxVelocities.y * deltaTime;
     if (currentState == State::MID_AIR) {
-        velocities.y -= (_gravity * deltaTime) / _maxVelocities.y; // TODO: figure out units, and stop dealing with pixels.
+        velocities.y -= (_gravity * deltaTime) / _maxVelocities.y;
     }
     if (position.y < 0.0) {
         position.y = 0.0;
@@ -89,15 +89,19 @@ void Character::updateAnimation() {
     if (currentState == STANDING) {
         ani->setTimeScale(1.0);
         if (velocities.x > 0.0) {
+            // If moving right, make the x scale positive so animation is facing right.
             ani->setScaleX(std::abs(ani->getScaleX()));
             ani->setAnimation(0, "run", true);
         } else if (velocities.x < 0.0) {
+            // If moving left, make the x scale negative so the animation is facing left.
             ani->setScaleX(-1 * std::abs(ani->getScaleX()));
             ani->setAnimation(0, "run", true);
         } else { // x == 0.0
             ani->setAnimation(0, "idle", true);
         }
     } else if (currentState == MID_AIR && velocities.y > .9) {
+        // If the character is in mid air and traveling upwards (usually happens right after jumping)
+        // then set the jump animation and slow it down so it lasts the whole time you're in the air.
         ani->setAnimation(0, "jump", false);
         ani->setTimeScale(0.5);
     }

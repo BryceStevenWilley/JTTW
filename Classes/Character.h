@@ -5,7 +5,11 @@
 #include <spine/spine-cocos2dx.h>
 
 /**
- * @brief Class for interactive characters
+ * @brief Class for interactive characters.
+ *
+ * Position is contained in the sprite, and is accessed through sprite->getPosition()/sprite->setPosition(<new Vec2>).
+ * Velocity is a percentage that goes from -1.0 to 1.0 contained in the velocity member, but should only be
+ * changed through accelerateLeft and accelerateRight to avoid non-sensical movement.
  */
 namespace JTTW {
     
@@ -27,13 +31,20 @@ public:
         MID_AIR
     };
 
+    /**
+     * Simple constructor.
+     * Example use:
+     * // Make a 40px x 40px character, with maximum horizontal velocity of 200px/second
+     * // and vertical velocity of 100px/second, and gravity of 100px/second^2.
+     * Character c("image.png", cocos2d::Vec2(40, 40), cocos2d::Vec2(200, 100), 100);
+     */
     Character(const std::string artFileName, cocos2d::Vec2 dimensions, cocos2d::Vec2 maxVelocities, double gravity);
     ~Character();
     
     /**
      * Controls for moving the character around.
      * Call these instead of manually changing the velocities member to ensure
-     * Comprehensible movement.
+     * comprehensible movement.
      */
     void accelerateLeft(float deltaVel);
     void accelerateRight(float deltaVel);

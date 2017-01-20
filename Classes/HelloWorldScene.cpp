@@ -35,12 +35,23 @@ bool HelloWorld::init() {
     
     closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
                                 origin.y + closeItem->getContentSize().height/2));
+    
+    // draw and add background
+    auto background = Sprite::create("backgrounds/VecteezyBackground.png");
+    background->setAnchorPoint(Vec2(origin.x, origin.y));
+    background->setScale(6);
+    background->setPosition(0,0);
+    this->addChild(background, 0);
 
     // create menu with the "X" image, it's an autorelease object
     auto menu = Menu::create(closeItem, NULL);
     menu->setPosition(Vec2::ZERO);
+    
+    // add menu with Z-order 1.
     this->addChild(menu, 1);
 
+    // Creates the camera, or viewpoint for this scene.
+    // 1.7/180.0 means that 1.7 meters in the game world (average human male height) is represented by 180 pixels on screen.
     Viewpoint vp(visibleSize, 1.7/180.0);
     
     int characterHeight = vp.metersToPixels(1.7);
@@ -56,9 +67,13 @@ bool HelloWorld::init() {
     }
     
     player = characters.begin();
+    
+    // Put a marker (the letter 'v') over the active character.
+    // TODO: when Viewpoint is finished, just center camera on active character.
     auto charLabel = Label::createWithTTF("v", "fonts/Marker Felt.ttf", 100);
-    charLabel->setPositionY(vp.metersToPixels(27.4));
-    charLabel->setPositionX(vp.metersToPixels(1.3));
+    charLabel->setTextColor(cocos2d::Color4B::BLACK);
+    charLabel->setPositionY(vp.metersToPixels(10.4));
+    charLabel->setPositionX(vp.metersToPixels(1.0));
     (*player)->ani->addChild(charLabel, -5);
     
     auto eventListener = EventListenerKeyboard::create();
@@ -82,8 +97,9 @@ bool HelloWorld::init() {
                     
                     player = nextPlayer;
                     auto newLabel = Label::createWithTTF("v", "fonts/Marker Felt.ttf", 100);
-                    newLabel->setPositionY(vp.metersToPixels(12.4));
-                    newLabel->setPositionX(vp.metersToPixels(1.7));
+                    newLabel->setTextColor(cocos2d::Color4B::BLACK);
+                    newLabel->setPositionY(vp.metersToPixels(10.4));
+                    newLabel->setPositionX(vp.metersToPixels(1.0));
                     (*player)->ani->addChild(newLabel, -5);
                 }
                 break;
