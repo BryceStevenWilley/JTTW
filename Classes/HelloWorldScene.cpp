@@ -41,13 +41,13 @@ bool HelloWorld::init() {
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
 
-    Viewpoint vp(visibleSize, 1.7/80.0);
+    Viewpoint vp(visibleSize, 1.7/180.0);
     
     int characterHeight = vp.metersToPixels(1.7);
     
     for (int i = 0; i < 4; i++) {
-        Character *body = new Character("spineboy", Vec2(characterHeight, characterHeight),
-                                        cocos2d::Vec2(vp.metersToPixels(17), vp.metersToPixels(12.5)), vp.metersToPixels(9.8));
+        Character *body = new Character("Monkey", Vec2(characterHeight, characterHeight),
+                                        cocos2d::Vec2(vp.metersToPixels(5), vp.metersToPixels(8)), vp.metersToPixels(9.8));
         body->ani->setPosition(vp.metersToPixels(1.7) * i, 0.0);
         this->addChild(body->ani, i);
         characters.push_back(body);

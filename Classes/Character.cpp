@@ -97,7 +97,7 @@ void Character::updateAnimation() {
         } else { // x == 0.0
             ani->setAnimation(0, "idle", true);
         }
-    } else if (currentState == MID_AIR && velocities.y > 0.0) {
+    } else if (currentState == MID_AIR && velocities.y > .9) {
         ani->setAnimation(0, "jump", false);
         ani->setTimeScale(0.5);
     }
