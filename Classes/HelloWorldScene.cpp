@@ -28,6 +28,8 @@ bool HelloWorld::init() {
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     
+    std::cout << visibleSize.height << ", " << visibleSize.width << std::endl << std::endl;
+    
     // add a "close" icon to exit the program. it's an autorelease object
     auto closeItem = MenuItemImage::create(
                                            "CloseNormal.png",
@@ -38,10 +40,10 @@ bool HelloWorld::init() {
                                 origin.y + closeItem->getContentSize().height/2));
     
     // draw and add background
-    auto background = Sprite::create("backgrounds/VecteezyBackground.png");
+    auto background = Sprite::create("backgrounds/Background.png");
     background->setAnchorPoint(Vec2(origin.x, origin.y));
-    background->setScale(6);
-    background->setPosition(0,0);
+    background->setScale(1.4);
+    background->setPosition(0,-300.0);
     this->addChild(background, 0);
     
     // create menu with the "X" image, it's an autorelease object
@@ -55,7 +57,18 @@ bool HelloWorld::init() {
     // 1.7/180.0 means that 1.7 meters in the game world (average human male height) is represented by 180 pixels on screen.
     Viewpoint vp(visibleSize, 1.7/180.0);
     
-    cocos2d::Sprite *plat = cocos2d::Sprite::create("platforms/Cloud1_2.png", cocos2d::Rect(vp.metersToPixels(0.0), vp.metersToPixels(0.0), vp.metersToPixels(5.0), vp.metersToPixels(5.0)));
+    // Set some simple platforms.
+    cocos2d::Sprite *plat = cocos2d::Sprite::create("platforms/Clear Day.png");
+    plat->setAnchorPoint(cocos2d::Vec2(0.0, 0.0));
+    plat->setPosition(vp.metersToPixels(0.0), vp.metersToPixels(1.5));
+    plat->setContentSize(cocos2d::Size(vp.metersToPixels(3.0), vp.metersToPixels(2.0)));
+    this->addChild(plat, 3);
+    platforms.push_back(plat);
+    
+    plat = cocos2d::Sprite::create("platforms/Clear Day.png");
+    plat->setAnchorPoint(cocos2d::Vec2(0.0, 0.0));
+    plat->setPosition(vp.metersToPixels(5.0), vp.metersToPixels(3.5));
+    plat->setContentSize(cocos2d::Size(vp.metersToPixels(3.0), vp.metersToPixels(2.0)));
     this->addChild(plat, 3);
     platforms.push_back(plat);
     
@@ -63,7 +76,7 @@ bool HelloWorld::init() {
     
     for (int i = 0; i < 4; i++) {
         Character *body = new Character("Monkey", Vec2(characterHeight, characterHeight),
-                                        cocos2d::Vec2(vp.metersToPixels(5), vp.metersToPixels(8)), vp.metersToPixels(9.8));
+                                        cocos2d::Vec2(vp.metersToPixels(5), vp.metersToPixels(10)), vp.metersToPixels(9.8));
         body->ani->setPosition(vp.metersToPixels(1.7) * i, 0.0);
         this->addChild(body->ani, i);
         characters.push_back(body);

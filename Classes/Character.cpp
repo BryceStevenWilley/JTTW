@@ -98,7 +98,7 @@ void Character::move(float deltaTime, std::vector<cocos2d::Sprite *> platforms) 
         currentState = State::STANDING;
         velocities.y = 0.0;
         updateAnimation();
-    } else if (vertCollision == false) {
+    } else if (vertCollision == false && position.y > 0.0) {
         currentState = State::MID_AIR;
     }
     ani->setPosition(position);
