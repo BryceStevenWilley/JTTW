@@ -6,6 +6,7 @@
 #include "AiAgent.hpp"
 #include "Viewpoint.hpp"
 #include <spine/spine-cocos2dx.h>
+#include <deque>
 
 namespace JTTW {
 class HelloWorld : public cocos2d::Layer
@@ -20,10 +21,10 @@ public:
     void update(float) override;
     
 private:
-    cocos2d::Sprite* testPlayer;
+    static Viewpoint vp;
     static std::vector<Character *> characters;
-    static std::vector<AiAgent *> agents;
-    static std::vector<Character *>::iterator player;
+    static std::deque<AiAgent *> agents;
+    static AiAgent *player;
     static std::vector<cocos2d::Sprite *> platforms;
 };
 }; // JTTW

@@ -26,11 +26,22 @@ void Viewpoint::panToCharacter(Character* player) {
     // When level->position.x == 0, then the center of the screen is at width/2.0.
     // width/2.0 = level->position.x + player->ani->position.x;
     float newLevelX = _screenDims.width/2.0 - player->ani->getPosition().x;
-    auto action = cocos2d::MoveTo::create(1.0, cocos2d::Vec2(newLevelX, _level->getPosition().y));
-    _level->runAction(action);
+    auto action = cocos2d::MoveTo::create(.5, cocos2d::Vec2(newLevelX, _level->getPosition().y));
+    
+    auto callback = cocos2d::CallFuncN::create([&](cocos2d::Node* sender)
+    {
+        _isPanning = false;
+    });
+
+    _isPanning = true;
+    _level->runAction(cocos2d::Sequence::create(action, callback, nullptr));
 }
 
-void Viewpoint::followCharacter(Character *player) {
-    float newLevelX = _screenDims.width / 2.0 - player->ani->getPosition().x;
-    _level->setPosition(cocos2d::Vec2(newLevelX, _level->getPosition().y));
+void Viewpoint::followCharacter(Character *player, float delta) {
+    if (_isPanning == false) {
+        float newLevelX = _screenDims.width / 2.0 - player->ani->getPosition().x;
+        _level->setPosition(cocos2d::Vec2(newLevelX, _level->getPosition().y));
+    } else {
+        _level->runAction(cocos2d::MoveBy::create(delta, cocos2d::Vec2(-player->getXVelocity() * delta, 0.0)));
+    }
 }
