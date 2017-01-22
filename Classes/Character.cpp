@@ -15,8 +15,6 @@ Character::Character(const std::string artFilePrefix, cocos2d::Vec2 dimensions, 
     ani->setScaleY(dimensions.y / 720.0f);
             
     ani->setAnimation(0, "idle", true);
-    ani->setAnimation(1, "empty", false);
-    ani->addAnimation(1, "gungrab", false, 2);
 }
 
 Character::~Character() {}
@@ -101,7 +99,7 @@ void Character::updateAnimation() {
         } else { // x == 0.0
             ani->setAnimation(0, "idle", true);
         }
-    } else if (currentState == MID_AIR && velocities.y > 0.0) {
+    } else if (currentState == MID_AIR && velocities.y > .9) {
         // If the character is in mid air and traveling upwards (usually happens right after jumping)
         // then set the jump animation and slow it down so it lasts the whole time you're in the air.
         ani->setAnimation(0, "jump", false);

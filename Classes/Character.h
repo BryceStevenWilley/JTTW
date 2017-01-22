@@ -12,6 +12,18 @@
  * changed through accelerateLeft and accelerateRight to avoid non-sensical movement.
  */
 namespace JTTW {
+    
+/**
+ * The possible actions that a character can do. Should correspond 1:1
+ * to methods in the character class.
+ */
+enum Action {
+    STOP,
+    MOVE_LEFT,
+    MOVE_RIGHT,
+    JUMP
+};
+    
 class Character {
 public:
     enum State {

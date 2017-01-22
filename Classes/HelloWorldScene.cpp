@@ -1,6 +1,5 @@
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
-#include "SyncronizedAgent.hpp"
 #include <iostream>
 
 using namespace cocos2d;
@@ -40,6 +39,7 @@ bool HelloWorld::init() {
     // draw and add background
     auto background = Sprite::create("backgrounds/VecteezyBackground.png");
     background->setAnchorPoint(Vec2(origin.x, origin.y));
+    background->setScale(6);
     background->setPosition(0,0);
     this->addChild(background, 0);
 
@@ -51,18 +51,18 @@ bool HelloWorld::init() {
     this->addChild(menu, 1);
 
     // Creates the camera, or viewpoint for this scene.
-    // 1.7/80.0 means that 1.7 meters in the game world (average human male height) is represented by 80 pixels on screen.
-    Viewpoint vp(visibleSize, 1.7/80.0);
+    // 1.7/180.0 means that 1.7 meters in the game world (average human male height) is represented by 180 pixels on screen.
+    Viewpoint vp(visibleSize, 1.7/180.0);
     
     int characterHeight = vp.metersToPixels(1.7);
     
     for (int i = 0; i < 4; i++) {
-        Character *body = new Character("spineboy", Vec2(characterHeight, characterHeight),
-                                        cocos2d::Vec2(vp.metersToPixels(17), vp.metersToPixels(12.5)), vp.metersToPixels(9.8));
+        Character *body = new Character("Monkey", Vec2(characterHeight, characterHeight),
+                                        cocos2d::Vec2(vp.metersToPixels(5), vp.metersToPixels(8)), vp.metersToPixels(9.8));
         body->ani->setPosition(vp.metersToPixels(1.7) * i, 0.0);
         this->addChild(body->ani, i);
         characters.push_back(body);
-        AiAgent *agent = new SyncronizedAgent(body);
+        AiAgent *agent = new AiAgent(body);
         agents.push_back(agent);
     }
     
@@ -71,8 +71,9 @@ bool HelloWorld::init() {
     // Put a marker (the letter 'v') over the active character.
     // TODO: when Viewpoint is finished, just center camera on active character.
     auto charLabel = Label::createWithTTF("v", "fonts/Marker Felt.ttf", 100);
-    charLabel->setPositionY(vp.metersToPixels(27.4));
-    charLabel->setPositionX(vp.metersToPixels(1.3));
+    charLabel->setTextColor(cocos2d::Color4B::BLACK);
+    charLabel->setPositionY(vp.metersToPixels(10.4));
+    charLabel->setPositionX(vp.metersToPixels(1.0));
     (*player)->ani->addChild(charLabel, -5);
     
     auto eventListener = EventListenerKeyboard::create();
@@ -96,8 +97,9 @@ bool HelloWorld::init() {
                     
                     player = nextPlayer;
                     auto newLabel = Label::createWithTTF("v", "fonts/Marker Felt.ttf", 100);
-                    newLabel->setPositionY(vp.metersToPixels(12.4));
-                    newLabel->setPositionX(vp.metersToPixels(1.7));
+                    newLabel->setTextColor(cocos2d::Color4B::BLACK);
+                    newLabel->setPositionY(vp.metersToPixels(10.4));
+                    newLabel->setPositionX(vp.metersToPixels(1.0));
                     (*player)->ani->addChild(newLabel, -5);
                 }
                 break;
@@ -110,9 +112,11 @@ bool HelloWorld::init() {
         }
         if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW ||
             keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW ||
-            keyCode == EventKeyboard::KeyCode::KEY_SPACE) {
+            keyCode == EventKeyboard::KeyCode::KEY_SPACE ||
+            keyCode == EventKeyboard::KeyCode::KEY_A ||
+            keyCode == EventKeyboard::KeyCode::KEY_O) {
             for (int i = 0; i < 4; i++) {
-                agents[i]->plan(*player, characters);
+                agents[i]->plan(*player, characters, keyCode);
             }
         }
     };
@@ -140,7 +144,7 @@ bool HelloWorld::init() {
         if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW ||
             keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW) {
             for (int i = 0; i < 4; i++) {
-                agents[i]->plan(*player, characters);
+                agents[i]->plan(*player, characters, keyCode);
             }
         }
     };

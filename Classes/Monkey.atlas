@@ -1,0 +1,89 @@
+
+Monkey.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Body
+  rotate: false
+  xy: 2, 272
+  size: 414, 749
+  orig: 414, 749
+  offset: 0, 0
+  index: -1
+L Arm
+  rotate: false
+  xy: 854, 436
+  size: 140, 585
+  orig: 140, 585
+  offset: 0, 0
+  index: -1
+L Calf
+  rotate: true
+  xy: 585, 3
+  size: 151, 358
+  orig: 151, 358
+  offset: 0, 0
+  index: -1
+R Arm
+  rotate: true
+  xy: 2, 2
+  size: 268, 581
+  orig: 268, 581
+  offset: 0, 0
+  index: -1
+R Calf
+  rotate: true
+  xy: 585, 156
+  size: 160, 355
+  orig: 160, 355
+  offset: 0, 0
+  index: -1
+R Foot
+  rotate: false
+  xy: 822, 332
+  size: 184, 102
+  orig: 184, 102
+  offset: 0, 0
+  index: -1
+R Thigh
+  rotate: true
+  xy: 418, 318
+  size: 167, 402
+  orig: 167, 402
+  offset: 0, 0
+  index: -1
+Tail
+  rotate: false
+  xy: 418, 487
+  size: 434, 534
+  orig: 434, 534
+  offset: 0, 0
+  index: -1
+
+Monkey2.png
+size: 1024,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Head
+  rotate: false
+  xy: 2, 98
+  size: 470, 391
+  orig: 470, 391
+  offset: 0, 0
+  index: -1
+L Foot
+  rotate: false
+  xy: 2, 2
+  size: 209, 94
+  orig: 209, 94
+  offset: 0, 0
+  index: -1
+L Thigh
+  rotate: true
+  xy: 474, 338
+  size: 151, 407
+  orig: 151, 407
+  offset: 0, 0
+  index: -1
