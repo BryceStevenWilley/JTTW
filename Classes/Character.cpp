@@ -69,18 +69,37 @@ const Character::State Character::getCurrentState() const {
     return currentState;
 }
 
-void Character::move(float deltaTime) {
+void Character::move(float deltaTime, std::vector<cocos2d::Sprite *> platforms) {
     auto position = ani->getPosition();
     position.x += velocities.x * _maxVelocities.x * deltaTime;
     position.y += velocities.y * _maxVelocities.y * deltaTime;
     if (currentState == State::MID_AIR) {
         velocities.y -= (_gravity * deltaTime) / _maxVelocities.y;
     }
+    bool vertCollision = false;
+    cocos2d::Sprite *collidedPlat;
+    for (auto plat = platforms.begin(); plat != platforms.end(); plat++) {
+        if(position.x  >= (*plat)->getBoundingBox().getMinX() && position.x <= (*plat)->getBoundingBox().getMaxX()) {
+            if (position.y >= (*plat)->getBoundingBox().getMinY() && position.y <= (*plat)->getBoundingBox().getMaxY()) {
+                vertCollision = true;
+                collidedPlat = *plat;
+                break;
+            }
+        }
+    }
+    
     if (position.y < 0.0) {
         position.y = 0.0;
         currentState = State::STANDING;
         velocities.y = 0.0;
         updateAnimation();
+    } else if (vertCollision == true) {
+        position.y = collidedPlat->getBoundingBox().getMaxY();
+        currentState = State::STANDING;
+        velocities.y = 0.0;
+        updateAnimation();
+    } else if (vertCollision == false && position.y > 0.0) {
+        currentState = State::MID_AIR;
     }
     ani->setPosition(position);
 }
