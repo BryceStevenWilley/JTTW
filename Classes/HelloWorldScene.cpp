@@ -9,6 +9,10 @@ std::vector<Character *> HelloWorld::characters;
 std::deque<AiAgent *> HelloWorld::agents;
 AiAgent * HelloWorld::player;
 std::vector<BadPlatform> HelloWorld::platforms;
+bool HelloWorld::pedestalPopped;
+bool HelloWorld::cloudSunk = false;
+bool HelloWorld::cloudSinking = false;
+
 Viewpoint HelloWorld::vp(cocos2d::Size(1.0, 1.0), 1.0, nullptr);
 
 Scene* HelloWorld::createScene() {
@@ -114,11 +118,11 @@ bool HelloWorld::init() {
     r1.dimensions.setRect(r1.s->getPosition().x,  r1.s->getPosition().y, r1Width, r1Height);
     platforms.push_back(r1);
     
-    float r2Height = vp.metersToPixels(9.0);
+    float r2Height = vp.metersToPixels(11.0);
     float r2Width = vp.metersToPixels(3.0);
     BadPlatform r2("platforms/Rock2.png");
     r2.s->setPosition(vp.metersToPixels(30.0), vp.metersToPixels(0.0));
-    r2.s->setContentSize(cocos2d::Size(vp.metersToPixels(4.0), vp.metersToPixels(13.0)));
+    r2.s->setContentSize(cocos2d::Size(vp.metersToPixels(4.0), vp.metersToPixels(15.0)));
     layer->addChild(r2.s, 6);
     r2.dimensions.setRect(r2.s->getPosition().x,  r2.s->getPosition().y, r2Width, r2Height);
     platforms.push_back(r2);
@@ -133,11 +137,11 @@ bool HelloWorld::init() {
     platforms.push_back(r3);
     
     
-    float r4Height = vp.metersToPixels(9.0);
+    float r4Height = vp.metersToPixels(8.0);
     float r4Width = vp.metersToPixels(3.0);
     BadPlatform r4("platforms/Rock4.png");
     r4.s->setPosition(vp.metersToPixels(46.0), vp.metersToPixels(0.0));
-    r4.s->setContentSize(cocos2d::Size(vp.metersToPixels(4.0), vp.metersToPixels(13.0)));
+    r4.s->setContentSize(cocos2d::Size(vp.metersToPixels(4.0), vp.metersToPixels(11.0)));
     layer->addChild(r4.s, 6);
     r4.dimensions.setRect(r4.s->getPosition().x,  r4.s->getPosition().y, r4Width, r4Height);
     platforms.push_back(r4);
@@ -158,9 +162,9 @@ bool HelloWorld::init() {
     Character *monk = new Character("Monk", Vec2(characterHeight, characterHeight),
                                       cocos2d::Vec2(vp.metersToPixels(3), vp.metersToPixels(6)), vp.metersToPixels(9.8));
     Character *piggy = new Character("Piggy", Vec2(characterHeight, characterHeight),
-                                      cocos2d::Vec2(vp.metersToPixels(5), vp.metersToPixels(8.7)), vp.metersToPixels(9.8));
+                                      cocos2d::Vec2(vp.metersToPixels(4), vp.metersToPixels(8.7)), vp.metersToPixels(9.8));
     Character *sandy = new Character("sandy", Vec2(characterHeight, characterHeight),
-                                     cocos2d::Vec2(vp.metersToPixels(5), vp.metersToPixels(8)), vp.metersToPixels(9.8));
+                                     cocos2d::Vec2(vp.metersToPixels(4.5), vp.metersToPixels(8)), vp.metersToPixels(9.8));
     characters.push_back(monkey);
     characters.push_back(monk);
     characters.push_back(piggy);
@@ -256,8 +260,32 @@ void HelloWorld::update(float delta) {
     }
     for (int i = 0; i < characters.size(); i++) {
         characters[i]->move(delta, platforms);
+        // HARDCODED STUFF FOR PEDESTAL DISSAPPEARING
+        if (characters[i]->ani->getPosition().x > vp.metersToPixels(52.0) && !pedestalPopped) {
+            // Remove the pedestal from the platforms.
+            BadPlatform pedstal = platforms.back();
+            platforms.pop_back();
+            pedstal.s->runAction(cocos2d::FadeOut::create(2.0));
+            pedestalPopped = true;
+            characters[i]->ani->setAnimation(0, "fall forwards", false);
+            characters[i]->ani->setTimeScale(.3);
+        }
+        if (characters[i]->characterName == "Piggy" && characters[i]->isDirectlyAbove(platforms[2].dimensions, characters[i]->ani->getPosition(), characters[i]->dimensions) && (!cloudSunk || !cloudSinking)) {
+            cloudSinking = true;
+        }
     }
-    vp.followCharacter(player->_controlledCharacter, delta);
     
+    if (cloudSinking == true) {
+        BadPlatform c = platforms[2];
+        c.dimensions.setRect(c.dimensions.origin.x, c.dimensions.origin.y - (20 * delta), c.dimensions.size.width, c.dimensions.size.height);
+        c.s->setPosition(cocos2d::Vec2(c.s->getPosition().x, c.s->getPosition().y - (20 * delta)));
+        if (c.dimensions.getMaxY() < vp.metersToPixels(12)) {
+            cloudSinking = false;
+            cloudSunk = true;
+        }
+        platforms[2] = c;
+    }
+    
+    vp.followCharacter(player->_controlledCharacter, delta);
 }
 

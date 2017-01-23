@@ -6,6 +6,7 @@ using namespace JTTW;
 Character::Character(const std::string artFilePrefix, cocos2d::Vec2 dimensions, cocos2d::Vec2 maxVelocities, double gravity) :
         ani(spine::SkeletonAnimation::createWithJsonFile(artFilePrefix + ".json", artFilePrefix + ".atlas", 1.0f)),
         //cocos2d::Sprite::create(artFileName)),
+        characterName(artFilePrefix),
         dimensions(dimensions),
         _maxVelocities(maxVelocities),
         _gravity(gravity) {
@@ -74,7 +75,7 @@ const Character::State Character::getCurrentState() const {
     return currentState;
 }
 
-bool isDirectlyAbove(cocos2d::Rect platform, cocos2d::Vec2 center, cocos2d::Vec2 dims) {
+bool Character::isDirectlyAbove(cocos2d::Rect platform, cocos2d::Vec2 center, cocos2d::Vec2 dims) {
     float maxX = center.x + dims.x / 2.0;
     float minX = center.x - dims.x / 2.0;
     if (maxX > platform.getMinX() && minX < platform.getMaxX()) {
@@ -177,12 +178,13 @@ void Character::move(float deltaTime, std::vector<BadPlatform> platforms) {
         }
     }
     
-    if (position.y < 0.0) {
-        position.y = 0.0;
-        currentState = State::STANDING;
-        velocities.y = 0.0;
-        updateAnimation();
-    } else if (collision == true) {
+    //if (position.y < 0.0) {
+    //    position.y = 0.0;
+    //    currentState = State::STANDING;
+    //    velocities.y = 0.0;
+    //    updateAnimation();
+    //} else
+    if (collision == true) {
         // push to out of box
         position = collidedPosition(collidedPlat.dimensions, position, dimensions, velocities);
         cocos2d::Rect r = collidedPlat.dimensions;
@@ -236,6 +238,6 @@ void Character::updateAnimation() {
         // If the character is in mid air and traveling upwards (usually happens right after jumping)
         // then set the jump animation and slow it down so it lasts the whole time you're in the air.
         ani->setAnimation(0, "jump", false);
-        ani->setTimeScale(0.5);
+        ani->setTimeScale(0.9);
     }
 }

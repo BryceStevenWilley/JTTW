@@ -27,6 +27,9 @@ private:
     static std::deque<AiAgent *> agents;
     static AiAgent *player;
     static std::vector<BadPlatform> platforms;
+    static bool pedestalPopped;
+    static bool cloudSunk;
+    static bool cloudSinking;
 };
 } // JTTW
 

@@ -78,6 +78,8 @@ public:
     
     const State getCurrentState() const;
     
+    bool isDirectlyAbove(cocos2d::Rect platform, cocos2d::Vec2 center, cocos2d::Vec2 dims);
+    
     /**
      * Moves the character left and right.
      *
@@ -90,6 +92,8 @@ public:
     
     // A box that encompasses the character.
     cocos2d::Vec2 dimensions;
+    
+    std::string characterName;
     
 private:
     void updateAnimation();
