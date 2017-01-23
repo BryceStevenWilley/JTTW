@@ -9,6 +9,7 @@
 #include <deque>
 
 namespace JTTW {
+    
 class HelloWorld : public cocos2d::Layer
 {
 public:
@@ -25,8 +26,8 @@ private:
     static std::vector<Character *> characters;
     static std::deque<AiAgent *> agents;
     static AiAgent *player;
-    static std::vector<cocos2d::Sprite *> platforms;
+    static std::vector<BadPlatform> platforms;
 };
-}; // JTTW
+} // JTTW
 
 #endif // HelloWorldScene_h

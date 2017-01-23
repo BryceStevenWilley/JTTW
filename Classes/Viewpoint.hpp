@@ -20,7 +20,6 @@ public:
     void panToCharacter(Character *player);
     void followCharacter(Character *player, float delta);
     
-    
     int metersToPixels(double meters) const;
     double pixelsToMeters(int pixels) const;
     

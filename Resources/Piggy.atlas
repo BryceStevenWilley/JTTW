@@ -1,0 +1,82 @@
+
+Piggy.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Body
+  rotate: false
+  xy: 2, 299
+  size: 578, 706
+  orig: 578, 706
+  offset: 0, 0
+  index: -1
+Head
+  rotate: true
+  xy: 582, 465
+  size: 540, 420
+  orig: 540, 420
+  offset: 0, 0
+  index: -1
+L Arm
+  rotate: true
+  xy: 2, 20
+  size: 277, 494
+  orig: 277, 494
+  offset: 0, 0
+  index: -1
+L Foot
+  rotate: true
+  xy: 917, 220
+  size: 243, 104
+  orig: 243, 104
+  offset: 0, 0
+  index: -1
+R Arm
+  rotate: false
+  xy: 582, 2
+  size: 333, 461
+  orig: 333, 461
+  offset: 0, 0
+  index: -1
+
+Piggy2.png
+size: 1024,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+L Calf
+  rotate: false
+  xy: 663, 174
+  size: 211, 303
+  orig: 211, 303
+  offset: 0, 0
+  index: -1
+L Thigh
+  rotate: false
+  xy: 235, 32
+  size: 208, 445
+  orig: 208, 445
+  offset: 0, 0
+  index: -1
+R Calf
+  rotate: false
+  xy: 445, 162
+  size: 216, 315
+  orig: 216, 315
+  offset: 0, 0
+  index: -1
+R Foot
+  rotate: true
+  xy: 876, 233
+  size: 244, 113
+  orig: 244, 113
+  offset: 0, 0
+  index: -1
+R Thigh
+  rotate: false
+  xy: 2, 2
+  size: 231, 475
+  orig: 231, 475
+  offset: 0, 0
+  index: -1

@@ -13,6 +13,21 @@
  */
 namespace JTTW {
     
+struct BadPlatform {
+    cocos2d::Sprite *s;
+    cocos2d::Rect dimensions;
+    
+    BadPlatform() :
+            s(cocos2d::Sprite::create()),
+            dimensions(cocos2d::Rect()) {}
+    
+    BadPlatform(std::string fileName) :
+            s(cocos2d::Sprite::create(fileName)),
+            dimensions(cocos2d::Rect()) {
+                s->setAnchorPoint(cocos2d::Vec2(0.0, 0.0));
+    }
+};
+
 /**
  * The possible actions that a character can do. Should correspond 1:1
  * to methods in the character class.
@@ -68,7 +83,7 @@ public:
      *
      *  direction is either 1 or -1, to make the character move left or right respectively.
      */
-    void move(float deltaTime, std::vector<cocos2d::Sprite *> platforms);
+    void move(float deltaTime, std::vector<BadPlatform> platforms);
     
     // TODO: integrate Mei's art with this.
     spine::SkeletonAnimation *ani;
@@ -84,11 +99,14 @@ private:
     // Vector of x and y velocities, normalized so that 1 moves right/up at max speed, -1 moves left/down at max speed.
     cocos2d::Vec2 velocities = cocos2d::Vec2(0.0, 0.0);
     
+    double forceXLeft = 0.0;
+    double forceXRight = 0.0;
+    
     // The max speed that the character should move laterally in pixels per second.
     cocos2d::Vec2 _maxVelocities;
 
     double _gravity;
 };
-}; // JTTW
+} // JTTW
 
 #endif /* Character_h */

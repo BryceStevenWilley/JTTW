@@ -1,0 +1,68 @@
+
+sandy.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Body
+  rotate: false
+  xy: 2, 237
+  size: 595, 734
+  orig: 595, 734
+  offset: 0, 0
+  index: -1
+Head
+  rotate: false
+  xy: 602, 22
+  size: 373, 422
+  orig: 373, 422
+  offset: 0, 0
+  index: -1
+L Foot
+  rotate: true
+  xy: 913, 588
+  size: 188, 80
+  orig: 188, 80
+  offset: 0, 0
+  index: -1
+R Arm
+  rotate: false
+  xy: 599, 446
+  size: 312, 525
+  orig: 312, 525
+  offset: 0, 0
+  index: -1
+R Foot
+  rotate: true
+  xy: 913, 778
+  size: 193, 85
+  orig: 193, 85
+  offset: 0, 0
+  index: -1
+R Leg
+  rotate: true
+  xy: 2, 2
+  size: 233, 598
+  orig: 233, 598
+  offset: 0, 0
+  index: -1
+
+sandy2.png
+size: 512,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+L Arm
+  rotate: false
+  xy: 196, 77
+  size: 210, 533
+  orig: 210, 533
+  offset: 0, 0
+  index: -1
+L Leg
+  rotate: false
+  xy: 2, 2
+  size: 192, 608
+  orig: 192, 608
+  offset: 0, 0
+  index: -1

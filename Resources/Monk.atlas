@@ -1,0 +1,68 @@
+
+Monk.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Body
+  rotate: false
+  xy: 2, 148
+  size: 519, 832
+  orig: 519, 832
+  offset: 0, 0
+  index: -1
+Head
+  rotate: true
+  xy: 523, 451
+  size: 529, 467
+  orig: 529, 467
+  offset: 0, 0
+  index: -1
+L Foot
+  rotate: false
+  xy: 722, 189
+  size: 189, 86
+  orig: 189, 86
+  offset: 0, 0
+  index: -1
+L Leg
+  rotate: true
+  xy: 2, 2
+  size: 144, 559
+  orig: 144, 559
+  offset: 0, 0
+  index: -1
+R Foot
+  rotate: false
+  xy: 523, 175
+  size: 197, 100
+  orig: 197, 100
+  offset: 0, 0
+  index: -1
+R Leg
+  rotate: true
+  xy: 523, 277
+  size: 172, 468
+  orig: 172, 468
+  offset: 0, 0
+  index: -1
+
+Monk2.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+L Arm
+  rotate: false
+  xy: 323, 13
+  size: 222, 596
+  orig: 222, 596
+  offset: 0, 0
+  index: -1
+R Arm
+  rotate: false
+  xy: 2, 2
+  size: 319, 607
+  orig: 319, 607
+  offset: 0, 0
+  index: -1
