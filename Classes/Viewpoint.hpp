@@ -18,7 +18,7 @@ public:
     Viewpoint(cocos2d::Size screenDims, double metersPerPixel, cocos2d::Layer *level);
     
     void panToCharacter(Character *player);
-    void followCharacter(Character *player);
+    void followCharacter(Character *player, float delta);
     
     
     int metersToPixels(double meters) const;
@@ -29,6 +29,8 @@ private:
     double _metersPerPixel; // The dimensions of the portion of the scene shown on screen in meters
     
     cocos2d::Layer *_level; // get from the level layer->getPosition.
+    
+    bool _isPanning = false;
 };
 };
 

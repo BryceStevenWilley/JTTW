@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <iostream>
 #include "AiAgent.hpp"
 
 using namespace JTTW;
@@ -11,7 +11,67 @@ AiAgent::~AiAgent() {}
 void AiAgent::setMap() {
 }
 
-void AiAgent::plan(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode code) {
+void AiAgent::cedeToPlayer(AiAgent *previousPlayer) {
+    // clean up any movements from the AI.
+    if (_currentBehavior == &AiAgent::stationaryBehavior) {
+        // Need to transfer velocity.
+        previousPlayer->_controlledCharacter->transferVelocity(_controlledCharacter);
+    } else if (_currentBehavior == &AiAgent::syncronizedBehavior) {
+        // No need to transfer velocity.
+    }
+    
+}
+
+void AiAgent::retakeFromPlayer(AiAgent *nextPlayer) {
+    
+}
+
+void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode code, bool pressed) {
+    if (code == cocos2d::EventKeyboard::KeyCode::KEY_A) {
+        // switch behaviors to stationary.
+        _currentBehavior = &AiAgent::stationaryBehavior;
+    } else if (code == cocos2d::EventKeyboard::KeyCode::KEY_O) {
+        _currentBehavior = &AiAgent::syncronizedBehavior;
+    }
+    
+    // All code to control goes here.
+    using KeyCode = cocos2d::EventKeyboard::KeyCode;
+    
+    switch(code) {
+        case KeyCode::KEY_LEFT_ARROW:
+            if (pressed) {
+                _controlledCharacter->accelerateLeft(1.0);
+            } else {
+                if (_controlledCharacter->isMovingLeft()) {
+                    _controlledCharacter->stop(); // stop moving left
+                } else if (_controlledCharacter->getXVelocity() == 0.0) {
+                    _controlledCharacter->accelerateRight(1.0);
+                }
+            }
+            break;
+        case KeyCode::KEY_RIGHT_ARROW:
+            if (pressed) {
+                _controlledCharacter->accelerateRight(1.0);
+            } else {
+                if (_controlledCharacter->isMovingRight()) {
+                    _controlledCharacter->stop(); // stop moving right
+                } else if (_controlledCharacter->getXVelocity() == 0.0) {
+                    _controlledCharacter->accelerateLeft(1.0);
+                }
+            }
+            break;
+        case KeyCode::KEY_SPACE:
+            _controlledCharacter->jump(1.0);
+            break;
+        default:
+            // do nothing
+            break;
+    }
+    return;
+
+}
+
+void AiAgent::plan(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode code, bool pressed) {
     if (code == cocos2d::EventKeyboard::KeyCode::KEY_A) {
         // switch behaviors to stationary.
         _currentBehavior = &AiAgent::stationaryBehavior;
@@ -20,6 +80,8 @@ void AiAgent::plan(Character *player, std::vector<Character *> otherCharacters, 
     }
     
     if (player == _controlledCharacter) {
+        // ERROR!!!!
+        std::cout << "ERROR: calling wrong function for ai controlled character" << std::endl;
         return;
     }
     
