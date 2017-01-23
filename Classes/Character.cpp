@@ -10,7 +10,7 @@ Character::Character(const std::string artFilePrefix, cocos2d::Vec2 dimensions, 
         _maxVelocities(maxVelocities),
         _gravity(gravity) {
             
-    ani->setAnchorPoint(cocos2d::Vec2(0.5, 0.0));
+    ani->setAnchorPoint(cocos2d::Vec2(0.5, 0.5));
     ani->setScaleX(dimensions.x / 720.0f); // 720.0px is approximately the size of the art at 1.0f.
     ani->setScaleY(dimensions.y / 720.0f);
             
@@ -69,6 +69,34 @@ const Character::State Character::getCurrentState() const {
     return currentState;
 }
 
+bool isInCollision(cocos2d::Rect platform, cocos2d::Vec2 center, cocos2d::Vec2 dims) {
+    float maxX = center.x + dims.x / 2.0;
+    float minX = center.x - dims.x / 2.0;
+    if (maxX > platform.getMinX() && minX < platform.getMaxX()) {
+        float maxY = center.y + dims.y / 2.0;
+        float minY = center.y - dims.y / 2.0;
+        if (maxY > platform.getMinY() && minY < platform.getMaxY()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+cocos2d::Vec2 collidedPosition(cocos2d::Rect platform, cocos2d::Vec2 center, cocos2d::Vec2 dims, cocos2d::Vec2 velos) {
+    float maxX = center.x + dims.x / 2.0;
+    float minX = center.x - dims.x / 2.0;
+    float maxY = center.y + dims.y / 2.0;
+    float minY = center.y - dims.y / 2.0;
+    float bottomDiff = maxY - platform.getMinY();
+    float topDiff = minY - platform.getMaxY();
+    float leftDiff = maxX - platform.getMinX();
+    float rightDiff = minX - platform.getMaxX();
+    if (maxX > platform.getMinX() && minX < platform.getMaxX()) {
+        if (maxY > platform.getMinY() && minY < platform.getMaxY()) {
+        }
+    }
+}
+
 void Character::move(float deltaTime, std::vector<cocos2d::Sprite *> platforms) {
     auto position = ani->getPosition();
     position.x += velocities.x * _maxVelocities.x * deltaTime;
@@ -76,15 +104,13 @@ void Character::move(float deltaTime, std::vector<cocos2d::Sprite *> platforms) 
     if (currentState == State::MID_AIR) {
         velocities.y -= (_gravity * deltaTime) / _maxVelocities.y;
     }
-    bool vertCollision = false;
+    bool collision = false;
     cocos2d::Sprite *collidedPlat;
     for (auto plat = platforms.begin(); plat != platforms.end(); plat++) {
-        if(position.x  >= (*plat)->getBoundingBox().getMinX() && position.x <= (*plat)->getBoundingBox().getMaxX()) {
-            if (position.y >= (*plat)->getBoundingBox().getMinY() && position.y <= (*plat)->getBoundingBox().getMaxY()) {
-                vertCollision = true;
-                collidedPlat = *plat;
-                break;
-            }
+        if (isInCollision((*plat)->getBoundingBox(), position, dimensions)) {
+            collision = true;
+            collidedPlat = *plat;
+            break;
         }
     }
     
@@ -93,12 +119,13 @@ void Character::move(float deltaTime, std::vector<cocos2d::Sprite *> platforms) 
         currentState = State::STANDING;
         velocities.y = 0.0;
         updateAnimation();
-    } else if (vertCollision == true) {
+    } else if (collision == true) {
+        // push to out of box
         position.y = collidedPlat->getBoundingBox().getMaxY();
         currentState = State::STANDING;
         velocities.y = 0.0;
         updateAnimation();
-    } else if (vertCollision == false && position.y > 0.0) {
+    } else if (collision == false && position.y > 0.0) {
         currentState = State::MID_AIR;
     }
     ani->setPosition(position);
