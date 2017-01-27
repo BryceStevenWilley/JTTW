@@ -126,8 +126,18 @@
 		9F666E6A1E326F5B00F9BB90 /* Monkey.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F666E641E326F5B00F9BB90 /* Monkey.png */; };
 		9F666E6C1E329BF000F9BB90 /* backgrounds in Resources */ = {isa = PBXBuildFile; fileRef = 454B17111E2FC6D30035467D /* backgrounds */; };
 		9F666E6E1E329BF200F9BB90 /* platforms in Resources */ = {isa = PBXBuildFile; fileRef = 454B170B1E2F39280035467D /* platforms */; };
+		9F8E654D1E3BB3C60058958F /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC4C2ED1E39293F00ABD648 /* Platform.cpp */; };
+		9F8E65581E3BC7720058958F /* demoLevel.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F8E65571E3BC7720058958F /* demoLevel.json */; };
+		9F8E655A1E3BC79C0058958F /* demoLevel.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F8E65571E3BC7720058958F /* demoLevel.json */; };
+		9F8E655D1E3BCA100058958F /* Rectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E655B1E3BCA100058958F /* Rectangle.cpp */; };
+		9F8E655E1E3BCA100058958F /* Rectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E655B1E3BCA100058958F /* Rectangle.cpp */; };
+		9F8E655F1E3BCA100058958F /* Rectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E655B1E3BCA100058958F /* Rectangle.cpp */; };
 		9F98AF911E2C99E2009559C7 /* Viewpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F98AF8F1E2C99E2009559C7 /* Viewpoint.cpp */; };
 		9F98AF921E2C99E2009559C7 /* Viewpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F98AF8F1E2C99E2009559C7 /* Viewpoint.cpp */; };
+		9FC4C2EF1E39293F00ABD648 /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC4C2ED1E39293F00ABD648 /* Platform.cpp */; };
+		9FC4C2F31E3B9B8B00ABD648 /* LevelParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC4C2F11E3B9B8B00ABD648 /* LevelParser.cpp */; };
+		9FC4C2F41E3B9B8B00ABD648 /* LevelParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC4C2F11E3B9B8B00ABD648 /* LevelParser.cpp */; };
+		9FC4C2F51E3B9B8B00ABD648 /* LevelParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC4C2F11E3B9B8B00ABD648 /* LevelParser.cpp */; };
 		9FD41BE71E2D54490077779E /* HelloWorld.png in Resources */ = {isa = PBXBuildFile; fileRef = 46880B7A19C43A67006E1F66 /* HelloWorld.png */; };
 		9FD41BE81E2D54490077779E /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 503AE0F617EB97AB00D1A890 /* Icon.icns */; };
 		9FD41BE91E2D54490077779E /* res in Resources */ = {isa = PBXBuildFile; fileRef = 3EACC98E19EE6D4300EB3C5E /* res */; };
@@ -295,9 +305,17 @@
 		9F666E571E31D89500F9BB90 /* AiAgentBehaviors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AiAgentBehaviors.cpp; sourceTree = "<group>"; };
 		9F666E631E326F5B00F9BB90 /* Monkey2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Monkey2.png; sourceTree = "<group>"; };
 		9F666E641E326F5B00F9BB90 /* Monkey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Monkey.png; sourceTree = "<group>"; };
+		9F8E65571E3BC7720058958F /* demoLevel.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = demoLevel.json; sourceTree = "<group>"; };
+		9F8E655B1E3BCA100058958F /* Rectangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rectangle.cpp; sourceTree = "<group>"; };
+		9F8E655C1E3BCA100058958F /* Rectangle.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Rectangle.hpp; sourceTree = "<group>"; };
 		9F98AF8F1E2C99E2009559C7 /* Viewpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Viewpoint.cpp; sourceTree = "<group>"; };
 		9F98AF901E2C99E2009559C7 /* Viewpoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Viewpoint.hpp; sourceTree = "<group>"; };
 		9FAAFDFB1E292DBB0036F58B /* AiAgent.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AiAgent.hpp; sourceTree = "<group>"; };
+		9FC4C2ED1E39293F00ABD648 /* Platform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Platform.cpp; sourceTree = "<group>"; };
+		9FC4C2EE1E39293F00ABD648 /* Platform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Platform.hpp; sourceTree = "<group>"; };
+		9FC4C2F11E3B9B8B00ABD648 /* LevelParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelParser.cpp; sourceTree = "<group>"; };
+		9FC4C2F21E3B9B8B00ABD648 /* LevelParser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LevelParser.hpp; sourceTree = "<group>"; };
+		9FC4C2F61E3B9BF200ABD648 /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
 		9FD41C051E2D54490077779E /* JTTW-desktop-tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "JTTW-desktop-tests.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FD41C071E2D544A0077779E /* JTTW-desktop copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "JTTW-desktop copy-Info.plist"; path = "/Users/brycewilley/Developer/JTTW/proj.ios_mac/JTTW-desktop copy-Info.plist"; sourceTree = "<absolute>"; };
 		9FD41C0E1E2D55920077779E /* testCharacter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = testCharacter.cpp; path = ../Tests/testCharacter.cpp; sourceTree = SOURCE_ROOT; };
@@ -479,6 +497,7 @@
 		46880B7519C43A67006E1F66 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9F8E65561E3BC7720058958F /* levelFiles */,
 				9F45C00E1E35EE7700C06D0C /* sandy2.png */,
 				9F45C00F1E35EE7700C06D0C /* sandy.png */,
 				9F45C0101E35EE7700C06D0C /* sandy.json */,
@@ -508,6 +527,7 @@
 		46880B8319C43A87006E1F66 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				9FC4C2F61E3B9BF200ABD648 /* json.hpp */,
 				9F31896F1E26E2520005B84E /* Character.h */,
 				9F3189741E272A570005B84E /* Character.cpp */,
 				46880B8419C43A87006E1F66 /* AppDelegate.cpp */,
@@ -517,6 +537,12 @@
 				9F98AF8F1E2C99E2009559C7 /* Viewpoint.cpp */,
 				9F98AF901E2C99E2009559C7 /* Viewpoint.hpp */,
 				9F666E561E31CB6100F9BB90 /* AI */,
+				9FC4C2ED1E39293F00ABD648 /* Platform.cpp */,
+				9FC4C2EE1E39293F00ABD648 /* Platform.hpp */,
+				9FC4C2F11E3B9B8B00ABD648 /* LevelParser.cpp */,
+				9FC4C2F21E3B9B8B00ABD648 /* LevelParser.hpp */,
+				9F8E655B1E3BCA100058958F /* Rectangle.cpp */,
+				9F8E655C1E3BCA100058958F /* Rectangle.hpp */,
 			);
 			name = Classes;
 			path = ../Classes;
@@ -578,6 +604,14 @@
 				9F666E4F1E31B64800F9BB90 /* AiActions.hpp */,
 			);
 			name = AI;
+			sourceTree = "<group>";
+		};
+		9F8E65561E3BC7720058958F /* levelFiles */ = {
+			isa = PBXGroup;
+			children = (
+				9F8E65571E3BC7720058958F /* demoLevel.json */,
+			);
+			path = levelFiles;
 			sourceTree = "<group>";
 		};
 		9FD41C081E2D550D0077779E /* Tests */ = {
@@ -752,6 +786,7 @@
 				50EF629817ECD46A001EB2F8 /* Icon-80.png in Resources */,
 				9F45C0001E35E85700C06D0C /* Monk.png in Resources */,
 				5087E78417EB970100C73F5D /* Icon-57.png in Resources */,
+				9F8E65581E3BC7720058958F /* demoLevel.json in Resources */,
 				5087E77E17EB970100C73F5D /* Default.png in Resources */,
 				521A8E6419F0C34300D177D7 /* Default-667h@2x.png in Resources */,
 				46880B7B19C43A67006E1F66 /* CloseNormal.png in Resources */,
@@ -766,6 +801,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F8E655A1E3BC79C0058958F /* demoLevel.json in Resources */,
 				9F45C0161E35EE8400C06D0C /* sandy2.png in Resources */,
 				9F45C0171E35EE8400C06D0C /* sandy.png in Resources */,
 				9F45C0181E35EE8400C06D0C /* sandy.json in Resources */,
@@ -836,15 +872,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FC4C2F31E3B9B8B00ABD648 /* LevelParser.cpp in Sources */,
 				46880B8819C43A87006E1F66 /* AppDelegate.cpp in Sources */,
 				46880B8A19C43A87006E1F66 /* HelloWorldScene.cpp in Sources */,
 				9F98AF911E2C99E2009559C7 /* Viewpoint.cpp in Sources */,
 				503AE10017EB989F00D1A890 /* AppController.mm in Sources */,
+				9FC4C2EF1E39293F00ABD648 /* Platform.cpp in Sources */,
 				9F3189751E272A570005B84E /* Character.cpp in Sources */,
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,
 				9F666E581E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */,
 				503AE10117EB989F00D1A890 /* main.m in Sources */,
 				9F666E461E30201C00F9BB90 /* AiAgent.cpp in Sources */,
+				9F8E655D1E3BCA100058958F /* Rectangle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -852,11 +891,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F8E654D1E3BB3C60058958F /* Platform.cpp in Sources */,
 				46880B8919C43A87006E1F66 /* AppDelegate.cpp in Sources */,
 				9F666E471E30201C00F9BB90 /* AiAgent.cpp in Sources */,
+				9F8E655E1E3BCA100058958F /* Rectangle.cpp in Sources */,
 				9F98AF921E2C99E2009559C7 /* Viewpoint.cpp in Sources */,
 				503AE10517EB98FF00D1A890 /* main.cpp in Sources */,
 				46880B8B19C43A87006E1F66 /* HelloWorldScene.cpp in Sources */,
+				9FC4C2F41E3B9B8B00ABD648 /* LevelParser.cpp in Sources */,
 				9F3189761E272A570005B84E /* Character.cpp in Sources */,
 				9F666E591E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */,
 			);
@@ -870,9 +912,11 @@
 				9FD41BF01E2D54490077779E /* Viewpoint.cpp in Sources */,
 				9FD41C151E2D56220077779E /* main.cpp in Sources */,
 				9FD41C131E2D55C80077779E /* TestDelegate.cpp in Sources */,
+				9F8E655F1E3BCA100058958F /* Rectangle.cpp in Sources */,
 				9FD41C101E2D55920077779E /* testCharacter.cpp in Sources */,
 				9FD41BF31E2D54490077779E /* HelloWorldScene.cpp in Sources */,
 				9F666E5A1E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */,
+				9FC4C2F51E3B9B8B00ABD648 /* LevelParser.cpp in Sources */,
 				9FD41BF41E2D54490077779E /* Character.cpp in Sources */,
 				9F666E481E30201C00F9BB90 /* AiAgent.cpp in Sources */,
 			);

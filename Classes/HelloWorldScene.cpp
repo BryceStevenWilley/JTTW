@@ -1,6 +1,7 @@
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
 #include <iostream>
+#include "LevelParser.hpp"
 
 using namespace cocos2d;
 using namespace JTTW;
@@ -8,7 +9,7 @@ using namespace JTTW;
 std::vector<Character *> HelloWorld::characters;
 std::deque<AiAgent *> HelloWorld::agents;
 AiAgent * HelloWorld::player;
-std::vector<BadPlatform> HelloWorld::platforms;
+std::vector<Platform> HelloWorld::platforms;
 bool HelloWorld::pedestalPopped;
 bool HelloWorld::cloudSunk = false;
 bool HelloWorld::cloudSinking = false;
@@ -45,11 +46,11 @@ bool HelloWorld::init() {
                                 origin.y + closeItem->getContentSize().height/2));
     
     // draw and add background
-    auto background = Sprite::create("backgrounds/Background.png");
-    background->setAnchorPoint(Vec2(origin.x, origin.y));
+    auto background = Sprite::create("backgrounds/Sunny Background.png");
+    background->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
     background->setScale(1.4);
     background->setPosition(0,-300.0);
-    this->addChild(background, 0);
+    //this->addChild(background, -8);
     
     // create menu with the "X" image, it's an autorelease object
     auto menu = Menu::create(closeItem, NULL);
@@ -62,6 +63,16 @@ bool HelloWorld::init() {
     // 1.7/180.0 means that 1.7 meters in the game world (average human male height) is represented by 180 pixels on screen.
     cocos2d::Layer *layer = cocos2d::Layer::create();
     vp = Viewpoint(visibleSize, 1.7/130.0, layer);
+    
+    auto rectNode = cocos2d::DrawNode::create();
+    cocos2d::Color4F black(1.0, 0.0, 0.0, 1.0);
+    cocos2d::Vec2 rect[4];
+    rect[0] = cocos2d::Vec2(0.0, 0.0);
+    rect[1] = cocos2d::Vec2(100.0, 0.0);
+    rect[2] = cocos2d::Vec2(100.0, 100.0);
+    rect[3] = cocos2d::Vec2(0.0, 100.0);
+    rectNode->drawPolygon(rect, 4, black, 100, black);
+    layer->addChild(rectNode, 8);
     
     // Set some simple platforms.
     /*
@@ -82,17 +93,17 @@ bool HelloWorld::init() {
     layer->addChild(plat, 3);
     platforms.push_back(plat);
     */
+
+    parseLevelFromJson("demoLevel.json", layer, platforms, vp);
     
-    float canyonHeight = vp.metersToPixels(8.5);
-    float canyonWidth = vp.metersToPixels(9.0);
+    /*Platform lCanyon("platforms/Canyon L.png",
+                     cocos2d::Vec2(5.0, 10.0),
+                     cocos2d::Size(10.0, 10.0),
+                     cocos2d::Vec2(8.5, 9.0), vp);
+    layer->addChild(lCanyon.getImage(), 6);
+    platforms.push_back(lCanyon);*/
     
-    BadPlatform lCanyon("platforms/Canyon L.png");
-    lCanyon.s->setPosition(0.0, 0.0);
-    lCanyon.s->setContentSize(cocos2d::Size(vp.metersToPixels(10.0), vp.metersToPixels(10.0)));
-    layer->addChild(lCanyon.s, 6);
-    lCanyon.dimensions.setRect(lCanyon.s->getPosition().x, lCanyon.s->getPosition().y, canyonWidth, canyonHeight);
-    platforms.push_back(lCanyon);
-    
+    /*
     BadPlatform rCanyon("platforms/Canyon R.png");
     rCanyon.s->setPosition(vp.metersToPixels(14.0), 0.0);
     rCanyon.s->setContentSize(cocos2d::Size(vp.metersToPixels(10.0), vp.metersToPixels(10.0)));
@@ -106,7 +117,7 @@ bool HelloWorld::init() {
     cloud.s->setPosition(vp.metersToPixels(9.0), vp.metersToPixels(11.0));
     cloud.s->setContentSize(cocos2d::Size(vp.metersToPixels(3.0), vp.metersToPixels(2.0)));
     layer->addChild(cloud.s, 6);
-    cloud.dimensions.setRect(cloud.s->getPosition().x + cloudWidth / 2.0,  cloud.s->getPosition().y - 20 /*+ (cloudHeight / 4.0*/, cloudWidth, cloudHeight);
+    cloud.dimensions.setRect(cloud.s->getPosition().x + cloudWidth / 2.0,  cloud.s->getPosition().y - 20 /*+ (cloudHeight / 4.0*//*, cloudWidth, cloudHeight);
     platforms.push_back(cloud);
     
     float r1Height = vp.metersToPixels(9.0);
@@ -136,7 +147,6 @@ bool HelloWorld::init() {
     r3.dimensions.setRect(r3.s->getPosition().x,  r3.s->getPosition().y, r3Width, r3Height);
     platforms.push_back(r3);
     
-    
     float r4Height = vp.metersToPixels(8.0);
     float r4Width = vp.metersToPixels(3.0);
     BadPlatform r4("platforms/Rock4.png");
@@ -154,16 +164,17 @@ bool HelloWorld::init() {
     layer->addChild(p.s, 6);
     p.dimensions.setRect(p.s->getPosition().x,  p.s->getPosition().y - pHeight + 5, pWidth, pHeight);
     platforms.push_back(p);
+    */
     
     int characterHeight = vp.metersToPixels(1.7);
     
-    Character *monkey = new Character("Monkey", Vec2(characterHeight, characterHeight),
+    Character *monkey = new Character("Monkey", JTTW::Rectangle(vp.metersToPixels(1.7), vp.metersToPixels(20.0), characterHeight, characterHeight),
                                      cocos2d::Vec2(vp.metersToPixels(5), vp.metersToPixels(10)), vp.metersToPixels(9.8));
-    Character *monk = new Character("Monk", Vec2(characterHeight, characterHeight),
+    Character *monk = new Character("Monk", JTTW::Rectangle(vp.metersToPixels(1.7) * 2, vp.metersToPixels(20.0), characterHeight, characterHeight),
                                       cocos2d::Vec2(vp.metersToPixels(3), vp.metersToPixels(6)), vp.metersToPixels(9.8));
-    Character *piggy = new Character("Piggy", Vec2(characterHeight, characterHeight),
+    Character *piggy = new Character("Piggy", JTTW::Rectangle(vp.metersToPixels(1.7) * 3, vp.metersToPixels(20.0), characterHeight, characterHeight),
                                       cocos2d::Vec2(vp.metersToPixels(4), vp.metersToPixels(8.7)), vp.metersToPixels(9.8));
-    Character *sandy = new Character("sandy", Vec2(characterHeight, characterHeight),
+    Character *sandy = new Character("sandy", JTTW::Rectangle(vp.metersToPixels(1.7) * 4, vp.metersToPixels(20.0), characterHeight, characterHeight),
                                      cocos2d::Vec2(vp.metersToPixels(4.5), vp.metersToPixels(8)), vp.metersToPixels(9.8));
     characters.push_back(monkey);
     characters.push_back(monk);
@@ -172,8 +183,9 @@ bool HelloWorld::init() {
     
     for (int i = 0; i < characters.size(); i++) {
         Character *body = characters[i];
-        body->ani->setPosition(vp.metersToPixels(1.7) * (i + 1), vp.metersToPixels(11.0));
+        //body->ani->setPosition(vp.metersToPixels(1.7) * (i + 1), vp.metersToPixels(20.0));
         layer->addChild(body->ani, i);
+        layer->addChild(body->a, -1);
         AiAgent *agent = new AiAgent(body);
         agents.push_back(agent);
     }
@@ -189,7 +201,7 @@ bool HelloWorld::init() {
     //charLabel->setPositionX(vp.metersToPixels(1.0));
     //(*player)->ani->addChild(charLabel, -5);
     
-    this->addChild(layer);
+    this->addChild(layer, 1);
     
     auto eventListener = EventListenerKeyboard::create();
     
@@ -260,7 +272,24 @@ void HelloWorld::update(float delta) {
     }
     for (int i = 0; i < characters.size(); i++) {
         characters[i]->move(delta, platforms);
+        
+        JTTW::Rectangle a = characters[i]->dimensions;
+        cocos2d::Color4F black(0.0, 1.0, 0.0, 1.0);
+        cocos2d::Vec2 rect[4];
+        rect[0] = cocos2d::Vec2(a.getCenterX() - a.getWidth() / 2.0, a.getCenterY() - a.getHeight() / 2.0);
+        rect[1] = cocos2d::Vec2(a.getCenterX() + a.getWidth() / 2.0, a.getCenterY() - a.getHeight() / 2.0);
+        rect[2] = cocos2d::Vec2(a.getCenterX() + a.getWidth() / 2.0, a.getCenterY() + a.getHeight() / 2.0);
+        rect[3] = cocos2d::Vec2(a.getCenterX() - a.getWidth() / 2.0, a.getCenterY() + a.getHeight() / 2.0);
+        characters[i]->a->clear();
+        characters[i]->a->drawPolygon(rect, 4, black, 10, black);
+        characters[i]->a->clear();
+        //rect[1] = cocos2d::Vec2(centerX - collisionWidth / 2.0, centerY - collisionHeight / 2.0);
+        //rect[2] = cocos2d::Vec2(centerX + collisionWidth / 2.0, centerY - collisionHeight / 2.0);
+        //rect[3] = cocos2d::Vec2(centerX + collisionWidth / 2.0, centerY + collisionHeight / 2.0);
+        //rect[4] = cocos2d::Vec2(centerX - collisionWidth / 2.0, centerY + collisionHeight / 2.0);
+        characters[i]->a->drawPolygon(rect, 4, black, 10, black);
         // HARDCODED STUFF FOR PEDESTAL DISSAPPEARING
+        /*
         if (characters[i]->ani->getPosition().x > vp.metersToPixels(52.0) && !pedestalPopped) {
             // Remove the pedestal from the platforms.
             BadPlatform pedstal = platforms.back();
@@ -273,8 +302,9 @@ void HelloWorld::update(float delta) {
         if (characters[i]->characterName == "Piggy" && characters[i]->isDirectlyAbove(platforms[2].dimensions, characters[i]->ani->getPosition(), characters[i]->dimensions) && (!cloudSunk || !cloudSinking)) {
             cloudSinking = true;
         }
+         */
     }
-    
+    /*
     if (cloudSinking == true) {
         BadPlatform c = platforms[2];
         c.dimensions.setRect(c.dimensions.origin.x, c.dimensions.origin.y - (20 * delta), c.dimensions.size.width, c.dimensions.size.height);
@@ -285,6 +315,7 @@ void HelloWorld::update(float delta) {
         }
         platforms[2] = c;
     }
+         */
     
     vp.followCharacter(player->_controlledCharacter, delta);
 }

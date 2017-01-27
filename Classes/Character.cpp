@@ -3,17 +3,19 @@
 
 using namespace JTTW;
 
-Character::Character(const std::string artFilePrefix, cocos2d::Vec2 dimensions, cocos2d::Vec2 maxVelocities, double gravity) :
+Character::Character(const std::string artFilePrefix, JTTW::Rectangle dimensions, cocos2d::Vec2 maxVelocities, double gravity) :
         ani(spine::SkeletonAnimation::createWithJsonFile(artFilePrefix + ".json", artFilePrefix + ".atlas", 1.0f)),
         //cocos2d::Sprite::create(artFileName)),
         characterName(artFilePrefix),
         dimensions(dimensions),
         _maxVelocities(maxVelocities),
-        _gravity(gravity) {
-            
-    ani->setAnchorPoint(cocos2d::Vec2(0.5, 0.5));
-    ani->setScaleX(dimensions.x / 720.0f); // 720.0px is approximately the size of the art at 1.0f.
-    ani->setScaleY(dimensions.y / 720.0f);
+        _gravity(gravity),
+        a(cocos2d::DrawNode::create()){
+    
+    ani->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+    ani->setPosition(dimensions.getCenterX(), dimensions.getCenterY());
+    ani->setScaleX(dimensions.getWidth() / 720.0f); // 720.0px is approximately the size of the art at 1.0f.
+    ani->setScaleY(dimensions.getHeight() / 720.0f);
             
     ani->setAnimation(0, "idle", true);
 }
@@ -75,11 +77,11 @@ const Character::State Character::getCurrentState() const {
     return currentState;
 }
 
-bool Character::isDirectlyAbove(cocos2d::Rect platform, cocos2d::Vec2 center, cocos2d::Vec2 dims) {
-    float maxX = center.x + dims.x / 2.0;
-    float minX = center.x - dims.x / 2.0;
+bool Character::isDirectlyAbove(JTTW::Rectangle platform, JTTW::Rectangle me) {
+    float maxX = me.getMaxX();
+    float minX = me.getMinX();
     if (maxX > platform.getMinX() && minX < platform.getMaxX()) {
-        float minY = center.y - dims.y / 2.0;
+        float minY = me.getMinY();
         if (minY >= platform.getMaxY() && minY < platform.getMaxY() + 10) {
             return true;
         }
@@ -87,12 +89,12 @@ bool Character::isDirectlyAbove(cocos2d::Rect platform, cocos2d::Vec2 center, co
     return false;
 }
 
-bool isInCollision(cocos2d::Rect platform, cocos2d::Vec2 center, cocos2d::Vec2 dims) {
-    float maxX = center.x + dims.x / 2.0;
-    float minX = center.x - dims.x / 2.0;
+bool isInCollision(JTTW::Rectangle platform, JTTW::Rectangle rect) {
+    float maxX = rect.getMaxX();
+    float minX = rect.getMinX();
     if (maxX > platform.getMinX() && minX < platform.getMaxX()) {
-        float maxY = center.y + dims.y / 2.0;
-        float minY = center.y - dims.y / 2.0;
+        float maxY = rect.getMaxY();
+        float minY = rect.getMinY();
         if (maxY > platform.getMinY() && minY < platform.getMaxY()) {
             return true;
         }
@@ -100,20 +102,16 @@ bool isInCollision(cocos2d::Rect platform, cocos2d::Vec2 center, cocos2d::Vec2 d
     return false;
 }
 
-cocos2d::Vec2 collidedPosition(cocos2d::Rect platform, cocos2d::Vec2 center, cocos2d::Vec2 dims, cocos2d::Vec2 velos) {
-    float maxX = center.x + dims.x / 2.0;
-    float minX = center.x - dims.x / 2.0;
-    float maxY = center.y + dims.y / 2.0;
-    float minY = center.y - dims.y / 2.0;
+cocos2d::Vec2 collidedPosition(JTTW::Rectangle platform, JTTW::Rectangle rect, cocos2d::Vec2 velos) {
+    float maxX = rect.getMaxX();
+    float minX = rect.getMinX();
+    float maxY = rect.getMaxY();
+    float minY = rect.getMinY();
     float bottomDiff = maxY - platform.getMinY();
     float topDiff = platform.getMaxY() - minY;
     float leftDiff = maxX - platform.getMinX();
     float rightDiff = platform.getMaxX() - minX;
-    
-    //std::cout << "Stats: MaxX: " << maxX << ", MinX: " << minX << ", MaxY: " << maxY << ", MinY: " << minY << std::endl;
-    //std::cout << "       Bott: " << bottomDiff << ", Top:  " << topDiff << ", left: " << leftDiff << ", righ: " << rightDiff << std::endl;
-    
-    
+
     // TODO: WOW THIS IS SHIT.
     if (topDiff < bottomDiff) {
         // collision on top.
@@ -122,20 +120,20 @@ cocos2d::Vec2 collidedPosition(cocos2d::Rect platform, cocos2d::Vec2 center, coc
             if (topDiff < leftDiff) {
                 // top.
                 //std::cout << "Top collinion" << std::endl;
-                return cocos2d::Vec2(center.x, platform.getMaxY() + dims.y / 2.0);
+                return cocos2d::Vec2(rect.getCenterX(), platform.getMaxY() + rect.getHeight() / 2.0);
             } else {
                 // left
                 //std::cout << "Left collinion" << std::endl;
-                return cocos2d::Vec2(platform.getMinX() - dims.x / 2.0, center.y);
+                return cocos2d::Vec2(platform.getMinX() - rect.getWidth() / 2.0, rect.getCenterY());
             }
         } else {
             // top right
             if (topDiff < rightDiff) {
                 //std::cout << "Top collinion" << std::endl;
-                return cocos2d::Vec2(center.x, platform.getMaxY() + dims.y / 2.0);
+                return cocos2d::Vec2(rect.getCenterX(), platform.getMaxY() + rect.getHeight() / 2.0);
             } else {
                 //std::cout << "Right collinion" << std::endl;
-                return cocos2d::Vec2(platform.getMaxX() + dims.x / 2.0, center.y);
+                return cocos2d::Vec2(platform.getMaxX() + rect.getWidth() / 2.0, rect.getCenterY());
             }
         }
     } else {
@@ -144,24 +142,24 @@ cocos2d::Vec2 collidedPosition(cocos2d::Rect platform, cocos2d::Vec2 center, coc
             // bottom left
             if (bottomDiff < leftDiff) {
                 //std::cout << "Bottom collision" << std::endl;
-                return cocos2d::Vec2(center.x, platform.getMinY() - dims.y / 2.0);
+                return cocos2d::Vec2(rect.getCenterX(), platform.getMinY() - rect.getHeight() / 2.0);
             } else {
                 //std::cout << "Left collision" << std::endl;
-                return cocos2d::Vec2(platform.getMinX() - dims.x / 2.0, center.y);
+                return cocos2d::Vec2(platform.getMinX() - rect.getWidth() / 2.0, rect.getCenterY());
             }
         } else {
             if (bottomDiff < rightDiff) {
                 //std::cout << "Bottom collision" << std::endl;
-                return cocos2d::Vec2(center.x, platform.getMinY() - dims.y / 2.0);
+                return cocos2d::Vec2(rect.getCenterX(), platform.getMinY() - rect.getHeight() / 2.0);
             } else {
                 //std::cout << "Right collision" << std::endl;
-                return cocos2d::Vec2(platform.getMaxX() + dims.x / 2.0, center.y);
+                return cocos2d::Vec2(platform.getMaxX() + rect.getWidth() / 2.0, rect.getCenterY());
             }
         }
     }
 }
 
-void Character::move(float deltaTime, std::vector<BadPlatform> platforms) {
+void Character::move(float deltaTime, std::vector<Platform> platforms) {
     auto position = ani->getPosition();
     position.x += velocities.x * _maxVelocities.x * deltaTime;
     position.y += velocities.y * _maxVelocities.y * deltaTime;
@@ -169,9 +167,10 @@ void Character::move(float deltaTime, std::vector<BadPlatform> platforms) {
         velocities.y -= (_gravity * deltaTime) / _maxVelocities.y;
     }
     bool collision = false;
-    BadPlatform collidedPlat;
+    Platform collidedPlat;
+    JTTW::Rectangle me(position.x, position.y, dimensions.getWidth(), dimensions.getHeight());
     for (auto plat = platforms.begin(); plat != platforms.end(); plat++) {
-        if (isInCollision((*plat).dimensions, position, dimensions)) {
+        if (isInCollision((*plat).getCollisionBounds(), me)) {
             collision = true;
             collidedPlat = *plat;
             break;
@@ -186,18 +185,18 @@ void Character::move(float deltaTime, std::vector<BadPlatform> platforms) {
     //} else
     if (collision == true) {
         // push to out of box
-        position = collidedPosition(collidedPlat.dimensions, position, dimensions, velocities);
-        cocos2d::Rect r = collidedPlat.dimensions;
-        if (position.x + dimensions.x / 2.0 > r.getMinX() && position.x - dimensions.x / 2.0 < r.getMaxX()) {
+        position = collidedPosition(collidedPlat.getCollisionBounds(), me, velocities);
+        JTTW::Rectangle r = collidedPlat.getCollisionBounds();
+        if (me.getCenterX() + me.getWidth()/ 2.0 > r.getMinX() && me.getCenterX() - me.getWidth() / 2.0 < r.getMaxX()) {
             velocities.y = 0.0;
-            if (position.y > r.getMaxY() && currentState != State::STANDING) {
+            if (me.getCenterY() > r.getMaxY() && currentState != State::STANDING) {
                 std::cout << "current State: " << currentState << ", standing == " << State::STANDING << std::endl;
                 currentState = State::STANDING;
                 std::cout << "Calling from collision" << std::endl;
                 updateAnimation();
             }
         }
-        if (position.y + dimensions.y / 2.0 > r.getMinY() && position.y - dimensions.y / 2.0 < r.getMaxY()) {
+        if (me.getCenterY() + me.getHeight() / 2.0 > r.getMinY() && me.getCenterY() - me.getHeight() / 2.0 < r.getMaxY()) {
             velocities.x = 0.0;
         }
         
@@ -205,7 +204,7 @@ void Character::move(float deltaTime, std::vector<BadPlatform> platforms) {
         // check vertical column
         bool isHovering = false;
         for (auto plat = platforms.begin(); plat != platforms.end(); plat++) {
-            if (isDirectlyAbove((*plat).dimensions, position, dimensions)) {
+            if (isDirectlyAbove((*plat).getCollisionBounds(), me)) {
                 isHovering = true;
                 break;
             }
@@ -217,6 +216,7 @@ void Character::move(float deltaTime, std::vector<BadPlatform> platforms) {
         }
     }
     ani->setPosition(position);
+    dimensions.setCenter(position.x, position.y);
 }
 
 void Character::updateAnimation() {

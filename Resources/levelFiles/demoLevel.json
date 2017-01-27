@@ -1,0 +1,23 @@
+{
+    "platforms" : [
+        {
+            "imageName" : "Canyon L.png",
+            "centerX" : 5.0,
+            "centerY" : 5.0,
+            "imageSizeWidth": 10.0,
+            "imageSizeHeight": 10.0,
+            "collisionWidth": 8.5,
+            "collisionHeight": 10.0
+        },
+        {
+           "imageName" : "Canyon R.png",
+           "centerX": 19.0,
+           "centerY": 5.0,
+           "imageSizeWidth": 10.0,
+           "imageSizeHeight": 10.0,
+           "collisionWidth" : 8.5,
+           "collisionHeight" : 9.0  
+        }
+    ]
+    
+}

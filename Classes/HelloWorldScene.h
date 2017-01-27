@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include "Character.h"
+#include "Platform.hpp"
 #include "AiAgent.hpp"
 #include "Viewpoint.hpp"
 #include <spine/spine-cocos2dx.h>
@@ -26,7 +27,7 @@ private:
     static std::vector<Character *> characters;
     static std::deque<AiAgent *> agents;
     static AiAgent *player;
-    static std::vector<BadPlatform> platforms;
+    static std::vector<Platform> platforms;
     static bool pedestalPopped;
     static bool cloudSunk;
     static bool cloudSinking;

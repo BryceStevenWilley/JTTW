@@ -2,32 +2,12 @@
 #define Character_h
 
 #include "cocos2d.h"
+#include "Platform.hpp"
+#include "Rectangle.hpp"
 #include <spine/spine-cocos2dx.h>
 
-/**
- * @brief Class for interactive characters.
- *
- * Position is contained in the sprite, and is accessed through sprite->getPosition()/sprite->setPosition(<new Vec2>).
- * Velocity is a percentage that goes from -1.0 to 1.0 contained in the velocity member, but should only be
- * changed through accelerateLeft and accelerateRight to avoid non-sensical movement.
- */
 namespace JTTW {
     
-struct BadPlatform {
-    cocos2d::Sprite *s;
-    cocos2d::Rect dimensions;
-    
-    BadPlatform() :
-            s(cocos2d::Sprite::create()),
-            dimensions(cocos2d::Rect()) {}
-    
-    BadPlatform(std::string fileName) :
-            s(cocos2d::Sprite::create(fileName)),
-            dimensions(cocos2d::Rect()) {
-                s->setAnchorPoint(cocos2d::Vec2(0.0, 0.0));
-    }
-};
-
 /**
  * The possible actions that a character can do. Should correspond 1:1
  * to methods in the character class.
@@ -39,6 +19,17 @@ enum Action {
     JUMP
 };
     
+    
+// Forward declaration of Platform.
+class Platform;
+    
+/**
+ * @brief Class for interactive characters.
+ *
+ * Position is contained in the sprite, and is accessed through sprite->getPosition()/sprite->setPosition(<new Vec2>).
+ * Velocity is a percentage that goes from -1.0 to 1.0 contained in the velocity member, but should only be
+ * changed through accelerateLeft and accelerateRight to avoid non-sensical movement.
+ */
 class Character {
 public:
     enum State {
@@ -53,7 +44,7 @@ public:
      * // and vertical velocity of 100px/second, and gravity of 100px/second^2.
      * Character c("image.png", cocos2d::Vec2(40, 40), cocos2d::Vec2(200, 100), 100);
      */
-    Character(const std::string artFileName, cocos2d::Vec2 dimensions, cocos2d::Vec2 maxVelocities, double gravity);
+    Character(const std::string artFileName, JTTW::Rectangle dimensions, cocos2d::Vec2 maxVelocities, double gravity);
     ~Character();
     
     /**
@@ -78,25 +69,28 @@ public:
     
     const State getCurrentState() const;
     
-    bool isDirectlyAbove(cocos2d::Rect platform, cocos2d::Vec2 center, cocos2d::Vec2 dims);
+    bool isDirectlyAbove(JTTW::Rectangle platform, JTTW::Rectangle me);
     
     /**
      * Moves the character left and right.
      *
      *  direction is either 1 or -1, to make the character move left or right respectively.
      */
-    void move(float deltaTime, std::vector<BadPlatform> platforms);
+    void move(float deltaTime, std::vector<Platform> platforms);
     
     // TODO: integrate Mei's art with this.
     spine::SkeletonAnimation *ani;
     
     // A box that encompasses the character.
-    cocos2d::Vec2 dimensions;
+    JTTW::Rectangle dimensions;
     
     std::string characterName;
     
+    cocos2d::DrawNode *a;
+    
 private:
     void updateAnimation();
+    void updatePosition();
     
     State currentState = State::STANDING;
     
