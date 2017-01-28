@@ -12,9 +12,9 @@
 
 using namespace JTTW; 
 
-void JTTW::parseLevelFromJson(std::string fileName, cocos2d::Layer *layer, std::vector<Platform> &platforms, Viewpoint vp) {
+void JTTW::parseLevelFromJson(std::string fileName, cocos2d::Layer *layer, std::vector<Platform> &platforms, Viewpoint vp, bool debugOn) {
     
-    const int platformZ = 3;
+    const int platformZ = 4;
     
     std::ifstream inFile(fileName);
     nlohmann::json lvl;
@@ -38,25 +38,17 @@ void JTTW::parseLevelFromJson(std::string fileName, cocos2d::Layer *layer, std::
         
         Platform p(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight));
         
-        //layer->addChild(p.getImage(), platformZ);
-        
-        auto rectNode = cocos2d::DrawNode::create();
-        cocos2d::Color4F black(0.0, 1.0, 1.0, 1.0);
-        cocos2d::Vec2 rect[4];
-        rect[0] = cocos2d::Vec2(centerX - collisionWidth / 2.0, centerY - collisionHeight / 2.0);
-        rect[1] = cocos2d::Vec2(centerX + collisionWidth / 2.0, centerY - collisionHeight / 2.0);
-        rect[2] = cocos2d::Vec2(centerX + collisionWidth / 2.0, centerY + collisionHeight / 2.0);
-        rect[3] = cocos2d::Vec2(centerX - collisionWidth / 2.0, centerY + collisionHeight / 2.0);
-        rectNode->drawPolygon(rect, 4, black, 10, black);
-        layer->addChild(rectNode, 7);
-        rectNode->clear();
-        //rect[1] = cocos2d::Vec2(centerX - collisionWidth / 2.0, centerY - collisionHeight / 2.0);
-        //rect[2] = cocos2d::Vec2(centerX + collisionWidth / 2.0, centerY - collisionHeight / 2.0);
-        //rect[3] = cocos2d::Vec2(centerX + collisionWidth / 2.0, centerY + collisionHeight / 2.0);
-        //rect[4] = cocos2d::Vec2(centerX - collisionWidth / 2.0, centerY + collisionHeight / 2.0);
-        rectNode->drawPolygon(rect, 4, black, 10, black);
-        //layer->addChild(rectNode, 8);
-        
+        layer->addChild(p.getImage(), platformZ);
         platforms.push_back(p);
+        
+        if (debugOn) {
+            auto rectNode = cocos2d::DrawNode::create();
+            cocos2d::Color4F black(0.0, 1.0, 1.0, 1.0);
+            std::array<cocos2d::Vec2, 4> rect = p.getCollisionBounds().getPoints();
+            rectNode->drawPolygon(rect.data(), 4, black, 0, black);
+            layer->addChild(rectNode, 3);
+            rectNode->clear();
+            rectNode->drawPolygon(rect.data(), 4, black, 0, black);
+        }
     }
 }

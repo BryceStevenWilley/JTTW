@@ -24,7 +24,6 @@ image(cocos2d::Sprite::create(fileName)), collisionBox(vp.metersToPixels(centerM
     cocos2d::Size actual = image->getContentSize(); // actual image size.
     image->setScaleX(imageSize.width / actual.width);
     image->setScaleY(imageSize.height / actual.height);
-    //image->setContentSize(imageSize);
 }
 
 Platform::Platform(std::string &fileName, cocos2d::Vec2 center, cocos2d::Size imageSize, cocos2d::Vec2 box) :

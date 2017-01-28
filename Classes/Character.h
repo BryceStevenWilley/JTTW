@@ -18,8 +18,7 @@ enum Action {
     MOVE_RIGHT,
     JUMP
 };
-    
-    
+
 // Forward declaration of Platform.
 class Platform;
     
@@ -40,18 +39,16 @@ public:
     /**
      * Simple constructor.
      * Example use:
-     * // Make a 40px x 40px character, with maximum horizontal velocity of 200px/second
+     * // Makes a 40px x 40px character, with maximum horizontal velocity of 200px/second
      * // and vertical velocity of 100px/second, and gravity of 100px/second^2.
-     * Character c("image.png", cocos2d::Vec2(40, 40), cocos2d::Vec2(200, 100), 100);
+     * Character c("spineboy", JTTW::Rectangle(0, 20, 40, 40), cocos2d::Vec2(200, 100), 100);
      */
     Character(const std::string artFileName, JTTW::Rectangle dimensions, cocos2d::Vec2 maxVelocities, double gravity);
     ~Character();
     
-    /**
-     * Controls for moving the character around.
-     * Call these instead of manually changing the velocities member to ensure
-     * comprehensible movement.
-     */
+    // Controls for moving the character around.
+    // Call these instead of manually changing the velocities member to ensure
+    // comprehensible movement.
     void accelerateLeft(float deltaVel);
     void accelerateRight(float deltaVel);
     void stop();
@@ -63,40 +60,37 @@ public:
     bool isMovingRight() const;
     bool justJumped() const;
     
-    // Getters for velocity.
+    // Getters for velocity and state.
     double getXVelocity() const;
     double getYVelocity() const;
-    
     const State getCurrentState() const;
     
-    bool isDirectlyAbove(JTTW::Rectangle platform, JTTW::Rectangle me);
-    
     /**
-     * Moves the character left and right.
-     *
-     *  direction is either 1 or -1, to make the character move left or right respectively.
+     * Moves the character over a time period, deltaTime, while avoiding the platforms.
      */
-    void move(float deltaTime, std::vector<Platform> platforms);
-    
-    // TODO: integrate Mei's art with this.
+    void move(float deltaTime, std::vector<Platform> platforms, bool debugOn);
+
     spine::SkeletonAnimation *ani;
     
     // A box that encompasses the character.
     JTTW::Rectangle dimensions;
-    
+
     std::string characterName;
     
-    cocos2d::DrawNode *a;
+    cocos2d::DrawNode *collisionBoxNode;
     
 private:
     void updateAnimation();
-    void updatePosition();
+    void updatePosition(double centerX, double centerY);
+    void drawCollisionBox();
     
     State currentState = State::STANDING;
     
     // Vector of x and y velocities, normalized so that 1 moves right/up at max speed, -1 moves left/down at max speed.
     cocos2d::Vec2 velocities = cocos2d::Vec2(0.0, 0.0);
     
+    // The left and right forces on the character. Forces include movement actions,
+    // collisions with platforms, wind, etc.
     double forceXLeft = 0.0;
     double forceXRight = 0.0;
     

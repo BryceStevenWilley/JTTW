@@ -10,6 +10,7 @@
 #define Rectangle_hpp
 
 #include <stdio.h>
+#include <array>
 #include "cocos2d.h"
 
 namespace JTTW {
@@ -24,15 +25,25 @@ public:
     
     void setCenter(double x, double y);
     
-    double getMaxY();
-    double getMinY();
-    double getMaxX();
-    double getMinX();
+    const cocos2d::Vec2 getCenter() const;
     
-    double getCenterX();
-    double getCenterY();
-    double getWidth();
-    double getHeight();
+    bool isInCollisionWith(Rectangle r) const;
+    bool isDirectlyAbove(Rectangle r) const;
+    
+    // Assumes that the current rectangle is moveable, and the given rectangle is stationary.
+    cocos2d::Vec2 closestNonCollidingPoint(Rectangle r) const;
+    
+    std::array<cocos2d::Vec2, 4> getPoints() const;
+    
+    double getMaxY() const;
+    double getMinY() const;
+    double getMaxX() const;
+    double getMinX() const;
+    
+    double getCenterX() const;
+    double getCenterY() const;
+    double getWidth() const;
+    double getHeight() const;
 };
 }
 

@@ -15,7 +15,7 @@
 #include "Viewpoint.hpp"
 
 namespace JTTW {
-    void parseLevelFromJson(std::string fileName, cocos2d::Layer *layer, std::vector<Platform> &platforms, Viewpoint vp);
+    void parseLevelFromJson(std::string fileName, cocos2d::Layer *layer, std::vector<Platform> &platforms, Viewpoint vp, bool debugOn);
 }
 
 #endif /* LevelParser_hpp */

@@ -28,9 +28,10 @@ private:
     static std::deque<AiAgent *> agents;
     static AiAgent *player;
     static std::vector<Platform> platforms;
-    static bool pedestalPopped;
-    static bool cloudSunk;
-    static bool cloudSinking;
+    static bool debugOn; // currently, will just turn on collision boxes.
+    //static bool pedestalPopped;
+    //static bool cloudSunk;
+    //static bool cloudSinking;
 };
 } // JTTW
 

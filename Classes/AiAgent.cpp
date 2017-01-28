@@ -43,11 +43,6 @@ void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeybo
                 _controlledCharacter->accelerateLeft(1.0);
             } else { // released
                 _controlledCharacter->accelerateLeft(-1.0);
-                //if (_controlledCharacter->isMovingLeft()) {
-                //    _controlledCharacter->stop(); // stop moving left
-                //} else if (_controlledCharacter->getXVelocity() == 0.0) {
-                //    _controlledCharacter->accelerate(-1.0);
-                //}
             }
             break;
         case KeyCode::KEY_RIGHT_ARROW:
@@ -55,11 +50,6 @@ void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeybo
                 _controlledCharacter->accelerateRight(1.0);
             } else {
                 _controlledCharacter->accelerateRight(-1.0);
-                //if (_controlledCharacter->isMovingRight()) {
-                //    _controlledCharacter->stop(); // stop moving right
-                //} else if (_controlledCharacter->getXVelocity() == 0.0) {
-                //    _controlledCharacter->accelerateRight(-1.0);
-                //}
             }
             break;
         case KeyCode::KEY_SPACE:
