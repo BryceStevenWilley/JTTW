@@ -1,11 +1,3 @@
-//
-//  Rectangle.cpp
-//  JTTW
-//
-//  Created by Bryce Willey on 1/27/17.
-//
-//
-
 #include "Rectangle.hpp"
 #include <iostream>
 
@@ -59,7 +51,6 @@ cocos2d::Vec2 Rectangle::closestNonCollidingPoint(Rectangle r) const {
     
     return closestPoint[diffs[0]];
 }
-
 
 std::array<cocos2d::Vec2, 4> Rectangle::getPoints() const {
     std::array<cocos2d::Vec2, 4> rect;

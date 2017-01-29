@@ -1,24 +1,11 @@
-//
-//  Rectangle.hpp
-//  JTTW
-//
-//  Created by Bryce Willey on 1/27/17.
-//
-//
-
 #ifndef Rectangle_hpp
 #define Rectangle_hpp
 
-#include <stdio.h>
 #include <array>
 #include "cocos2d.h"
 
 namespace JTTW {
 class Rectangle {
-private:
-    cocos2d::Vec2 _center;
-    cocos2d::Size _dimensions;
-    
 public:
     Rectangle(cocos2d::Vec2 center, cocos2d::Size dimensions);
     Rectangle(double centerX, double centerY, double width, double height);
@@ -44,6 +31,10 @@ public:
     double getCenterY() const;
     double getWidth() const;
     double getHeight() const;
+    
+private:
+    cocos2d::Vec2 _center;
+    cocos2d::Size _dimensions;
 };
 }
 

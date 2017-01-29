@@ -132,6 +132,15 @@
 		9F8E655D1E3BCA100058958F /* Rectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E655B1E3BCA100058958F /* Rectangle.cpp */; };
 		9F8E655E1E3BCA100058958F /* Rectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E655B1E3BCA100058958F /* Rectangle.cpp */; };
 		9F8E655F1E3BCA100058958F /* Rectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E655B1E3BCA100058958F /* Rectangle.cpp */; };
+		9F8E65631E3D6B2F0058958F /* MoveableObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E65611E3D6B2F0058958F /* MoveableObject.cpp */; };
+		9F8E65641E3D6B2F0058958F /* MoveableObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E65611E3D6B2F0058958F /* MoveableObject.cpp */; };
+		9F8E65651E3D6B2F0058958F /* MoveableObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E65611E3D6B2F0058958F /* MoveableObject.cpp */; };
+		9F8E65691E3D92230058958F /* GameObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E65671E3D92230058958F /* GameObject.cpp */; };
+		9F8E656A1E3D92230058958F /* GameObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E65671E3D92230058958F /* GameObject.cpp */; };
+		9F8E656B1E3D92230058958F /* GameObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E65671E3D92230058958F /* GameObject.cpp */; };
+		9F8E656F1E3DA0060058958F /* MoveablePlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */; };
+		9F8E65701E3DA0060058958F /* MoveablePlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */; };
+		9F8E65711E3DA0060058958F /* MoveablePlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */; };
 		9F98AF911E2C99E2009559C7 /* Viewpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F98AF8F1E2C99E2009559C7 /* Viewpoint.cpp */; };
 		9F98AF921E2C99E2009559C7 /* Viewpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F98AF8F1E2C99E2009559C7 /* Viewpoint.cpp */; };
 		9FC4C2EF1E39293F00ABD648 /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC4C2ED1E39293F00ABD648 /* Platform.cpp */; };
@@ -308,6 +317,12 @@
 		9F8E65571E3BC7720058958F /* demoLevel.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = demoLevel.json; sourceTree = "<group>"; };
 		9F8E655B1E3BCA100058958F /* Rectangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rectangle.cpp; sourceTree = "<group>"; };
 		9F8E655C1E3BCA100058958F /* Rectangle.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Rectangle.hpp; sourceTree = "<group>"; };
+		9F8E65611E3D6B2F0058958F /* MoveableObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoveableObject.cpp; sourceTree = "<group>"; };
+		9F8E65621E3D6B2F0058958F /* MoveableObject.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MoveableObject.hpp; sourceTree = "<group>"; };
+		9F8E65671E3D92230058958F /* GameObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameObject.cpp; sourceTree = "<group>"; };
+		9F8E65681E3D92230058958F /* GameObject.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameObject.hpp; sourceTree = "<group>"; };
+		9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoveablePlatform.cpp; sourceTree = "<group>"; };
+		9F8E656E1E3DA0060058958F /* MoveablePlatform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MoveablePlatform.hpp; sourceTree = "<group>"; };
 		9F98AF8F1E2C99E2009559C7 /* Viewpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Viewpoint.cpp; sourceTree = "<group>"; };
 		9F98AF901E2C99E2009559C7 /* Viewpoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Viewpoint.hpp; sourceTree = "<group>"; };
 		9FAAFDFB1E292DBB0036F58B /* AiAgent.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AiAgent.hpp; sourceTree = "<group>"; };
@@ -527,6 +542,7 @@
 		46880B8319C43A87006E1F66 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				9F8E656C1E3D9F8A0058958F /* Objects */,
 				9FC4C2F61E3B9BF200ABD648 /* json.hpp */,
 				9F31896F1E26E2520005B84E /* Character.h */,
 				9F3189741E272A570005B84E /* Character.cpp */,
@@ -537,12 +553,8 @@
 				9F98AF8F1E2C99E2009559C7 /* Viewpoint.cpp */,
 				9F98AF901E2C99E2009559C7 /* Viewpoint.hpp */,
 				9F666E561E31CB6100F9BB90 /* AI */,
-				9FC4C2ED1E39293F00ABD648 /* Platform.cpp */,
-				9FC4C2EE1E39293F00ABD648 /* Platform.hpp */,
 				9FC4C2F11E3B9B8B00ABD648 /* LevelParser.cpp */,
 				9FC4C2F21E3B9B8B00ABD648 /* LevelParser.hpp */,
-				9F8E655B1E3BCA100058958F /* Rectangle.cpp */,
-				9F8E655C1E3BCA100058958F /* Rectangle.hpp */,
 			);
 			name = Classes;
 			path = ../Classes;
@@ -612,6 +624,23 @@
 				9F8E65571E3BC7720058958F /* demoLevel.json */,
 			);
 			path = levelFiles;
+			sourceTree = "<group>";
+		};
+		9F8E656C1E3D9F8A0058958F /* Objects */ = {
+			isa = PBXGroup;
+			children = (
+				9FC4C2ED1E39293F00ABD648 /* Platform.cpp */,
+				9FC4C2EE1E39293F00ABD648 /* Platform.hpp */,
+				9F8E655B1E3BCA100058958F /* Rectangle.cpp */,
+				9F8E655C1E3BCA100058958F /* Rectangle.hpp */,
+				9F8E65611E3D6B2F0058958F /* MoveableObject.cpp */,
+				9F8E65621E3D6B2F0058958F /* MoveableObject.hpp */,
+				9F8E65671E3D92230058958F /* GameObject.cpp */,
+				9F8E65681E3D92230058958F /* GameObject.hpp */,
+				9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */,
+				9F8E656E1E3DA0060058958F /* MoveablePlatform.hpp */,
+			);
+			name = Objects;
 			sourceTree = "<group>";
 		};
 		9FD41C081E2D550D0077779E /* Tests */ = {
@@ -876,13 +905,16 @@
 				46880B8819C43A87006E1F66 /* AppDelegate.cpp in Sources */,
 				46880B8A19C43A87006E1F66 /* HelloWorldScene.cpp in Sources */,
 				9F98AF911E2C99E2009559C7 /* Viewpoint.cpp in Sources */,
+				9F8E65691E3D92230058958F /* GameObject.cpp in Sources */,
 				503AE10017EB989F00D1A890 /* AppController.mm in Sources */,
 				9FC4C2EF1E39293F00ABD648 /* Platform.cpp in Sources */,
 				9F3189751E272A570005B84E /* Character.cpp in Sources */,
+				9F8E65631E3D6B2F0058958F /* MoveableObject.cpp in Sources */,
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,
 				9F666E581E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */,
 				503AE10117EB989F00D1A890 /* main.m in Sources */,
 				9F666E461E30201C00F9BB90 /* AiAgent.cpp in Sources */,
+				9F8E656F1E3DA0060058958F /* MoveablePlatform.cpp in Sources */,
 				9F8E655D1E3BCA100058958F /* Rectangle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -893,10 +925,13 @@
 			files = (
 				9F8E654D1E3BB3C60058958F /* Platform.cpp in Sources */,
 				46880B8919C43A87006E1F66 /* AppDelegate.cpp in Sources */,
+				9F8E656A1E3D92230058958F /* GameObject.cpp in Sources */,
+				9F8E65701E3DA0060058958F /* MoveablePlatform.cpp in Sources */,
 				9F666E471E30201C00F9BB90 /* AiAgent.cpp in Sources */,
 				9F8E655E1E3BCA100058958F /* Rectangle.cpp in Sources */,
 				9F98AF921E2C99E2009559C7 /* Viewpoint.cpp in Sources */,
 				503AE10517EB98FF00D1A890 /* main.cpp in Sources */,
+				9F8E65641E3D6B2F0058958F /* MoveableObject.cpp in Sources */,
 				46880B8B19C43A87006E1F66 /* HelloWorldScene.cpp in Sources */,
 				9FC4C2F41E3B9B8B00ABD648 /* LevelParser.cpp in Sources */,
 				9F3189761E272A570005B84E /* Character.cpp in Sources */,
@@ -912,11 +947,14 @@
 				9FD41BF01E2D54490077779E /* Viewpoint.cpp in Sources */,
 				9FD41C151E2D56220077779E /* main.cpp in Sources */,
 				9FD41C131E2D55C80077779E /* TestDelegate.cpp in Sources */,
+				9F8E656B1E3D92230058958F /* GameObject.cpp in Sources */,
 				9F8E655F1E3BCA100058958F /* Rectangle.cpp in Sources */,
 				9FD41C101E2D55920077779E /* testCharacter.cpp in Sources */,
 				9FD41BF31E2D54490077779E /* HelloWorldScene.cpp in Sources */,
 				9F666E5A1E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */,
+				9F8E65711E3DA0060058958F /* MoveablePlatform.cpp in Sources */,
 				9FC4C2F51E3B9B8B00ABD648 /* LevelParser.cpp in Sources */,
+				9F8E65651E3D6B2F0058958F /* MoveableObject.cpp in Sources */,
 				9FD41BF41E2D54490077779E /* Character.cpp in Sources */,
 				9F666E481E30201C00F9BB90 /* AiAgent.cpp in Sources */,
 			);

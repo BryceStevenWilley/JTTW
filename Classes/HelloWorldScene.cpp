@@ -67,13 +67,13 @@ bool HelloWorld::init() {
     parseLevelFromJson("demoLevel.json", layer, platforms, vp, debugOn);    
     int characterHeight = vp.metersToPixels(1.7);
     Character *monkey = new Character("Monkey", JTTW::Rectangle(vp.metersToPixels(1.7), vp.metersToPixels(20.0), characterHeight, characterHeight),
-                                     cocos2d::Vec2(vp.metersToPixels(5), vp.metersToPixels(10)), vp.metersToPixels(9.8));
+                                     cocos2d::Vec2(vp.metersToPixels(5), vp.metersToPixels(10)), 60, vp.metersToPixels(9.8));
     Character *monk = new Character("Monk", JTTW::Rectangle(vp.metersToPixels(1.7) * 2, vp.metersToPixels(20.0), characterHeight, characterHeight),
-                                      cocos2d::Vec2(vp.metersToPixels(3), vp.metersToPixels(6)), vp.metersToPixels(9.8));
+                                      cocos2d::Vec2(vp.metersToPixels(3), vp.metersToPixels(6)), 50, vp.metersToPixels(9.8));
     Character *piggy = new Character("Piggy", JTTW::Rectangle(vp.metersToPixels(1.7) * 3, vp.metersToPixels(20.0), characterHeight, characterHeight),
-                                      cocos2d::Vec2(vp.metersToPixels(4), vp.metersToPixels(8.7)), vp.metersToPixels(9.8));
+                                      cocos2d::Vec2(vp.metersToPixels(4), vp.metersToPixels(8.7)), 150, vp.metersToPixels(9.8));
     Character *sandy = new Character("sandy", JTTW::Rectangle(vp.metersToPixels(1.7) * 4, vp.metersToPixels(20.0), characterHeight, characterHeight),
-                                     cocos2d::Vec2(vp.metersToPixels(4.5), vp.metersToPixels(8)), vp.metersToPixels(9.8));
+                                     cocos2d::Vec2(vp.metersToPixels(4.5), vp.metersToPixels(8)), 100, vp.metersToPixels(9.8));
     
     characters.push_back(monkey);
     characters.push_back(monk);

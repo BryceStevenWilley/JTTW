@@ -1,11 +1,3 @@
-//
-//  LevelParser.hpp
-//  JTTW
-//
-//  Created by Bryce Willey on 1/27/17.
-//
-//
-
 #ifndef LevelParser_hpp
 #define LevelParser_hpp
 

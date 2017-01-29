@@ -28,6 +28,7 @@ private:
     static std::deque<AiAgent *> agents;
     static AiAgent *player;
     static std::vector<Platform> platforms;
+    static std::map<Platform, cocos2d::Vec2> movingPlatforms;
     static bool debugOn; // currently, will just turn on collision boxes.
     //static bool pedestalPopped;
     //static bool cloudSunk;

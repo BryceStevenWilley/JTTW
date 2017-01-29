@@ -4,13 +4,11 @@
 
 using namespace JTTW;
 
-Character::Character(const std::string artFilePrefix, JTTW::Rectangle dimensions, cocos2d::Vec2 maxVelocities, double gravity) :
+Character::Character(const std::string artFilePrefix, JTTW::Rectangle dimensions, cocos2d::Vec2 maxVelocities, double mass, double gravity) : MoveableObject(dimensions, maxVelocities),
         ani(spine::SkeletonAnimation::createWithJsonFile(artFilePrefix + ".json", artFilePrefix + ".atlas", 1.0f)),
         characterName(artFilePrefix),
-        dimensions(dimensions),
-        _maxVelocities(maxVelocities),
-        _gravity(gravity),
-        collisionBoxNode(cocos2d::DrawNode::create()) {
+        _mass(mass),
+        _gravity(gravity) {
     
     ani->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
     updatePosition(dimensions.getCenterX(), dimensions.getCenterY());
@@ -23,23 +21,20 @@ Character::Character(const std::string artFilePrefix, JTTW::Rectangle dimensions
 Character::~Character() {}
 
 void Character::accelerateLeft(float deltaVel) {
-    forceXLeft += deltaVel;
-    velocities.x = forceXRight - forceXLeft;
+    MoveableObject::accelerateLeft(deltaVel);
     updateAnimation();
 }
 
 void Character::accelerateRight(float deltaVel) {
-    forceXRight += deltaVel;
-    velocities.x = forceXRight - forceXLeft;
+    MoveableObject::accelerateRight(deltaVel);
     updateAnimation();
 }
 
 void Character::stop() {
-    velocities.x = 0.0;
-    forceXRight = 0.0;
-    forceXLeft = 0.0;
+    MoveableObject::stop();
     updateAnimation();
 }
+
 
 void Character::jump(float percent) {
     velocities.y = percent;
@@ -53,24 +48,12 @@ void Character::transferVelocity(Character *reciever) {
     this->stop();
 }
 
-bool Character::isMovingLeft() const {
-    return velocities.x < 0.0;
-}
-
-bool Character::isMovingRight() const {
-    return velocities.x > 0.0;
-}
-
 bool Character::justJumped() const {
     return velocities.y == 1.0;
 }
 
-double Character::getXVelocity() const {
-    return velocities.x * _maxVelocities.x;
-}
-
-double Character::getYVelocity() const {
-    return velocities.y * _maxVelocities.y;
+double Character::getMass() const {
+    return _mass;
 }
 
 const Character::State Character::getCurrentState() const {
@@ -128,12 +111,6 @@ void Character::move(float deltaTime, std::vector<Platform> platforms, bool debu
     if (debugOn) {
         drawCollisionBox();
     }
-}
-
-void Character::drawCollisionBox() {
-    cocos2d::Color4F black(0.0, 1.0, 0.0, 1.0);
-    collisionBoxNode->clear();
-    collisionBoxNode->drawPolygon(dimensions.getPoints().data(), 4, black, 0, black);
 }
 
 void Character::updateAnimation() {
