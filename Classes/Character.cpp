@@ -8,8 +8,8 @@ Character::Character(const std::string artFilePrefix, JTTW::Rectangle dimensions
         ani(spine::SkeletonAnimation::createWithJsonFile(artFilePrefix + ".json", artFilePrefix + ".atlas", 1.0f)),
         characterName(artFilePrefix),
         _mass(mass),
-        _gravity(gravity) {
-    
+        _gravity(gravity),
+        _spawnPosition(dimensions.getCenterX(), dimensions.getCenterY()) {
     ani->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
     updatePosition(dimensions.getCenterX(), dimensions.getCenterY());
     ani->setScaleX(dimensions.getWidth() / 720.0f); // 720.0px is approximately the size of the art at 1.0f.
@@ -18,7 +18,9 @@ Character::Character(const std::string artFilePrefix, JTTW::Rectangle dimensions
     ani->setAnimation(0, "idle", true);
 }
 
-Character::~Character() {}
+Character::~Character() {
+    //ani->onExit();
+}
 
 void Character::accelerateLeft(float deltaVel) {
     MoveableObject::accelerateLeft(deltaVel);
@@ -93,7 +95,6 @@ void Character::move(float deltaTime, std::vector<GameObject *> platforms, bool 
         if (me.getMaxY() > r.getMinY() && me.getMinY() < r.getMaxY()) {
             velocities.x = 0.0;
         }
-        
     } else if (collision == false && position.y > 0.0) {
         // check vertical column
         bool isHovering = false;
@@ -107,6 +108,11 @@ void Character::move(float deltaTime, std::vector<GameObject *> platforms, bool 
         if (!isHovering) {
             currentState = State::MID_AIR;
         }
+    }
+    
+    if (position.y < -10.0) {
+        // You fell below the ground, restart at beginning of level.
+        position = _spawnPosition;
     }
     updatePosition(position.x, position.y);
     if (debugOn) {

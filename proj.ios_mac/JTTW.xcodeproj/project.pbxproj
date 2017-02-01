@@ -69,6 +69,10 @@
 		9F3189761E272A570005B84E /* Character.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F3189741E272A570005B84E /* Character.cpp */; };
 		9F3189781E272A810005B84E /* image.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F3189771E272A810005B84E /* image.png */; };
 		9F3189791E272A810005B84E /* image.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F3189771E272A810005B84E /* image.png */; };
+		9F380AA81E424FDE00728246 /* SimpleDitch.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F380AA71E424FDE00728246 /* SimpleDitch.json */; };
+		9F380AAA1E42502A00728246 /* SimpleDitch.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F380AA71E424FDE00728246 /* SimpleDitch.json */; };
+		9F380AAB1E42503300728246 /* SimpleDitch.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F380AA71E424FDE00728246 /* SimpleDitch.json */; };
+		9F380AAC1E42503300728246 /* demoLevel.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F8E65571E3BC7720058958F /* demoLevel.json */; };
 		9F45BFF81E35E85700C06D0C /* Piggy2.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F45BFED1E35E85700C06D0C /* Piggy2.png */; };
 		9F45BFF91E35E85700C06D0C /* Piggy.spine in Resources */ = {isa = PBXBuildFile; fileRef = 9F45BFEE1E35E85700C06D0C /* Piggy.spine */; };
 		9F45BFFA1E35E85700C06D0C /* Piggy.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F45BFEF1E35E85700C06D0C /* Piggy.png */; };
@@ -252,7 +256,7 @@
 		46880B7A19C43A67006E1F66 /* HelloWorld.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = HelloWorld.png; sourceTree = "<group>"; };
 		46880B8419C43A87006E1F66 /* AppDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppDelegate.cpp; sourceTree = "<group>"; };
 		46880B8519C43A87006E1F66 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		46880B8619C43A87006E1F66 /* HelloWorldScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HelloWorldScene.cpp; sourceTree = "<group>"; };
+		46880B8619C43A87006E1F66 /* HelloWorldScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = HelloWorldScene.cpp; sourceTree = "<group>"; usesTabs = 0; };
 		46880B8719C43A87006E1F66 /* HelloWorldScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelloWorldScene.h; sourceTree = "<group>"; };
 		503AE0F617EB97AB00D1A890 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
 		503AE0F717EB97AB00D1A890 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -294,6 +298,7 @@
 		9F31896F1E26E2520005B84E /* Character.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Character.h; sourceTree = "<group>"; };
 		9F3189741E272A570005B84E /* Character.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Character.cpp; sourceTree = "<group>"; };
 		9F3189771E272A810005B84E /* image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image.png; sourceTree = "<group>"; };
+		9F380AA71E424FDE00728246 /* SimpleDitch.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = SimpleDitch.json; sourceTree = "<group>"; };
 		9F45BFED1E35E85700C06D0C /* Piggy2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Piggy2.png; sourceTree = "<group>"; };
 		9F45BFEE1E35E85700C06D0C /* Piggy.spine */ = {isa = PBXFileReference; lastKnownFileType = file; path = Piggy.spine; sourceTree = "<group>"; };
 		9F45BFEF1E35E85700C06D0C /* Piggy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Piggy.png; sourceTree = "<group>"; };
@@ -621,6 +626,7 @@
 		9F8E65561E3BC7720058958F /* levelFiles */ = {
 			isa = PBXGroup;
 			children = (
+				9F380AA71E424FDE00728246 /* SimpleDitch.json */,
 				9F8E65571E3BC7720058958F /* demoLevel.json */,
 			);
 			path = levelFiles;
@@ -790,6 +796,7 @@
 				46880B8119C43A67006E1F66 /* HelloWorld.png in Resources */,
 				9F45BFFE1E35E85700C06D0C /* Monkey.atlas in Resources */,
 				46880B7D19C43A67006E1F66 /* CloseSelected.png in Resources */,
+				9F380AA81E424FDE00728246 /* SimpleDitch.json in Resources */,
 				9F666E651E326F5B00F9BB90 /* Monkey2.png in Resources */,
 				9FD41CC91E2DB2A60077779E /* spineboy.png in Resources */,
 				9F45C0131E35EE7700C06D0C /* sandy.png in Resources */,
@@ -830,6 +837,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F380AAA1E42502A00728246 /* SimpleDitch.json in Resources */,
 				9F8E655A1E3BC79C0058958F /* demoLevel.json in Resources */,
 				9F45C0161E35EE8400C06D0C /* sandy2.png in Resources */,
 				9F45C0171E35EE8400C06D0C /* sandy.png in Resources */,
@@ -863,6 +871,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F380AAB1E42503300728246 /* SimpleDitch.json in Resources */,
+				9F380AAC1E42503300728246 /* demoLevel.json in Resources */,
 				9F45C01A1E35EE9400C06D0C /* sandy2.png in Resources */,
 				9F45C01B1E35EE9400C06D0C /* sandy.png in Resources */,
 				9F45C01C1E35EE9400C06D0C /* sandy.json in Resources */,

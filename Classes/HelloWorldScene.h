@@ -9,6 +9,7 @@
 #include "MoveablePlatform.hpp"
 #include <spine/spine-cocos2dx.h>
 #include <deque>
+#include "json.hpp"
 
 namespace JTTW {
     
@@ -25,13 +26,14 @@ public:
     void update(float) override;
     
 private:
-    static Viewpoint vp;
-    static std::vector<Character *> characters;
-    static std::vector<AiAgent *> agents;
-    static AiAgent *player;
-    static std::vector<GameObject *> platforms;
-    static std::vector<MoveablePlatform *> moveables;
-    static bool debugOn; // currently, will just turn on collision boxes.
+    Viewpoint vp = Viewpoint(cocos2d::Size(1.0, 1.0), 1.0, nullptr);
+    std::vector<Character *> characters = std::vector<Character *>();
+    std::vector<AiAgent *> agents = std::vector<AiAgent *>();
+    AiAgent *player = nullptr;
+    std::vector<GameObject *> platforms = std::vector<GameObject *>();
+    std::vector<MoveablePlatform *> moveables = std::vector<MoveablePlatform *>();
+    bool debugOn = true; // currently, will just turn on collision boxes.
+
     //static bool pedestalPopped;
     //static bool cloudSunk;
     //static bool cloudSinking;

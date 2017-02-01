@@ -82,6 +82,8 @@ private:
     double _mass;
     
     double _gravity;
+    
+    cocos2d::Vec2 _spawnPosition;
 };
 } // JTTW
 

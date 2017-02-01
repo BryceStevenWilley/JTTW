@@ -6,19 +6,19 @@
 using namespace cocos2d;
 using namespace JTTW;
 
-std::vector<Character *> HelloWorld::characters;
-std::vector<AiAgent *> HelloWorld::agents;
-AiAgent * HelloWorld::player;
-std::vector<GameObject *> HelloWorld::platforms;
-std::vector<MoveablePlatform *> HelloWorld::moveables;
+//std::vector<Character *> HelloWorld::characters;
+//std::vector<AiAgent *> HelloWorld::agents;
+//AiAgent * HelloWorld::player;
+//std::vector<GameObject *> HelloWorld::platforms;
+//std::vector<MoveablePlatform *> HelloWorld::moveables;
 
-bool HelloWorld::debugOn = true;
+//bool HelloWorld::debugOn = true;
 
 //bool HelloWorld::pedestalPopped;
 //bool HelloWorld::cloudSunk = false;
 //bool HelloWorld::cloudSinking = false;
 
-Viewpoint HelloWorld::vp(cocos2d::Size(1.0, 1.0), 1.0, nullptr);
+//Viewpoint HelloWorld::vp(cocos2d::Size(1.0, 1.0), 1.0, nullptr);
 
 Scene* HelloWorld::createScene() {
     // 'scene' and layer are autorelease objects.
@@ -65,16 +65,35 @@ bool HelloWorld::init() {
     cocos2d::Layer *layer = cocos2d::Layer::create();
     vp = Viewpoint(visibleSize, 1.7/130.0, layer);
 
-    parseLevelFromJson("demoLevel.json", layer, platforms, moveables, vp, debugOn);
+    nlohmann::json characterStart = parseLevelFromJson("SimpleDitch.json", layer, platforms, moveables, vp, debugOn);
     int characterHeight = vp.metersToPixels(1.7);
-    Character *monkey = new Character("Monkey", JTTW::Rectangle(vp.metersToPixels(1.7), vp.metersToPixels(20.0), characterHeight, characterHeight),
-                                     cocos2d::Vec2(vp.metersToPixels(5), vp.metersToPixels(10)), 60, vp.metersToPixels(9.8));
-    Character *monk = new Character("Monk", JTTW::Rectangle(vp.metersToPixels(1.7) * 2, vp.metersToPixels(20.0), characterHeight, characterHeight),
-                                      cocos2d::Vec2(vp.metersToPixels(3), vp.metersToPixels(6)), 50, vp.metersToPixels(9.8));
-    Character *piggy = new Character("Piggy", JTTW::Rectangle(vp.metersToPixels(1.7) * 3, vp.metersToPixels(20.0), characterHeight, characterHeight),
-                                      cocos2d::Vec2(vp.metersToPixels(4), vp.metersToPixels(8.7)), 150, vp.metersToPixels(9.8));
-    Character *sandy = new Character("sandy", JTTW::Rectangle(vp.metersToPixels(1.7) * 4, vp.metersToPixels(20.0), characterHeight, characterHeight),
-                                     cocos2d::Vec2(vp.metersToPixels(4.5), vp.metersToPixels(8)), 100, vp.metersToPixels(9.8));
+    double monkeyStartX = vp.metersToPixels((double)characterStart["Monkey"][0]);
+    double monkeyStartY = vp.metersToPixels((double)characterStart["Monkey"][1]);
+    Character *monkey = new Character(
+            "Monkey",
+            JTTW::Rectangle(monkeyStartX, monkeyStartY,characterHeight, characterHeight),
+            cocos2d::Vec2(vp.metersToPixels(5), vp.metersToPixels(10)), 60, vp.metersToPixels(9.8));
+    
+    double monkStartX = vp.metersToPixels((double)characterStart["Monk"][0]);
+    double monkStartY = vp.metersToPixels((double)characterStart["Monk"][1]);
+    Character *monk = new Character(
+            "Monk",
+            JTTW::Rectangle(monkStartX, monkStartY, characterHeight, characterHeight),
+            cocos2d::Vec2(vp.metersToPixels(3), vp.metersToPixels(6)), 50, vp.metersToPixels(9.8));
+    
+    double piggyStartX = vp.metersToPixels((double)characterStart["Piggy"][0]);
+    double piggyStartY = vp.metersToPixels((double)characterStart["Piggy"][1]);
+    Character *piggy = new Character(
+            "Piggy",
+            JTTW::Rectangle(piggyStartX, piggyStartY, characterHeight, characterHeight),
+            cocos2d::Vec2(vp.metersToPixels(4), vp.metersToPixels(8.7)), 150, vp.metersToPixels(9.8));
+    
+    double sandyStartX = vp.metersToPixels((double)characterStart["Sandy"][0]);
+    double sandyStartY = vp.metersToPixels((double)characterStart["Sandy"][1]);
+    Character *sandy = new Character(
+           "sandy",
+            JTTW::Rectangle(sandyStartX, sandyStartY, characterHeight, characterHeight),
+            cocos2d::Vec2(vp.metersToPixels(4.5), vp.metersToPixels(8)), 100, vp.metersToPixels(9.8));
     
     characters.push_back(monkey);
     characters.push_back(monk);
@@ -96,7 +115,7 @@ bool HelloWorld::init() {
     
     auto eventListener = EventListenerKeyboard::create();
     
-    eventListener->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event) mutable {
+    eventListener->onKeyPressed = [this, layer](EventKeyboard::KeyCode keyCode, Event* event) mutable {
         switch(keyCode) {
             case EventKeyboard::KeyCode::KEY_Z:
                 switchToCharacter(0);
@@ -125,6 +144,28 @@ bool HelloWorld::init() {
                     }
                 }
                 break;
+            case EventKeyboard::KeyCode::KEY_TAB:
+                // Try to restart!
+                /*
+                layer->removeAllChildren();
+                this->removeAllChildren();
+                agents.clear();
+                characters.clear();
+                platforms.clear();
+                moveables.clear();
+                this->init();
+                 */
+                //{
+                    // Cleanup all characters.
+                    //layer->removeAllChildrenWithCleanup(true);
+                    //for (auto ch = characters.begin(); ch != characters.end(); ch++) {
+                        //
+                    //}
+                    //auto newScene = HelloWorld::createScene();
+                    //Director::getInstance()->replaceScene(newScene);
+                //}
+                break;
+                
             default:
                 // do nothing.
                 break;

@@ -13,7 +13,7 @@
 
 using namespace JTTW; 
 
-void JTTW::parseLevelFromJson(std::string fileName, cocos2d::Layer *layer, std::vector<GameObject *> &platforms, std::vector<MoveablePlatform *> &movables, Viewpoint vp, bool debugOn) {
+nlohmann::json JTTW::parseLevelFromJson(std::string fileName, cocos2d::Layer *layer, std::vector<GameObject *> &platforms, std::vector<MoveablePlatform *> &movables, Viewpoint vp, bool debugOn) {
     
     const int platformZ = 4;
     
@@ -61,4 +61,5 @@ void JTTW::parseLevelFromJson(std::string fileName, cocos2d::Layer *layer, std::
             }
         }
     }
+    return lvl["charactersStart"];
 }
