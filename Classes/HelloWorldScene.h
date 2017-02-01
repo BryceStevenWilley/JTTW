@@ -24,6 +24,8 @@ public:
     
     void update(float) override;
     
+    bool onContactBegin(cocos2d::PhysicsContact &contact);
+    
 private:
     static Viewpoint vp;
     static std::vector<Character *> characters;

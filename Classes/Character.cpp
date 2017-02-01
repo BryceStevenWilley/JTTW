@@ -15,6 +15,11 @@ Character::Character(const std::string artFilePrefix, JTTW::Rectangle dimensions
     ani->setScaleX(dimensions.getWidth() / 720.0f); // 720.0px is approximately the size of the art at 1.0f.
     ani->setScaleY(dimensions.getHeight() / 720.0f);
             
+    auto physics = cocos2d::PhysicsBody::createBox(cocos2d::Size(dimensions.getWidth(), dimensions.getHeight()));
+    physics->setDynamic(true); // TODO: change?
+    physics->setTag(1);
+    physics->setContactTestBitmask(0xFFFFFFFF);
+    ani->addComponent(physics);
     ani->setAnimation(0, "idle", true);
 }
 

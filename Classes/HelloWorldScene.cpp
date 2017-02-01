@@ -20,9 +20,16 @@ bool HelloWorld::debugOn = true;
 
 Viewpoint HelloWorld::vp(cocos2d::Size(1.0, 1.0), 1.0, nullptr);
 
+bool HelloWorld::onContactBegin(cocos2d::PhysicsContact& contact) {
+    std::cout << "Found contact between 2 bodies!" << std::endl;
+    return true;
+}
+
 Scene* HelloWorld::createScene() {
     // 'scene' and layer are autorelease objects.
-    auto scene = Scene::create();
+    auto scene = Scene::createWithPhysics();
+    scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -98));
+    scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = HelloWorld::create();
     scene->addChild(layer);
 
@@ -144,6 +151,11 @@ bool HelloWorld::init() {
     };
 
     this->_eventDispatcher->addEventListenerWithFixedPriority(eventListener, 1);
+    
+    auto contactListener = cocos2d::EventListenerPhysicsContact::create();
+    contactListener->onContactBegin = CC_CALLBACK_1(HelloWorld::onContactBegin, this);
+    this->_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
+    
     
     // Look at the Follow action.
     //this->runAction(cocos2d::Follow::create(*player, ))

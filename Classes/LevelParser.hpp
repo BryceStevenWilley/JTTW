@@ -2,6 +2,7 @@
 #define LevelParser_hpp
 
 #include <stdio.h>
+#include "cocos2d.h"
 #include "json.hpp"
 #include "Platform.hpp"
 #include "Viewpoint.hpp"
