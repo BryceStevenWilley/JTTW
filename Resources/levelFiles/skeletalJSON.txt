@@ -1,0 +1,34 @@
+/* All numbers in in-game meters unless stated otherwise. */
+
+{ "background" : {
+    "imageName" : String,
+    "centerX" : double, 
+    "centerY" : double, 
+    "width" : double,     // The width of the level.
+    "height" : double     // The height of the level.
+    },
+  "platforms" : [ {
+    "imageName" : String,
+    "centerX" : double,
+    "centerY" : double,
+    "width" : double,
+    "height" : double,
+    "collisionPoints" : [
+        double,
+        double,
+        ...
+        double
+        ]
+      },
+    ...
+    ],
+  "characters" : [ {
+    "name" : String,
+    "present" : bool,
+    "startingXPos" : double,
+    "startingYPos" : double
+     },
+    ...
+    ]
+}
+    
