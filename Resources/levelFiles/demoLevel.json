@@ -1,0 +1,87 @@
+{
+    "platforms" : [
+        {
+            "imageName" : "Canyon L.png",
+            "centerX" : 5.0,
+            "centerY" : 5.0,
+            "imageSizeWidth": 10.0,
+            "imageSizeHeight": 10.0,
+            "collisionWidth": 8.5,
+            "collisionHeight": 10.0,
+            "moveable": false
+        },
+        {
+           "imageName" : "Canyon R.png",
+           "centerX": 19.0,
+           "centerY": 5.0,
+           "imageSizeWidth": 10.0,
+           "imageSizeHeight": 10.0,
+           "collisionWidth" : 8.5,
+           "collisionHeight" : 9.0,
+           "moveable": false
+        },
+        {
+           "imageName": "Clear Day.png",
+           "centerX": 11.0,
+           "centerY": 10.0,
+           "imageSizeWidth": 3.0,
+           "imageSizeHeight": 2.0,
+           "collisionWidth": 1.5,
+           "collisionHeight": 1.0,
+           "moveable": true,
+           "center2X": 11.0,
+           "center2Y": 15.0,
+           "maximumVelocity": 2.0
+       },
+       {
+           "imageName": "Rock1.png",
+           "centerX": 25.0,
+           "centerY": 5.0,
+           "imageSizeWidth": 4.0,
+           "imageSizeHeight": 13.0,
+           "collisionWidth": 3.0,
+           "collisionHeight": 9.0,
+           "moveable": false
+       },
+       {
+           "imageName": "Rock2.png",
+           "centerX": 30.0,
+           "centerY": 5.0,
+           "imageSizeWidth": 4.0,
+           "imageSizeHeight": 15.0,
+           "collisionWidth": 3.0,
+           "collisionHeight": 11.0,
+           "moveable": false
+       },
+       {
+           "imageName": "Rock3.png",
+           "centerX": 39.0,
+           "centerY": 5.0,
+           "imageSizeWidth": 4.0,
+           "imageSizeHeight": 13.0,
+           "collisionWidth": 3.0,
+           "collisionHeight": 9.0,
+           "moveable": false
+       },
+       {
+           "imageName": "Rock4.png",
+           "centerX": 46.0,
+           "centerY": 5.0,
+           "imageSizeWidth": 4.0,
+           "imageSizeHeight": 11.0,
+           "collisionWidth": 3.0,
+           "collisionHeight": 8.0,
+           "moveable": false
+       },
+       {
+           "imageName": "Pedestal.png",
+           "centerX": 52.0,
+           "centerY": 5.0,
+           "imageSizeWidth": 4.0,
+           "imageSizeHeight": 1.3,
+           "collisionWidth": 4.0,
+           "collisionHeight": 1.3,
+           "moveable": false
+       }
+    ]
+}

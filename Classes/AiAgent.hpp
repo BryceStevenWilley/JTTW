@@ -30,6 +30,7 @@ public:
     void retakeFromPlayer(AiAgent *nextPlayer);
     void plan(std::vector<Character *> otherCharactrs, cocos2d::EventKeyboard::KeyCode code, bool pressed);
     void plan(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode code, bool pressed);
+    void changeBehavior(cocos2d::EventKeyboard::KeyCode code);
     void executePlan(float delta);
     void setMap(); // TODO: when the map API is created, pass the object that holds the map to this.
     

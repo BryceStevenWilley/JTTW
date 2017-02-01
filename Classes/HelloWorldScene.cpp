@@ -1,14 +1,23 @@
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
 #include <iostream>
+#include "LevelParser.hpp"
 
 using namespace cocos2d;
 using namespace JTTW;
 
 std::vector<Character *> HelloWorld::characters;
-std::deque<AiAgent *> HelloWorld::agents;
+std::vector<AiAgent *> HelloWorld::agents;
 AiAgent * HelloWorld::player;
-std::vector<cocos2d::Sprite *> HelloWorld::platforms;
+std::vector<GameObject *> HelloWorld::platforms;
+std::vector<MoveablePlatform *> HelloWorld::moveables;
+
+bool HelloWorld::debugOn = true;
+
+//bool HelloWorld::pedestalPopped;
+//bool HelloWorld::cloudSunk = false;
+//bool HelloWorld::cloudSinking = false;
+
 Viewpoint HelloWorld::vp(cocos2d::Size(1.0, 1.0), 1.0, nullptr);
 
 Scene* HelloWorld::createScene() {
@@ -28,12 +37,9 @@ bool HelloWorld::init() {
     // aka window dimensions
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    
-    std::cout << visibleSize.height << ", " << visibleSize.width << std::endl << std::endl;
-    
+
     // add a "close" icon to exit the program. it's an autorelease object
-    auto closeItem = MenuItemImage::create(
-                                           "CloseNormal.png",
+    auto closeItem = MenuItemImage::create("CloseNormal.png",
                                            "CloseSelected.png",
                                            CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
     
@@ -41,11 +47,11 @@ bool HelloWorld::init() {
                                 origin.y + closeItem->getContentSize().height/2));
     
     // draw and add background
-    auto background = Sprite::create("backgrounds/Background.png");
-    background->setAnchorPoint(Vec2(origin.x, origin.y));
+    auto background = Sprite::create("backgrounds/Sunny Background.png");
+    background->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
     background->setScale(1.4);
     background->setPosition(0,-300.0);
-    this->addChild(background, 0);
+    this->addChild(background, -8);
     
     // create menu with the "X" image, it's an autorelease object
     auto menu = Menu::create(closeItem, NULL);
@@ -57,64 +63,52 @@ bool HelloWorld::init() {
     // Creates the camera, or viewpoint for this scene.
     // 1.7/180.0 means that 1.7 meters in the game world (average human male height) is represented by 180 pixels on screen.
     cocos2d::Layer *layer = cocos2d::Layer::create();
-    vp = Viewpoint(visibleSize, 1.7/180.0, layer);
-    
-    // Set some simple platforms.
-    cocos2d::Sprite *plat = cocos2d::Sprite::create("platforms/Clear Day.png");
-    plat->setAnchorPoint(cocos2d::Vec2(0.0, 0.0));
-    plat->setPosition(vp.metersToPixels(0.0), vp.metersToPixels(1.5));
-    plat->setContentSize(cocos2d::Size(vp.metersToPixels(3.0), vp.metersToPixels(2.0)));
-    layer->addChild(plat, 3);
-    platforms.push_back(plat);
-    
-    plat = cocos2d::Sprite::create("platforms/Clear Day.png");
-    plat->setAnchorPoint(cocos2d::Vec2(0.0, 0.0));
-    plat->setPosition(vp.metersToPixels(5.0), vp.metersToPixels(3.5));
-    plat->setContentSize(cocos2d::Size(vp.metersToPixels(3.0), vp.metersToPixels(2.0)));
-    layer->addChild(plat, 3);
-    platforms.push_back(plat);
-    
+    vp = Viewpoint(visibleSize, 1.7/130.0, layer);
+
+    parseLevelFromJson("demoLevel.json", layer, platforms, moveables, vp, debugOn);
     int characterHeight = vp.metersToPixels(1.7);
+    Character *monkey = new Character("Monkey", JTTW::Rectangle(vp.metersToPixels(1.7), vp.metersToPixels(20.0), characterHeight, characterHeight),
+                                     cocos2d::Vec2(vp.metersToPixels(5), vp.metersToPixels(10)), 60, vp.metersToPixels(9.8));
+    Character *monk = new Character("Monk", JTTW::Rectangle(vp.metersToPixels(1.7) * 2, vp.metersToPixels(20.0), characterHeight, characterHeight),
+                                      cocos2d::Vec2(vp.metersToPixels(3), vp.metersToPixels(6)), 50, vp.metersToPixels(9.8));
+    Character *piggy = new Character("Piggy", JTTW::Rectangle(vp.metersToPixels(1.7) * 3, vp.metersToPixels(20.0), characterHeight, characterHeight),
+                                      cocos2d::Vec2(vp.metersToPixels(4), vp.metersToPixels(8.7)), 150, vp.metersToPixels(9.8));
+    Character *sandy = new Character("sandy", JTTW::Rectangle(vp.metersToPixels(1.7) * 4, vp.metersToPixels(20.0), characterHeight, characterHeight),
+                                     cocos2d::Vec2(vp.metersToPixels(4.5), vp.metersToPixels(8)), 100, vp.metersToPixels(9.8));
     
-    for (int i = 0; i < 4; i++) {
-        Character *body = new Character("Monkey", Vec2(characterHeight, characterHeight),
-                                        cocos2d::Vec2(vp.metersToPixels(5), vp.metersToPixels(10)), vp.metersToPixels(9.8));
-        body->ani->setPosition(vp.metersToPixels(1.7) * i, 0.0);
+    characters.push_back(monkey);
+    characters.push_back(monk);
+    characters.push_back(piggy);
+    characters.push_back(sandy);
+    
+    for (int i = 0; i < characters.size(); i++) {
+        Character *body = characters[i];
         layer->addChild(body->ani, i);
-        characters.push_back(body);
+        layer->addChild(body->collisionBoxNode, -1);
         AiAgent *agent = new AiAgent(body);
         agents.push_back(agent);
     }
     
-    player = agents.front();
-    agents.pop_front();
+    player = agents[0];
+    //agents.pop_front();
     
-    // Put a marker (the letter 'v') over the active character.
-    // TODO: when Viewpoint is finished, just center camera on active character.
-    //auto charLabel = Label::createWithTTF("v", "fonts/Marker Felt.ttf", 100);
-   // charLabel->setTextColor(cocos2d::Color4B::BLACK);
-    //charLabel->setPositionY(vp.metersToPixels(10.4));
-    //charLabel->setPositionX(vp.metersToPixels(1.0));
-    //(*player)->ani->addChild(charLabel, -5);
-    
-    this->addChild(layer);
+    this->addChild(layer, 1);
     
     auto eventListener = EventListenerKeyboard::create();
     
     eventListener->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event) mutable {
         switch(keyCode) {
-            case EventKeyboard::KeyCode::KEY_TAB:
-                std::cout << "Tab pressed" << std::endl;
-                {
-                    auto nextPlayer = agents.front();
-                    agents.pop_front();
-                    nextPlayer->cedeToPlayer(player);
-                    //(*player)->transferVelocity(*nextPlayer);
-                    
-                    agents.push_back(player);
-                    player = nextPlayer;
-                    vp.panToCharacter(player->_controlledCharacter);
-                }
+            case EventKeyboard::KeyCode::KEY_Z:
+                switchToCharacter(0);
+                break;
+            case EventKeyboard::KeyCode::KEY_X:
+                switchToCharacter(1);
+                break;
+            case EventKeyboard::KeyCode::KEY_C:
+                switchToCharacter(2);
+                break;
+            case EventKeyboard::KeyCode::KEY_V:
+                switchToCharacter(3);
                 break;
             case EventKeyboard::KeyCode::KEY_ESCAPE:
                 this->menuCloseCallback(nullptr); // TODO: should I be using this nullptr?
@@ -126,7 +120,9 @@ bool HelloWorld::init() {
             case EventKeyboard::KeyCode::KEY_O:
                 player->plan(characters, keyCode, true);
                 for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
-                    (*xAgent)->plan(player->_controlledCharacter, characters, keyCode, true);
+                    if ((*xAgent) != player) {
+                        (*xAgent)->plan(player->_controlledCharacter, characters, keyCode, true);
+                    }
                 }
                 break;
             default:
@@ -140,7 +136,9 @@ bool HelloWorld::init() {
             keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW) {
             player->plan(characters, keyCode, false);
             for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
-                (*xAgent)->plan(player->_controlledCharacter, characters, keyCode, false);
+                if ((*xAgent) != player) {
+                    (*xAgent)->plan(player->_controlledCharacter, characters, keyCode, false);
+                }
             }
         }
     };
@@ -151,6 +149,16 @@ bool HelloWorld::init() {
     //this->runAction(cocos2d::Follow::create(*player, ))
     this->scheduleUpdate();
     return true;
+}
+
+// TODO: maybe switch this to a map, so we don't need that '!= player' bit.
+void HelloWorld::switchToCharacter(int charIndex) {
+    auto nextPlayer = agents[charIndex];
+    nextPlayer->cedeToPlayer(player);
+        
+    //agents.push_back(player);
+    player = nextPlayer;
+    vp.panToCharacter(player->_controlledCharacter);
 }
 
 void HelloWorld::menuCloseCallback(Ref* pSender) {
@@ -164,11 +172,46 @@ void HelloWorld::menuCloseCallback(Ref* pSender) {
 
 void HelloWorld::update(float delta) {
     for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
-        (*xAgent)->executePlan(delta);
+        if ((*xAgent) != player) {
+            (*xAgent)->executePlan(delta);
+        }
     }
-    for (int i = 0; i < 4; i++) {
-        characters[i]->move(delta, platforms);
+    for (int i = 0; i < characters.size(); i++) {
+        characters[i]->move(delta, platforms, debugOn);
+
+        // HARDCODED STUFF FOR PEDESTAL DISSAPPEARING
+        /*
+        if (characters[i]->ani->getPosition().x > vp.metersToPixels(52.0) && !pedestalPopped) {
+            // Remove the pedestal from the platforms.
+            BadPlatform pedstal = platforms.back();
+            platforms.pop_back();
+            pedstal.s->runAction(cocos2d::FadeOut::create(2.0));
+            pedestalPopped = true;
+            characters[i]->ani->setAnimation(0, "fall forwards", false);
+            characters[i]->ani->setTimeScale(.3);
+        }
+        if (characters[i]->characterName == "Piggy" && characters[i]->isDirectlyAbove(platforms[2].dimensions, characters[i]->ani->getPosition(), characters[i]->dimensions) && (!cloudSunk || !cloudSinking)) {
+            cloudSinking = true;
+        }
+         */
     }
+    
+    for (int i = 0; i < moveables.size(); i++) {
+        moveables[i]->move(delta, false);
+    }
+    /*
+    if (cloudSinking == true) {
+        BadPlatform c = platforms[2];
+        c.dimensions.setRect(c.dimensions.origin.x, c.dimensions.origin.y - (20 * delta), c.dimensions.size.width, c.dimensions.size.height);
+        c.s->setPosition(cocos2d::Vec2(c.s->getPosition().x, c.s->getPosition().y - (20 * delta)));
+        if (c.dimensions.getMaxY() < vp.metersToPixels(12)) {
+            cloudSinking = false;
+            cloudSunk = true;
+        }
+        platforms[2] = c;
+    }
+    */
+    
     vp.followCharacter(player->_controlledCharacter, delta);
 }
 

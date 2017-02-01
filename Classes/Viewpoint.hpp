@@ -1,11 +1,3 @@
-//
-//  Viewpoint.hpp
-//  JTTW
-//
-//  Created by Bryce Willey on 1/16/17.
-//
-//
-
 #ifndef Viewpoint_hpp
 #define Viewpoint_hpp
 
@@ -13,6 +5,10 @@
 #include "Character.h"
 
 namespace JTTW {
+    
+// Forward declaration of Character.
+class Character;
+
 class Viewpoint {
 public:
     Viewpoint(cocos2d::Size screenDims, double metersPerPixel, cocos2d::Layer *level);
@@ -20,8 +16,8 @@ public:
     void panToCharacter(Character *player);
     void followCharacter(Character *player, float delta);
     
-    
     int metersToPixels(double meters) const;
+    cocos2d::Vec2 metersToPixels(cocos2d::Vec2 meters) const;
     double pixelsToMeters(int pixels) const;
     
 private:

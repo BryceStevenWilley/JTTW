@@ -2,15 +2,11 @@
 #define Character_h
 
 #include "cocos2d.h"
+#include "Platform.hpp"
+#include "Rectangle.hpp"
+#include "MoveableObject.hpp"
 #include <spine/spine-cocos2dx.h>
 
-/**
- * @brief Class for interactive characters.
- *
- * Position is contained in the sprite, and is accessed through sprite->getPosition()/sprite->setPosition(<new Vec2>).
- * Velocity is a percentage that goes from -1.0 to 1.0 contained in the velocity member, but should only be
- * changed through accelerateLeft and accelerateRight to avoid non-sensical movement.
- */
 namespace JTTW {
     
 /**
@@ -23,8 +19,18 @@ enum Action {
     MOVE_RIGHT,
     JUMP
 };
+
+// Forward declaration of Platform.
+class Platform;
     
-class Character {
+/**
+ * @brief Class for interactive characters.
+ *
+ * Position is contained in the sprite, and is accessed through sprite->getPosition()/sprite->setPosition(<new Vec2>).
+ * Velocity is a percentage that goes from -1.0 to 1.0 contained in the velocity member, but should only be
+ * changed through accelerateLeft and accelerateRight to avoid non-sensical movement.
+ */
+class Character : public MoveableObject {
 public:
     enum State {
         STANDING,
@@ -34,61 +40,49 @@ public:
     /**
      * Simple constructor.
      * Example use:
-     * // Make a 40px x 40px character, with maximum horizontal velocity of 200px/second
+     * // Makes a 40px x 40px character, with maximum horizontal velocity of 200px/second
      * // and vertical velocity of 100px/second, and gravity of 100px/second^2.
-     * Character c("image.png", cocos2d::Vec2(40, 40), cocos2d::Vec2(200, 100), 100);
+     * Character c("spineboy", JTTW::Rectangle(0, 20, 40, 40), cocos2d::Vec2(200, 100), 100);
      */
-    Character(const std::string artFileName, cocos2d::Vec2 dimensions, cocos2d::Vec2 maxVelocities, double gravity);
+    Character(const std::string artFileName, JTTW::Rectangle dimensions, cocos2d::Vec2 maxVelocities, double mass, double gravity);
     ~Character();
     
-    /**
-     * Controls for moving the character around.
-     * Call these instead of manually changing the velocities member to ensure
-     * comprehensible movement.
-     */
-    void accelerateLeft(float deltaVel);
-    void accelerateRight(float deltaVel);
-    void stop();
+    // Controls for moving the character around.
+    // Call these instead of manually changing the velocities member to ensure
+    // comprehensible movement.
+    virtual void accelerateLeft(float deltaVel);
+    virtual void accelerateRight(float deltaVel);
+    virtual void stop();
     void jump(float percent);
     void transferVelocity(Character *reciever);
     
     // Convience/ readable functions for checking velocities.
-    bool isMovingLeft() const;
-    bool isMovingRight() const;
     bool justJumped() const;
     
-    // Getters for velocity.
-    double getXVelocity() const;
-    double getYVelocity() const;
-    
+    // Getters for velocity, mass, and state.
+    double getMass() const;
     const State getCurrentState() const;
     
     /**
-     * Moves the character left and right.
-     *
-     *  direction is either 1 or -1, to make the character move left or right respectively.
+     * Moves the character over a time period, deltaTime, while avoiding the platforms.
      */
-    void move(float deltaTime, std::vector<cocos2d::Sprite *> platforms);
+    void move(float deltaTime, std::vector<GameObject *> platforms, bool debugOn);
     
-    // TODO: integrate Mei's art with this.
+    std::string characterName;
+
     spine::SkeletonAnimation *ani;
-    
-    // A box that encompasses the character.
-    cocos2d::Vec2 dimensions;
     
 private:
     void updateAnimation();
+    void updatePosition(double centerX, double centerY);
     
     State currentState = State::STANDING;
     
-    // Vector of x and y velocities, normalized so that 1 moves right/up at max speed, -1 moves left/down at max speed.
-    cocos2d::Vec2 velocities = cocos2d::Vec2(0.0, 0.0);
+    // The mass of the character.
+    double _mass;
     
-    // The max speed that the character should move laterally in pixels per second.
-    cocos2d::Vec2 _maxVelocities;
-
     double _gravity;
 };
-}; // JTTW
+} // JTTW
 
 #endif /* Character_h */
