@@ -66,7 +66,7 @@ public:
     /**
      * Moves the character over a time period, deltaTime, while avoiding the platforms.
      */
-    void move(float deltaTime, std::vector<Platform> platforms, bool debugOn);
+    void move(float deltaTime, std::vector<GameObject *> platforms, bool debugOn);
     
     std::string characterName;
 

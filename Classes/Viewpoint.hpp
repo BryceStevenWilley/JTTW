@@ -17,6 +17,7 @@ public:
     void followCharacter(Character *player, float delta);
     
     int metersToPixels(double meters) const;
+    cocos2d::Vec2 metersToPixels(cocos2d::Vec2 meters) const;
     double pixelsToMeters(int pixels) const;
     
 private:

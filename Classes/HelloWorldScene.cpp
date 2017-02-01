@@ -7,9 +7,10 @@ using namespace cocos2d;
 using namespace JTTW;
 
 std::vector<Character *> HelloWorld::characters;
-std::deque<AiAgent *> HelloWorld::agents;
+std::vector<AiAgent *> HelloWorld::agents;
 AiAgent * HelloWorld::player;
-std::vector<Platform> HelloWorld::platforms;
+std::vector<GameObject *> HelloWorld::platforms;
+std::vector<MoveablePlatform *> HelloWorld::moveables;
 
 bool HelloWorld::debugOn = true;
 
@@ -64,7 +65,7 @@ bool HelloWorld::init() {
     cocos2d::Layer *layer = cocos2d::Layer::create();
     vp = Viewpoint(visibleSize, 1.7/130.0, layer);
 
-    parseLevelFromJson("demoLevel.json", layer, platforms, vp, debugOn);    
+    parseLevelFromJson("demoLevel.json", layer, platforms, moveables, vp, debugOn);
     int characterHeight = vp.metersToPixels(1.7);
     Character *monkey = new Character("Monkey", JTTW::Rectangle(vp.metersToPixels(1.7), vp.metersToPixels(20.0), characterHeight, characterHeight),
                                      cocos2d::Vec2(vp.metersToPixels(5), vp.metersToPixels(10)), 60, vp.metersToPixels(9.8));
@@ -88,8 +89,8 @@ bool HelloWorld::init() {
         agents.push_back(agent);
     }
     
-    player = agents.front();
-    agents.pop_front();
+    player = agents[0];
+    //agents.pop_front();
     
     this->addChild(layer, 1);
     
@@ -97,17 +98,17 @@ bool HelloWorld::init() {
     
     eventListener->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event) mutable {
         switch(keyCode) {
-            case EventKeyboard::KeyCode::KEY_TAB:
-                std::cout << "Tab pressed" << std::endl;
-                {
-                    auto nextPlayer = agents.front();
-                    agents.pop_front();
-                    nextPlayer->cedeToPlayer(player);
-                    
-                    agents.push_back(player);
-                    player = nextPlayer;
-                    vp.panToCharacter(player->_controlledCharacter);
-                }
+            case EventKeyboard::KeyCode::KEY_Z:
+                switchToCharacter(0);
+                break;
+            case EventKeyboard::KeyCode::KEY_X:
+                switchToCharacter(1);
+                break;
+            case EventKeyboard::KeyCode::KEY_C:
+                switchToCharacter(2);
+                break;
+            case EventKeyboard::KeyCode::KEY_V:
+                switchToCharacter(3);
                 break;
             case EventKeyboard::KeyCode::KEY_ESCAPE:
                 this->menuCloseCallback(nullptr); // TODO: should I be using this nullptr?
@@ -119,7 +120,9 @@ bool HelloWorld::init() {
             case EventKeyboard::KeyCode::KEY_O:
                 player->plan(characters, keyCode, true);
                 for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
-                    (*xAgent)->plan(player->_controlledCharacter, characters, keyCode, true);
+                    if ((*xAgent) != player) {
+                        (*xAgent)->plan(player->_controlledCharacter, characters, keyCode, true);
+                    }
                 }
                 break;
             default:
@@ -133,7 +136,9 @@ bool HelloWorld::init() {
             keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW) {
             player->plan(characters, keyCode, false);
             for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
-                (*xAgent)->plan(player->_controlledCharacter, characters, keyCode, false);
+                if ((*xAgent) != player) {
+                    (*xAgent)->plan(player->_controlledCharacter, characters, keyCode, false);
+                }
             }
         }
     };
@@ -144,6 +149,16 @@ bool HelloWorld::init() {
     //this->runAction(cocos2d::Follow::create(*player, ))
     this->scheduleUpdate();
     return true;
+}
+
+// TODO: maybe switch this to a map, so we don't need that '!= player' bit.
+void HelloWorld::switchToCharacter(int charIndex) {
+    auto nextPlayer = agents[charIndex];
+    nextPlayer->cedeToPlayer(player);
+        
+    //agents.push_back(player);
+    player = nextPlayer;
+    vp.panToCharacter(player->_controlledCharacter);
 }
 
 void HelloWorld::menuCloseCallback(Ref* pSender) {
@@ -157,7 +172,9 @@ void HelloWorld::menuCloseCallback(Ref* pSender) {
 
 void HelloWorld::update(float delta) {
     for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
-        (*xAgent)->executePlan(delta);
+        if ((*xAgent) != player) {
+            (*xAgent)->executePlan(delta);
+        }
     }
     for (int i = 0; i < characters.size(); i++) {
         characters[i]->move(delta, platforms, debugOn);
@@ -177,6 +194,10 @@ void HelloWorld::update(float delta) {
             cloudSinking = true;
         }
          */
+    }
+    
+    for (int i = 0; i < moveables.size(); i++) {
+        moveables[i]->move(delta, false);
     }
     /*
     if (cloudSinking == true) {

@@ -41,7 +41,7 @@ std::queue<ActionAndTrigger> AiAgent::syncronizedBehavior(Character *player, std
 std::queue<ActionAndTrigger> AiAgent::stationaryBehavior(Character *player, std::vector<Character *> otherCharacters) {
     std::queue<ActionAndTrigger> plannedActions;
     // Literally, stand completely still.
-    //plannedActions.push(ActionAndTrigger(Action::STOP, 0.0));
+    plannedActions.push(ActionAndTrigger(Action::STOP, 0.0));
     return plannedActions;
 }
 

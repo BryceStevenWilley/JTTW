@@ -17,6 +17,10 @@ int Viewpoint::metersToPixels(double meters) const {
     return meters / _metersPerPixel;
 }
 
+cocos2d::Vec2 Viewpoint::metersToPixels(cocos2d::Vec2 vecMeters) const {
+    return cocos2d::Vec2(metersToPixels(vecMeters.x), metersToPixels(vecMeters.y));
+}
+
 double Viewpoint::pixelsToMeters(int pixels) const {
     return pixels * _metersPerPixel;
 }

@@ -60,7 +60,7 @@ const Character::State Character::getCurrentState() const {
     return currentState;
 }
 
-void Character::move(float deltaTime, std::vector<Platform> platforms, bool debugOn) {
+void Character::move(float deltaTime, std::vector<GameObject *> platforms, bool debugOn) {
     auto position = dimensions.getCenter();
     position.x += velocities.x * _maxVelocities.x * deltaTime;
     position.y += velocities.y * _maxVelocities.y * deltaTime;
@@ -68,10 +68,10 @@ void Character::move(float deltaTime, std::vector<Platform> platforms, bool debu
         velocities.y -= (_gravity * deltaTime) / _maxVelocities.y;
     }
     bool collision = false;
-    Platform collidedPlat;
+    GameObject *collidedPlat;
     JTTW::Rectangle me(position.x, position.y, dimensions.getWidth(), dimensions.getHeight());
     for (auto plat = platforms.begin(); plat != platforms.end(); plat++) {
-        if (me.isInCollisionWith(plat->getCollisionBounds())) {
+        if (me.isInCollisionWith((*plat)->dimensions)) {
             collision = true;
             collidedPlat = *plat;
             break;
@@ -80,16 +80,17 @@ void Character::move(float deltaTime, std::vector<Platform> platforms, bool debu
 
     if (collision == true) {
         // push to out of box
-        position = me.closestNonCollidingPoint(collidedPlat.getCollisionBounds());
-        JTTW::Rectangle r = collidedPlat.getCollisionBounds();
-        if (me.getMaxX() > r.getMinX() && me.getMinX() < r.getMaxX()) {
+        JTTW::Rectangle r = collidedPlat->dimensions;
+        position = me.closestNonCollidingPoint(r);
+        // If the new position moved up or down, then it was a top or bottom collision, so stop vertical velocity.
+        if (position.y != me.getCenterY()) {
             velocities.y = 0.0;
             if (me.getCenterY() > r.getMaxY() && currentState != State::STANDING) {
                 currentState = State::STANDING;
                 updateAnimation();
             }
         }
-        if (me.getCenterY() + me.getHeight() / 2.0 > r.getMinY() && me.getCenterY() - me.getHeight() / 2.0 < r.getMaxY()) {
+        if (me.getMaxY() > r.getMinY() && me.getMinY() < r.getMaxY()) {
             velocities.x = 0.0;
         }
         
@@ -97,7 +98,7 @@ void Character::move(float deltaTime, std::vector<Platform> platforms, bool debu
         // check vertical column
         bool isHovering = false;
         for (auto plat = platforms.begin(); plat != platforms.end(); plat++) {
-            if (me.isDirectlyAbove((*plat).getCollisionBounds())) {
+            if (me.isDirectlyAbove((*plat)->dimensions)) {
                 isHovering = true;
                 break;
             }
