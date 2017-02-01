@@ -14,8 +14,17 @@ Character::Character(const std::string artFilePrefix, JTTW::Rectangle dimensions
     updatePosition(dimensions.getCenterX(), dimensions.getCenterY());
     ani->setScaleX(dimensions.getWidth() / 720.0f); // 720.0px is approximately the size of the art at 1.0f.
     ani->setScaleY(dimensions.getHeight() / 720.0f);
-            
+          
     ani->setAnimation(0, "idle", true);
+    
+    crown = cocos2d::Sprite::create("Selection Crown.png");
+    //crown->setScaleX(dimensions.getWidth() / crown->getScaleX());
+    //crown->setScaleY(dimensions.getHeight() / crown->getScaleY());
+    crown->setScale(.3);
+    crown->setPosition(0.0, 950);
+    crown->setVisible(false);
+    ani->addChild(crown);
+    //ani->setAttachment("head", "");
 }
 
 Character::~Character() {

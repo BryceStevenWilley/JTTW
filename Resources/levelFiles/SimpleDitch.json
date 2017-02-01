@@ -70,38 +70,8 @@
            "moveable": false
        },
        {
-           "imageName": "Rock2.png",
-           "centerX": 30.0,
-           "centerY": 5.0,
-           "imageSizeWidth": 4.0,
-           "imageSizeHeight": 15.0,
-           "collisionWidth": 3.0,
-           "collisionHeight": 11.0,
-           "moveable": false
-       },
-       {
-           "imageName": "Rock3.png",
-           "centerX": 39.0,
-           "centerY": 5.0,
-           "imageSizeWidth": 4.0,
-           "imageSizeHeight": 13.0,
-           "collisionWidth": 3.0,
-           "collisionHeight": 9.0,
-           "moveable": false
-       },
-       {
-           "imageName": "Rock4.png",
-           "centerX": 46.0,
-           "centerY": 5.0,
-           "imageSizeWidth": 4.0,
-           "imageSizeHeight": 11.0,
-           "collisionWidth": 3.0,
-           "collisionHeight": 8.0,
-           "moveable": false
-       },
-       {
            "imageName": "Pedestal.png",
-           "centerX": 52.0,
+           "centerX": 30.0,
            "centerY": 5.0,
            "imageSizeWidth": 4.0,
            "imageSizeHeight": 1.3,

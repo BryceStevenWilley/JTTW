@@ -111,6 +111,8 @@ bool HelloWorld::init() {
     player = agents[0];
     //agents.pop_front();
     
+     player->_controlledCharacter->crown->setVisible(true);
+    
     this->addChild(layer, 1);
     
     auto eventListener = EventListenerKeyboard::create();
@@ -196,9 +198,13 @@ bool HelloWorld::init() {
 void HelloWorld::switchToCharacter(int charIndex) {
     auto nextPlayer = agents[charIndex];
     nextPlayer->cedeToPlayer(player);
-        
+    
+    player->_controlledCharacter->crown->setVisible(false);
+    //player->_controlledCharacter->ani->removeAllChildrenWithCleanup(true);
     //agents.push_back(player);
     player = nextPlayer;
+    player->_controlledCharacter->crown->setVisible(true);
+    //player->_controlledCharacter->ani->addChild(player->_controlledCharacter->crown);
     vp.panToCharacter(player->_controlledCharacter);
 }
 
@@ -254,5 +260,6 @@ void HelloWorld::update(float delta) {
     */
     
     vp.followCharacter(player->_controlledCharacter, delta);
+
 }
 

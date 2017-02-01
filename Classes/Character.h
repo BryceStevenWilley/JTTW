@@ -72,6 +72,7 @@ public:
 
     spine::SkeletonAnimation *ani;
     
+    cocos2d::Sprite *crown;
 private:
     void updateAnimation();
     void updatePosition(double centerX, double centerY);
