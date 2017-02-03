@@ -1,6 +1,7 @@
 /* All numbers in in-game meters unless stated otherwise. */
 
-{ "background" : {        
+{ "levelName" : String,
+  "background" : {        
     "imageName" : String,
     "centerX" : double, 
     "centerY" : double, 
