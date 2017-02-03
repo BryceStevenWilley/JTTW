@@ -1,6 +1,6 @@
 /* All numbers in in-game meters unless stated otherwise. */
 
-{ "background" : {
+{ "background" : {        
     "imageName" : String,
     "centerX" : double, 
     "centerY" : double, 
@@ -13,15 +13,15 @@
     "centerY" : double,
     "width" : double,
     "height" : double,
-    "collisionPoints" : [
-        double,
-        double,
-        ...
-        double
+    "collisionPoints" : [ {
+        "x" : double,
+        "y" : double
+        },
+        ...       
         ]
-      },
-    ...
+    }
     ],
+    // NOTE: "characters" is not supported yet, do not attempt to read this in
   "characters" : [ {
     "name" : String,
     "present" : bool,
