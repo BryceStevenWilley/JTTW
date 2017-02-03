@@ -14,11 +14,7 @@ Character::Character(const std::string artFilePrefix, JTTW::Rectangle dimensions
     updatePosition(dimensions.getCenterX(), dimensions.getCenterY());
     ani->setScaleX(dimensions.getWidth() / 720.0f); // 720.0px is approximately the size of the art at 1.0f.
     ani->setScaleY(dimensions.getHeight() / 720.0f);
-            
-    auto physics = cocos2d::PhysicsBody::createBox(cocos2d::Size(dimensions.getWidth(), dimensions.getHeight()));
-    physics->setDynamic(true); // TODO: change?
-    physics->setTag(1);
-    physics->setContactTestBitmask(0xFFFFFFFF);
+
     ani->addComponent(physics);
     ani->setAnimation(0, "idle", true);
 }
@@ -40,9 +36,9 @@ void Character::stop() {
     updateAnimation();
 }
 
-
 void Character::jump(float percent) {
     velocities.y = percent;
+    physics->setVelocity(cocos2d::Vec2(velocities.x * _maxVelocities.x, velocities.y * _maxVelocities.y));
     currentState = State::MID_AIR;
     updateAnimation();
 }
@@ -113,7 +109,7 @@ void Character::move(float deltaTime, std::vector<GameObject *> platforms, bool 
             currentState = State::MID_AIR;
         }
     }
-    updatePosition(position.x, position.y);
+    //updatePosition(position.x, position.y);
     if (debugOn) {
         drawCollisionBox();
     }

@@ -40,7 +40,7 @@ void JTTW::parseLevelFromJson(std::string fileName, cocos2d::Layer *layer, std::
             cocos2d::Vec2 centerB(centerBX, centerBY);
             double maximumVelocity = vp.metersToPixels((double)pAtt["maximumVelocity"]);
             MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), maximumVelocity);
-            auto physics = cocos2d::PhysicsBody::createBox(cocos2d::Size(collisionWidth, collisionHeight));
+            auto physics = cocos2d::PhysicsBody::createBox(cocos2d::Size(collisionWidth, collisionHeight), cocos2d::PhysicsMaterial(1.0, 0.0, 0.0));
             physics->setDynamic(false); // moving platforms are kinematic bodies.
             physics->setTag(1);
             physics->setContactTestBitmask(0xFFFFFFFF);
@@ -52,7 +52,7 @@ void JTTW::parseLevelFromJson(std::string fileName, cocos2d::Layer *layer, std::
         } else {
             Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight));
         
-            auto physics = cocos2d::PhysicsBody::createBox(cocos2d::Size(collisionWidth, collisionHeight));
+            auto physics = cocos2d::PhysicsBody::createBox(cocos2d::Size(collisionWidth, collisionHeight), cocos2d::PhysicsMaterial(1.0, 0.0, 0.0));
             physics->setDynamic(false); // moving platforms are kinematic bodies.
             physics->setTag(1);
              physics->setContactTestBitmask(0xFFFFFFFF);

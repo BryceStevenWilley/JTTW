@@ -32,6 +32,8 @@ protected:
     // collisions with platforms, wind, etc.
     double forceXLeft = 0.0;
     double forceXRight = 0.0;
+    
+    cocos2d::PhysicsBody *physics;
 };
 }
 
