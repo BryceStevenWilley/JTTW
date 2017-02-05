@@ -9,7 +9,7 @@
 #ifndef AiActions_hpp
 #define AiActions_hpp
 
-#include "Character.h"
+#include "Character.hpp"
 
 namespace JTTW {
 /**

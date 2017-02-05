@@ -34,20 +34,20 @@ void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeybo
     switch(code) {
         case KeyCode::KEY_LEFT_ARROW:
             if (pressed) {
-                _controlledCharacter->accelerateLeft(1.0);
+                _controlledCharacter->impulseLeft(200.0);
             } else { // released
-                _controlledCharacter->accelerateLeft(-1.0);
+                _controlledCharacter->impulseLeft(-200.0);
             }
             break;
         case KeyCode::KEY_RIGHT_ARROW:
             if (pressed) {
-                _controlledCharacter->accelerateRight(1.0);
+                _controlledCharacter->impulseRight(200.0);
             } else {
-                _controlledCharacter->accelerateRight(-1.0);
+                _controlledCharacter->impulseRight(-200.0);
             }
             break;
         case KeyCode::KEY_SPACE:
-            _controlledCharacter->jump(1.0);
+            _controlledCharacter->jump();
             break;
         default:
             // do nothing
@@ -94,8 +94,8 @@ void AiAgent::executePlan(float delta) {
         bool doAction = false;
         if (a.trigger.usePosition) {
             // TODO: add a tolerance to this positioning system.
-            if (a.trigger.position.x == _controlledCharacter->ani->getPosition().x &&
-                a.trigger.position.y == _controlledCharacter->ani->getPosition().y) {
+            if (a.trigger.position.x == _controlledCharacter->getPosition().x &&
+                a.trigger.position.y == _controlledCharacter->getPosition().y) {
                 doAction = true;
             }
         } else {
@@ -113,13 +113,13 @@ void AiAgent::executePlan(float delta) {
                     _controlledCharacter->stop();
                     break;
                 case Action::MOVE_LEFT:
-                    _controlledCharacter->accelerateLeft(1.0);
+                    _controlledCharacter->impulseLeft(200.0);
                     break;
                 case Action::MOVE_RIGHT:
-                    _controlledCharacter->accelerateRight(1.0);
+                    _controlledCharacter->impulseRight(200.0);
                     break;
                 case Action::JUMP:
-                    _controlledCharacter->jump(1.0);
+                    _controlledCharacter->jump();
                     break;
                 default:
                     // do nothing

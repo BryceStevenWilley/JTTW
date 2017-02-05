@@ -2,7 +2,7 @@
 #define AiAgent_hpp
 
 #include <stdio.h>
-#include "Character.h"
+#include "Character.hpp"
 #include "AiActions.hpp"
 #include <map>
 

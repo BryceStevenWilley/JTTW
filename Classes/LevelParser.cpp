@@ -13,7 +13,7 @@
 
 using namespace JTTW; 
 
-void JTTW::parseLevelFromJson(std::string fileName, cocos2d::Layer *layer, std::vector<GameObject *> &platforms, std::vector<MoveablePlatform *> &movables, Viewpoint vp, bool debugOn) {
+void JTTW::parseLevelFromJson(std::string fileName, cocos2d::Layer *layer, std::vector<Platform *> &platforms, std::vector<MoveablePlatform *> &movables, Viewpoint vp, bool debugOn) {
     
     const int platformZ = 4;
     
@@ -40,25 +40,21 @@ void JTTW::parseLevelFromJson(std::string fileName, cocos2d::Layer *layer, std::
             cocos2d::Vec2 centerB(centerBX, centerBY);
             double maximumVelocity = vp.metersToPixels((double)pAtt["maximumVelocity"]);
             MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), maximumVelocity);
+            auto physics = cocos2d::PhysicsBody::createBox(cocos2d::Size(collisionWidth, collisionHeight), cocos2d::PhysicsMaterial(1.0, 0.0, 0.0));
+            physics->setDynamic(false); // moving platforms are kinematic bodies.
+            physics->setGravityEnable(false);
+            physics->setTag(1);
+            physics->setContactTestBitmask(0xFFFFFFFF);
+            //p->image->addComponent(physics);
+            
             layer->addChild(p->image, platformZ);
             platforms.push_back(p);
             movables.push_back(p);
         } else {
-        
             Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight));
         
             layer->addChild(p->getImage(), platformZ);
             platforms.push_back(p);
-
-            if (debugOn) {
-                auto rectNode = cocos2d::DrawNode::create();
-                cocos2d::Color4F black(0.0, 1.0, 1.0, 1.0);
-                std::array<cocos2d::Vec2, 4> rect = p->getCollisionBounds().getPoints();
-                rectNode->drawPolygon(rect.data(), 4, black, 0, black);
-                layer->addChild(rectNode, 3);
-                rectNode->clear();
-                rectNode->drawPolygon(rect.data(), 4, black, 0, black);
-            }
         }
     }
 }

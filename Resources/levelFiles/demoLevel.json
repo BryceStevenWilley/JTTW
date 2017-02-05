@@ -3,7 +3,7 @@
         {
             "imageName" : "Canyon L.png",
             "centerX" : 5.0,
-            "centerY" : 5.0,
+            "centerY" : 1.0,
             "imageSizeWidth": 10.0,
             "imageSizeHeight": 10.0,
             "collisionWidth": 8.5,
@@ -23,15 +23,15 @@
         {
            "imageName": "Clear Day.png",
            "centerX": 11.0,
-           "centerY": 10.0,
+           "centerY": 7.0,
            "imageSizeWidth": 3.0,
            "imageSizeHeight": 2.0,
            "collisionWidth": 1.5,
            "collisionHeight": 1.0,
            "moveable": true,
            "center2X": 11.0,
-           "center2Y": 15.0,
-           "maximumVelocity": 2.0
+           "center2Y": 10.0,
+           "maximumVelocity": 1.0
        },
        {
            "imageName": "Rock1.png",
