@@ -2,7 +2,7 @@
 #define Viewpoint_hpp
 
 #include <stdio.h>
-#include "Character.h"
+#include "Character.hpp"
 
 namespace JTTW {
     
@@ -15,6 +15,7 @@ public:
     
     void panToCharacter(Character *player);
     void followCharacter(Character *player, float delta);
+    void followCharacter(cocos2d::Node *body, float delta);
     
     int metersToPixels(double meters) const;
     cocos2d::Vec2 metersToPixels(cocos2d::Vec2 meters) const;
