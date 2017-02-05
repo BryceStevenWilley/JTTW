@@ -19,6 +19,8 @@ public:
     virtual bool init() override;
     
     CREATE_FUNC(LevelSelect);
+    
+    void menuCallback(cocos2d::Ref *fromItem);
 };
 
 }

@@ -1,5 +1,6 @@
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
+#include "MainMenuScene.hpp"
 #include <iostream>
 #include "LevelParser.hpp"
 #include "Character.hpp"
@@ -222,12 +223,14 @@ void HelloWorld::switchToCharacter(int charIndex) {
 }
 
 void HelloWorld::menuCloseCallback(Ref* pSender) {
+    auto startScene = MainMenu::createScene();
+    cocos2d::Director::getInstance()->replaceScene(startScene);
     // Close the game and quit the application
-    Director::getInstance()->end();
+    //Director::getInstance()->end();
 
-    #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-        exit(0);
-    #endif
+    //#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    //    exit(0);
+    //#endif
 }
 
 void HelloWorld::update(float delta) {

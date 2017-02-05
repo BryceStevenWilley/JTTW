@@ -1,5 +1,6 @@
 #include "MainMenuScene.hpp"
 #include "HelloWorldScene.h"
+#include "LevelSelectScene.hpp"
 #include <iostream>
 
 using namespace JTTW;
@@ -29,7 +30,6 @@ bool MainMenu::init() {
     auto titleImage = cocos2d::Sprite::create("UI/MenuTitle.png");
 
     titleImage->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-
     
     float middleX = origin.x + visibleSize.width / 2.0;
     titleImage->setPosition(middleX, origin.y + visibleSize.height * (3.0 / 4.0));
@@ -89,7 +89,7 @@ bool MainMenu::init() {
 }
 
 void MainMenu::openStartScene() {
-    auto startScene = HelloWorld::createScene();
+    auto startScene = LevelSelect::createScene();
     cocos2d::Director::getInstance()->replaceScene(startScene);
 }
 

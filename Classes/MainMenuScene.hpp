@@ -25,7 +25,6 @@ public:
     void openSettings();
     
     void exitGame();
-    
 };
 } // JTTW
 
