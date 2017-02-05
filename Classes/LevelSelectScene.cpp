@@ -13,6 +13,7 @@
 using namespace JTTW;
 
 const int DEMO_LEVEL_TAG = 10;
+const int DITCH_LEVEL_TAG = 11;
 
 cocos2d::Scene* LevelSelect::createScene() {
     // 'scene' and 'layer' are auto-release.
@@ -33,12 +34,16 @@ bool LevelSelect::init() {
     this->addChild(chooseLabel);
     
     // Level labels (hardcoded).
-    auto demoLevel = cocos2d::Label::createWithTTF("demoLevel.json", "fonts/arial.ttf", 18);
+    auto demoLevel = cocos2d::Label::createWithTTF("demo level", "fonts/arial.ttf", 18);
     cocos2d::MenuItem *demoItem = cocos2d::MenuItemLabel::create(demoLevel, CC_CALLBACK_1(LevelSelect::menuCallback, this));
     demoItem->setTag(DEMO_LEVEL_TAG);
+    auto ditchLevel = cocos2d::Label::createWithTTF("ditch level", "fonts/arial.ttf", 18);
+    cocos2d::MenuItem *ditchItem = cocos2d::MenuItemLabel::create(ditchLevel, CC_CALLBACK_1(LevelSelect::menuCallback, this));
+    ditchItem->setTag(DITCH_LEVEL_TAG);
     
     // Display them.
-    cocos2d::Menu *m = cocos2d::Menu::create(demoItem, NULL);
+    cocos2d::Menu *m = cocos2d::Menu::create(demoItem, ditchItem, NULL);
+    m->alignItemsVertically();
     
     this->addChild(m);
 
@@ -47,10 +52,15 @@ bool LevelSelect::init() {
 
 void LevelSelect::menuCallback(cocos2d::Ref* fromItem) {
     auto menuSelection = (cocos2d::MenuItem *) fromItem;
+    cocos2d::Scene *startScene;
     switch (menuSelection->getTag()) {
-        case DEMO_LEVEL_TAG: {
-                auto startScene = HelloWorld::createScene();
-                cocos2d::Director::getInstance()->replaceScene(startScene);
-        }
+        case DEMO_LEVEL_TAG:
+            startScene = HelloWorld::createScene("levelFiles/demoLevel.json");
+            break;
+        
+        case DITCH_LEVEL_TAG:
+            startScene = HelloWorld::createScene("levelFiles/SimpleDitch.json");
+            break;
     }
+    cocos2d::Director::getInstance()->replaceScene(startScene);
 }

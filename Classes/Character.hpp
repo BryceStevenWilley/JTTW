@@ -78,6 +78,8 @@ public:
     const std::string characterName;
     
     float getMass() const;
+    
+    cocos2d::Sprite *crown;
 
 private:
     void updateAnimation();

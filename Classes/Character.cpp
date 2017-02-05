@@ -27,7 +27,15 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
 
     this->setPhysicsBody(body);
     this->setAnimation(0, "idle", true);
-    
+
+    crown = cocos2d::Sprite::create("Selection Crown.png");
+    //crown->setScaleX(dimensions.getWidth() / crown->getScaleX());
+    //crown->setScaleY(dimensions.getHeight() / crown->getScaleY());
+    crown->setScale(.3);
+    crown->setPosition(0.0, 950);
+    crown->setVisible(false);
+    this->addChild(crown);
+
     this->setPosition(startPosition);
     
     this->setTag(CHARACTER_TAG);
