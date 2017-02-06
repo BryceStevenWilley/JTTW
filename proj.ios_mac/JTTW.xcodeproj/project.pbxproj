@@ -568,7 +568,6 @@
 				9FB69DE11E46D93D006325A3 /* MainMenuScene.hpp */,
 				9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */,
 				9FB69E061E46EE88006325A3 /* LevelSelectScene.hpp */,
-				9F300C831E4805340051284B /* Collisions.hpp */,
 			);
 			name = Classes;
 			path = ../Classes;
@@ -635,6 +634,7 @@
 		9F8E656C1E3D9F8A0058958F /* Objects */ = {
 			isa = PBXGroup;
 			children = (
+				9F300C831E4805340051284B /* Collisions.hpp */,
 				9FC4C2ED1E39293F00ABD648 /* Platform.cpp */,
 				9FC4C2EE1E39293F00ABD648 /* Platform.hpp */,
 				9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */,

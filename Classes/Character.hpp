@@ -64,7 +64,6 @@ public:
     // Allows the character to jump.
     void jump();
     
-    
     bool isMovingLeft() const;
     bool isMovingRight() const;
     
@@ -85,6 +84,8 @@ private:
     void updateAnimation();
     
     State _currentState = State::STANDING;
+    
+    
 
 };
 }

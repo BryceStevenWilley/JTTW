@@ -1,4 +1,5 @@
 #include "MoveablePlatform.hpp"
+#include "Collisions.hpp"
 #include <iostream>
 
 using namespace JTTW;
@@ -9,8 +10,10 @@ MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerA,
     body = cocos2d::PhysicsBody::createBox(image->getContentSize(), cocos2d::PhysicsMaterial(1.0, 0.0, 0.0));
     body->setDynamic(false); // moving platforms are kinematic bodies.
     body->setGravityEnable(false);
-    body->setTag(1);
-    body->setContactTestBitmask(0xFFFFFFFF);
+    body->setTag((int)CollisionCategory::Platform);
+    body->setContactTestBitmask((int)CollisionCategory::Character);
+    body->setCollisionBitmask((int)CollisionCategory::Character);
+
     image->addComponent(body);
 
     cocos2d::Size actual = image->getContentSize(); // actual image size.
@@ -31,6 +34,14 @@ MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerAm
     cocos2d::Size actual = image->getContentSize(); // actual image size.
     image->setScaleX(vp.metersToPixels(imageSizeM.width) / actual.width);
     image->setScaleY(vp.metersToPixels(imageSizeM.height) / actual.height);
+    body = cocos2d::PhysicsBody::createBox(image->getContentSize(), cocos2d::PhysicsMaterial(1.0, 0.0, 0.0));
+    body->setDynamic(false); // moving platforms are kinematic bodies.
+    body->setGravityEnable(false);
+    
+    body->setTag((int)CollisionCategory::Platform);
+    body->setContactTestBitmask((int)CollisionCategory::Character);
+    body->setCollisionBitmask((int)CollisionCategory::Character);
+    
     
     // Set initial speed.
     _velocities = vp.metersToPixels(maxVelocity) * (_centerB - _centerA)/(_centerB - _centerA).getLength();

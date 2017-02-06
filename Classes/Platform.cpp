@@ -20,6 +20,7 @@ Platform::Platform(std::string fileName, cocos2d::Vec2 centerMeters, cocos2d::Si
     body->setGravityEnable(false);
     body->setTag((int)CollisionCategory::Platform);
     body->setContactTestBitmask((int)CollisionCategory::Character);
+    body->setCollisionBitmask((int)CollisionCategory::Character);
     
     image->addComponent(body);
     
@@ -36,8 +37,9 @@ image(cocos2d::Sprite::create(fileName)) {
     auto body = cocos2d::PhysicsBody::createBox(cocos2d::Size(box.x, box.y), cocos2d::PhysicsMaterial(1.0, 0.0, 0.0));
     body->setDynamic(false);
     body->setGravityEnable(false);
-    body->setTag(1);
-    body->setContactTestBitmask(0xFFFFFFFF);
+    body->setTag((int)CollisionCategory::Platform);
+    body->setContactTestBitmask((int)CollisionCategory::Character);
+    body->setCollisionBitmask((int)CollisionCategory::Character);
     
     image->addComponent(body);
     

@@ -23,6 +23,7 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
 
     body->setCategoryBitmask((int)CollisionCategory::Character);
     body->setCollisionBitmask((int)CollisionCategory::Platform);
+    body->setContactTestBitmask((int)CollisionCategory::Platform);
     body->setRotationEnable(false);
 
     body->setPositionOffset(cocos2d::Vec2(0.0, dimensions.height / 2.0));
