@@ -13,7 +13,7 @@
 
 using namespace JTTW; 
 
-void JTTW::parseLevelFromJson(std::string fileName, cocos2d::Layer *layer, std::vector<Platform *> &platforms, std::vector<MoveablePlatform *> &movables, Viewpoint vp, bool debugOn) {
+nlohmann::json JTTW::parseLevelFromJson(std::string fileName, cocos2d::Layer *level, cocos2d::Layer *platLayer, std::vector<Platform *> &platforms, std::vector<MoveablePlatform *> &movables, Viewpoint vp, bool debugOn) {
     
     const int platformZ = 4;
     
@@ -22,6 +22,17 @@ void JTTW::parseLevelFromJson(std::string fileName, cocos2d::Layer *layer, std::
     
     std::cout.flush();
     inFile >> lvl;
+    
+    // draw and add background
+    nlohmann::json backgroundAtts = lvl["background"];
+    std::string bgPath = backgroundAtts["imageName"];
+    bgPath = "backgrounds/" + bgPath;
+    auto background = cocos2d::Sprite::create(bgPath);
+    background->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
+    background->setScale(1.4);
+    background->setPosition(0,-300.0);
+    level->addChild(background, -8);
+    
     nlohmann::json platformAtts = lvl["platforms"];
     for (auto& pAtt: platformAtts) {
         std::string fullImagePath = pAtt["imageName"];
@@ -40,21 +51,16 @@ void JTTW::parseLevelFromJson(std::string fileName, cocos2d::Layer *layer, std::
             cocos2d::Vec2 centerB(centerBX, centerBY);
             double maximumVelocity = vp.metersToPixels((double)pAtt["maximumVelocity"]);
             MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), maximumVelocity);
-            auto physics = cocos2d::PhysicsBody::createBox(cocos2d::Size(collisionWidth, collisionHeight), cocos2d::PhysicsMaterial(1.0, 0.0, 0.0));
-            physics->setDynamic(false); // moving platforms are kinematic bodies.
-            physics->setGravityEnable(false);
-            physics->setTag(1);
-            physics->setContactTestBitmask(0xFFFFFFFF);
-            //p->image->addComponent(physics);
-            
-            layer->addChild(p->image, platformZ);
+
+            platLayer->addChild(p->image, platformZ);
             platforms.push_back(p);
             movables.push_back(p);
         } else {
             Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight));
         
-            layer->addChild(p->getImage(), platformZ);
+            platLayer->addChild(p->getImage(), platformZ);
             platforms.push_back(p);
         }
     }
+    return lvl["charactersStart"];
 }

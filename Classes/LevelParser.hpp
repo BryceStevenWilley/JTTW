@@ -9,7 +9,7 @@
 #include "MoveablePlatform.hpp"
 
 namespace JTTW {
-    void parseLevelFromJson(std::string fileName, cocos2d::Layer *layer, std::vector<Platform *> &platforms, std::vector<MoveablePlatform *> &movables, Viewpoint vp, bool debugOn);
+    nlohmann::json parseLevelFromJson(std::string fileName, cocos2d::Layer *level, cocos2d::Layer *platLayer, std::vector<Platform *> &platforms, std::vector<MoveablePlatform *> &movables, Viewpoint vp, bool debugOn);
 }
 
 #endif /* LevelParser_hpp */

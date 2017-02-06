@@ -27,7 +27,9 @@ void AiAgent::retakeFromPlayer(AiAgent *nextPlayer) {
 }
 
 void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode code, bool pressed) {
-    changeBehavior(code);
+    if (pressed) {
+        changeBehavior(code);
+    }
     // All code to control goes here.
     using KeyCode = cocos2d::EventKeyboard::KeyCode;
     
@@ -58,7 +60,9 @@ void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeybo
 }
 
 void AiAgent::plan(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode code, bool pressed) {
-    changeBehavior(code);
+    if (pressed) {
+        changeBehavior(code);
+    }
     
     if (player == _controlledCharacter) {
         // ERROR!!!!
@@ -80,11 +84,11 @@ void AiAgent::changeBehavior(cocos2d::EventKeyboard::KeyCode code) {
     if (code == cocos2d::EventKeyboard::KeyCode::KEY_A) { // 'A' is becoming a toggle.
         if (_currentBehavior == &AiAgent::stationaryBehavior) {
             _currentBehavior = &AiAgent::syncronizedBehavior;
+            std::cout << "Behavior is now syncronized" << std::endl;
         } else if (_currentBehavior == &AiAgent::syncronizedBehavior) {
             _currentBehavior = &AiAgent::stationaryBehavior;
+            std::cout << "Behavior is now stationary" << std::endl;
         }
-        // switch behaviors to stationary.
-        //_currentBehavior = &AiAgent::stationaryBehavior;
     }
 }
 

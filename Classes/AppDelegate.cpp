@@ -1,5 +1,5 @@
 #include "AppDelegate.h"
-#include "HelloWorldScene.h"
+#include "MainMenuScene.hpp"
 
 using namespace cocos2d;
 
@@ -73,7 +73,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    auto scene = JTTW::HelloWorld::createScene();
+    auto scene = JTTW::MainMenu::createScene();
 
     // run
     director->runWithScene(scene);

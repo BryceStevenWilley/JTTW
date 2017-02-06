@@ -1,4 +1,17 @@
 {
+    "background" : {
+        "imageName" : "Background.png",
+        "centerX" : 0.0,
+        "centerY" : 0.0,
+        "width" : 0.0,
+        "height" : 0.0
+    },
+    "charactersStart" : {
+        "Monkey" : [0.3, 10],
+        "Monk" : [2.0, 10],
+        "Piggy" : [3.7, 10],
+        "Sandy" : [7.2, 10]
+    },
     "platforms" : [
         {
             "imageName" : "Canyon L.png",
