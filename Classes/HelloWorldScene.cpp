@@ -8,19 +8,9 @@
 using namespace cocos2d;
 using namespace JTTW;
 
-//std::vector<Character *> HelloWorld::characters;
-//std::vector<AiAgent *> HelloWorld::agents;
-//AiAgent * HelloWorld::player;
-//std::vector<Platform *> HelloWorld::platforms;
-//std::vector<MoveablePlatform *> HelloWorld::moveables;
-
-//bool HelloWorld::debugOn = true;
-
 //bool HelloWorld::pedestalPopped;
 //bool HelloWorld::cloudSunk = false;
 //bool HelloWorld::cloudSinking = false;
-
-//Viewpoint HelloWorld::vp(cocos2d::Size(1.0, 1.0), 1.0, nullptr);
 
 bool HelloWorld::onContactBegin(cocos2d::PhysicsContact& contact) {
     std::cout << "Found contact between 2 bodies!" << std::endl;
@@ -51,7 +41,7 @@ Scene* HelloWorld::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = Scene::createWithPhysics();
     //scene->autorelease();
-    scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -98));
+    scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -298));
     scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = HelloWorld::create(levelToLoad);
     scene->addChild(layer);
@@ -77,11 +67,11 @@ bool HelloWorld::init(std::string levelToLoad) {
                                 origin.y + closeItem->getContentSize().height/2));
     
     // draw and add background
-    auto background = cocos2d::Sprite::create("backgrounds/Sunny Background.png");
-    background->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
-    background->setScale(1.4);
-    background->setPosition(0,-300.0);
-    this->addChild(background, -8);
+    //auto background = cocos2d::Sprite::create("backgrounds/Sunny Background.png");
+   // background->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
+    //background->setScale(1.4);
+    //background->setPosition(0,-300.0);
+    //this->addChild(background, -8);
     
     // create menu with the "X" image, it's an autorelease object
     auto menu = cocos2d::Menu::create(closeItem, NULL);
@@ -95,137 +85,74 @@ bool HelloWorld::init(std::string levelToLoad) {
     cocos2d::Layer *layer = cocos2d::Layer::create();
     vp = Viewpoint(visibleSize, 1.7/130.0, layer);
 
-    nlohmann::json characterStart = parseLevelFromJson(levelToLoad, layer, platforms, moveables, vp, debugOn);
+    nlohmann::json characterStart = parseLevelFromJson(levelToLoad, this, layer, platforms, moveables, vp, debugOn);
     int characterHeight = vp.metersToPixels(1.7);
 
-    /*
-    nlohmann::json characterStart = parseLevelFromJson("SimpleDitch.json", layer, platforms, moveables, vp, debugOn);
-    int characterHeight = vp.metersToPixels(1.7);
     double monkeyStartX = vp.metersToPixels((double)characterStart["Monkey"][0]);
     double monkeyStartY = vp.metersToPixels((double)characterStart["Monkey"][1]);
-    Character *monkey = new Character(
-            "Monkey",
-            JTTW::Rectangle(monkeyStartX, monkeyStartY,characterHeight, characterHeight),
-            cocos2d::Vec2(vp.metersToPixels(5), vp.metersToPixels(10)), 60, vp.metersToPixels(9.8));
-    
+        
     double monkStartX = vp.metersToPixels((double)characterStart["Monk"][0]);
     double monkStartY = vp.metersToPixels((double)characterStart["Monk"][1]);
-    Character *monk = new Character(
-            "Monk",
-            JTTW::Rectangle(monkStartX, monkStartY, characterHeight, characterHeight),
-            cocos2d::Vec2(vp.metersToPixels(3), vp.metersToPixels(6)), 50, vp.metersToPixels(9.8));
     
     double piggyStartX = vp.metersToPixels((double)characterStart["Piggy"][0]);
     double piggyStartY = vp.metersToPixels((double)characterStart["Piggy"][1]);
-    Character *piggy = new Character(
-            "Piggy",
-            JTTW::Rectangle(piggyStartX, piggyStartY, characterHeight, characterHeight),
-            cocos2d::Vec2(vp.metersToPixels(4), vp.metersToPixels(8.7)), 150, vp.metersToPixels(9.8));
     
     double sandyStartX = vp.metersToPixels((double)characterStart["Sandy"][0]);
     double sandyStartY = vp.metersToPixels((double)characterStart["Sandy"][1]);
-    Character *sandy = new Character(
-           "sandy",
-            JTTW::Rectangle(sandyStartX, sandyStartY, characterHeight, characterHeight),
-            cocos2d::Vec2(vp.metersToPixels(4.5), vp.metersToPixels(8)), 100, vp.metersToPixels(9.8));
     
+    Character *monkey = new Character("Monkey", PhysicsMaterial(1.0, 0.0, 1.0), cocos2d::Vec2(monkeyStartX, monkeyStartY), cocos2d::Size(characterHeight, characterHeight));
+    Character *monk = new Character("Monk", PhysicsMaterial(1.0, 0.0, 1.0), cocos2d::Vec2(monkStartX, monkStartY), cocos2d::Size(characterHeight, characterHeight));
+    Character *piggy = new Character("Piggy", PhysicsMaterial(1.0, 0.0, 1.0), cocos2d::Vec2(piggyStartX, piggyStartY), cocos2d::Size(characterHeight, characterHeight));
+    Character *sandy = new Character("sandy", PhysicsMaterial(1.0, 0.0, 1.0), cocos2d::Vec2(sandyStartX, sandyStartY), cocos2d::Size(characterHeight, characterHeight));
+
     characters.push_back(monkey);
     characters.push_back(monk);
     characters.push_back(piggy);
     characters.push_back(sandy);
-    */
     
     for (int i = 0; i < characters.size(); i++) {
         Character *body = characters[i];
         layer->addChild(body, i);
-        //layer->addChild(body->collisionBoxNode, -1);
         AiAgent *agent = new AiAgent(body);
         agents.push_back(agent);
     }
     
-    //player = agents[0];
-    //agents.pop_front();
+    player = agents[0];
 
-    auto sprite = cocos2d::Sprite::create("Piggy.png");
-    auto physics = cocos2d::PhysicsBody::createBox(sprite->getContentSize(), PhysicsMaterial(1.0, 0.0, 1.0));
-    physics->setContactTestBitmask(0xFFFFFFFF);
-    physics->setRotationEnable(false);
-    //physics->setDynamic(false); // turns off gravity
-    sprite->setScale(.2);
-    sprite->setPosition(vp.metersToPixels(cocos2d::Vec2(2.0, 9.0)));
-    sprite->addComponent(physics);
-
-    Character *c = new Character("Piggy", PhysicsMaterial(1.0, 0.0, 1.0), vp.metersToPixels(cocos2d::Vec2(2.0, 9.0)), cocos2d::Size(characterHeight, characterHeight));
-    
-    layer->addChild(c);
-    c->crown->setVisible(true);
+    player->_controlledCharacter->crown->setVisible(true);
 
     this->addChild(layer, 1);
     
-    body = c;
-    
     auto eventListener = cocos2d::EventListenerKeyboard::create();
     
-    eventListener->onKeyPressed = [this, c](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) mutable {
+    eventListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) mutable {
         switch(keyCode) {
             case EventKeyboard::KeyCode::KEY_Z:
-                //switchToCharacter(0);
+                switchToCharacter(0);
                 break;
-            //case EventKeyboard::KeyCode::KEY_X:
-            //    switchToCharacter(1);
-            //    break;
-            //case EventKeyboard::KeyCode::KEY_C:
-            //    switchToCharacter(2);
-            //    break;
-            //case EventKeyboard::KeyCode::KEY_V:
-            //    switchToCharacter(3);
-            //    break;
+            case EventKeyboard::KeyCode::KEY_X:
+                switchToCharacter(1);
+                break;
+            case EventKeyboard::KeyCode::KEY_C:
+                switchToCharacter(2);
+                break;
+            case EventKeyboard::KeyCode::KEY_V:
+                switchToCharacter(3);
+                break;
             case EventKeyboard::KeyCode::KEY_ESCAPE:
                 this->menuCloseCallback(nullptr); // TODO: should I be using this nullptr?
                 break;
             case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-                c->impulseLeft(200);
-                //physics->setVelocity(cocos2d::Vec2(-200.0, physics->getVelocity().y));
-                break;
             case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-                c->impulseRight(200);
-                //physics->setVelocity(cocos2d::Vec2(200.0, physics->getVelocity().y));
-                break;
             case EventKeyboard::KeyCode::KEY_SPACE:
-                // TDOD: figure out how to handle this physics stuff.
-                //this->getScene()->getPhysicsWorld()->removeAllJoints();
-                c->jump();
-                //physics->setVelocity(cocos2d::Vec2(physics->getVelocity().x, 200.0));
-                break;
             case EventKeyboard::KeyCode::KEY_A:
             case EventKeyboard::KeyCode::KEY_O:
-                //player->plan(characters, keyCode, true);
-                //for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
-                //    if ((*xAgent) != player) {
-                //        (*xAgent)->plan(player->_controlledCharacter, characters, keyCode, true);
-                //    }
-                //}
-                break;
-            case EventKeyboard::KeyCode::KEY_TAB:
-                // Try to restart!
-                /*
-                layer->removeAllChildren();
-                this->removeAllChildren();
-                agents.clear();
-                characters.clear();
-                platforms.clear();
-                moveables.clear();
-                this->init();
-                 */
-                //{
-                    // Cleanup all characters.
-                    //layer->removeAllChildrenWithCleanup(true);
-                    //for (auto ch = characters.begin(); ch != characters.end(); ch++) {
-                        //
-                    //}
-                    //auto newScene = HelloWorld::createScene();
-                    //Director::getInstance()->replaceScene(newScene);
-                //}
+                player->plan(characters, keyCode, true);
+                for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
+                    if ((*xAgent) != player) {
+                        (*xAgent)->plan(player->_controlledCharacter, characters, keyCode, true);
+                    }
+                }
                 break;
                 
             default:
@@ -234,20 +161,13 @@ bool HelloWorld::init(std::string levelToLoad) {
         }
     };
     
-    eventListener->onKeyReleased = [this, c](EventKeyboard::KeyCode keyCode, Event* event) mutable {
-        if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW  && c->body->getVelocity().x <= 0) {
-          c->impulseLeft(-200);
-          //physics->setVelocity(cocos2d::Vec2(0, physics->getVelocity().y));
-        } else if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW && c->body->getVelocity().x >= 0) {
-          c->impulseRight(-200);
-          //physics->setVelocity(cocos2d::Vec2(0, physics->getVelocity().y));
-            //player->plan(characters, keyCode, false);
-            ///for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
-            //    if ((*xAgent) != player) {
-            //        (*xAgent)->plan(player->_controlledCharacter, characters, keyCode, false);
-            //    }
-            //}
-        }
+    eventListener->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event* event) mutable {
+            player->plan(characters, keyCode, false);
+            for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
+                if ((*xAgent) != player) {
+                    (*xAgent)->plan(player->_controlledCharacter, characters, keyCode, false);
+                }
+            }
     };
 
     this->_eventDispatcher->addEventListenerWithFixedPriority(eventListener, 1);
@@ -255,24 +175,18 @@ bool HelloWorld::init(std::string levelToLoad) {
     auto contactListener = cocos2d::EventListenerPhysicsContact::create();
     contactListener->onContactBegin = CC_CALLBACK_1(HelloWorld::onContactBegin, this);
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
-    
-    // Look at the Follow action.
-    //this->runAction(cocos2d::Follow::create(*player, ))
+
     this->scheduleUpdate();
     return true;
 }
 
-// TODO: maybe switch this to a map, so we don't need that '!= player' bit.
 void HelloWorld::switchToCharacter(int charIndex) {
     auto nextPlayer = agents[charIndex];
     nextPlayer->cedeToPlayer(player);
     
     player->_controlledCharacter->crown->setVisible(false);
-    //player->_controlledCharacter->ani->removeAllChildrenWithCleanup(true);
-    //agents.push_back(player);
     player = nextPlayer;
     player->_controlledCharacter->crown->setVisible(true);
-    //player->_controlledCharacter->ani->addChild(player->_controlledCharacter->crown);
     vp.panToCharacter(player->_controlledCharacter);
 }
 
@@ -289,11 +203,11 @@ void HelloWorld::menuCloseCallback(Ref* pSender) {
 }
 
 void HelloWorld::update(float delta) {
-    //for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
-    //    if ((*xAgent) != player) {
-    //        (*xAgent)->executePlan(delta);
-    //    }
-    //}
+    for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
+        if ((*xAgent) != player) {
+            (*xAgent)->executePlan(delta);
+        }
+    }
     //for (int i = 0; i < characters.size(); i++) {
     //    characters[i]->move(delta, platforms, debugOn);
 
@@ -329,9 +243,7 @@ void HelloWorld::update(float delta) {
         platforms[2] = c;
     }
     */
-    
-    //vp.followCharacter(player->_controlledCharacter, delta);
-    vp.followCharacter(body, delta);
+    vp.followCharacter(player->_controlledCharacter, delta);
 
 }
 

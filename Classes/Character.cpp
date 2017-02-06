@@ -7,6 +7,7 @@
 //
 
 #include "Character.hpp"
+#include "Collisions.hpp"
 
 using namespace JTTW;
 
@@ -20,7 +21,8 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
     this->setScaleX(dimensions.width / 720.0f); // 720.0px is approximately the size of the art at 1.0f.
     this->setScaleY(dimensions.height / 720.0f);
 
-    body->setContactTestBitmask(0xFFFFFFFF);
+    body->setCategoryBitmask((int)CollisionCategory::Character);
+    body->setCollisionBitmask((int)CollisionCategory::Platform);
     body->setRotationEnable(false);
 
     body->setPositionOffset(cocos2d::Vec2(0.0, dimensions.height / 2.0));
@@ -29,8 +31,6 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
     this->setAnimation(0, "idle", true);
 
     crown = cocos2d::Sprite::create("Selection Crown.png");
-    //crown->setScaleX(dimensions.getWidth() / crown->getScaleX());
-    //crown->setScaleY(dimensions.getHeight() / crown->getScaleY());
     crown->setScale(.3);
     crown->setPosition(0.0, 950);
     crown->setVisible(false);

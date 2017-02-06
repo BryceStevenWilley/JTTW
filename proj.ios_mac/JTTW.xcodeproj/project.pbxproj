@@ -68,9 +68,6 @@
 		9F3189781E272A810005B84E /* image.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F3189771E272A810005B84E /* image.png */; };
 		9F3189791E272A810005B84E /* image.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F3189771E272A810005B84E /* image.png */; };
 		9F380AA81E424FDE00728246 /* SimpleDitch.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F380AA71E424FDE00728246 /* SimpleDitch.json */; };
-		9F380AAA1E42502A00728246 /* SimpleDitch.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F380AA71E424FDE00728246 /* SimpleDitch.json */; };
-		9F380AAB1E42503300728246 /* SimpleDitch.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F380AA71E424FDE00728246 /* SimpleDitch.json */; };
-		9F380AAC1E42503300728246 /* demoLevel.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F8E65571E3BC7720058958F /* demoLevel.json */; };
 		9F380AAF1E427A9500728246 /* Selection Crown.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F380AAE1E427A9500728246 /* Selection Crown.png */; };
 		9F380AB01E427A9500728246 /* Selection Crown.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F380AAE1E427A9500728246 /* Selection Crown.png */; };
 		9F380AB11E427A9500728246 /* Selection Crown.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F380AAE1E427A9500728246 /* Selection Crown.png */; };
@@ -299,6 +296,7 @@
 		521A8EA819F11F5000D177D7 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		52B47A461A53D09B004E4C60 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.1.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		8262943D1AAF051F00CB7CF7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		9F300C831E4805340051284B /* Collisions.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Collisions.hpp; sourceTree = "<group>"; };
 		9F3189771E272A810005B84E /* image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image.png; sourceTree = "<group>"; };
 		9F380AA71E424FDE00728246 /* SimpleDitch.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = SimpleDitch.json; sourceTree = "<group>"; };
 		9F380AAE1E427A9500728246 /* Selection Crown.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Selection Crown.png"; sourceTree = "<group>"; };
@@ -570,6 +568,7 @@
 				9FB69DE11E46D93D006325A3 /* MainMenuScene.hpp */,
 				9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */,
 				9FB69E061E46EE88006325A3 /* LevelSelectScene.hpp */,
+				9F300C831E4805340051284B /* Collisions.hpp */,
 			);
 			name = Classes;
 			path = ../Classes;

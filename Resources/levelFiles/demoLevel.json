@@ -1,9 +1,16 @@
 {
+    "background" : {
+        "imageName" : "Background.png",
+        "centerX" : 0.0,
+        "centerY" : 0.0,
+        "width" : 0.0,
+        "height" : 0.0
+    },
     "charactersStart" : {
-        "Monkey" : [-12.7, 10],
-        "Monk" : [-11.0, 10],
-        "Piggy" : [-9.3, 10],
-        "Sandy" : [-7.6, 10]
+        "Monkey" : [0.3, 10],
+        "Monk" : [2.0, 10],
+        "Piggy" : [3.7, 10],
+        "Sandy" : [7.2, 10]
     },
     "platforms" : [
         {
