@@ -6,11 +6,11 @@
         "width" : 0.0,
         "height" : 0.0
     },
-    "charactersStart" : {
-        "Monkey" : [0.3, 10],
-        "Monk" : [2.0, 10],
-        "Piggy" : [3.7, 10],
-        "Sandy" : [7.2, 10]
+    "characters" : {
+        "Monkey" : {"startingXPos": 0.3, "startingYPos": 10},
+        "Monk" : {"startingXPos": 2.0, "startingYPos": 10},
+        "Piggy" : {"startingXPos": 3.7, "startingYPos": 10},
+        "Sandy" : {"startingXPos":7.2, "startingYPos": 10}
     },
     "platforms" : [
         {
