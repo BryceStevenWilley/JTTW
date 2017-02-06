@@ -10,10 +10,11 @@
 #include "HelloWorldScene.h"
 #include <iostream>
 
-using namespace JTTW;
+#include <stdio.h>
+#include <string.h>
+#include <dirent.h>
 
-const int DEMO_LEVEL_TAG = 10;
-const int DITCH_LEVEL_TAG = 11;
+using namespace JTTW;
 
 cocos2d::Scene* LevelSelect::createScene() {
     // 'scene' and 'layer' are auto-release.
@@ -24,43 +25,82 @@ cocos2d::Scene* LevelSelect::createScene() {
     return scene;
 }
 
+std::vector<std::string> findLevelFiles() {
+    std::vector<std::string> toReturn;
+    DIR *currentDir;
+    struct dirent *dirEntry;
+    
+    currentDir = opendir("levelFiles");
+    if (currentDir == NULL) {
+        std::cout << "Couldn't open level files." << std::endl;
+        return toReturn;
+    }
+    
+    // Iterater through all the entries in this directory.
+    do {
+        if ((dirEntry = readdir(currentDir)) != NULL) {
+            // If the file ends in ".json", it's a level file.
+            if (strcmp(strrchr(dirEntry->d_name, '.'), ".json") == 0) {
+                toReturn.push_back(std::string(dirEntry->d_name));
+            }
+        }
+    } while (dirEntry != NULL);
+    
+    (void) closedir(currentDir);
+    return toReturn;
+}
+
+// Sets up the selection menu by looking through the level folder and displaying
+// all .json files.
 bool LevelSelect::init() {
     auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
     cocos2d::Vec2 origin = cocos2d::Director::getInstance()->getVisibleOrigin();
 
-    // Choose level label.
-    auto chooseLabel = cocos2d::Label::createWithTTF("Choose a level!", "fonts/arial.ttf", 24);
-    chooseLabel->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (3.0 / 4.0));
-    this->addChild(chooseLabel);
+    // Sets the background image to fill the screen.
+    auto background = cocos2d::Sprite::create("backgrounds/Splash.png");
+    background->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
+    background->setPosition(origin);
+    auto bgSize = background->getContentSize();
+    background->setScale(visibleSize.width / bgSize.width, visibleSize.height / bgSize.height);
+    this->addChild(background, -8);
     
-    // Level labels (hardcoded).
-    auto demoLevel = cocos2d::Label::createWithTTF("demo level", "fonts/arial.ttf", 18);
-    cocos2d::MenuItem *demoItem = cocos2d::MenuItemLabel::create(demoLevel, CC_CALLBACK_1(LevelSelect::menuCallback, this));
-    demoItem->setTag(DEMO_LEVEL_TAG);
-    auto ditchLevel = cocos2d::Label::createWithTTF("ditch level", "fonts/arial.ttf", 18);
-    cocos2d::MenuItem *ditchItem = cocos2d::MenuItemLabel::create(ditchLevel, CC_CALLBACK_1(LevelSelect::menuCallback, this));
-    ditchItem->setTag(DITCH_LEVEL_TAG);
-    
-    // Display them.
-    cocos2d::Menu *m = cocos2d::Menu::create(demoItem, ditchItem, NULL);
-    m->alignItemsVertically();
-    
+    // Set the title text as a label.
+    auto titleLabel = cocos2d::Label::createWithTTF("Choose a level!", "fonts/arial.ttf", 100);
+    titleLabel->setTextColor(cocos2d::Color4B::WHITE);
+    titleLabel->enableOutline(cocos2d::Color4B::BLACK);
+    titleLabel->enableShadow();
+    titleLabel->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (3.0 / 4.0));
+    this->addChild(titleLabel);
+
+    // Create menu items for each of the level files that we have.
+    // TODO: This won't work well for many level files (they'll fall off the bottom.
+    std::vector<std::string> allLevels = findLevelFiles();
+    cocos2d::Vector<cocos2d::MenuItem *> menuButtons;
+    int levelHash = 0;
+    for (auto level : allLevels) {
+        auto levelName = cocos2d::Label::createWithTTF(level, "fonts/arial.ttf", 40);
+        levelName->enableShadow();
+        cocos2d::MenuItem *levelItem = cocos2d::MenuItemLabel::create(levelName, CC_CALLBACK_1(LevelSelect::menuCallback, this));
+        levelItem->setTag(levelHash);
+        menuButtons.pushBack(levelItem);
+        tagToFileName[levelHash] = level;
+        levelHash += 1;
+    }
+
+    // Display and activate the menu items.
+    cocos2d::Menu *m = cocos2d::Menu::createWithArray(menuButtons);
+    m->alignItemsVerticallyWithPadding(40);
     this->addChild(m);
 
     return true;
 }
 
+// Go to whatever level was selected.
 void LevelSelect::menuCallback(cocos2d::Ref* fromItem) {
     auto menuSelection = (cocos2d::MenuItem *) fromItem;
     cocos2d::Scene *startScene;
-    switch (menuSelection->getTag()) {
-        case DEMO_LEVEL_TAG:
-            startScene = HelloWorld::createScene("levelFiles/demoLevel.json");
-            break;
-        
-        case DITCH_LEVEL_TAG:
-            startScene = HelloWorld::createScene("levelFiles/SimpleDitch.json");
-            break;
-    }
+    std::stringstream ss;
+    ss << "levelFiles/" << tagToFileName[menuSelection->getTag()];
+    startScene = HelloWorld::createScene(ss.str());
     cocos2d::Director::getInstance()->replaceScene(startScene);
 }

@@ -1,4 +1,10 @@
 {
+    "charactersStart" : {
+        "Monkey" : [-12.7, 10],
+        "Monk" : [-11.0, 10],
+        "Piggy" : [-9.3, 10],
+        "Sandy" : [-7.6, 10]
+    },
     "platforms" : [
         {
             "imageName" : "Canyon L.png",

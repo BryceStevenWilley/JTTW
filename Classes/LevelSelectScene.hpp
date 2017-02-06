@@ -21,6 +21,9 @@ public:
     CREATE_FUNC(LevelSelect);
     
     void menuCallback(cocos2d::Ref *fromItem);
+    
+private:
+    std::map<int, std::string> tagToFileName;
 };
 
 }
