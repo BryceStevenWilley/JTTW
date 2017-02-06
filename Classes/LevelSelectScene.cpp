@@ -65,7 +65,7 @@ bool LevelSelect::init() {
     this->addChild(background, -8);
     
     // Set the title text as a label.
-    auto titleLabel = cocos2d::Label::createWithTTF("Choose a level!", "fonts/arial.ttf", 100);
+    auto titleLabel = cocos2d::Label::createWithTTF("Choose a level!", "fonts/WaitingfortheSunrise.ttf", 100);
     titleLabel->setTextColor(cocos2d::Color4B::WHITE);
     titleLabel->enableOutline(cocos2d::Color4B::BLACK);
     titleLabel->enableShadow();
@@ -78,7 +78,7 @@ bool LevelSelect::init() {
     cocos2d::Vector<cocos2d::MenuItem *> menuButtons;
     int levelHash = 0;
     for (auto level : allLevels) {
-        auto levelName = cocos2d::Label::createWithTTF(level, "fonts/arial.ttf", 40);
+        auto levelName = cocos2d::Label::createWithTTF(level, "fonts/WaitingfortheSunrise.ttf", 40);
         levelName->enableShadow();
         cocos2d::MenuItem *levelItem = cocos2d::MenuItemLabel::create(levelName, CC_CALLBACK_1(LevelSelect::menuCallback, this));
         levelItem->setTag(levelHash);

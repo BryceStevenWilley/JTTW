@@ -4,7 +4,7 @@
 using namespace JTTW;
 
 AiAgent::AiAgent(Character *controlledCharacter) :
-_controlledCharacter(controlledCharacter), _currentBehavior(&AiAgent::syncronizedBehavior) {}
+_controlledCharacter(controlledCharacter), _currentBehavior(&AiAgent::stationaryBehavior) {}
 
 AiAgent::~AiAgent() {}
 

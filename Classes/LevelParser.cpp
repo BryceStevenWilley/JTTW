@@ -41,6 +41,8 @@ nlohmann::json JTTW::parseLevelFromJson(std::string fileName, cocos2d::Layer *le
         double centerY = vp.metersToPixels((double)pAtt["centerY"]);
         double imageSizeWidth = vp.metersToPixels((double)pAtt["imageSizeWidth"]);
         double imageSizeHeight = vp.metersToPixels((double)pAtt["imageSizeHeight"]);
+        
+        // Get the collision Width and height.
         double collisionWidth = vp.metersToPixels((double)pAtt["collisionWidth"]);
         double collisionHeight = vp.metersToPixels((double)pAtt["collisionHeight"]);
         
