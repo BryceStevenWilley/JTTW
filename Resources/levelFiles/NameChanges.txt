@@ -1,0 +1,56 @@
+NAME CONVENTIONS
+
+NO WHITESPACE
+
+Backgrounds: 
+  "bg" + Name + ".png/.jpg"
+   Example: bgCloud.png
+
+Clouds:
+  "cld" + Name + Direction + ".png/.jpg"
+   Example: "cldClear.png" is a stationary cloud.
+   Example: "cldSunsetDiagR.png" is a cloud that moves up and right.
+   
+Pedestals: 
+  "Pedestal" + Name + ".png/.jpg"
+   Example: "Pedestal.png"
+   
+Rocks:
+  "Rock" + # + ".png/.jpg"
+   Example: "Rock5.png"
+
+Unique objects:
+  Short, meaningful names.
+   Example: "BuddhaHand.png"
+
+ASSET NAME CHANGES
+Sunny Background.png -> bgSunny.png
+Cloudy Background.png -> bgCloud.png
+Blue Ground.png -> bgGround.png
+  Various cloud files have been renamed based on their direction of movement.
+cldClear.png
+cldClearDiagL.png
+cldClearDiagR.png
+cldClearUp.png
+cldCloud.png
+cldCloudDiagL.png
+cldCloudDiagR.png
+cldCloudUp.png
+cldStormy.png
+cldStormyDiagL.png
+cldStormyDiagR.png
+cldStormyUp.png
+cldSunset.png
+cldSunsetDiagL.png
+cldSunsetDiagR.png
+cldSunsetUp.png
+  Platforms
+Canyon R.png -> canyonR.png
+Canyon L.png -> canyonL.png
+Buddha Hand.png -> BuddhaHand.png
+
+
+Use GIMP2.0 to make thumbnail; alpha channel is preferred (.png).
+Thumbnail size:
+If X is larger: 90px
+If Y is larger: 68 px
