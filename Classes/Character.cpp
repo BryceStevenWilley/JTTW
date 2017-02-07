@@ -39,26 +39,45 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
 
     this->setPosition(startPosition);
     
+    _startingPosition = startPosition;
+    
     this->setTag(CHARACTER_TAG);
 }
 
 void Character::impulseLeft(float deltaVel) {
-    body->applyImpulse(cocos2d::Vec2(body->getMass() * -deltaVel, 0));
-    updateAnimation();
+    double impulse = body->getMass() * deltaVel;
+    leftMomentum += impulse;
+    rebalanceImpulse();
 }
 
 void Character::impulseRight(float deltaVel) {
-    body->applyImpulse(cocos2d::Vec2(body->getMass() * deltaVel, 0));
+    double impulse = body->getMass() * deltaVel;
+    rightMomentum += impulse;
+    rebalanceImpulse();
+}
+
+void Character::rebalanceImpulse() {
+    
+    double totalMomentum = rightMomentum - leftMomentum;
+    double targetVelocity = totalMomentum / body->getMass();
+    
+    double actualDeltaVel = targetVelocity - body->getVelocity().x;
+    
+    double actualImpulse = body->getMass() * actualDeltaVel;
+    
+    body->applyImpulse(cocos2d::Vec2(actualImpulse, 0));
     updateAnimation();
 }
 
 void Character::stop() {
+    leftMomentum = 0.0;
+    rightMomentum = 0.0;
     body->applyImpulse(cocos2d::Vec2(body->getMass() * -(body->getVelocity().x), 0));
     updateAnimation();
 }
     
 void Character::jump() {
-    body->applyImpulse(cocos2d::Vec2(0, 5000000));
+    body->applyImpulse(cocos2d::Vec2(0, body->getMass() * 200));
     _currentState = State::MID_AIR;
     updateAnimation();
 }
@@ -109,10 +128,16 @@ void Character::updateAnimation() {
         } else { // x == 0.0
             this->setAnimation(0, "idle", true);
         }
-    } else if (_currentState == MID_AIR && body->getVelocity().y > 100) {
+    } else if (_currentState == MID_AIR && body->getVelocity().y > 200) {
         // If the character is in mid air traveling upwards (right after jumping)
         // then set the jump animation and slow it down so it lasts the whole time.
         this->setAnimation(0, "jump", false);
         this->setTimeScale(0.9);
     }
 }
+
+void Character::restartFromStart() {
+    body->setVelocity(cocos2d::Vec2(0, 0));
+    this->setPosition(_startingPosition);
+}
+

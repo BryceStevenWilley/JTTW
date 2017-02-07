@@ -64,5 +64,5 @@ nlohmann::json JTTW::parseLevelFromJson(std::string fileName, cocos2d::Layer *le
             platforms.push_back(p);
         }
     }
-    return lvl["charactersStart"];
+    return lvl["characters"];
 }

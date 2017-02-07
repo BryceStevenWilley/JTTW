@@ -6,7 +6,7 @@ using namespace JTTW;
 AiAgent::AiAgent(Character *controlledCharacter) :
 _controlledCharacter(controlledCharacter), _currentBehavior(&AiAgent::stationaryBehavior) {}
 
-AiAgent::~AiAgent() {}
+//AiAgent::~AiAgent() {}
 
 void AiAgent::setMap() {
 }
@@ -70,7 +70,7 @@ void AiAgent::plan(Character *player, std::vector<Character *> otherCharacters, 
         return;
     }
     
-    std::queue<ActionAndTrigger> toAdd  = (this->*_currentBehavior)(player, otherCharacters);
+    std::queue<ActionAndTrigger> toAdd  = (this->*_currentBehavior)(player, otherCharacters, code);
     
     // Put all of the returned ActionAndTriggers onto the master action queue.
     while (!toAdd.empty()) {
@@ -98,8 +98,7 @@ void AiAgent::executePlan(float delta) {
         bool doAction = false;
         if (a.trigger.usePosition) {
             // TODO: add a tolerance to this positioning system.
-            if (a.trigger.position.x == _controlledCharacter->getPosition().x &&
-                a.trigger.position.y == _controlledCharacter->getPosition().y) {
+            if (a.trigger.isAtLocation(_controlledCharacter->getPosition())) {
                 doAction = true;
             }
         } else {

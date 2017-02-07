@@ -14,19 +14,19 @@ using namespace JTTW;
  * Player just jumped? You jump. Player moved left? You move left.
  * For now, just a simple AI for making characters follow player.
  */
-std::queue<ActionAndTrigger> AiAgent::syncronizedBehavior(Character *player, std::vector<Character *> otherCharacters) {
+std::queue<ActionAndTrigger> AiAgent::syncronizedBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction) {
     std::queue<ActionAndTrigger> plannedActions;
     // Literally, plan to do what the player is doing.
     if (player == _controlledCharacter) {
         return plannedActions;
     }
-    if (player->isMovingLeft() && !_controlledCharacter->isMovingLeft()) {
+    if (player->isMovingLeft() && !_controlledCharacter->isMovingLeft() && playerAction != cocos2d::EventKeyboard::KeyCode::KEY_SPACE) {
         plannedActions.push(ActionAndTrigger(Action::STOP, 0.0));
         plannedActions.push(ActionAndTrigger(Action::MOVE_LEFT, 0.0));
-    } else if (player->isMovingRight() && !_controlledCharacter->isMovingRight()) {
+    } else if (player->isMovingRight() && !_controlledCharacter->isMovingRight() && playerAction != cocos2d::EventKeyboard::KeyCode::KEY_SPACE) {
         plannedActions.push(ActionAndTrigger(Action::STOP, 0.0));
         plannedActions.push(ActionAndTrigger(Action::MOVE_RIGHT, 0.0));
-    } else if (player->getCurrentState() == Character::State::MID_AIR && player->justJumped()) { // TODO: causes agents to jump more than they should, fix
+    } else if (player->getCurrentState() == Character::State::MID_AIR && player->justJumped() && playerAction == cocos2d::EventKeyboard::KeyCode::KEY_SPACE) { // TODO: causes agents to jump more than they should, fix
         plannedActions.push(ActionAndTrigger(Action::JUMP, 0.0));
     }
     if (!player->isMovingLeft() && !player->isMovingRight()) {
@@ -38,10 +38,33 @@ std::queue<ActionAndTrigger> AiAgent::syncronizedBehavior(Character *player, std
 /**
  * Stand in the same place. Always chooses the stop action, no matter what.
  */
-std::queue<ActionAndTrigger> AiAgent::stationaryBehavior(Character *player, std::vector<Character *> otherCharacters) {
+std::queue<ActionAndTrigger> AiAgent::stationaryBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction) {
     std::queue<ActionAndTrigger> plannedActions;
     // Literally, stand completely still.
     plannedActions.push(ActionAndTrigger(Action::STOP, 0.0));
+    return plannedActions;
+}
+
+std::queue<ActionAndTrigger> AiAgent::dumbFollowBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction) {
+        std::queue<ActionAndTrigger> plannedActions;
+    // Literally, plan to do what the player is doing, but at exactly the position
+    // where they're doing it.
+    if (player == _controlledCharacter) {
+        return plannedActions;
+    }
+    cocos2d::Vec2 playerPosition = player->body->getPosition();
+    if (player->isMovingLeft() && !_controlledCharacter->isMovingLeft() && playerAction != cocos2d::EventKeyboard::KeyCode::KEY_SPACE) {
+        plannedActions.push(ActionAndTrigger(Action::STOP, playerPosition.x, playerPosition.y));
+        plannedActions.push(ActionAndTrigger(Action::MOVE_LEFT, playerPosition.x, playerPosition.y));
+    } else if (player->isMovingRight() && !_controlledCharacter->isMovingRight() && playerAction != cocos2d::EventKeyboard::KeyCode::KEY_SPACE) {
+        plannedActions.push(ActionAndTrigger(Action::STOP, playerPosition.x, playerPosition.y));
+        plannedActions.push(ActionAndTrigger(Action::MOVE_RIGHT, playerPosition.x, playerPosition.y));
+    } else if (player->getCurrentState() == Character::State::MID_AIR && player->justJumped() && playerAction == cocos2d::EventKeyboard::KeyCode::KEY_SPACE) { // TODO: causes agents to jump more than they should, fix
+        plannedActions.push(ActionAndTrigger(Action::JUMP, playerPosition.x, playerPosition.y));
+    }
+    if (!player->isMovingLeft() && !player->isMovingRight()) {
+        plannedActions.push(ActionAndTrigger(Action::STOP, playerPosition.x, playerPosition.y));
+    }
     return plannedActions;
 }
 

@@ -21,10 +21,10 @@ namespace JTTW {
 class AiAgent {
 public:
     // A function pointer to a possible behavior that this agent can be following at the moment.
-    typedef std::queue<ActionAndTrigger> (AiAgent::*Behavior)(Character *player, std::vector<Character *> otherCharacters);
+    typedef std::queue<ActionAndTrigger> (AiAgent::*Behavior)(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction);
     
     AiAgent(Character *controlledCharacter);
-    ~AiAgent();
+    //~AiAgent();
     
     void cedeToPlayer(AiAgent *previousPlayer);
     void retakeFromPlayer(AiAgent *nextPlayer);
@@ -43,8 +43,9 @@ protected:
 
 private:
     // The possible behaivors of the AI. All of these methods are implemented in AiAgentBehaivors.cpp.
-    std::queue<ActionAndTrigger> stationaryBehavior(Character *player, std::vector<Character *> otherCharacters);
-    std::queue<ActionAndTrigger> syncronizedBehavior(Character *player, std::vector<Character *> otherCharacters);
+    std::queue<ActionAndTrigger> stationaryBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction);
+    std::queue<ActionAndTrigger> syncronizedBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction);
+    std::queue<ActionAndTrigger> dumbFollowBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction);
 };
     
 };
