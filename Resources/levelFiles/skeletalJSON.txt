@@ -23,13 +23,13 @@
     }
     ],
     // NOTE: "characters" is not supported yet, do not attempt to read this in
-  "characters" : [ {
-    "name" : String,
-    "present" : bool,
-    "startingXPos" : double,
-    "startingYPos" : double
+  "characters" : {
+    "Monkey" : {     
+      "present" : bool,
+      "startingXPos" : double,
+      "startingYPos" : double
      },
     ...
-    ]
+    }
 }
     
