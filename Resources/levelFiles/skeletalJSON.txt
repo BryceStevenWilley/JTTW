@@ -22,7 +22,7 @@
         ]
     }
     ],
-    // NOTE: "characters" is not supported yet, do not attempt to read this in
+// For the below in-game controllable characters and NPC, their collisionbox, width, height, and images are defined in cocos
   "characters" : {
     "Monkey" : {     
       "present" : bool,
@@ -30,6 +30,12 @@
       "startingYPos" : double
      },
     ...
-    }
+    },
+  "npcs" : [ {
+      "name" : String,
+      "startingXPos" : double,
+      "startingYPos" : double
+  }
+  ]
 }
     
