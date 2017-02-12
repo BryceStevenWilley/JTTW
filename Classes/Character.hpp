@@ -79,7 +79,10 @@ public:
     
     float getMass() const;
     
-    cocos2d::Sprite *crown;
+    cocos2d::Sprite *followcrown;
+    cocos2d::Sprite *alonecrown;
+    
+    cocos2d::Sprite *currentCrown;
     void restartFromStart();
 
 private:

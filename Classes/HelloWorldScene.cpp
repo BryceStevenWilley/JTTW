@@ -13,8 +13,6 @@ using namespace JTTW;
 //bool HelloWorld::cloudSinking = false;
 
 bool HelloWorld::onContactBegin(cocos2d::PhysicsContact& contact) {
-    std::cout << "Found contact between 2 bodies!" << std::endl;
-    
     auto nodeA = contact.getShapeA()->getBody()->getNode();
     auto nodeB = contact.getShapeB()->getBody()->getNode();
     
@@ -144,7 +142,7 @@ bool HelloWorld::init(std::string levelToLoad) {
     
     player = agents[0];
 
-    player->_controlledCharacter->crown->setVisible(true);
+    player->_controlledCharacter->currentCrown->setVisible(true);
 
     this->addChild(layer, 1);
     
@@ -209,10 +207,7 @@ bool HelloWorld::init(std::string levelToLoad) {
 void HelloWorld::switchToCharacter(int charIndex) {
     auto nextPlayer = agents[charIndex];
     nextPlayer->cedeToPlayer(player);
-    
-    player->_controlledCharacter->crown->setVisible(false);
     player = nextPlayer;
-    player->_controlledCharacter->crown->setVisible(true);
     vp.panToCharacter(player->_controlledCharacter);
 }
 

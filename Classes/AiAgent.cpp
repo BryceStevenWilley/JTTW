@@ -19,11 +19,12 @@ void AiAgent::cedeToPlayer(AiAgent *previousPlayer) {
     } else if (_currentBehavior == &AiAgent::syncronizedBehavior) {
         // No need to transfer velocity.
     }
-    
+    previousPlayer->_controlledCharacter->currentCrown->setVisible(false);
+    this->_controlledCharacter->currentCrown->setVisible(true);
 }
 
 void AiAgent::retakeFromPlayer(AiAgent *nextPlayer) {
-    
+   
 }
 
 void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode code, bool pressed) {
@@ -84,10 +85,16 @@ void AiAgent::changeBehavior(cocos2d::EventKeyboard::KeyCode code) {
     if (code == cocos2d::EventKeyboard::KeyCode::KEY_A) { // 'A' is becoming a toggle.
         if (_currentBehavior == &AiAgent::stationaryBehavior) {
             _currentBehavior = &AiAgent::syncronizedBehavior;
-            std::cout << "Behavior is now syncronized" << std::endl;
+            bool wasOn = _controlledCharacter->currentCrown->isVisible();
+            _controlledCharacter->currentCrown->setVisible(false);
+            _controlledCharacter->currentCrown = _controlledCharacter->followcrown;
+            _controlledCharacter->currentCrown->setVisible(wasOn);
         } else if (_currentBehavior == &AiAgent::syncronizedBehavior) {
             _currentBehavior = &AiAgent::stationaryBehavior;
-            std::cout << "Behavior is now stationary" << std::endl;
+              bool wasOn = _controlledCharacter->currentCrown->isVisible();
+            _controlledCharacter->currentCrown->setVisible(false);
+            _controlledCharacter->currentCrown = _controlledCharacter->alonecrown;
+            _controlledCharacter->currentCrown->setVisible(wasOn);
         }
     }
 }

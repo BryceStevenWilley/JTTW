@@ -41,6 +41,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
         glview = GLViewImpl::createWithRect("SampleGame", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
         //glview = GLViewImpl::createWithFullScreen("SampleGame");
         //glview = GLViewImpl::createWithRect("SampleGame", Rect(0,0,700,400), 1.0);
+        //glview = GLViewImpl::createWithRect("SampleGame", Rect(0,0,512, 384), 1.0);
 #else
         glview = GLViewImpl::create("Not WIN/MAC/LINUX");
 #endif
