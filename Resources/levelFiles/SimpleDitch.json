@@ -6,8 +6,8 @@
         "width" : 0.0,
         "height" : 0.0
     },
-    "charactersStart" : {
-    "Monkey" : {"startingXPos": -12.7, "startingYPos", 10},
+    "characters" : {
+    "Monkey" : {"startingXPos": -12.7, "startingYPos": 10},
         "Monk" : {"startingXPos": -11.0, "startingYPos": 10},
         "Piggy" : {"startingXPos": -9.3, "startingYPos": 10},
         "Sandy" : {"startingXPos":-7.6, "startingYPos": 10}
@@ -34,7 +34,7 @@
             "moveable": false
         },
         {
-            "imageName" : "Canyon L.png",
+            "imageName" : "canyonL.png",
             "centerX" : 5.0,
             "centerY" : 4.0,
             "imageSizeWidth": 10.0,
@@ -44,7 +44,7 @@
             "moveable": false
         },
         {
-           "imageName" : "Canyon R.png",
+           "imageName" : "canyonR.png",
            "centerX": 19.0,
            "centerY": 5.0,
            "imageSizeWidth": 10.0,
@@ -54,7 +54,7 @@
            "moveable": false
         },
         {
-           "imageName": "Clear Day.png",
+           "imageName": "cldClear.png",
            "centerX": 11.0,
            "centerY": 10.0,
            "imageSizeWidth": 3.0,

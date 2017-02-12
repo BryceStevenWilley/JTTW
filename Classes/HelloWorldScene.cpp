@@ -13,8 +13,6 @@ using namespace JTTW;
 //bool HelloWorld::cloudSinking = false;
 
 bool HelloWorld::onContactBegin(cocos2d::PhysicsContact& contact) {
-    std::cout << "Found contact between 2 bodies!" << std::endl;
-    
     auto nodeA = contact.getShapeA()->getBody()->getNode();
     auto nodeB = contact.getShapeB()->getBody()->getNode();
     
@@ -29,6 +27,31 @@ bool HelloWorld::onContactBegin(cocos2d::PhysicsContact& contact) {
         if (nodeB->getPositionY() > nodeA->getPositionY()) {
             Character *c = (Character *)nodeB;
             c->landedCallback();
+        }
+    }
+    
+    //cocos2d::PhysicsJoint *j = cocos2d::PhysicsJointFixed::construct(contact.getShapeA()->getBody(), contact.getShapeB()->getBody(), cocos2d::Vec2(500, 500));
+    //this->getScene()->getPhysicsWorld()->addJoint(j);
+    return true;
+}
+
+bool HelloWorld::onContactEnd(cocos2d::PhysicsContact& contact) {
+      auto nodeA = contact.getShapeA()->getBody()->getNode();
+    auto nodeB = contact.getShapeB()->getBody()->getNode();
+    
+    if (nodeA->getTag() == CHARACTER_TAG) {// && nodeB->getTag() != CHARACTER_TAG) {
+        if (nodeA->getPositionY() > nodeB->getPositionY()) {
+            // Character landed on a platform, probably.
+            Character *c = (Character *)nodeA;
+            //c->landedCallback();
+            c->rebalanceImpulse();
+        }
+    }
+    if (nodeB->getTag() == CHARACTER_TAG) {// && nodeB->getTag() != CHARACTER_TAG) {
+        if (nodeB->getPositionY() > nodeA->getPositionY()) {
+            Character *c = (Character *)nodeB;
+            //c->landedCallback();
+            c->rebalanceImpulse();
         }
     }
     
@@ -88,17 +111,17 @@ bool HelloWorld::init(std::string levelToLoad) {
     nlohmann::json characterStart = parseLevelFromJson(levelToLoad, this, layer, platforms, moveables, vp, debugOn);
     int characterHeight = vp.metersToPixels(1.7);
 
-    double monkeyStartX = vp.metersToPixels((double)characterStart["Monkey"][0]);
-    double monkeyStartY = vp.metersToPixels((double)characterStart["Monkey"][1]);
+    double monkeyStartX = vp.metersToPixels((double)characterStart["Monkey"]["startingXPos"]);
+    double monkeyStartY = vp.metersToPixels((double)characterStart["Monkey"]["startingYPos"]);
         
-    double monkStartX = vp.metersToPixels((double)characterStart["Monk"][0]);
-    double monkStartY = vp.metersToPixels((double)characterStart["Monk"][1]);
+    double monkStartX = vp.metersToPixels((double)characterStart["Monk"]["startingXPos"]);
+    double monkStartY = vp.metersToPixels((double)characterStart["Monk"]["startingYPos"]);
     
-    double piggyStartX = vp.metersToPixels((double)characterStart["Piggy"][0]);
-    double piggyStartY = vp.metersToPixels((double)characterStart["Piggy"][1]);
+    double piggyStartX = vp.metersToPixels((double)characterStart["Piggy"]["startingXPos"]);
+    double piggyStartY = vp.metersToPixels((double)characterStart["Piggy"]["startingYPos"]);
     
-    double sandyStartX = vp.metersToPixels((double)characterStart["Sandy"][0]);
-    double sandyStartY = vp.metersToPixels((double)characterStart["Sandy"][1]);
+    double sandyStartX = vp.metersToPixels((double)characterStart["Sandy"]["startingXPos"]);
+    double sandyStartY = vp.metersToPixels((double)characterStart["Sandy"]["startingYPos"]);
     
     Character *monkey = new Character("Monkey", PhysicsMaterial(1.0, 0.0, 1.0), cocos2d::Vec2(monkeyStartX, monkeyStartY), cocos2d::Size(characterHeight, characterHeight));
     Character *monk = new Character("Monk", PhysicsMaterial(1.0, 0.0, 1.0), cocos2d::Vec2(monkStartX, monkStartY), cocos2d::Size(characterHeight, characterHeight));
@@ -119,7 +142,7 @@ bool HelloWorld::init(std::string levelToLoad) {
     
     player = agents[0];
 
-    player->_controlledCharacter->crown->setVisible(true);
+    player->_controlledCharacter->currentCrown->setVisible(true);
 
     this->addChild(layer, 1);
     
@@ -174,6 +197,7 @@ bool HelloWorld::init(std::string levelToLoad) {
     
     auto contactListener = cocos2d::EventListenerPhysicsContact::create();
     contactListener->onContactBegin = CC_CALLBACK_1(HelloWorld::onContactBegin, this);
+    contactListener->onContactSeparate = CC_CALLBACK_1(HelloWorld::onContactEnd, this);
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 
     this->scheduleUpdate();
@@ -183,29 +207,25 @@ bool HelloWorld::init(std::string levelToLoad) {
 void HelloWorld::switchToCharacter(int charIndex) {
     auto nextPlayer = agents[charIndex];
     nextPlayer->cedeToPlayer(player);
-    
-    player->_controlledCharacter->crown->setVisible(false);
     player = nextPlayer;
-    player->_controlledCharacter->crown->setVisible(true);
     vp.panToCharacter(player->_controlledCharacter);
 }
 
 void HelloWorld::menuCloseCallback(Ref* pSender) {
     auto startScene = MainMenu::createScene();
-    //cocos2d::Director::getInstance()->popScene();
     cocos2d::Director::getInstance()->replaceScene(startScene);
-    // Close the game and quit the application
-    //Director::getInstance()->end();
-
-    //#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    //    exit(0);
-    //#endif
 }
 
 void HelloWorld::update(float delta) {
     for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
         if ((*xAgent) != player) {
             (*xAgent)->executePlan(delta);
+        }
+    }
+    
+    for (int i = 0; i < characters.size(); i++) {
+        if (characters[i]->getPosition().y < -100) { // TODO: un-hardcode this.
+            characters[i]->restartFromStart();
         }
     }
     //for (int i = 0; i < characters.size(); i++) {

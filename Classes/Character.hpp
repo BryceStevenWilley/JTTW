@@ -48,7 +48,6 @@ public:
     Character(const std::string artFileName, cocos2d::PhysicsMaterial mat, cocos2d::Vec2 startPosition, cocos2d::Size dimensions);
 
     cocos2d::PhysicsBody *body;
-    //spine::SkeletonAnimation *ani;
     
     // Applies an impulse going to the left of the character.
     //     deltaVel - the amount that the velocity going to the left should change.
@@ -57,6 +56,8 @@ public:
     // Applies an impulse going to the right of the character.
     //     deltaVel - the amount that the velocity going to the right should change.
     virtual void impulseRight(float deltaVel);
+    
+    void rebalanceImpulse(); 
     
     // Stops the character by applying an impulse that sets the velocity to 0.
     virtual void stop();
@@ -78,14 +79,21 @@ public:
     
     float getMass() const;
     
-    cocos2d::Sprite *crown;
+    cocos2d::Sprite *followcrown;
+    cocos2d::Sprite *alonecrown;
+    
+    cocos2d::Sprite *currentCrown;
+    void restartFromStart();
 
 private:
     void updateAnimation();
+       
+    cocos2d::Vec2 _startingPosition;
     
     State _currentState = State::STANDING;
     
-    
+    double leftMomentum = 0.0;
+    double rightMomentum = 0.0;
 
 };
 }

@@ -117,8 +117,8 @@ bool MainMenu::init() {
     
     auto eventListener = cocos2d::EventListenerKeyboard::create();
     eventListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
-        if (keyCode == cocos2d::EventKeyboard::KeyCode::KEY_ENTER) {
-            this->openStartScene();
+        if (keyCode == cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE) {
+            this->exitGame();
         }
     };
     this->_eventDispatcher->addEventListenerWithFixedPriority(eventListener, 1);

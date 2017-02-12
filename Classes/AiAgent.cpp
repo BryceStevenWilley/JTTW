@@ -6,7 +6,7 @@ using namespace JTTW;
 AiAgent::AiAgent(Character *controlledCharacter) :
 _controlledCharacter(controlledCharacter), _currentBehavior(&AiAgent::stationaryBehavior) {}
 
-AiAgent::~AiAgent() {}
+//AiAgent::~AiAgent() {}
 
 void AiAgent::setMap() {
 }
@@ -19,11 +19,12 @@ void AiAgent::cedeToPlayer(AiAgent *previousPlayer) {
     } else if (_currentBehavior == &AiAgent::syncronizedBehavior) {
         // No need to transfer velocity.
     }
-    
+    previousPlayer->_controlledCharacter->currentCrown->setVisible(false);
+    this->_controlledCharacter->currentCrown->setVisible(true);
 }
 
 void AiAgent::retakeFromPlayer(AiAgent *nextPlayer) {
-    
+   
 }
 
 void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode code, bool pressed) {
@@ -70,7 +71,7 @@ void AiAgent::plan(Character *player, std::vector<Character *> otherCharacters, 
         return;
     }
     
-    std::queue<ActionAndTrigger> toAdd  = (this->*_currentBehavior)(player, otherCharacters);
+    std::queue<ActionAndTrigger> toAdd  = (this->*_currentBehavior)(player, otherCharacters, code);
     
     // Put all of the returned ActionAndTriggers onto the master action queue.
     while (!toAdd.empty()) {
@@ -84,10 +85,16 @@ void AiAgent::changeBehavior(cocos2d::EventKeyboard::KeyCode code) {
     if (code == cocos2d::EventKeyboard::KeyCode::KEY_A) { // 'A' is becoming a toggle.
         if (_currentBehavior == &AiAgent::stationaryBehavior) {
             _currentBehavior = &AiAgent::syncronizedBehavior;
-            std::cout << "Behavior is now syncronized" << std::endl;
+            bool wasOn = _controlledCharacter->currentCrown->isVisible();
+            _controlledCharacter->currentCrown->setVisible(false);
+            _controlledCharacter->currentCrown = _controlledCharacter->followcrown;
+            _controlledCharacter->currentCrown->setVisible(wasOn);
         } else if (_currentBehavior == &AiAgent::syncronizedBehavior) {
             _currentBehavior = &AiAgent::stationaryBehavior;
-            std::cout << "Behavior is now stationary" << std::endl;
+              bool wasOn = _controlledCharacter->currentCrown->isVisible();
+            _controlledCharacter->currentCrown->setVisible(false);
+            _controlledCharacter->currentCrown = _controlledCharacter->alonecrown;
+            _controlledCharacter->currentCrown->setVisible(wasOn);
         }
     }
 }
@@ -98,8 +105,7 @@ void AiAgent::executePlan(float delta) {
         bool doAction = false;
         if (a.trigger.usePosition) {
             // TODO: add a tolerance to this positioning system.
-            if (a.trigger.position.x == _controlledCharacter->getPosition().x &&
-                a.trigger.position.y == _controlledCharacter->getPosition().y) {
+            if (a.trigger.isAtLocation(_controlledCharacter->getPosition())) {
                 doAction = true;
             }
         } else {

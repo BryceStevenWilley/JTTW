@@ -37,6 +37,7 @@ public:
     void update(float) override;
     
     bool onContactBegin(cocos2d::PhysicsContact &contact);
+    bool onContactEnd(cocos2d::PhysicsContact &contact);
     
 private:
     cocos2d::Node *body;
