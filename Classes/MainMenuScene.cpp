@@ -28,13 +28,12 @@ bool MainMenu::init() {
     
     // Set the Font on the screen. (TODO: make it fly in?)
     auto titleImage = cocos2d::Sprite::create("UI/MenuTitle.png");
-
     titleImage->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
     
     float middleX = origin.x + visibleSize.width / 2.0;
     titleImage->setPosition(middleX, origin.y + visibleSize.height * (3.0 / 4.0));
-    cocos2d::Size desiredSize = cocos2d::Size(visibleSize.width / 3.0, visibleSize.height / 6.0);
-    titleImage->setScale(desiredSize.width / titleImage->getContentSize().width, desiredSize.height / titleImage->getContentSize().height);
+    cocos2d::Size titleSize = cocos2d::Size(visibleSize.width / 2.0, visibleSize.height / 3.0);
+    titleImage->setScale(titleSize.width / titleImage->getContentSize().width, titleSize.height / titleImage->getContentSize().height);
     
     auto playImage = cocos2d::Sprite::create("UI/MenuPlay.png");
     auto settingsImage = cocos2d::Sprite::create("UI/MenuSettings.png");
@@ -58,15 +57,54 @@ bool MainMenu::init() {
     cocos2d::MenuItemSprite *settingsItem = cocos2d::MenuItemSprite::create(settingsImage, settingsImageS, settingsImage, CC_CALLBACK_0(MainMenu::openSettings, this));
     cocos2d::MenuItemSprite *exitItem = cocos2d::MenuItemSprite::create(exitImage, exitImageS, CC_CALLBACK_0(MainMenu::exitGame, this));
     
-    desiredSize = desiredSize * 0.6;
-    playItem->setScale(desiredSize.width / playItem->getContentSize().width, desiredSize.height / playItem->getContentSize().height);
-    exitItem->setScale(desiredSize.width / exitItem->getContentSize().width, desiredSize.height / exitItem->getContentSize().height);
-    desiredSize.width *= 1.4;
-    settingsItem->setScale(desiredSize.width / settingsItem->getContentSize().width, desiredSize.height / settingsItem->getContentSize().height);
+    /*Set up idle characters.*/
+    
+    // Monk.
+    spine::SkeletonAnimation *monk = spine::SkeletonAnimation::createWithJsonFile("Monk.json", "Monk.atlas", 1.0f);
+    monk->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+    monk->setPosition(origin.x + (middleX/2), origin.y + visibleSize.height / 8);
+    monk->setAnimation(0, "idle", true);
+    monk->setScale(.15);
+    this->addChild(monk);
+    
+    // Monkey.
+    spine::SkeletonAnimation *monkey = spine::SkeletonAnimation::createWithJsonFile("Monkey.json", "Monkey.atlas", 1.0f);
+    monkey->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+    monkey->setPosition(origin.x + (middleX/4), origin.y + visibleSize.height / 8);
+    monkey->setAnimation(0, "idle", true);
+    monkey->setScale(.15);
+    this->addChild(monkey);
+    
+    // Piggy.
+    spine::SkeletonAnimation *piggy = spine::SkeletonAnimation::createWithJsonFile("Piggy.json", "Piggy.atlas", 1.0f);
+    piggy->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+    piggy->setPosition(visibleSize.width - (middleX/2), origin.y + visibleSize.height / 15);
+    piggy->setAnimation(0, "idle", true);
+    piggy->setScale(.15);
+    // Mirror the image.
+    piggy->setScaleX(-1 * piggy->getScaleX());
+    this->addChild(piggy);
+    
+    // Sandy.
+    spine::SkeletonAnimation *sandy = spine::SkeletonAnimation::createWithJsonFile("sandy.json", "sandy.atlas", 1.0f);
+    sandy->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+    sandy->setPosition(visibleSize.width - (middleX/4), origin.y + visibleSize.height / 15);
+    sandy->setAnimation(0, "idle", true);
+    sandy->setScale(.15);
+    // Mirror the image.
+    sandy->setScaleX(-1 * sandy->getScaleX());
+    this->addChild(sandy);
+    
+    cocos2d::Size menuItemSize = titleSize * 0.4;
+    playItem->setScale(menuItemSize.width / playItem->getContentSize().width, menuItemSize.height / playItem->getContentSize().height);
+    exitItem->setScale(menuItemSize.width / exitItem->getContentSize().width, menuItemSize.height / exitItem->getContentSize().height);
+    menuItemSize.width *= 2.5;
+    menuItemSize.height *= 1.5;
+    settingsItem->setScale(menuItemSize.width / settingsItem->getContentSize().width, menuItemSize.height / settingsItem->getContentSize().height);
 
-    playItem->setPosition(middleX, origin.y + visibleSize.height / 2.0);
-    settingsItem->setPosition(middleX, origin.y + visibleSize.height * (2.0 / 6.0));
-    exitItem->setPosition(middleX, origin.y + visibleSize.height * (1.0 / 6.0));
+    playItem->setPosition(middleX + 20, origin.y + visibleSize.height / 2.0);
+    settingsItem->setPosition(middleX + 20, origin.y + visibleSize.height / 3.0);
+    exitItem->setPosition(middleX + 20, origin.y + visibleSize.height / 5.0);
     
     // TODO: right now, the menu only changes to selected when clicked.
     // Make it so that the first starts being selected, can navigate with arrow keys, or if the mouse starts moving, it selects
