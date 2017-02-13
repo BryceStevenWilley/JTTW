@@ -13,7 +13,7 @@ MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerA,
     body->setTag((int)CollisionCategory::Platform);
     body->setContactTestBitmask((int)CollisionCategory::Character);
     body->setCollisionBitmask((int)CollisionCategory::Character);
-
+     
     image->addComponent(body);
 
     cocos2d::Size actual = image->getContentSize(); // actual image size.
@@ -59,9 +59,5 @@ void MoveablePlatform::move(float deltaTime, bool debugOn) {
         _velocities = - _velocities;
     }
     body->setVelocity(_velocities);
-
-    if (debugOn) {
-        //drawCollisionBox();
-    }
 }
 

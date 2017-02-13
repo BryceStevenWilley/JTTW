@@ -38,7 +38,8 @@ public:
     
     bool onContactBegin(cocos2d::PhysicsContact &contact);
     bool onContactEnd(cocos2d::PhysicsContact &contact);
-    
+    bool onContactHandler(cocos2d::PhysicsContact &contact, bool begin);
+ 
 private:
     cocos2d::Node *body;
     Viewpoint vp = Viewpoint(cocos2d::Size(1.0, 1.0), 1.0, nullptr);
