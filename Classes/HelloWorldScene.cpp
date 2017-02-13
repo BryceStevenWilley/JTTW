@@ -12,52 +12,49 @@ using namespace JTTW;
 //bool HelloWorld::cloudSunk = false;
 //bool HelloWorld::cloudSinking = false;
 
-bool HelloWorld::onContactBegin(cocos2d::PhysicsContact& contact) {
+bool HelloWorld::onContactHandler(cocos2d::PhysicsContact& contact, bool begin) {
     auto nodeA = contact.getShapeA()->getBody()->getNode();
     auto nodeB = contact.getShapeB()->getBody()->getNode();
-    
-    if (nodeA->getTag() == CHARACTER_TAG) {// && nodeB->getTag() != CHARACTER_TAG) {
-        if (nodeA->getPositionY() > nodeB->getPositionY()) {
+    cocos2d::Vec2 normal = contact.getContactData()->normal;
+    if (nodeA->getTag() == CHARACTER_TAG) {
+        Character *c = (Character *)nodeA;
+        // If A is the character, then for landing on a flat platform, the normal is 0, -1.
+        if (normal.dot(cocos2d::Vec2(0, -1)) > std::cos(M_PI/4.0)) {
             // Character landed on a platform, probably.
-            Character *c = (Character *)nodeA;
-            c->landedCallback();
+            if (begin) {
+                c->landedCallback();
+            } else { // onContactEnd
+                c->leftCallback();
+            }
         }
-    }
-    if (nodeB->getTag() == CHARACTER_TAG) {// && nodeB->getTag() != CHARACTER_TAG) {
-        if (nodeB->getPositionY() > nodeA->getPositionY()) {
-            Character *c = (Character *)nodeB;
-            c->landedCallback();
+        if (!begin) {
+            c->rebalanceImpulse();
         }
     }
     
-    //cocos2d::PhysicsJoint *j = cocos2d::PhysicsJointFixed::construct(contact.getShapeA()->getBody(), contact.getShapeB()->getBody(), cocos2d::Vec2(500, 500));
-    //this->getScene()->getPhysicsWorld()->addJoint(j);
+    if (nodeB->getTag() == CHARACTER_TAG) {
+        Character *c = (Character *)nodeB;
+        // If B is the character, then for landing on a flat platform, the normal is 0, 1.
+        if (normal.dot(cocos2d::Vec2(0, 1)) > std::cos(M_PI /4.0)) {
+            if (begin) {
+                c->landedCallback();
+            } else { // onContactEnd
+                c->leftCallback();
+            }
+        }
+        if (!begin) {
+            c->rebalanceImpulse();
+        }
+    }
     return true;
 }
 
+bool HelloWorld::onContactBegin(cocos2d::PhysicsContact& contact) {
+    return onContactHandler(contact, true);
+}
+
 bool HelloWorld::onContactEnd(cocos2d::PhysicsContact& contact) {
-      auto nodeA = contact.getShapeA()->getBody()->getNode();
-    auto nodeB = contact.getShapeB()->getBody()->getNode();
-    
-    if (nodeA->getTag() == CHARACTER_TAG) {// && nodeB->getTag() != CHARACTER_TAG) {
-        if (nodeA->getPositionY() > nodeB->getPositionY()) {
-            // Character landed on a platform, probably.
-            Character *c = (Character *)nodeA;
-            //c->landedCallback();
-            c->rebalanceImpulse();
-        }
-    }
-    if (nodeB->getTag() == CHARACTER_TAG) {// && nodeB->getTag() != CHARACTER_TAG) {
-        if (nodeB->getPositionY() > nodeA->getPositionY()) {
-            Character *c = (Character *)nodeB;
-            //c->landedCallback();
-            c->rebalanceImpulse();
-        }
-    }
-    
-    //cocos2d::PhysicsJoint *j = cocos2d::PhysicsJointFixed::construct(contact.getShapeA()->getBody(), contact.getShapeB()->getBody(), cocos2d::Vec2(500, 500));
-    //this->getScene()->getPhysicsWorld()->addJoint(j);
-    return true;
+    return onContactHandler(contact, false);
 }
 
 Scene* HelloWorld::createScene(std::string levelToLoad) {
@@ -137,6 +134,7 @@ bool HelloWorld::init(std::string levelToLoad) {
         Character *body = characters[i];
         layer->addChild(body, i);
         AiAgent *agent = new AiAgent(body);
+        agent->setPlayerPosOffset(body->getPosition() - monkey->getPosition());
         agents.push_back(agent);
     }
     
@@ -173,7 +171,7 @@ bool HelloWorld::init(std::string levelToLoad) {
                 player->plan(characters, keyCode, true);
                 for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
                     if ((*xAgent) != player) {
-                        (*xAgent)->plan(player->_controlledCharacter, characters, keyCode, true);
+                        (*xAgent)->changeBehavior(player->_controlledCharacter, keyCode);
                     }
                 }
                 break;
@@ -187,9 +185,9 @@ bool HelloWorld::init(std::string levelToLoad) {
     eventListener->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event* event) mutable {
             player->plan(characters, keyCode, false);
             for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
-                if ((*xAgent) != player) {
-                    (*xAgent)->plan(player->_controlledCharacter, characters, keyCode, false);
-                }
+                //if ((*xAgent) != player) {
+                //    (*xAgent)->plan(player->_controlledCharacter, characters, keyCode, false);
+                //}
             }
     };
 
@@ -206,9 +204,19 @@ bool HelloWorld::init(std::string levelToLoad) {
 
 void HelloWorld::switchToCharacter(int charIndex) {
     auto nextPlayer = agents[charIndex];
+    if (nextPlayer == player) {
+        return; // don't do shit!
+    }
     nextPlayer->cedeToPlayer(player);
     player = nextPlayer;
     vp.panToCharacter(player->_controlledCharacter);
+    
+    // Set all of the offsets correctly.
+    for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
+        if ((*xAgent) != player) {
+            (*xAgent)->adjustOffset(player->_controlledCharacter);
+        }
+    }
 }
 
 void HelloWorld::menuCloseCallback(Ref* pSender) {
@@ -219,11 +227,13 @@ void HelloWorld::menuCloseCallback(Ref* pSender) {
 void HelloWorld::update(float delta) {
     for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
         if ((*xAgent) != player) {
-            (*xAgent)->executePlan(delta);
+            (*xAgent)->plan(player->_controlledCharacter, characters);
+            (*xAgent)->executeControl(delta);
         }
     }
     
     for (int i = 0; i < characters.size(); i++) {
+        characters[i]->updateAnimation();
         if (characters[i]->getPosition().y < -100) { // TODO: un-hardcode this.
             characters[i]->restartFromStart();
         }

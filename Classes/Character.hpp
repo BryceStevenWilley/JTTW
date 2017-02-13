@@ -57,6 +57,8 @@ public:
     //     deltaVel - the amount that the velocity going to the right should change.
     virtual void impulseRight(float deltaVel);
     
+    void applyForceRight(double fprimex);
+    
     void rebalanceImpulse(); 
     
     // Stops the character by applying an impulse that sets the velocity to 0.
@@ -64,11 +66,13 @@ public:
     
     // Allows the character to jump.
     void jump();
+    void jumpFromForce(double fprime_y);
     
     bool isMovingLeft() const;
     bool isMovingRight() const;
     
     void landedCallback();
+    void leftCallback();
     
     void transferVelocity(Character *reciever);
     
@@ -84,9 +88,11 @@ public:
     
     cocos2d::Sprite *currentCrown;
     void restartFromStart();
+    
+    void updateAnimation();
 
 private:
-    void updateAnimation();
+    void updateAnimation(State oldState);
        
     cocos2d::Vec2 _startingPosition;
     
@@ -94,6 +100,10 @@ private:
     
     double leftMomentum = 0.0;
     double rightMomentum = 0.0;
+    
+    cocos2d::Vec2 _oldVel;
+    
+    int platformsStandingOn = 0;
 
 };
 }

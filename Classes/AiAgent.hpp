@@ -21,31 +21,49 @@ namespace JTTW {
 class AiAgent {
 public:
     // A function pointer to a possible behavior that this agent can be following at the moment.
-    typedef std::queue<ActionAndTrigger> (AiAgent::*Behavior)(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction);
+    typedef void (AiAgent::*Behavior)(Character *player, std::vector<Character *> otherCharacters);
     
     AiAgent(Character *controlledCharacter);
     //~AiAgent();
     
     void cedeToPlayer(AiAgent *previousPlayer);
     void retakeFromPlayer(AiAgent *nextPlayer);
+    void adjustOffset(Character *player);
     void plan(std::vector<Character *> otherCharactrs, cocos2d::EventKeyboard::KeyCode code, bool pressed);
-    void plan(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode code, bool pressed);
-    void changeBehavior(cocos2d::EventKeyboard::KeyCode code);
-    void executePlan(float delta);
+    void plan(Character *player, std::vector<Character *> otherCharacters);
+    void changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode code);
+    void executeControl(float delta);
     void setMap(); // TODO: when the map API is created, pass the object that holds the map to this.
     
-    Character *_controlledCharacter;
+    cocos2d::Vec2 getPlayerPosOffset() const;
+    void setPlayerPosOffset(cocos2d::Vec2 playerPosOffset);
     
+    Character *_controlledCharacter;
 protected:
+    cocos2d::Vec2 _playerPosOffset = cocos2d::Vec2(0, 0);
+
     // The queue of actions that will be executed in the future, according to their triggers.
     std::queue<ActionAndTrigger> plannedActions;
     Behavior _currentBehavior;
+    
+    // The input 'trajectory' to match.
+    cocos2d::Vec2 desiredVel;
+    cocos2d::Vec2 desiredPosition;
+    
+    // Control parameters.
+    double kp = 16.0;
+    double kv = 8.0;
+    double b;
+    double k;
 
 private:
+    void followBehavior(Character *player, std::vector<Character *> otherCharacters);
+    void stationaryBehavior(Character *player, std::vector<Character *> otherCharacters);
+
     // The possible behaivors of the AI. All of these methods are implemented in AiAgentBehaivors.cpp.
-    std::queue<ActionAndTrigger> stationaryBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction);
-    std::queue<ActionAndTrigger> syncronizedBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction);
-    std::queue<ActionAndTrigger> dumbFollowBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction);
+    //std::queue<ActionAndTrigger> stationaryBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction);
+    //std::queue<ActionAndTrigger> syncronizedBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction);
+    //std::queue<ActionAndTrigger> dumbFollowBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction);
 };
     
 };

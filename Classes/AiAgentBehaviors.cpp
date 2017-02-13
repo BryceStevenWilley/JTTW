@@ -9,12 +9,31 @@
 using namespace JTTW;
 
 /**
+ * Sets the desired position/trajectory to be at an offset from the main player.
+ * Completely dumb, will jump more than it needs to, etc.
+ */
+void AiAgent::followBehavior(Character *player, std::vector<Character *> otherCharacters) {
+    // Set the desired velocity and position, as taken from input from the player character.
+    desiredVel = player->body->getVelocity();
+    desiredPosition = player->getPosition() + _playerPosOffset;
+}
+
+/**
+ * Sets the desired position to be exactly where they are.
+ * Don't move an inch.
+ */
+void AiAgent::stationaryBehavior(Character *player, std::vector<Character *> otherCharacters) {
+    desiredVel = cocos2d::Vec2::ZERO;
+    desiredPosition = _controlledCharacter->getPosition();
+}
+
+/**
  * Copies exactly what the player character is doing at the moment.
  * 
  * Player just jumped? You jump. Player moved left? You move left.
  * For now, just a simple AI for making characters follow player.
  */
-std::queue<ActionAndTrigger> AiAgent::syncronizedBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction) {
+/*std::queue<ActionAndTrigger> AiAgent::syncronizedBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction) {
     std::queue<ActionAndTrigger> plannedActions;
     if (player == _controlledCharacter) {
         return plannedActions;
@@ -48,18 +67,20 @@ std::queue<ActionAndTrigger> AiAgent::syncronizedBehavior(Character *player, std
     //}
     return plannedActions;
 }
+*/
 
 /**
  * Stand in the same place. Always chooses the stop action, no matter what.
  */
-std::queue<ActionAndTrigger> AiAgent::stationaryBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction) {
+/*std::queue<ActionAndTrigger> AiAgent::stationaryBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction) {
     std::queue<ActionAndTrigger> plannedActions;
     // Literally, stand completely still.
     plannedActions.push(ActionAndTrigger(Action::STOP, 0.0));
     return plannedActions;
 }
+*/
 
-std::queue<ActionAndTrigger> AiAgent::dumbFollowBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction) {
+/*std::queue<ActionAndTrigger> AiAgent::dumbFollowBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction) {
         std::queue<ActionAndTrigger> plannedActions;
     // Literally, plan to do what the player is doing, but at exactly the position
     // where they're doing it.
@@ -80,5 +101,5 @@ std::queue<ActionAndTrigger> AiAgent::dumbFollowBehavior(Character *player, std:
         plannedActions.push(ActionAndTrigger(Action::STOP, playerPosition.x, playerPosition.y));
     }
     return plannedActions;
-}
+}*/
 
