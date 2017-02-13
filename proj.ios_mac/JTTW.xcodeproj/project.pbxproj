@@ -319,7 +319,6 @@
 		9F45C0101E35EE7700C06D0C /* sandy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = sandy.json; sourceTree = "<group>"; };
 		9F45C0111E35EE7700C06D0C /* sandy.atlas */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sandy.atlas; sourceTree = "<group>"; };
 		9F666E451E30201C00F9BB90 /* AiAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AiAgent.cpp; sourceTree = "<group>"; };
-		9F666E4F1E31B64800F9BB90 /* AiActions.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AiActions.hpp; sourceTree = "<group>"; };
 		9F666E571E31D89500F9BB90 /* AiAgentBehaviors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AiAgentBehaviors.cpp; sourceTree = "<group>"; };
 		9F666E631E326F5B00F9BB90 /* Monkey2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Monkey2.png; sourceTree = "<group>"; };
 		9F666E641E326F5B00F9BB90 /* Monkey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Monkey.png; sourceTree = "<group>"; };
@@ -631,7 +630,6 @@
 				9FAAFDFB1E292DBB0036F58B /* AiAgent.hpp */,
 				9F666E451E30201C00F9BB90 /* AiAgent.cpp */,
 				9F666E571E31D89500F9BB90 /* AiAgentBehaviors.cpp */,
-				9F666E4F1E31B64800F9BB90 /* AiActions.hpp */,
 			);
 			name = AI;
 			sourceTree = "<group>";

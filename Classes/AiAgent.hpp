@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include "Character.hpp"
-#include "AiActions.hpp"
 #include <map>
 
 namespace JTTW {
@@ -24,7 +23,6 @@ public:
     typedef void (AiAgent::*Behavior)(Character *player, std::vector<Character *> otherCharacters);
     
     AiAgent(Character *controlledCharacter);
-    //~AiAgent();
     
     void cedeToPlayer(AiAgent *previousPlayer);
     void retakeFromPlayer(AiAgent *nextPlayer);
@@ -43,7 +41,6 @@ protected:
     cocos2d::Vec2 _playerPosOffset = cocos2d::Vec2(0, 0);
 
     // The queue of actions that will be executed in the future, according to their triggers.
-    std::queue<ActionAndTrigger> plannedActions;
     Behavior _currentBehavior;
     
     // The input 'trajectory' to match.
@@ -57,13 +54,10 @@ protected:
     double k;
 
 private:
-    void followBehavior(Character *player, std::vector<Character *> otherCharacters);
-    void stationaryBehavior(Character *player, std::vector<Character *> otherCharacters);
 
     // The possible behaivors of the AI. All of these methods are implemented in AiAgentBehaivors.cpp.
-    //std::queue<ActionAndTrigger> stationaryBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction);
-    //std::queue<ActionAndTrigger> syncronizedBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction);
-    //std::queue<ActionAndTrigger> dumbFollowBehavior(Character *player, std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode playerAction);
+    void followBehavior(Character *player, std::vector<Character *> otherCharacters);
+    void stationaryBehavior(Character *player, std::vector<Character *> otherCharacters);
 };
     
 };

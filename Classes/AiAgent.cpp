@@ -14,17 +14,14 @@ void AiAgent::cedeToPlayer(AiAgent *previousPlayer) {
     // clean up any movements from the AI.
     if (_currentBehavior == &AiAgent::stationaryBehavior) {
         // Need to transfer velocity.
-        //_controlledCharacter->body->resetForces();
         previousPlayer->_controlledCharacter->transferVelocity(_controlledCharacter);
     } else if (_currentBehavior == &AiAgent::followBehavior) {
-        // No need to transfer velocity.
+        // Need to transfer velocity, and reset the control forces that were previously acting there.
         _controlledCharacter->body->resetForces();
         previousPlayer->_controlledCharacter->transferVelocity(_controlledCharacter);
     }
-    previousPlayer->_controlledCharacter->currentCrown->setVisible(false);
-    //cocos2d::Vec2 theirOffset = previousPlayer->getPlayerPosOffset();
     previousPlayer->setPlayerPosOffset(previousPlayer->_controlledCharacter->getPosition() - this->_controlledCharacter->getPosition());
-    //this->setPlayerPosOffset(theirOffset);
+    previousPlayer->_controlledCharacter->currentCrown->setVisible(false);
     this->_controlledCharacter->currentCrown->setVisible(true);
 }
 

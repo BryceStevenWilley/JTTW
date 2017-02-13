@@ -85,14 +85,7 @@ bool HelloWorld::init(std::string levelToLoad) {
     
     closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
                                 origin.y + closeItem->getContentSize().height/2));
-    
-    // draw and add background
-    //auto background = cocos2d::Sprite::create("backgrounds/Sunny Background.png");
-   // background->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
-    //background->setScale(1.4);
-    //background->setPosition(0,-300.0);
-    //this->addChild(background, -8);
-    
+
     // create menu with the "X" image, it's an autorelease object
     auto menu = cocos2d::Menu::create(closeItem, NULL);
     menu->setPosition(Vec2::ZERO);
@@ -184,11 +177,6 @@ bool HelloWorld::init(std::string levelToLoad) {
     
     eventListener->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event* event) mutable {
             player->plan(characters, keyCode, false);
-            for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
-                //if ((*xAgent) != player) {
-                //    (*xAgent)->plan(player->_controlledCharacter, characters, keyCode, false);
-                //}
-            }
     };
 
     this->_eventDispatcher->addEventListenerWithFixedPriority(eventListener, 1);
@@ -238,42 +226,10 @@ void HelloWorld::update(float delta) {
             characters[i]->restartFromStart();
         }
     }
-    //for (int i = 0; i < characters.size(); i++) {
-    //    characters[i]->move(delta, platforms, debugOn);
-
-        // HARDCODED STUFF FOR PEDESTAL DISSAPPEARING
-        /*
-        if (characters[i]->ani->getPosition().x > vp.metersToPixels(52.0) && !pedestalPopped) {
-            // Remove the pedestal from the platforms.
-            BadPlatform pedstal = platforms.back();
-            platforms.pop_back();
-            pedstal.s->runAction(cocos2d::FadeOut::create(2.0));
-            pedestalPopped = true;
-            characters[i]->ani->setAnimation(0, "fall forwards", false);
-            characters[i]->ani->setTimeScale(.3);
-        }
-        if (characters[i]->characterName == "Piggy" && characters[i]->isDirectlyAbove(platforms[2].dimensions, characters[i]->ani->getPosition(), characters[i]->dimensions) && (!cloudSunk || !cloudSinking)) {
-            cloudSinking = true;
-        }
-         */
-    //}
     
     for (int i = 0; i < moveables.size(); i++) {
         moveables[i]->move(delta, false);
     }
-    /*
-    if (cloudSinking == true) {
-        BadPlatform c = platforms[2];
-        c.dimensions.setRect(c.dimensions.origin.x, c.dimensions.origin.y - (20 * delta), c.dimensions.size.width, c.dimensions.size.height);
-        c.s->setPosition(cocos2d::Vec2(c.s->getPosition().x, c.s->getPosition().y - (20 * delta)));
-        if (c.dimensions.getMaxY() < vp.metersToPixels(12)) {
-            cloudSinking = false;
-            cloudSunk = true;
-        }
-        platforms[2] = c;
-    }
-    */
     vp.followCharacter(player->_controlledCharacter, delta);
-
 }
 
