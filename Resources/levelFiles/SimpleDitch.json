@@ -1,4 +1,6 @@
 {
+    "levelEndX" : -1,
+    "nextLevelName" : "",
     "background" : {
         "imageName" : "bgSunny.png",
         "centerX" : 0.0,

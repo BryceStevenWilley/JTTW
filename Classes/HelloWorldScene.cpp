@@ -2,8 +2,13 @@
 #include "SimpleAudioEngine.h"
 #include "MainMenuScene.hpp"
 #include <iostream>
-#include "LevelParser.hpp"
 #include "Character.hpp"
+#include "LevelEnd.hpp"
+#include <stdio.h>
+#include "cocos2d.h"
+#include "json.hpp"
+#include <iostream>
+#include <fstream>
 
 using namespace cocos2d;
 using namespace JTTW;
@@ -11,6 +16,18 @@ using namespace JTTW;
 //bool HelloWorld::pedestalPopped;
 //bool HelloWorld::cloudSunk = false;
 //bool HelloWorld::cloudSinking = false;
+
+cocos2d::Scene* HelloWorld::createScene(std::string levelToLoad) {
+    // 'scene' and layer are autorelease objects.
+    auto scene = cocos2d::Scene::createWithPhysics();
+    //scene->autorelease();
+    scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -298));
+    scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
+    auto layer = HelloWorld::create(levelToLoad);
+    scene->addChild(layer);
+
+    return scene;
+}
 
 bool HelloWorld::onContactHandler(cocos2d::PhysicsContact& contact, bool begin) {
     auto nodeA = contact.getShapeA()->getBody()->getNode();
@@ -57,50 +74,63 @@ bool HelloWorld::onContactEnd(cocos2d::PhysicsContact& contact) {
     return onContactHandler(contact, false);
 }
 
-Scene* HelloWorld::createScene(std::string levelToLoad) {
-    // 'scene' and layer are autorelease objects.
-    auto scene = Scene::createWithPhysics();
-    //scene->autorelease();
-    scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -298));
-    scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
-    auto layer = HelloWorld::create(levelToLoad);
-    scene->addChild(layer);
 
-    return scene;
-}
+cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugOn) {
+    
+    cocos2d::Layer *platLayer = cocos2d::Layer::create();
+    
+    const int platformZ = 4;
+    
+    std::ifstream inFile(fileName);
+    nlohmann::json lvl;
+    
+    std::cout.flush();
+    inFile >> lvl;
+    
+    // draw and add background
+    nlohmann::json backgroundAtts = lvl["background"];
+    std::string bgPath = backgroundAtts["imageName"];
+    bgPath = "backgrounds/" + bgPath;
+    auto background = cocos2d::Sprite::create(bgPath);
+    background->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
+    background->setScale(1.4);
+    background->setPosition(0,-300.0);
+    this->addChild(background, -8);
+    
+    nlohmann::json platformAtts = lvl["platforms"];
+    for (auto& pAtt: platformAtts) {
+        std::string fullImagePath = pAtt["imageName"];
+        fullImagePath = "platforms/" + fullImagePath;
+        double centerX = vp.metersToPixels((double)pAtt["centerX"]);
+        double centerY = vp.metersToPixels((double)pAtt["centerY"]);
+        double imageSizeWidth = vp.metersToPixels((double)pAtt["imageSizeWidth"]);
+        double imageSizeHeight = vp.metersToPixels((double)pAtt["imageSizeHeight"]);
+        
+        // Get the collision Width and height.
+        double collisionWidth = vp.metersToPixels((double)pAtt["collisionWidth"]);
+        double collisionHeight = vp.metersToPixels((double)pAtt["collisionHeight"]);
+        
+        if (pAtt["moveable"]) {
+            cocos2d::Vec2 centerA(centerX, centerY);
+            double centerBX = vp.metersToPixels((double)pAtt["center2X"]);
+            double centerBY = vp.metersToPixels((double)pAtt["center2Y"]);
+            cocos2d::Vec2 centerB(centerBX, centerBY);
+            double maximumVelocity = vp.metersToPixels((double)pAtt["maximumVelocity"]);
+            MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), maximumVelocity);
 
-bool HelloWorld::init(std::string levelToLoad) {
-    if ( !Layer::init() ) {
-        return false;
+            platLayer->addChild(p->image, platformZ);
+            platforms.push_back(p);
+            moveables.push_back(p);
+        } else {
+            Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight));
+        
+            platLayer->addChild(p->getImage(), platformZ);
+            platforms.push_back(p);
+        }
     }
     
-    // aka window dimensions
-    auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-    cocos2d::Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
-    // add a "close" icon to exit the program. it's an autorelease object
-    auto closeItem = cocos2d::MenuItemImage::create("CloseNormal.png",
-                                           "CloseSelected.png",
-                                           CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
+    nlohmann::json characterStart = lvl["characters"];
     
-    closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
-                                origin.y + closeItem->getContentSize().height/2));
-
-    // create menu with the "X" image, it's an autorelease object
-    auto menu = cocos2d::Menu::create(closeItem, NULL);
-    menu->setPosition(Vec2::ZERO);
-    
-    // add menu with Z-order 1.
-    this->addChild(menu, 1);
-
-    // Creates the camera, or viewpoint for this scene.
-    // 1.7/180.0 means that 1.7 meters in the game world (average human male height) is represented by 180 pixels on screen.
-    cocos2d::Layer *layer = cocos2d::Layer::create();
-    vp = Viewpoint(visibleSize, 1.7/130.0, layer);
-
-    nlohmann::json characterStart = parseLevelFromJson(levelToLoad, this, layer, platforms, moveables, vp, debugOn);
-    int characterHeight = vp.metersToPixels(1.7);
-
     double monkeyStartX = vp.metersToPixels((double)characterStart["Monkey"]["startingXPos"]);
     double monkeyStartY = vp.metersToPixels((double)characterStart["Monkey"]["startingYPos"]);
         
@@ -113,31 +143,78 @@ bool HelloWorld::init(std::string levelToLoad) {
     double sandyStartX = vp.metersToPixels((double)characterStart["Sandy"]["startingXPos"]);
     double sandyStartY = vp.metersToPixels((double)characterStart["Sandy"]["startingYPos"]);
     
-    Character *monkey = new Character("Monkey", PhysicsMaterial(1.0, 0.0, 1.0), cocos2d::Vec2(monkeyStartX, monkeyStartY), cocos2d::Size(characterHeight, characterHeight));
-    Character *monk = new Character("Monk", PhysicsMaterial(1.0, 0.0, 1.0), cocos2d::Vec2(monkStartX, monkStartY), cocos2d::Size(characterHeight, characterHeight));
-    Character *piggy = new Character("Piggy", PhysicsMaterial(1.0, 0.0, 1.0), cocos2d::Vec2(piggyStartX, piggyStartY), cocos2d::Size(characterHeight, characterHeight));
-    Character *sandy = new Character("sandy", PhysicsMaterial(1.0, 0.0, 1.0), cocos2d::Vec2(sandyStartX, sandyStartY), cocos2d::Size(characterHeight, characterHeight));
+    int characterHeight = vp.metersToPixels(1.7);
+    int characterWidth = vp.metersToPixels(1.7);
+
+    Character *monkey = new Character("Monkey", PhysicsMaterial(1.0, 0.0, 1.0), cocos2d::Vec2(monkeyStartX, monkeyStartY), cocos2d::Size(characterWidth, characterHeight));
+    Character *monk = new Character("Monk", PhysicsMaterial(1.0, 0.0, 1.0), cocos2d::Vec2(monkStartX, monkStartY), cocos2d::Size(characterWidth, characterHeight));
+    Character *piggy = new Character("Piggy", PhysicsMaterial(1.0, 0.0, 1.0), cocos2d::Vec2(piggyStartX, piggyStartY), cocos2d::Size(characterWidth, characterHeight));
+    Character *sandy = new Character("sandy", PhysicsMaterial(1.0, 0.0, 1.0), cocos2d::Vec2(sandyStartX, sandyStartY), cocos2d::Size(characterWidth, characterHeight));
 
     characters.push_back(monkey);
     characters.push_back(monk);
     characters.push_back(piggy);
     characters.push_back(sandy);
     
+    charactersAtEnd.push_back(false);
+    charactersAtEnd.push_back(false);
+    charactersAtEnd.push_back(false);
+    charactersAtEnd.push_back(false);
+    
+    levelEndX = lvl["levelEndX"];
+    
+    _nextLevel = lvl["nextLevelName"];
+    
+    return platLayer;
+}
+
+bool HelloWorld::init(std::string levelToLoad) {
+    if ( !Layer::init() ) {
+        return false;
+    }
+    
+    // aka window dimensions
+    auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+    cocos2d::Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+    // add a "close" icon to exit the program. it's an autorelease object
+    //auto closeItem = cocos2d::MenuItemImage::create("CloseNormal.png",
+    //                                       "CloseSelected.png",
+    //                                       CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
+    
+    //closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
+    //                            origin.y + closeItem->getContentSize().height/2));
+
+    // create menu with the "X" image, it's an autorelease object
+    //auto menu = cocos2d::Menu::create(closeItem, NULL);
+    //menu->setPosition(Vec2::ZERO);
+    
+    // add menu with Z-order 1.
+    //this->addChild(menu, 1);
+
+   
+    // Creates the camera, or viewpoint for this scene.
+    // 1.7/130.0 means that 1.7 meters in the game world (average human male height) is represented by 180 pixels on screen.
+    vp = Viewpoint(visibleSize, 1.7/130.0);
+
+    cocos2d::Layer *layer = parseLevelFromJson(levelToLoad, debugOn);
+ 
+    vp.setLayer(layer);
+ 
     for (int i = 0; i < characters.size(); i++) {
         Character *body = characters[i];
         layer->addChild(body, i);
         AiAgent *agent = new AiAgent(body);
-        agent->setPlayerPosOffset(body->getPosition() - monkey->getPosition());
+        agent->setPlayerPosOffset(body->getPosition() - characters[0]->getPosition());
         agents.push_back(agent);
     }
     
     player = agents[0];
-
     player->_controlledCharacter->currentCrown->setVisible(true);
 
     this->addChild(layer, 1);
     
-    auto eventListener = cocos2d::EventListenerKeyboard::create();
+    eventListener = cocos2d::EventListenerKeyboard::create();
     
     eventListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) mutable {
         switch(keyCode) {
@@ -209,7 +286,19 @@ void HelloWorld::switchToCharacter(int charIndex) {
 
 void HelloWorld::menuCloseCallback(Ref* pSender) {
     auto startScene = MainMenu::createScene();
+    this->_eventDispatcher->removeEventListener(eventListener);
     cocos2d::Director::getInstance()->replaceScene(startScene);
+}
+
+void HelloWorld::nextLevelCallback() {
+    if (!nextLevelStarting) {
+        this->_eventDispatcher->removeEventListener(eventListener);
+        std::cout << "Starting next level, " << _nextLevel << std::endl;
+        auto end = LevelEnd::createScene(_nextLevel);
+        auto fade = cocos2d::TransitionFade::create(3.0, end);
+        cocos2d::Director::getInstance()->replaceScene(fade);
+        nextLevelStarting = true;
+    }
 }
 
 void HelloWorld::update(float delta) {
@@ -220,11 +309,20 @@ void HelloWorld::update(float delta) {
         }
     }
     
+    bool done = true;
     for (int i = 0; i < characters.size(); i++) {
         characters[i]->updateAnimation();
         if (characters[i]->getPosition().y < -100) { // TODO: un-hardcode this.
             characters[i]->restartFromStart();
+        }  else if (vp.pixelsToMeters(characters[i]->getPosition().x) < levelEndX) {
+            done = false;
         }
+    }
+    if (done) {
+        for (int i = 0; i < characters.size(); i++) {
+            characters[i]->stop();
+        }
+        nextLevelCallback();
     }
     
     for (int i = 0; i < moveables.size(); i++) {

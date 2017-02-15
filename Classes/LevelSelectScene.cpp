@@ -102,5 +102,6 @@ void LevelSelect::menuCallback(cocos2d::Ref* fromItem) {
     std::stringstream ss;
     ss << "levelFiles/" << tagToFileName[menuSelection->getTag()];
     startScene = HelloWorld::createScene(ss.str());
-    cocos2d::Director::getInstance()->replaceScene(startScene);
+    auto fade = cocos2d::TransitionFade::create(3.0, startScene);
+    cocos2d::Director::getInstance()->replaceScene(fade);
 }

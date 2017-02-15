@@ -1,4 +1,6 @@
 {
+    "levelEndX" : 5,
+    "nextLevelName" : "SimpleDitch.json",
     "background" : {
         "imageName" : "Background.png",
         "centerX" : 0.0,
@@ -7,10 +9,10 @@
         "height" : 0.0
     },
     "characters" : {
-        "Sandy" : {"startingXPos": 0.3, "startingYPos": 10},
-        "Piggy" : {"startingXPos": 2.0, "startingYPos": 10},
-        "Monk" : {"startingXPos": 3.7, "startingYPos": 10},
-        "Monkey" : {"startingXPos":7.0, "startingYPos": 10}
+        "Sandy" : {"startingXPos": 0.8, "startingYPos": 10},
+        "Piggy" : {"startingXPos": 2.5, "startingYPos": 10},
+        "Monk" : {"startingXPos": 4.2, "startingYPos": 10},
+        "Monkey" : {"startingXPos":5.7, "startingYPos": 10}
     },
     "platforms" : [
         {

@@ -14,7 +14,7 @@ using namespace JTTW;
 
 Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial mat, cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
         spine::SkeletonAnimation(),
-        body(cocos2d::PhysicsBody::createBox(cocos2d::Size(720.0f, 720.0f), mat)),
+        body(cocos2d::PhysicsBody::createBox(cocos2d::Size(600.0f, 720.0f), mat)),
         characterName(artFilePrefix) {
     
     this->initWithJsonFile(artFilePrefix + ".json", artFilePrefix + ".atlas", 1.0f);

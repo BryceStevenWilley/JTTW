@@ -1,7 +1,7 @@
 #ifndef Viewpoint_hpp
 #define Viewpoint_hpp
 
-#include <stdio.h>
+#include <iostream>
 #include "Character.hpp"
 
 namespace JTTW {
@@ -11,7 +11,9 @@ class Character;
 
 class Viewpoint {
 public:
-    Viewpoint(cocos2d::Size screenDims, double metersPerPixel, cocos2d::Layer *level);
+    Viewpoint(cocos2d::Size screenDims, double metersPerPixel);
+    
+    void setLayer(cocos2d::Layer *level);
     
     void panToCharacter(Character *player);
     void followCharacter(Character *player, float delta);
