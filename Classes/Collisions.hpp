@@ -15,7 +15,14 @@ enum class CollisionCategory {
     None = 0,
     Character = (1 << 0), // 1
     Platform = (1 << 1), // 2
-    ALL = CollisionCategory::Character | CollisionCategory::Platform // 3
+    Boulder = (1 << 2), // 4?
+    PlatformAndBoulder = CollisionCategory::Platform |
+                         CollisionCategory::Boulder,
+    CharacterAndBoulder = CollisionCategory::Character |
+                          CollisionCategory::Boulder,
+    ALL = CollisionCategory::Character |
+          CollisionCategory::Platform |
+          CollisionCategory::Boulder // 3
 };
 
 }

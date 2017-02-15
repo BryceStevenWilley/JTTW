@@ -44,11 +44,10 @@ public:
 private:
     cocos2d::Layer *parseLevelFromJson(std::string fileName, bool debugOn);
 
-    cocos2d::Node *body;
     Viewpoint vp = Viewpoint(cocos2d::Size(1.0, 1.0), 1.0);
     std::vector<Character *> characters = std::vector<Character *>();
-    std::vector<bool> charactersAtEnd = std::vector<bool>();
     std::vector<AiAgent *> agents = std::vector<AiAgent *>();
+    std::vector<cocos2d::Sprite *> dynamics = std::vector<cocos2d::Sprite *>();
     AiAgent *player = nullptr;
     std::vector<Platform *> platforms = std::vector<Platform *>();
     std::vector<MoveablePlatform *> moveables = std::vector<MoveablePlatform *>();

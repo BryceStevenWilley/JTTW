@@ -86,7 +86,7 @@ bool MainMenu::init() {
     this->addChild(piggy);
     
     // Sandy.
-    spine::SkeletonAnimation *sandy = spine::SkeletonAnimation::createWithJsonFile("sandy.json", "sandy.atlas", 1.0f);
+    spine::SkeletonAnimation *sandy = spine::SkeletonAnimation::createWithJsonFile("Sandy.json", "Sandy.atlas", 1.0f);
     sandy->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
     sandy->setPosition(visibleSize.width - (middleX/4), origin.y + visibleSize.height / 15);
     sandy->setAnimation(0, "idle", true);

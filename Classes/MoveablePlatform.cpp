@@ -11,8 +11,8 @@ MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerA,
     body->setDynamic(false); // moving platforms are kinematic bodies.
     body->setGravityEnable(false);
     body->setTag((int)CollisionCategory::Platform);
-    body->setContactTestBitmask((int)CollisionCategory::Character);
-    body->setCollisionBitmask((int)CollisionCategory::Character);
+    body->setContactTestBitmask((int)CollisionCategory::CharacterAndBoulder);
+    body->setCollisionBitmask((int)CollisionCategory::CharacterAndBoulder);
      
     image->addComponent(body);
 
@@ -39,8 +39,8 @@ MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerAm
     body->setGravityEnable(false);
     
     body->setTag((int)CollisionCategory::Platform);
-    body->setContactTestBitmask((int)CollisionCategory::Character);
-    body->setCollisionBitmask((int)CollisionCategory::Character);
+    body->setContactTestBitmask((int)CollisionCategory::CharacterAndBoulder);
+    body->setCollisionBitmask((int)CollisionCategory::CharacterAndBoulder);
     
     
     // Set initial speed.

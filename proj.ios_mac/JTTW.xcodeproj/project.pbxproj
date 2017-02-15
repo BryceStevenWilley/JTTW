@@ -92,18 +92,18 @@
 		9F45C00B1E35E89500C06D0C /* Monk.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F45BFF51E35E85700C06D0C /* Monk.png */; };
 		9F45C00C1E35E89500C06D0C /* Monk.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F45BFF61E35E85700C06D0C /* Monk.json */; };
 		9F45C00D1E35E89500C06D0C /* Monk.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 9F45BFF71E35E85700C06D0C /* Monk.atlas */; };
-		9F45C0121E35EE7700C06D0C /* sandy2.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C00E1E35EE7700C06D0C /* sandy2.png */; };
-		9F45C0131E35EE7700C06D0C /* sandy.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C00F1E35EE7700C06D0C /* sandy.png */; };
-		9F45C0141E35EE7700C06D0C /* sandy.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C0101E35EE7700C06D0C /* sandy.json */; };
-		9F45C0151E35EE7700C06D0C /* sandy.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C0111E35EE7700C06D0C /* sandy.atlas */; };
-		9F45C0161E35EE8400C06D0C /* sandy2.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C00E1E35EE7700C06D0C /* sandy2.png */; };
-		9F45C0171E35EE8400C06D0C /* sandy.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C00F1E35EE7700C06D0C /* sandy.png */; };
-		9F45C0181E35EE8400C06D0C /* sandy.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C0101E35EE7700C06D0C /* sandy.json */; };
-		9F45C0191E35EE8400C06D0C /* sandy.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C0111E35EE7700C06D0C /* sandy.atlas */; };
-		9F45C01A1E35EE9400C06D0C /* sandy2.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C00E1E35EE7700C06D0C /* sandy2.png */; };
-		9F45C01B1E35EE9400C06D0C /* sandy.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C00F1E35EE7700C06D0C /* sandy.png */; };
-		9F45C01C1E35EE9400C06D0C /* sandy.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C0101E35EE7700C06D0C /* sandy.json */; };
-		9F45C01D1E35EE9400C06D0C /* sandy.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C0111E35EE7700C06D0C /* sandy.atlas */; };
+		9F45C0121E35EE7700C06D0C /* Sandy2.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C00E1E35EE7700C06D0C /* Sandy2.png */; };
+		9F45C0131E35EE7700C06D0C /* Sandy.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C00F1E35EE7700C06D0C /* Sandy.png */; };
+		9F45C0141E35EE7700C06D0C /* Sandy.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C0101E35EE7700C06D0C /* Sandy.json */; };
+		9F45C0151E35EE7700C06D0C /* Sandy.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C0111E35EE7700C06D0C /* Sandy.atlas */; };
+		9F45C0161E35EE8400C06D0C /* Sandy2.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C00E1E35EE7700C06D0C /* Sandy2.png */; };
+		9F45C0171E35EE8400C06D0C /* Sandy.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C00F1E35EE7700C06D0C /* Sandy.png */; };
+		9F45C0181E35EE8400C06D0C /* Sandy.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C0101E35EE7700C06D0C /* Sandy.json */; };
+		9F45C0191E35EE8400C06D0C /* Sandy.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C0111E35EE7700C06D0C /* Sandy.atlas */; };
+		9F45C01A1E35EE9400C06D0C /* Sandy2.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C00E1E35EE7700C06D0C /* Sandy2.png */; };
+		9F45C01B1E35EE9400C06D0C /* Sandy.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C00F1E35EE7700C06D0C /* Sandy.png */; };
+		9F45C01C1E35EE9400C06D0C /* Sandy.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C0101E35EE7700C06D0C /* Sandy.json */; };
+		9F45C01D1E35EE9400C06D0C /* Sandy.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 9F45C0111E35EE7700C06D0C /* Sandy.atlas */; };
 		9F45C01E1E35EE9400C06D0C /* Piggy2.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F45BFED1E35E85700C06D0C /* Piggy2.png */; };
 		9F45C0201E35EE9400C06D0C /* Piggy.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F45BFEF1E35E85700C06D0C /* Piggy.png */; };
 		9F45C0211E35EE9400C06D0C /* Piggy.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F45BFF01E35E85700C06D0C /* Piggy.json */; };
@@ -314,10 +314,10 @@
 		9F45BFF51E35E85700C06D0C /* Monk.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Monk.png; sourceTree = "<group>"; };
 		9F45BFF61E35E85700C06D0C /* Monk.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Monk.json; sourceTree = "<group>"; };
 		9F45BFF71E35E85700C06D0C /* Monk.atlas */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Monk.atlas; sourceTree = "<group>"; };
-		9F45C00E1E35EE7700C06D0C /* sandy2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sandy2.png; sourceTree = "<group>"; };
-		9F45C00F1E35EE7700C06D0C /* sandy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sandy.png; sourceTree = "<group>"; };
-		9F45C0101E35EE7700C06D0C /* sandy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = sandy.json; sourceTree = "<group>"; };
-		9F45C0111E35EE7700C06D0C /* sandy.atlas */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sandy.atlas; sourceTree = "<group>"; };
+		9F45C00E1E35EE7700C06D0C /* Sandy2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Sandy2.png; sourceTree = "<group>"; };
+		9F45C00F1E35EE7700C06D0C /* Sandy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Sandy.png; sourceTree = "<group>"; };
+		9F45C0101E35EE7700C06D0C /* Sandy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Sandy.json; sourceTree = "<group>"; };
+		9F45C0111E35EE7700C06D0C /* Sandy.atlas */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sandy.atlas; sourceTree = "<group>"; };
 		9F666E451E30201C00F9BB90 /* AiAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AiAgent.cpp; sourceTree = "<group>"; };
 		9F666E571E31D89500F9BB90 /* AiAgentBehaviors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AiAgentBehaviors.cpp; sourceTree = "<group>"; };
 		9F666E631E326F5B00F9BB90 /* Monkey2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Monkey2.png; sourceTree = "<group>"; };
@@ -526,10 +526,10 @@
 				9FB69E001E46E93A006325A3 /* levelFiles */,
 				9FB69DFE1E46E92B006325A3 /* UI */,
 				9F380AAE1E427A9500728246 /* Selection Crown.png */,
-				9F45C00E1E35EE7700C06D0C /* sandy2.png */,
-				9F45C00F1E35EE7700C06D0C /* sandy.png */,
-				9F45C0101E35EE7700C06D0C /* sandy.json */,
-				9F45C0111E35EE7700C06D0C /* sandy.atlas */,
+				9F45C00E1E35EE7700C06D0C /* Sandy2.png */,
+				9F45C00F1E35EE7700C06D0C /* Sandy.png */,
+				9F45C0101E35EE7700C06D0C /* Sandy.json */,
+				9F45C0111E35EE7700C06D0C /* Sandy.atlas */,
 				9F45BFED1E35E85700C06D0C /* Piggy2.png */,
 				9F45BFEE1E35E85700C06D0C /* Piggy.spine */,
 				9F45BFEF1E35E85700C06D0C /* Piggy.png */,
@@ -781,7 +781,7 @@
 			files = (
 				9F380AAF1E427A9500728246 /* Selection Crown.png in Resources */,
 				9F45BFFF1E35E85700C06D0C /* Monk2.png in Resources */,
-				9F45C0151E35EE7700C06D0C /* sandy.atlas in Resources */,
+				9F45C0151E35EE7700C06D0C /* Sandy.atlas in Resources */,
 				5087E78117EB970100C73F5D /* Icon-120.png in Resources */,
 				454B17121E2FC6D30035467D /* backgrounds in Resources */,
 				9F45BFFC1E35E85700C06D0C /* Piggy.atlas in Resources */,
@@ -799,7 +799,7 @@
 				9F666E651E326F5B00F9BB90 /* Monkey2.png in Resources */,
 				9FD41CC91E2DB2A60077779E /* spineboy.png in Resources */,
 				9FB69DFF1E46E92B006325A3 /* UI in Resources */,
-				9F45C0131E35EE7700C06D0C /* sandy.png in Resources */,
+				9F45C0131E35EE7700C06D0C /* Sandy.png in Resources */,
 				5087E77D17EB970100C73F5D /* Default-568h@2x.png in Resources */,
 				5087E78517EB970100C73F5D /* Icon-72.png in Resources */,
 				9F45C0011E35E85700C06D0C /* Monk.json in Resources */,
@@ -818,7 +818,7 @@
 				9F45BFFD1E35E85700C06D0C /* Monkey.json in Resources */,
 				5087E78217EB970100C73F5D /* Icon-144.png in Resources */,
 				3EACC98F19EE6D4300EB3C5E /* res in Resources */,
-				9F45C0141E35EE7700C06D0C /* sandy.json in Resources */,
+				9F45C0141E35EE7700C06D0C /* Sandy.json in Resources */,
 				9FB69E011E46E93A006325A3 /* levelFiles in Resources */,
 				50EF629817ECD46A001EB2F8 /* Icon-80.png in Resources */,
 				9F45C0001E35E85700C06D0C /* Monk.png in Resources */,
@@ -827,7 +827,7 @@
 				521A8E6419F0C34300D177D7 /* Default-667h@2x.png in Resources */,
 				46880B7B19C43A67006E1F66 /* CloseNormal.png in Resources */,
 				50EF629717ECD46A001EB2F8 /* Icon-58.png in Resources */,
-				9F45C0121E35EE7700C06D0C /* sandy2.png in Resources */,
+				9F45C0121E35EE7700C06D0C /* Sandy2.png in Resources */,
 				9F3189781E272A810005B84E /* image.png in Resources */,
 				454B170E1E2F39280035467D /* platforms in Resources */,
 			);
@@ -840,10 +840,10 @@
 				9FC4933A1E4BA881009B9598 /* AloneCrown.png in Resources */,
 				9FB69E041E46EAE9006325A3 /* levelFiles in Resources */,
 				9FB69E021E46E944006325A3 /* UI in Resources */,
-				9F45C0161E35EE8400C06D0C /* sandy2.png in Resources */,
-				9F45C0171E35EE8400C06D0C /* sandy.png in Resources */,
-				9F45C0181E35EE8400C06D0C /* sandy.json in Resources */,
-				9F45C0191E35EE8400C06D0C /* sandy.atlas in Resources */,
+				9F45C0161E35EE8400C06D0C /* Sandy2.png in Resources */,
+				9F45C0171E35EE8400C06D0C /* Sandy.png in Resources */,
+				9F45C0181E35EE8400C06D0C /* Sandy.json in Resources */,
+				9F45C0191E35EE8400C06D0C /* Sandy.atlas in Resources */,
 				9F45C0031E35E89500C06D0C /* Piggy2.png in Resources */,
 				9F45C0051E35E89500C06D0C /* Piggy.png in Resources */,
 				9F45C0061E35E89500C06D0C /* Piggy.json in Resources */,
@@ -875,10 +875,10 @@
 			files = (
 				9FC4933B1E4BA891009B9598 /* AloneCrown.png in Resources */,
 				9FB69E031E46E950006325A3 /* UI in Resources */,
-				9F45C01A1E35EE9400C06D0C /* sandy2.png in Resources */,
-				9F45C01B1E35EE9400C06D0C /* sandy.png in Resources */,
-				9F45C01C1E35EE9400C06D0C /* sandy.json in Resources */,
-				9F45C01D1E35EE9400C06D0C /* sandy.atlas in Resources */,
+				9F45C01A1E35EE9400C06D0C /* Sandy2.png in Resources */,
+				9F45C01B1E35EE9400C06D0C /* Sandy.png in Resources */,
+				9F45C01C1E35EE9400C06D0C /* Sandy.json in Resources */,
+				9F45C01D1E35EE9400C06D0C /* Sandy.atlas in Resources */,
 				9F45C01E1E35EE9400C06D0C /* Piggy2.png in Resources */,
 				9F45C0201E35EE9400C06D0C /* Piggy.png in Resources */,
 				9F45C0211E35EE9400C06D0C /* Piggy.json in Resources */,
