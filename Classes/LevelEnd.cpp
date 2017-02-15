@@ -7,7 +7,7 @@
 //
 
 #include "LevelEnd.hpp"
-#include "HelloWorldScene.h"
+#include "MainGameScene.h"
 #include "MainMenuScene.hpp"
 
 using namespace JTTW;

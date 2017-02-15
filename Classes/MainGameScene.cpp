@@ -1,4 +1,4 @@
-#include "HelloWorldScene.h"
+#include "MainGameScene.h"
 #include "SimpleAudioEngine.h"
 #include "MainMenuScene.hpp"
 #include "Collisions.hpp"

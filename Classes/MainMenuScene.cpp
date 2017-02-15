@@ -1,6 +1,6 @@
 #include "MainMenuScene.hpp"
-#include "HelloWorldScene.h"
 #include "LevelSelectScene.hpp"
+#include <spine/spine-cocos2dx.h>
 #include <iostream>
 
 using namespace JTTW;
