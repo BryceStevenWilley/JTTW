@@ -12,15 +12,30 @@
     "imageName" : String,
     "centerX" : double,
     "centerY" : double,
-    "width" : double,
-    "height" : double,
+    "imageSizeWidth" : double,
+    "imageSizeHeight" : double,
+    "solid" : boolean,    // Whether the platform should disappear from under the player or not.
+    "moveable" : boolean, // Whether a still or moving platform.
+    /* IF MOVEABLE */
+    "startX" : double,
+    "startY" : double,
+    "endX" : double,
+    "endY" : double,
+    "velocity" : double,
+    /* IF BOX COORDINATES */
+    "collisionWidth", double,
+    "collisionHeight", double,
+    /* ELSE IF POLYGON COORDINATES */
     "collisionPoints" : [ {
         "x" : double,
         "y" : double
         },
         ...       
         ]
-    }
+    },
+    "cloud" : boolean,
+    /* IF A CLOUD */
+    "sinkDistance" : double  // How far the cloud is allowed to sink when Pig is on
     ],
 // For the below in-game controllable characters and NPC, their collisionbox, width, height, and images are defined in cocos
   "characters" : {
@@ -36,6 +51,58 @@
       "startingXPos" : double,
       "startingYPos" : double
   }
-  ]
+  ],
+  "interactables" : {
+      "boulders" : [ {
+        "imageName" : String,
+        "centerX" : double,
+        "centerY" : double,
+        "radius" : double,
+        "resistance" : double // How much the boulder resists pushing.
+      },
+      ...
+      ],
+      "goldenPegs" : [ {
+        "imageName" : String,
+        "centerX" : double,
+        "centerY" : double,        
+        "collisionPoints" : [ { // I'm assuming four points, so that the box can be tilted if needed
+          "x" : double,
+          "y" : double
+        },
+        ...
+        ]
+       },
+       ...       
+       ],
+       "vines" : [ {
+         "swingCenterX" : double, // The center point that the swinging swings around
+         "swingCenterY" : double,
+         "length" : double,
+         "arcLimit" : double  // How big an arc it can make. degrees? radians? I don't know.
+    },
+    "terrain" : {
+      "wind" : [ {
+        "directionX" : double,
+        "directionY" : double,
+        "velocity" : double,
+        "collisionPoints" : [ { // Area affected by wind. Polygonal. 
+          "x" : double,
+          "y" : double
+          },
+          ...
+        }
+        ]
+      },
+      ...
+      ]
+    },
+  "traps" : [ { // I am not sure what traps need.
+    "imageName" : String,
+    "centerX" : double,
+    "centerY" : double,
+  },
+  ...
+  ]    
 }
     
