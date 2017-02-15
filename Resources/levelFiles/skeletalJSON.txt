@@ -1,7 +1,8 @@
 /* All numbers in in-game meters unless stated otherwise. */
 
 { "levelName" : String,
-  "levelEndX" : double,
+  "nextLevelName" : String, // This is blank on the final level.
+  "levelEndX" : double, // The X position of where the level officially ends.
   "mToPixel" : double, // The number of pixels in a meter. For example, 80 = 80 px per meter.
   "background" : {        
     "imageName" : String, 
@@ -36,7 +37,10 @@
     "springCK" : double,  // Spring constant k.
     "climeable" : boolean
     ],
-// For the below in-game controllable characters and NPC, their collisionbox, width, height, and images are defined in cocos
+/*
+ * For the below in-game controllable characters and NPCs, their 
+ * collisionbox, width, height, and images are defined in [cocos, meters] coordinates
+ */
   "characters" : {
     "Monkey" : {     
       "present" : bool,
@@ -57,7 +61,7 @@
         "centerX" : double,
         "centerY" : double,
         "radius" : double,
-        "friction" : double,
+        "friction" : double,  // Physics requirements to be updated by Bryce.
         "density" : double,
         "mass" : double
       },
@@ -77,14 +81,17 @@
        ...       
        ],
        "vines" : [ {
-         "swingCenterX" : double, // The center point that the swinging swings around
+         "swingCenterX" : double, // The center point that the swinging swings around.
          "swingCenterY" : double,
          "length" : double,
          "arcLimit" : double  // How big an arc it can make. degrees? radians? I don't know.
+       },
+       ...
+       ]
     },
     "terrain" : {
       "wind" : [ {
-        "directionX" : double,
+        "directionX" : double,  // Strength of wind is now determined by directino vector.
         "directionY" : double,
         "collisionPoints" : [ { // Area affected by wind. Polygonal. 
           "x" : double,
@@ -105,7 +112,7 @@
     ...
   ],
   "respawnPs" : [ {
-    "xPos" : double,
+    "xPos" : double,  // If the player is closest to this x coordinate, respawn at the specified coordinates.
     "respawnX" : double,
     "respawnY" : double
     },
