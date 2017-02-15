@@ -26,7 +26,7 @@ enum Action {
     JUMP
 };
 
-const int CHARACTER_TAG = 14;
+const int CHARACTER_TAG = 10;
 
 /**
  * @brief Class for interactive characters based on physics.
@@ -65,6 +65,8 @@ public:
     // Allows the character to jump.
     virtual void jump() = 0;
     void jumpFromForce(double fprime_y);
+    
+    virtual void characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) = 0;
     
     bool isMovingLeft() const;
     bool isMovingRight() const;

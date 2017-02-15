@@ -4,7 +4,9 @@
 #include "Collisions.hpp"
 #include <iostream>
 #include "Character.hpp"
+#include "Monkey.hpp"
 #include "LevelEnd.hpp"
+#include "Platform.hpp"
 #include <stdio.h>
 #include "cocos2d.h"
 #include "json.hpp"
@@ -44,6 +46,18 @@ bool HelloWorld::onContactHandler(cocos2d::PhysicsContact& contact, bool begin) 
             } else { // onContactEnd
                 c->leftCallback();
             }
+        } else if (nodeB->getTag() == CLIMBEABLE_TAG && c->characterName == "Monkey") {
+            // TODO: hacky, fix
+            std::cout << "Hit climeable" << std::endl;
+            Monkey *m = (Monkey *)c;
+            if (begin) {
+                m->enteringClimeable();
+            } else {
+                m->leavingClimeable();
+            }
+        }
+        if (!begin) {
+            c->rebalanceImpulse();
         }
         if (!begin) {
             c->rebalanceImpulse();
@@ -58,6 +72,15 @@ bool HelloWorld::onContactHandler(cocos2d::PhysicsContact& contact, bool begin) 
                 c->landedCallback();
             } else { // onContactEnd
                 c->leftCallback();
+            }
+        } else if (nodeA->getTag() == CLIMBEABLE_TAG && c->characterName == "Monkey") {
+            // TODO: Hacky, fix.
+            std::cout << "Hit climeable" << std::endl;
+            Monkey *m = (Monkey *)c;
+            if (begin) {
+                m->enteringClimeable();
+            } else {
+                m->leavingClimeable();
             }
         }
         if (!begin) {
@@ -123,7 +146,7 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
             platforms.push_back(p);
             moveables.push_back(p);
         } else {
-            Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight));
+            Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climeable"]);
         
             levelLayer->addChild(p->getImage(), platformZ);
             platforms.push_back(p);
@@ -218,9 +241,12 @@ bool HelloWorld::init(std::string levelToLoad) {
                 break;
             case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
             case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+            case EventKeyboard::KeyCode::KEY_UP_ARROW:
+            case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
             case EventKeyboard::KeyCode::KEY_SPACE:
             case EventKeyboard::KeyCode::KEY_A:
             case EventKeyboard::KeyCode::KEY_O:
+            case EventKeyboard::KeyCode::KEY_S:
                 player->plan(characters, keyCode, true);
                 for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
                     if ((*xAgent) != player) {

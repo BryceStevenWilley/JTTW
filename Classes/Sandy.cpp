@@ -14,5 +14,10 @@ Sandy::Sandy(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
  Character("Sandy", cocos2d::PhysicsMaterial(1.0, 0.0, 1.0), startPosition, dimensions) {}
 
 void Sandy::jump() {
-    Character::jump(300);
+    Character::jump(350);
+}
+
+
+void Sandy::characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) {
+
 }

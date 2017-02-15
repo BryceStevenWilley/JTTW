@@ -69,7 +69,7 @@ void LevelEnd::menuCallback() {
     std::cout << ss.str() << std::endl;
     
     auto startScene = HelloWorld::createScene(ss.str());
-    auto fade = cocos2d::TransitionFade::create(5, startScene);
+    auto fade = cocos2d::TransitionFade::create(3, startScene);
     
     cocos2d::Director::getInstance()->replaceScene(fade);
 }
