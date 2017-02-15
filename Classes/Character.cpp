@@ -8,9 +8,26 @@
 
 #include "Character.hpp"
 #include "Collisions.hpp"
+#include "Monkey.hpp"
+#include "Monk.hpp"
+#include "Piggy.hpp"
+#include "Sandy.hpp"
 #include <iostream>
 
 using namespace JTTW;
+   
+Character * Character::createFromName(const std::string name, cocos2d::Vec2 startPosition, cocos2d::Size dimensions) {
+    if (name == "Monkey") {
+        return (Character *)new Monkey(startPosition, dimensions);
+    } else if (name == "Monk") {
+        return (Character *)new Monk(startPosition, dimensions);
+    } else if (name == "Piggy") {
+        return (Character *)new Piggy(startPosition, dimensions);
+    } else { // (name == "Sandy"), ALSO DEFAULT
+        return (Character *)new Sandy(startPosition, dimensions);
+    }
+}
+
 
 Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial mat, cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
         spine::SkeletonAnimation(),
@@ -91,13 +108,13 @@ void Character::stop() {
     body->applyImpulse(cocos2d::Vec2(body->getMass() * -(body->getVelocity().x), 0));
 }
     
-void Character::jump() {
+void Character::jump(double force) {
     if (_currentState == State::MID_AIR) {
         // Can't jump while you're in the air, dummy!
         return;
     }
     
-    body->applyImpulse(cocos2d::Vec2(0, body->getMass() * 250));
+    body->applyImpulse(cocos2d::Vec2(0, body->getMass() * force));
 }
 
 void Character::jumpFromForce(double fprime_y) {

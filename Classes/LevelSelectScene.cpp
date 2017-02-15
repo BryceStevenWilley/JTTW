@@ -74,7 +74,7 @@ bool LevelSelect::init() {
     this->addChild(titleLabel);
 
     // Create menu items for each of the level files that we have.
-    // TODO: This won't work well for many level files (they'll fall off the bottom.
+    // TODO: This won't work well for many level files (they'll fall off the bottom).
     std::vector<std::string> allLevels = findLevelFiles();
     cocos2d::Vector<cocos2d::MenuItem *> menuButtons;
     int levelHash = 0;

@@ -1,0 +1,23 @@
+//
+//  Monk.hpp
+//  JTTW
+//
+//  Created by Bryce Willey on 2/15/17.
+//
+//
+
+#ifndef Monk_hpp
+#define Monk_hpp
+
+#include <iostream>
+#include "Character.hpp"
+
+namespace JTTW {
+class Monk : public Character {
+public:
+    Monk(cocos2d::Vec2 startPosition, cocos2d::Size dimensions);
+    
+    virtual void jump() override;
+};
+}
+#endif /* Monk_hpp */

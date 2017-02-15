@@ -1,5 +1,5 @@
 {
-    "levelEndX" : 5,
+    "levelEndX" : 50,
     "nextLevelName" : "SimpleDitch.json",
     "background" : {
         "imageName" : "Background.png",

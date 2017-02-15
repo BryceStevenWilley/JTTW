@@ -26,10 +26,6 @@ enum Action {
     JUMP
 };
 
-// Forward declaration of Platform.
-class Platform;
-
-
 const int CHARACTER_TAG = 14;
 
 /**
@@ -44,6 +40,8 @@ public:
         STANDING,
         MID_AIR
     };
+    
+    static Character *createFromName(const std::string name, cocos2d::Vec2 startPosition, cocos2d::Size dimensions);
     
     Character(const std::string artFileName, cocos2d::PhysicsMaterial mat, cocos2d::Vec2 startPosition, cocos2d::Size dimensions);
 
@@ -65,7 +63,7 @@ public:
     virtual void stop();
     
     // Allows the character to jump.
-    void jump();
+    virtual void jump() = 0;
     void jumpFromForce(double fprime_y);
     
     bool isMovingLeft() const;
@@ -90,6 +88,9 @@ public:
     void restartFromStart();
     
     void updateAnimation();
+
+protected:
+    void jump(double force);
 
 private:
     void updateAnimation(State oldState);

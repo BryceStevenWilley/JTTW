@@ -138,7 +138,7 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
             double startX = vp.metersToPixels((double)characterStruct[charNames[i]]["startingXPos"]);
             double startY = vp.metersToPixels((double)characterStruct[charNames[i]]["startingYPos"]);
 
-            Character *c = new Character(charNames[i], PhysicsMaterial(1.0, 0.0, 1.0), cocos2d::Vec2(startX, startY), cocos2d::Size(characterWidth, characterHeight));
+            Character *c = Character::createFromName(charNames[i], cocos2d::Vec2(startX, startY), cocos2d::Size(characterWidth, characterHeight));
             characters.push_back(c);
             levelLayer->addChild(c, i);
             AiAgent *agent = new AiAgent(c);
@@ -316,4 +316,3 @@ void HelloWorld::update(float delta) {
     }
     vp.followCharacter(player->_controlledCharacter, delta);
 }
-

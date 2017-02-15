@@ -65,6 +65,18 @@
 		521A8EAA19F11F5000D177D7 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 521A8EA819F11F5000D177D7 /* fonts */; };
 		52B47A471A53D09C004E4C60 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52B47A461A53D09B004E4C60 /* Security.framework */; };
 		8262943E1AAF051F00CB7CF7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8262943D1AAF051F00CB7CF7 /* Security.framework */; };
+		9F16FC001E54CC5F00D9DBCA /* Monkey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F16FBFE1E54CC5F00D9DBCA /* Monkey.cpp */; };
+		9F16FC011E54CC5F00D9DBCA /* Monkey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F16FBFE1E54CC5F00D9DBCA /* Monkey.cpp */; };
+		9F16FC021E54CC5F00D9DBCA /* Monkey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F16FBFE1E54CC5F00D9DBCA /* Monkey.cpp */; };
+		9F16FC061E54CCA500D9DBCA /* Monk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F16FC041E54CCA500D9DBCA /* Monk.cpp */; };
+		9F16FC071E54CCA500D9DBCA /* Monk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F16FC041E54CCA500D9DBCA /* Monk.cpp */; };
+		9F16FC081E54CCA500D9DBCA /* Monk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F16FC041E54CCA500D9DBCA /* Monk.cpp */; };
+		9F16FC0B1E54CCC200D9DBCA /* Sandy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F16FC091E54CCC200D9DBCA /* Sandy.cpp */; };
+		9F16FC0C1E54CCC200D9DBCA /* Sandy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F16FC091E54CCC200D9DBCA /* Sandy.cpp */; };
+		9F16FC0D1E54CCC200D9DBCA /* Sandy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F16FC091E54CCC200D9DBCA /* Sandy.cpp */; };
+		9F16FC101E54CCDB00D9DBCA /* Piggy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F16FC0E1E54CCDB00D9DBCA /* Piggy.cpp */; };
+		9F16FC111E54CCDB00D9DBCA /* Piggy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F16FC0E1E54CCDB00D9DBCA /* Piggy.cpp */; };
+		9F16FC121E54CCDB00D9DBCA /* Piggy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F16FC0E1E54CCDB00D9DBCA /* Piggy.cpp */; };
 		9F3189781E272A810005B84E /* image.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F3189771E272A810005B84E /* image.png */; };
 		9F3189791E272A810005B84E /* image.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F3189771E272A810005B84E /* image.png */; };
 		9F380AA81E424FDE00728246 /* SimpleDitch.json in Resources */ = {isa = PBXBuildFile; fileRef = 9F380AA71E424FDE00728246 /* SimpleDitch.json */; };
@@ -299,6 +311,14 @@
 		521A8EA819F11F5000D177D7 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		52B47A461A53D09B004E4C60 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.1.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		8262943D1AAF051F00CB7CF7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		9F16FBFE1E54CC5F00D9DBCA /* Monkey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Monkey.cpp; sourceTree = "<group>"; };
+		9F16FBFF1E54CC5F00D9DBCA /* Monkey.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Monkey.hpp; sourceTree = "<group>"; };
+		9F16FC041E54CCA500D9DBCA /* Monk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Monk.cpp; sourceTree = "<group>"; };
+		9F16FC051E54CCA500D9DBCA /* Monk.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Monk.hpp; sourceTree = "<group>"; };
+		9F16FC091E54CCC200D9DBCA /* Sandy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sandy.cpp; sourceTree = "<group>"; };
+		9F16FC0A1E54CCC200D9DBCA /* Sandy.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Sandy.hpp; sourceTree = "<group>"; };
+		9F16FC0E1E54CCDB00D9DBCA /* Piggy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Piggy.cpp; sourceTree = "<group>"; };
+		9F16FC0F1E54CCDB00D9DBCA /* Piggy.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Piggy.hpp; sourceTree = "<group>"; };
 		9F300C831E4805340051284B /* Collisions.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Collisions.hpp; sourceTree = "<group>"; };
 		9F3189771E272A810005B84E /* image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image.png; sourceTree = "<group>"; };
 		9F380AA71E424FDE00728246 /* SimpleDitch.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = SimpleDitch.json; sourceTree = "<group>"; };
@@ -555,6 +575,7 @@
 		46880B8319C43A87006E1F66 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				9F16FC131E54CCF600D9DBCA /* Characters */,
 				9FC97C8A1E54384500EF6C31 /* Scenes */,
 				9F8E656C1E3D9F8A0058958F /* Objects */,
 				9FC4C2F61E3B9BF200ABD648 /* json.hpp */,
@@ -563,8 +584,6 @@
 				9F98AF8F1E2C99E2009559C7 /* Viewpoint.cpp */,
 				9F98AF901E2C99E2009559C7 /* Viewpoint.hpp */,
 				9F666E561E31CB6100F9BB90 /* AI */,
-				9FB69DD91E459B90006325A3 /* Character.cpp */,
-				9FB69DDA1E459B90006325A3 /* Character.hpp */,
 			);
 			name = Classes;
 			path = ../Classes;
@@ -616,6 +635,23 @@
 			name = Icons;
 			path = ios;
 			sourceTree = SOURCE_ROOT;
+		};
+		9F16FC131E54CCF600D9DBCA /* Characters */ = {
+			isa = PBXGroup;
+			children = (
+				9FB69DD91E459B90006325A3 /* Character.cpp */,
+				9FB69DDA1E459B90006325A3 /* Character.hpp */,
+				9F16FBFE1E54CC5F00D9DBCA /* Monkey.cpp */,
+				9F16FBFF1E54CC5F00D9DBCA /* Monkey.hpp */,
+				9F16FC041E54CCA500D9DBCA /* Monk.cpp */,
+				9F16FC051E54CCA500D9DBCA /* Monk.hpp */,
+				9F16FC091E54CCC200D9DBCA /* Sandy.cpp */,
+				9F16FC0A1E54CCC200D9DBCA /* Sandy.hpp */,
+				9F16FC0E1E54CCDB00D9DBCA /* Piggy.cpp */,
+				9F16FC0F1E54CCDB00D9DBCA /* Piggy.hpp */,
+			);
+			name = Characters;
+			sourceTree = "<group>";
 		};
 		9F666E561E31CB6100F9BB90 /* AI */ = {
 			isa = PBXGroup;
@@ -922,6 +958,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F16FC001E54CC5F00D9DBCA /* Monkey.cpp in Sources */,
 				46880B8819C43A87006E1F66 /* AppDelegate.cpp in Sources */,
 				46880B8A19C43A87006E1F66 /* MainGameScene.cpp in Sources */,
 				9FB69E071E46EE88006325A3 /* LevelSelectScene.cpp in Sources */,
@@ -932,9 +969,12 @@
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,
 				9FC97C871E540E0300EF6C31 /* LevelEnd.cpp in Sources */,
 				9F666E581E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */,
+				9F16FC0B1E54CCC200D9DBCA /* Sandy.cpp in Sources */,
+				9F16FC101E54CCDB00D9DBCA /* Piggy.cpp in Sources */,
 				503AE10117EB989F00D1A890 /* main.m in Sources */,
 				9FB69DDB1E459B90006325A3 /* Character.cpp in Sources */,
 				9F666E461E30201C00F9BB90 /* AiAgent.cpp in Sources */,
+				9F16FC061E54CCA500D9DBCA /* Monk.cpp in Sources */,
 				9F8E656F1E3DA0060058958F /* MoveablePlatform.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -945,15 +985,19 @@
 			files = (
 				9F8E654D1E3BB3C60058958F /* Platform.cpp in Sources */,
 				46880B8919C43A87006E1F66 /* AppDelegate.cpp in Sources */,
+				9F16FC011E54CC5F00D9DBCA /* Monkey.cpp in Sources */,
+				9F16FC0C1E54CCC200D9DBCA /* Sandy.cpp in Sources */,
 				9F8E65701E3DA0060058958F /* MoveablePlatform.cpp in Sources */,
 				9FB69E081E46EE88006325A3 /* LevelSelectScene.cpp in Sources */,
 				9FC97C881E540E0300EF6C31 /* LevelEnd.cpp in Sources */,
 				9F666E471E30201C00F9BB90 /* AiAgent.cpp in Sources */,
 				9F98AF921E2C99E2009559C7 /* Viewpoint.cpp in Sources */,
 				9FB69DDC1E459B90006325A3 /* Character.cpp in Sources */,
+				9F16FC111E54CCDB00D9DBCA /* Piggy.cpp in Sources */,
 				503AE10517EB98FF00D1A890 /* main.cpp in Sources */,
 				46880B8B19C43A87006E1F66 /* MainGameScene.cpp in Sources */,
 				9F666E591E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */,
+				9F16FC071E54CCA500D9DBCA /* Monk.cpp in Sources */,
 				9FB69DE31E46D93D006325A3 /* MainMenuScene.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -962,6 +1006,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F16FC021E54CC5F00D9DBCA /* Monkey.cpp in Sources */,
 				9FB69DD51E459AA4006325A3 /* Platform.cpp in Sources */,
 				9FD41BEF1E2D54490077779E /* AppDelegate.cpp in Sources */,
 				9FD41BF01E2D54490077779E /* Viewpoint.cpp in Sources */,
@@ -972,9 +1017,12 @@
 				9FD41C101E2D55920077779E /* testCharacter.cpp in Sources */,
 				9FC97C891E540E0300EF6C31 /* LevelEnd.cpp in Sources */,
 				9FD41BF31E2D54490077779E /* MainGameScene.cpp in Sources */,
+				9F16FC0D1E54CCC200D9DBCA /* Sandy.cpp in Sources */,
+				9F16FC121E54CCDB00D9DBCA /* Piggy.cpp in Sources */,
 				9F666E5A1E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */,
 				9F8E65711E3DA0060058958F /* MoveablePlatform.cpp in Sources */,
 				9FB69DDD1E459B90006325A3 /* Character.cpp in Sources */,
+				9F16FC081E54CCA500D9DBCA /* Monk.cpp in Sources */,
 				9F666E481E30201C00F9BB90 /* AiAgent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
