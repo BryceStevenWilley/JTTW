@@ -107,9 +107,10 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
         double imageSizeWidth = vp.metersToPixels((double)pAtt["imageSizeWidth"]);
         double imageSizeHeight = vp.metersToPixels((double)pAtt["imageSizeHeight"]);
         
-        // Get the collision Width and height.
-        double collisionWidth = vp.metersToPixels((double)pAtt["collisionWidth"]);
-        double collisionHeight = vp.metersToPixels((double)pAtt["collisionHeight"]);
+        std::vector<cocos2d::Vec2> ps;
+        for (auto& cPoint: pAtt["collisionPoints"]) {
+            ps.push_back(cocos2d::Vec2(vp.metersToPixels((double)cPoint["x"]), vp.metersToPixels((double)cPoint["y"])));
+        }
         
         if (pAtt["moveable"]) {
             cocos2d::Vec2 centerA(centerX, centerY);
@@ -117,13 +118,13 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
             double centerBY = vp.metersToPixels((double)pAtt["center2Y"]);
             cocos2d::Vec2 centerB(centerBX, centerBY);
             double maximumVelocity = vp.metersToPixels((double)pAtt["maximumVelocity"]);
-            MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), maximumVelocity);
+            MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, cocos2d::Size(imageSizeWidth, imageSizeHeight), ps, maximumVelocity);
 
             levelLayer->addChild(p->image, platformZ);
             platforms.push_back(p);
             moveables.push_back(p);
         } else {
-            Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight));
+            Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), ps);
         
             levelLayer->addChild(p->getImage(), platformZ);
             platforms.push_back(p);

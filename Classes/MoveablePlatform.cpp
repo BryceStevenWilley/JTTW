@@ -26,26 +26,28 @@ MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerA,
     image->setPosition(centerA);
 }
 
-MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerAm, cocos2d::Vec2 centerBm, cocos2d::Size imageSizeM, cocos2d::Vec2 boxM, double maxVelocity, Viewpoint vp) :
-        image(cocos2d::Sprite::create(fileName)),
-        _centerA(vp.metersToPixels(centerAm)),
-        _centerB(vp.metersToPixels(centerBm)) {
+MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerA, cocos2d::Vec2 centerB, cocos2d::Size imageSize, std::vector<cocos2d::Vec2> points, double maxVelocity) : image(cocos2d::Sprite::create(fileName)), _centerA(centerA), _centerB(centerB) {
     image->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    cocos2d::Size actual = image->getContentSize(); // actual image size.
-    image->setScaleX(vp.metersToPixels(imageSizeM.width) / actual.width);
-    image->setScaleY(vp.metersToPixels(imageSizeM.height) / actual.height);
-    body = cocos2d::PhysicsBody::createBox(image->getContentSize(), cocos2d::PhysicsMaterial(1.0, 0.0, 0.0));
+
+    body = cocos2d::PhysicsBody::createPolygon(points.data(), (int)points.size(), cocos2d::PhysicsMaterial(1.0, 0.0, 0.0));
     body->setDynamic(false); // moving platforms are kinematic bodies.
     body->setGravityEnable(false);
-    
     body->setTag((int)CollisionCategory::Platform);
     body->setContactTestBitmask((int)CollisionCategory::CharacterAndBoulder);
     body->setCollisionBitmask((int)CollisionCategory::CharacterAndBoulder);
-    
-    
+     
+    image->addComponent(body);
+
+    cocos2d::Size actual = image->getContentSize(); // actual image size.
+    image->setScaleX(imageSize.width / actual.width);
+    image->setScaleY(imageSize.height / actual.height);
+
     // Set initial speed.
-    _velocities = vp.metersToPixels(maxVelocity) * (_centerB - _centerA)/(_centerB - _centerA).getLength();
+    _velocities = maxVelocity * (centerB - centerA)/(centerB - centerA).getLength();
+    
+    image->setPosition(centerA);
 }
+
 
 void MoveablePlatform::move(float deltaTime, bool debugOn) {
     auto position = image->getPosition() + _velocities * deltaTime;
