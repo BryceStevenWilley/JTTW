@@ -10,8 +10,12 @@
 
 using namespace JTTW;
 
-Viewpoint::Viewpoint(cocos2d::Size dims, double metersPerPixel, cocos2d::Layer *level) :
-_screenDims(dims), _metersPerPixel(metersPerPixel), _level(level) {}
+Viewpoint::Viewpoint(cocos2d::Size dims, double metersPerPixel) :
+_screenDims(dims), _metersPerPixel(metersPerPixel), _level(nullptr) {}
+
+void Viewpoint::setLayer(cocos2d::Layer *level) {
+    _level = level;
+}
 
 int Viewpoint::metersToPixels(double meters) const {
     return meters / _metersPerPixel;
@@ -26,6 +30,10 @@ double Viewpoint::pixelsToMeters(int pixels) const {
 }
 
 void Viewpoint::panToCharacter(Character* player) {
+    if (_level == nullptr) {
+        std::cout << "_level was never set for Viewpoint!" << std::endl;
+        std::exit(0);
+    }
     // So, we know the level location, the width of the screen, and the player location.
     // When level->position.x == 0, then the center of the screen is at width/2.0.
     // width/2.0 = level->position.x + player->ani->position.x;
@@ -43,6 +51,10 @@ void Viewpoint::panToCharacter(Character* player) {
 }
 
 void Viewpoint::followCharacter(Character *player, float delta) {
+    if (_level == nullptr) {
+        std::cout << "_level was never set for Viewpoint!" << std::endl;
+        std::exit(0);
+    }
     if (_isPanning == false) {
         float newLevelX = _screenDims.width / 2.0 - player->getPosition().x;
         float newLevelY =  _screenDims.height / 2.0 - player->getPosition().y;
@@ -53,6 +65,10 @@ void Viewpoint::followCharacter(Character *player, float delta) {
 }
 
 void Viewpoint::followCharacter(cocos2d::Node *body, float delta) {
+    if (_level == nullptr) {
+        std::cout << "_level was never set for Viewpoint!" << std::endl;
+        std::exit(0);
+    }
     if (_isPanning == false) {
         float newLevelX = _screenDims.width / 2.0 - body->getPosition().x;
         float newLevelY =  _screenDims.height / 2.0 - body->getPosition().y;

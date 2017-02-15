@@ -9,7 +9,7 @@
 #ifndef MainMenuScene_hpp
 #define MainMenuScene_hpp
 
-#include <stdio.h>
+#include <iostream>
 
 namespace JTTW {
 

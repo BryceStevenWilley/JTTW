@@ -9,7 +9,7 @@
 #ifndef LevelSelectScene_hpp
 #define LevelSelectScene_hpp
 
-#include <stdio.h>
+#include <iostream>
 
 namespace JTTW {
 

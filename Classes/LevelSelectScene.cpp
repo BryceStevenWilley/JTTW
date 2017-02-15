@@ -7,7 +7,8 @@
 //
 
 #include "LevelSelectScene.hpp"
-#include "HelloWorldScene.h"
+#include "MainGameScene.h"
+#include "cocos-ext.h"
 #include <iostream>
 
 #include <stdio.h>
@@ -83,6 +84,7 @@ bool LevelSelect::init() {
         cocos2d::MenuItem *levelItem = cocos2d::MenuItemLabel::create(levelName, CC_CALLBACK_1(LevelSelect::menuCallback, this));
         levelItem->setTag(levelHash);
         menuButtons.pushBack(levelItem);
+        
         tagToFileName[levelHash] = level;
         levelHash += 1;
     }
@@ -97,10 +99,11 @@ bool LevelSelect::init() {
 
 // Go to whatever level was selected.
 void LevelSelect::menuCallback(cocos2d::Ref* fromItem) {
-    auto menuSelection = (cocos2d::MenuItem *) fromItem;
+    auto menuSelection = (cocos2d::ui::Button *) fromItem;
     cocos2d::Scene *startScene;
     std::stringstream ss;
     ss << "levelFiles/" << tagToFileName[menuSelection->getTag()];
     startScene = HelloWorld::createScene(ss.str());
-    cocos2d::Director::getInstance()->replaceScene(startScene);
+    auto fade = cocos2d::TransitionFade::create(1.5, startScene);
+    cocos2d::Director::getInstance()->replaceScene(fade);
 }

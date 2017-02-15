@@ -66,7 +66,6 @@ void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeybo
 
 }
 
-    
 cocos2d::Vec2 AiAgent::getPlayerPosOffset() const {
     return cocos2d::Vec2(_playerPosOffset);
 }
@@ -74,7 +73,6 @@ cocos2d::Vec2 AiAgent::getPlayerPosOffset() const {
 void AiAgent::setPlayerPosOffset(cocos2d::Vec2 playerPosOffset) {
     _playerPosOffset = playerPosOffset;
 }
-
 
 void AiAgent::plan(Character *player, std::vector<Character *> otherCharacters) {
     if (player == _controlledCharacter) {
@@ -116,7 +114,7 @@ void AiAgent::executeControl(float delta) {
     cocos2d::Vec2 fprime = errorPosition * kp + errorVelocity * kv;
     
     _controlledCharacter->applyForceRight(fprime.x);
-    if (errorPosition.y * kp > 50.0) {
+    if (errorPosition.y > 20.0) {
         _controlledCharacter->jump();
     }
 }

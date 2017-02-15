@@ -1,6 +1,6 @@
 #include "MainMenuScene.hpp"
-#include "HelloWorldScene.h"
 #include "LevelSelectScene.hpp"
+#include <spine/spine-cocos2dx.h>
 #include <iostream>
 
 using namespace JTTW;
@@ -86,7 +86,7 @@ bool MainMenu::init() {
     this->addChild(piggy);
     
     // Sandy.
-    spine::SkeletonAnimation *sandy = spine::SkeletonAnimation::createWithJsonFile("sandy.json", "sandy.atlas", 1.0f);
+    spine::SkeletonAnimation *sandy = spine::SkeletonAnimation::createWithJsonFile("Sandy.json", "Sandy.atlas", 1.0f);
     sandy->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
     sandy->setPosition(visibleSize.width - (middleX/4), origin.y + visibleSize.height / 15);
     sandy->setAnimation(0, "idle", true);
@@ -117,9 +117,9 @@ bool MainMenu::init() {
     
     auto eventListener = cocos2d::EventListenerKeyboard::create();
     eventListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
-        if (keyCode == cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE) {
-            this->exitGame();
-        }
+        //if (keyCode == cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE) {
+        //    this->exitGame();
+        //}
     };
     this->_eventDispatcher->addEventListenerWithFixedPriority(eventListener, 1);
     
@@ -128,7 +128,8 @@ bool MainMenu::init() {
 
 void MainMenu::openStartScene() {
     auto startScene = LevelSelect::createScene();
-    cocos2d::Director::getInstance()->replaceScene(startScene);
+    auto fade = cocos2d::TransitionCrossFade::create(.5, startScene);
+    cocos2d::Director::getInstance()->replaceScene(fade);
 }
 
 void MainMenu::openSettings() {
@@ -137,6 +138,7 @@ void MainMenu::openSettings() {
 }
 
 void MainMenu::exitGame() {
+    std::cout << "Exiting game from main screen." << std::endl;
     // Close the game and quit the application
     cocos2d::Director::getInstance()->end();
 
