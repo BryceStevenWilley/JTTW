@@ -298,6 +298,7 @@ void HelloWorld::update(float delta) {
     for (int i = 0; i < characters.size(); i++) {
         characters[i]->updateAnimation();
         if (characters[i]->getPosition().y < -100) { // TODO: un-hardcode this.
+            done = false; // don't go to the next level if all characters die at once!
             characters[i]->restartFromStart();
         }  else if (vp.pixelsToMeters(characters[i]->getPosition().x) < levelEndX) {
             done = false;
