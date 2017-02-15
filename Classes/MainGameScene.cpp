@@ -199,6 +199,7 @@ bool HelloWorld::init(std::string levelToLoad) {
     
     eventListener = cocos2d::EventListenerKeyboard::create();
     eventListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) mutable {
+        firstClick = true;
         switch(keyCode) {
             case EventKeyboard::KeyCode::KEY_Z:
                 switchToCharacter(0);
@@ -235,7 +236,9 @@ bool HelloWorld::init(std::string levelToLoad) {
     };
     
     eventListener->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event* event) mutable {
-            player->plan(characters, keyCode, false);
+            if (firstClick) {
+                player->plan(characters, keyCode, false);
+            }
     };
 
     this->_eventDispatcher->addEventListenerWithFixedPriority(eventListener, 1);

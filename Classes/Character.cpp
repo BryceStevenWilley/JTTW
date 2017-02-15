@@ -92,10 +92,10 @@ void Character::stop() {
 }
     
 void Character::jump() {
-    //if (_currentState == State::MID_AIR) {
+    if (_currentState == State::MID_AIR) {
         // Can't jump while you're in the air, dummy!
-    //    return;
-   // }
+        return;
+    }
     
     body->applyImpulse(cocos2d::Vec2(0, body->getMass() * 250));
 }
