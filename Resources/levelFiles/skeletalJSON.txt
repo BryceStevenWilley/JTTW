@@ -1,10 +1,10 @@
 /* All numbers in in-game meters unless stated otherwise. */
 
 { "levelName" : String,
+  "levelEndX" : double,
+  "mToPixel" : double, // The number of pixels in a meter. For example, 80 = 80 px per meter.
   "background" : {        
-    "imageName" : String,
-    "centerX" : double, 
-    "centerY" : double, 
+    "imageName" : String, 
     "width" : double,     // The width of the level.
     "height" : double     // The height of the level.
     },
@@ -14,11 +14,9 @@
     "centerY" : double,
     "imageSizeWidth" : double,
     "imageSizeHeight" : double,
-    "solid" : boolean,    // Whether the platform should disappear from under the player or not.
+    "disappears" : boolean,    // Whether the platform should disappear from under the player or not.
     "moveable" : boolean, // Whether a still or moving platform.
     /* IF MOVEABLE */
-    "startX" : double,
-    "startY" : double,
     "endX" : double,
     "endY" : double,
     "velocity" : double,
@@ -33,9 +31,10 @@
         ...       
         ]
     },
-    "cloud" : boolean,
-    /* IF A CLOUD */
-    "sinkDistance" : double  // How far the cloud is allowed to sink when Pig is on
+    "sinkable" : boolean,
+    /* IF SINKABLE */
+    "springCK" : double,  // Spring constant k.
+    "climeable" : boolean
     ],
 // For the below in-game controllable characters and NPC, their collisionbox, width, height, and images are defined in cocos
   "characters" : {
@@ -58,7 +57,9 @@
         "centerX" : double,
         "centerY" : double,
         "radius" : double,
-        "resistance" : double // How much the boulder resists pushing.
+        "friction" : double,
+        "density" : double,
+        "mass" : double
       },
       ...
       ],
@@ -85,7 +86,6 @@
       "wind" : [ {
         "directionX" : double,
         "directionY" : double,
-        "velocity" : double,
         "collisionPoints" : [ { // Area affected by wind. Polygonal. 
           "x" : double,
           "y" : double
@@ -101,8 +101,15 @@
     "imageName" : String,
     "centerX" : double,
     "centerY" : double,
-  },
-  ...
-  ]    
+    },
+    ...
+  ],
+  "respawnPs" : [ {
+    "xPos" : double,
+    "respawnX" : double,
+    "respawnY" : double
+    },
+    ...
+   ]
 }
     
