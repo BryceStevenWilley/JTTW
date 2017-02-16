@@ -35,7 +35,7 @@
     "sinkable" : boolean,
     /* IF SINKABLE */
     "springCK" : double,  // Spring constant k.
-    "climeable" : boolean
+    "climbable" : boolean
     ],
 /*
  * For the below in-game controllable characters and NPCs, their 
