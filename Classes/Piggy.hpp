@@ -24,6 +24,11 @@ namespace JTTW {
  */
 class Piggy : public Character {
 public:
+    enum State {
+        NORMAL,
+        BOULDER_MODE,
+    };
+
     Piggy(cocos2d::Vec2 startPosition, cocos2d::Size dimensions);
     
     virtual void impulseLeft(float deltaVel) override;
@@ -32,7 +37,7 @@ public:
     virtual void characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) override;
     
 private:
-    bool boulderMode = false;
+    State _state = NORMAL;
 };
 }
 #endif /* Piggy_hpp */

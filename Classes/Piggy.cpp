@@ -16,19 +16,19 @@ Piggy::Piggy(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
 
 
 void Piggy::impulseLeft(float deltaVel) {
-    if (!boulderMode) {
+    if (_state != BOULDER_MODE) {
         Character::impulseLeft(deltaVel);
     }
 }
 
 void Piggy::impulseRight(float deltaVel) {
-    if (!boulderMode) {
+    if (_state != BOULDER_MODE) {
         Character::impulseRight(deltaVel);
     }
 }
 
 void Piggy::jump() {
-    if (!boulderMode) {
+    if (_state != BOULDER_MODE) {
         Character::jump(330);
     }
 }
@@ -38,19 +38,21 @@ void Piggy::characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed)
     std::cout << "S is " << (int)cocos2d::EventKeyboard::KeyCode::KEY_S << std::endl;
     if (code == cocos2d::EventKeyboard::KeyCode::KEY_S && pressed) {
         std::cout << "Changing mode!" << std::endl;
-        if (!boulderMode) {
+        if (_state != BOULDER_MODE) {
             Character::stop();
             body->setCategoryBitmask((int)CollisionCategory::Boulder);
             body->setCollisionBitmask((int)CollisionCategory::ALL);
             body->setContactTestBitmask((int)CollisionCategory::ALL);
-            boulderMode = true;
+            _state = BOULDER_MODE;
             alonecrown->setRotation(3.1415926/2);
+            alonecrown->setDirty(true);
             followcrown->setRotation(3.1415926/2);
+            followcrown->setDirty(true);
         } else {
             body->setCategoryBitmask((int)CollisionCategory::Character);
             body->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
             body->setContactTestBitmask((int)CollisionCategory::PlatformAndBoulder);
-            boulderMode = false;
+            _state = NORMAL;
             alonecrown->setRotation(0);
             followcrown->setRotation(0);
         }

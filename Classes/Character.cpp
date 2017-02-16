@@ -28,16 +28,15 @@ Character * Character::createFromName(const std::string name, cocos2d::Vec2 star
     }
 }
 
-
 Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial mat, cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
         spine::SkeletonAnimation(),
-        body(cocos2d::PhysicsBody::createBox(cocos2d::Size(600.0f, 720.0f), mat)),
+        body(cocos2d::PhysicsBody::createBox(cocos2d::Size(480.0f, 780.0f), mat)),
         characterName(artFilePrefix) {
     
     this->initWithJsonFile(artFilePrefix + ".json", artFilePrefix + ".atlas", 1.0f);
     this->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    this->setScaleX(dimensions.width / 720.0f); // 720.0px is approximately the size of the art at 1.0f.
-    this->setScaleY(dimensions.height / 720.0f);
+    this->setScaleX(dimensions.width / 780.0f); // 720.0px is approximately the size of the art at 1.0f.
+    this->setScaleY(dimensions.height / 780.0f);
 
     body->setCategoryBitmask((int)CollisionCategory::Character);
     body->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
