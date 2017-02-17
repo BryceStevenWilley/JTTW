@@ -176,7 +176,7 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
         // Handle Error!
         std::cout << "You cant have a level with no characters!" << std::endl;
         //menuCloseCallback(nullptr);
-        return nullptr;
+        throw std::domain_error("No characters");
     }
     player = agents[0];
     player->_controlledCharacter->currentCrown->setVisible(true);
@@ -222,7 +222,13 @@ bool HelloWorld::init(std::string levelToLoad) {
     // 1.7/130.0 means that 1.7 meters in the game world (average human male height) is represented by 180 pixels on screen.
     vp = Viewpoint(visibleSize, 1.7/130.0);
 
-    cocos2d::Layer *layer = parseLevelFromJson(levelToLoad, debugOn);
+    cocos2d::Layer *layer;
+    try {
+        layer = parseLevelFromJson(levelToLoad, debugOn);
+    } catch (std::domain_error ex) {
+        std::cout<< "Json was mal-formed, or expected members were not found" << std::endl;
+        return false;
+    }
  
     if (layer == nullptr) {
         std::cout << "Level file corrupted!" << std::endl;
@@ -292,6 +298,9 @@ bool HelloWorld::init(std::string levelToLoad) {
 }
 
 void HelloWorld::switchToCharacter(int charIndex) {
+    if (charIndex > agents.size() - 1) {
+        return;
+    }
     auto nextPlayer = agents[charIndex];
     if (nextPlayer == player) {
         return; // don't do shit!

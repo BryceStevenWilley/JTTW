@@ -21,7 +21,6 @@ image(cocos2d::Sprite::create(fileName)) {
     image->addComponent(body);
     
     if (climeable) {
-        std::cout << "Setting climeable platforms." << std::endl;
         image->setTag(CLIMBEABLE_TAG);
     }
 }

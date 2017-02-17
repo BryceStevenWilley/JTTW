@@ -1,11 +1,3 @@
-//
-//  Sandy.cpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/15/17.
-//
-//
-
 #include "Sandy.hpp"
 
 using namespace JTTW;

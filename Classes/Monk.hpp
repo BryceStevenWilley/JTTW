@@ -1,11 +1,3 @@
-//
-//  Monk.hpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/15/17.
-//
-//
-
 #ifndef Monk_hpp
 #define Monk_hpp
 

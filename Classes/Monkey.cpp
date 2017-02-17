@@ -1,11 +1,3 @@
-//
-//  Monkey.cpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/15/17.
-//
-//
-
 #include "Monkey.hpp"
 
 using namespace JTTW;
@@ -16,11 +8,19 @@ Monkey::Monkey(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
 void Monkey::impulseLeft(float deltaVel) {
     if (_state != CLIMBING) {
         Character::impulseLeft(deltaVel);
+    } else if (this->getScaleX() > 0) {
+        // Facing right
+        leavingClimeable();
+        Character::impulseLeft(deltaVel);
     }
 }
 
 void Monkey::impulseRight(float deltaVel) {
     if (_state != CLIMBING) {
+        Character::impulseRight(deltaVel);
+    } else if (this->getScaleX() < 0) {
+        // Facing right
+        leavingClimeable();
         Character::impulseRight(deltaVel);
     }
 }
@@ -34,22 +34,6 @@ void Monkey::jump() {
 }
 
 void Monkey::characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) {
-    if (code == cocos2d::EventKeyboard::KeyCode::KEY_S && pressed) {
-        std::cout << "Toggling climbing" << std::endl;
-        if (_state == COULD_CLIMB) {
-            // Stick to where you are.
-            body->setGravityEnable(false);
-            Character::stop();
-            body->setVelocity(cocos2d::Vec2::ZERO);
-            _state = CLIMBING;
-            this->setAnimation(0, "ClimbIdle", true);
-        } else if (_state == CLIMBING) {
-            body->setGravityEnable(true);
-            _state = COULD_CLIMB;
-            this->setAnimation(0, "JumpBackFromClimb", false);
-        }
-    }
-    
     if (code == cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW && _state == CLIMBING) {
         if (pressed) {
             climbUpVel += 200;
@@ -83,7 +67,13 @@ void Monkey::updateClimbingVel() {
 
 void Monkey::enteringClimeable() {
     if (_state == NORMAL) {
-        _state = COULD_CLIMB;
+        std::cout << "Toggling climbing" << std::endl;
+        // Stick to where you are.
+        body->setGravityEnable(false);
+        Character::stop();
+        body->setVelocity(cocos2d::Vec2::ZERO);
+        _state = CLIMBING;
+        this->setAnimation(0, "ClimbIdle", true);
     }
 }
 

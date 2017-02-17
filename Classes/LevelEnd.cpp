@@ -1,11 +1,3 @@
-//
-//  LevelEnd.cpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/14/17.
-//
-//
-
 #include "LevelEnd.hpp"
 #include "MainGameScene.h"
 #include "MainMenuScene.hpp"

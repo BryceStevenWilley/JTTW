@@ -1,11 +1,3 @@
-//
-//  PCharacter.hpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/3/17.
-//
-//
-
 #ifndef PCharacter_hpp
 #define PCharacter_hpp
 

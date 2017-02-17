@@ -1,11 +1,3 @@
-//
-//  Sandy.hpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/15/17.
-//
-//
-
 #ifndef Sandy_hpp
 #define Sandy_hpp
 

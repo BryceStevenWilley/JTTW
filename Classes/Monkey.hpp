@@ -1,11 +1,3 @@
-//
-//  Monkey.hpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/15/17.
-//
-//
-
 #ifndef Monkey_hpp
 #define Monkey_hpp
 
@@ -17,7 +9,6 @@ class Monkey : public Character {
 public:
     enum State {
         NORMAL,
-        COULD_CLIMB,
         CLIMBING
     };
 

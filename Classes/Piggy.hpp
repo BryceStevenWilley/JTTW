@@ -1,11 +1,3 @@
-//
-//  Piggy.hpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/15/17.
-//
-//
-
 #ifndef Piggy_hpp
 #define Piggy_hpp
 

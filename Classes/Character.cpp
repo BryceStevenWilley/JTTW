@@ -1,11 +1,3 @@
-//
-//  PCharacter.cpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/3/17.
-//
-//
-
 #include "Character.hpp"
 #include "Collisions.hpp"
 #include "MoveablePlatform.hpp"
@@ -36,7 +28,7 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
     
     this->initWithJsonFile(artFilePrefix + ".json", artFilePrefix + ".atlas", 1.0f);
     this->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    this->setScaleX(dimensions.width / 780.0f); // 720.0px is approximately the size of the art at 1.0f.
+    this->setScaleX(dimensions.width / 780.0f);
     this->setScaleY(dimensions.height / 780.0f);
 
     body->setCategoryBitmask((int)CollisionCategory::Character);
@@ -91,7 +83,6 @@ void Character::applyForceRight(double fprime_x) {
 }
 
 void Character::rebalanceImpulse() {
-    std::cout << characterName << " right momentum: " << rightMomentum << ", left: " << leftMomentum << std::endl;
     double totalMomentum = rightMomentum - leftMomentum;
     double targetVelocity = totalMomentum / body->getMass();
     
