@@ -27,6 +27,9 @@ cocos2d::Scene* HelloWorld::createScene(std::string levelToLoad) {
     scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -298));
     scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = HelloWorld::create(levelToLoad);
+    if (layer == NULL) {
+        return NULL;
+    }
     scene->addChild(layer);
 
     return scene;
@@ -40,11 +43,10 @@ bool HelloWorld::onContactHandler(cocos2d::PhysicsContact& contact, bool begin) 
         Character *c = (Character *)nodeA;
         // If A is the character, then for landing on a flat platform, the normal is 0, -1.
         if (normal.dot(cocos2d::Vec2(0, -1)) > std::cos(M_PI/4.0)) {
-            // Character landed on a platform, probably.
             if (begin) {
-                c->landedCallback();
+                c->landedCallback(contact.getShapeB()->getBody());
             } else { // onContactEnd
-                c->leftCallback();
+                c->leftCallback(contact.getShapeB()->getBody());
             }
         } else if (nodeB->getTag() == CLIMBEABLE_TAG && c->characterName == "Monkey") {
             // TODO: hacky, fix
@@ -69,9 +71,9 @@ bool HelloWorld::onContactHandler(cocos2d::PhysicsContact& contact, bool begin) 
         // If B is the character, then for landing on a flat platform, the normal is 0, 1.
         if (normal.dot(cocos2d::Vec2(0, 1)) > std::cos(M_PI /4.0)) {
             if (begin) {
-                c->landedCallback();
+                c->landedCallback(contact.getShapeA()->getBody());
             } else { // onContactEnd
-                c->leftCallback();
+                c->leftCallback(contact.getShapeA()->getBody());
             }
         } else if (nodeA->getTag() == CLIMBEABLE_TAG && c->characterName == "Monkey") {
             // TODO: Hacky, fix.
@@ -136,17 +138,17 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
         
         if (pAtt["moveable"]) {
             cocos2d::Vec2 centerA(centerX, centerY);
-            double centerBX = vp.metersToPixels((double)pAtt["center2X"]);
-            double centerBY = vp.metersToPixels((double)pAtt["center2Y"]);
+            double centerBX = vp.metersToPixels((double)pAtt["endX"]);
+            double centerBY = vp.metersToPixels((double)pAtt["endY"]);
             cocos2d::Vec2 centerB(centerBX, centerBY);
-            double maximumVelocity = vp.metersToPixels((double)pAtt["maximumVelocity"]);
+            double maximumVelocity = vp.metersToPixels((double)pAtt["velocity"]);
             MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), maximumVelocity);
 
             levelLayer->addChild(p->image, platformZ);
             platforms.push_back(p);
             moveables.push_back(p);
         } else {
-            Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climeable"]);
+            Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climbable"]);
         
             levelLayer->addChild(p->getImage(), platformZ);
             platforms.push_back(p);
@@ -170,6 +172,12 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
         }
     }
     
+    if (agents.size() == 0) {
+        // Handle Error!
+        std::cout << "You cant have a level with no characters!" << std::endl;
+        //menuCloseCallback(nullptr);
+        return nullptr;
+    }
     player = agents[0];
     player->_controlledCharacter->currentCrown->setVisible(true);
 
@@ -215,6 +223,11 @@ bool HelloWorld::init(std::string levelToLoad) {
     vp = Viewpoint(visibleSize, 1.7/130.0);
 
     cocos2d::Layer *layer = parseLevelFromJson(levelToLoad, debugOn);
+ 
+    if (layer == nullptr) {
+        std::cout << "Level file corrupted!" << std::endl;
+        return false;
+    }
  
     vp.setLayer(layer);
 

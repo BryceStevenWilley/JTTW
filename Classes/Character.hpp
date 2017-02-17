@@ -71,8 +71,8 @@ public:
     bool isMovingLeft() const;
     bool isMovingRight() const;
     
-    void landedCallback();
-    void leftCallback();
+    void landedCallback(cocos2d::PhysicsBody *plat);
+    void leftCallback(cocos2d::PhysicsBody *plat);
     
     void transferVelocity(Character *reciever);
     
@@ -93,13 +93,13 @@ public:
 
 protected:
     void jump(double force);
+    State _currentState = State::STANDING;
+    
 
 private:
     void updateAnimation(State oldState);
        
     cocos2d::Vec2 _startingPosition;
-    
-    State _currentState = State::STANDING;
     
     double leftMomentum = 0.0;
     double rightMomentum = 0.0;
@@ -107,7 +107,9 @@ private:
     cocos2d::Vec2 _oldVel;
     
     int platformsStandingOn = 0;
-
+    
+    cocos2d::PhysicsBody *referenceBody = nullptr;
+    cocos2d::Vec2 lastRefVel = cocos2d::Vec2::ZERO;
 };
 }
 

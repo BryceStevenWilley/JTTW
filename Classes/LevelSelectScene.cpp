@@ -66,7 +66,7 @@ bool LevelSelect::init() {
     this->addChild(background, -8);
     
     // Set the title text as a label.
-    auto titleLabel = cocos2d::Label::createWithTTF("Choose a level!", "fonts/WaitingfortheSunrise.ttf", 100);
+    titleLabel = cocos2d::Label::createWithTTF("Choose a level!", "fonts/WaitingfortheSunrise.ttf", 100);
     titleLabel->setTextColor(cocos2d::Color4B::WHITE);
     titleLabel->enableOutline(cocos2d::Color4B::BLACK);
     titleLabel->enableShadow();
@@ -104,6 +104,11 @@ void LevelSelect::menuCallback(cocos2d::Ref* fromItem) {
     std::stringstream ss;
     ss << "levelFiles/" << tagToFileName[menuSelection->getTag()];
     startScene = HelloWorld::createScene(ss.str());
+    if (startScene == NULL) {
+        titleLabel->setString("Something went wrong!\n Choose a different level!");
+        titleLabel->setBMFontSize(40);
+        return;
+    }
     auto fade = cocos2d::TransitionFade::create(1.5, startScene);
     cocos2d::Director::getInstance()->replaceScene(fade);
 }

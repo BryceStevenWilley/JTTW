@@ -8,6 +8,7 @@
 
 #include "Character.hpp"
 #include "Collisions.hpp"
+#include "MoveablePlatform.hpp"
 #include "Monkey.hpp"
 #include "Monk.hpp"
 #include "Piggy.hpp"
@@ -52,7 +53,7 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
 
     followcrown = cocos2d::Sprite::create("Selection Crown.png");
     followcrown->setScale(.2);
-    followcrown->setPosition(0.0, 950);
+    followcrown->setPosition(0.0, 940);
     followcrown->setVisible(false);
     this->addChild(followcrown);
     
@@ -93,6 +94,8 @@ void Character::rebalanceImpulse() {
     std::cout << characterName << " right momentum: " << rightMomentum << ", left: " << leftMomentum << std::endl;
     double totalMomentum = rightMomentum - leftMomentum;
     double targetVelocity = totalMomentum / body->getMass();
+    
+    targetVelocity += lastRefVel.x;
     
     double actualDeltaVel = targetVelocity - body->getVelocity().x;
     
@@ -138,19 +141,28 @@ bool Character::justJumped() const {
     return body->getVelocity().y > 100;
 }
 
-void Character::landedCallback() {
+void Character::landedCallback(cocos2d::PhysicsBody *plat) {
     State oldState = _currentState;
     _currentState = State::STANDING;
     platformsStandingOn += 1;
     updateAnimation(oldState);
+    if (plat->getNode()->getTag() == MOVEABLE_TAG) {
+        referenceBody = plat;
+        body->setVelocity(body->getVelocity() + referenceBody->getVelocity());
+        lastRefVel = referenceBody->getVelocity();
+    }
 }
 
-void Character::leftCallback() {
+void Character::leftCallback(cocos2d::PhysicsBody *plat) {
     platformsStandingOn -= 1;
     if (platformsStandingOn == 0) {
         State oldState = _currentState;
         _currentState = State::MID_AIR;
         updateAnimation(oldState);
+        if (plat->getNode()->getTag() == MOVEABLE_TAG) {
+            referenceBody = nullptr;
+            lastRefVel = cocos2d::Vec2::ZERO;
+        }
     } else if (platformsStandingOn < 0) {
         std::cerr << "ERROR: how can " << characterName << " stand on negative platforms?!" << std::endl;
         platformsStandingOn = 0;
@@ -174,29 +186,40 @@ const Character::State Character::getCurrentState() const {
 }
 
 void Character::updateAnimation() {
-    if (_oldVel == body->getVelocity()) {
+    // Update velocity if needed.
+    if (referenceBody != nullptr && lastRefVel != referenceBody->getVelocity()) {
+        body->setVelocity(cocos2d::Vec2(body->getVelocity().x - lastRefVel.x + referenceBody->getVelocity().x, 0.0));
+        lastRefVel = referenceBody->getVelocity();
+    }
+    
+    auto currentRelVel = cocos2d::Vec2((rightMomentum - leftMomentum)/ body->getMass(), body->getVelocity().y - lastRefVel.y);
+    
+    //auto currentRelVel = body->getVelocity() - lastRefVel;
+    if (_oldVel == currentRelVel) {
         // nothing changed.
         return;
     }
-    if (std::abs(_oldVel.x) >= 5 && std::abs(body->getVelocity().x) < 5) {
-        // Slowing down.
-        this->setAnimation(0, "idle", true);
-    }
-    if (std::abs(_oldVel.x) < 5 && std::abs(body->getVelocity().x) >= 5) {
-        // Speeding up.
-        this->setAnimation(0, "walk", true);
+    if (_currentState == STANDING) {
+        if (std::abs(_oldVel.x) >= 5 && std::abs(currentRelVel.x) < 5) {
+            // Slowing down.
+            this->setAnimation(0, "idle", true);
+        }
+        if (std::abs(_oldVel.x) < 5 && std::abs(currentRelVel.x) >= 5) {
+            // Speeding up.
+            this->setAnimation(0, "walk", true);
+        }
     }
     
     //  Left vs. Right
-    if (_oldVel.x <= 0.0 && body->getVelocity().x > 0.0) {
+    if (_oldVel.x <= 0.0 && currentRelVel.x > 0.0) {
       // Set to go right.
       this->setScaleX(std::abs(this->getScaleX()));
     }
-    if (_oldVel.x >= 0.0 && body->getVelocity().x < 0.0) {
+    if (_oldVel.x >= 0.0 && currentRelVel.x < 0.0) {
       this->setScaleX(-1 * std::abs(this->getScaleX()));
     }
     
-    _oldVel = body->getVelocity();
+    _oldVel = currentRelVel;
 }
 
 void Character::updateAnimation(State oldState) {

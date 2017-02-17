@@ -23,6 +23,7 @@
             "imageSizeHeight" : 5.0,
             "collisionWidth" : 18.5,
             "collisionHeight" : 5.0,
+            "climbable" : false,
             "moveable" : false
         },
         {
@@ -33,6 +34,7 @@
             "imageSizeHeight": 13.0,
             "collisionWidth": 3.0,
             "collisionHeight": 9.0,
+            "climbable" : false,
             "moveable": false
         },
         {
@@ -43,6 +45,7 @@
             "imageSizeHeight": 10.0,
             "collisionWidth": 8.5,
             "collisionHeight": 10.0,
+            "climbable" : false,
             "moveable": false
         },
         {
@@ -53,6 +56,7 @@
            "imageSizeHeight": 10.0,
            "collisionWidth" : 8.5,
            "collisionHeight" : 9.0,
+           "climbable" : false,
            "moveable": false
         },
         {
@@ -63,10 +67,11 @@
            "imageSizeHeight": 2.0,
            "collisionWidth": 1.5,
            "collisionHeight": 1.0,
+           "climbable" : false,
            "moveable": true,
-           "center2X": 11.0,
-           "center2Y": 15.0,
-           "maximumVelocity": 2.0
+           "endX": 11.0,
+           "endY": 15.0,
+           "velocity": 2.0
        },
        {
            "imageName": "Rock1.png",

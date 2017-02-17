@@ -24,6 +24,7 @@ public:
     
 private:
     std::map<int, std::string> tagToFileName;
+    cocos2d::Label *titleLabel;
 };
 
 }

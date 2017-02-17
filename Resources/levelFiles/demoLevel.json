@@ -1,6 +1,6 @@
 {
     "levelEndX" : 50,
-    "nextLevelName" : "SimpleDitch.json",
+    "nextLevelName" : "SimpleDitch",
     "background" : {
         "imageName" : "Background.png",
         "centerX" : 0.0,
@@ -23,7 +23,7 @@
             "imageSizeHeight": 10.0,
             "collisionWidth": 8.5,
             "collisionHeight": 10.0,
-            "climeable" : false,
+            "climbable" : false,
             "moveable": false
         },
         {
@@ -34,7 +34,7 @@
            "imageSizeHeight": 10.0,
            "collisionWidth" : 8.5,
            "collisionHeight" : 9.0,
-           "climeable" : false,
+           "climbable" : false,
            "moveable": false
         },
         {
@@ -46,10 +46,10 @@
            "collisionWidth": 1.5,
            "collisionHeight": 1.0,
            "moveable": true,
-           "center2X": 11.0,
-           "center2Y": 10.0,
-           "climeable" : false,
-           "maximumVelocity": 1.0
+           "endX": 11.0,
+           "endY": 10.0,
+           "climbable" : false,
+           "velocity": 1.0
        },
        {
            "imageName": "Rock1.png",
@@ -59,7 +59,7 @@
            "imageSizeHeight": 13.0,
            "collisionWidth": 3.0,
            "collisionHeight": 9.0,
-           "climeable" : true,
+           "climbable" : true,
            "moveable": false
        },
        {
@@ -70,7 +70,7 @@
            "imageSizeHeight": 15.0,
            "collisionWidth": 3.0,
            "collisionHeight": 11.0,
-           "climeable" : true,
+           "climbable" : true,
            "moveable": false
        },
        {
@@ -81,7 +81,7 @@
            "imageSizeHeight": 13.0,
            "collisionWidth": 3.0,
            "collisionHeight": 9.0,
-           "climeable" : true,
+           "climbable" : true,
            "moveable": false
        },
        {
@@ -92,7 +92,7 @@
            "imageSizeHeight": 11.0,
            "collisionWidth": 3.0,
            "collisionHeight": 8.0,
-           "climeable" : true,
+           "climbable" : true,
            "moveable": false
        },
        {
@@ -103,7 +103,7 @@
            "imageSizeHeight": 1.3,
            "collisionWidth": 4.0,
            "collisionHeight": 1.3,
-           "climeable" : false,
+           "climbable" : false,
            "moveable": false
        }
     ],

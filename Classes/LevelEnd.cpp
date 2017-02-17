@@ -38,7 +38,16 @@ bool LevelEnd::init(std::string &nextLevelToLoad) {
     textLabel->enableShadow();
     textLabel->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (3.0 / 4.0));
     
-     this->addChild(textLabel);
+    this->addChild(textLabel);
+    
+    auto smallLabel = cocos2d::Label::createWithTTF("(click or press any key to continue)", "fonts/WaitingfortheSunrise.ttf", 40);
+    
+    smallLabel->setTextColor(cocos2d::Color4B::WHITE);
+    smallLabel->setTextColor(cocos2d::Color4B::BLACK);
+    smallLabel->enableShadow();
+    smallLabel->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/4.0));
+    
+    this->addChild(smallLabel);
     
     keyListener = cocos2d::EventListenerKeyboard::create();
     keyListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) {
@@ -64,7 +73,7 @@ void LevelEnd::menuCallback() {
         return;
     }
     std::stringstream ss;
-    ss << "levelFiles/" << _nextLevelToLoad;
+    ss << "levelFiles/" << _nextLevelToLoad << ".json";
     
     std::cout << ss.str() << std::endl;
     
