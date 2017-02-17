@@ -4,7 +4,9 @@
 #include "Collisions.hpp"
 #include <iostream>
 #include "Character.hpp"
+#include "Monkey.hpp"
 #include "LevelEnd.hpp"
+#include "Platform.hpp"
 #include <stdio.h>
 #include "cocos2d.h"
 #include "json.hpp"
@@ -25,6 +27,9 @@ cocos2d::Scene* HelloWorld::createScene(std::string levelToLoad) {
     scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -298));
     scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = HelloWorld::create(levelToLoad);
+    if (layer == NULL) {
+        return NULL;
+    }
     scene->addChild(layer);
 
     return scene;
@@ -38,12 +43,23 @@ bool HelloWorld::onContactHandler(cocos2d::PhysicsContact& contact, bool begin) 
         Character *c = (Character *)nodeA;
         // If A is the character, then for landing on a flat platform, the normal is 0, -1.
         if (normal.dot(cocos2d::Vec2(0, -1)) > std::cos(M_PI/4.0)) {
-            // Character landed on a platform, probably.
             if (begin) {
-                c->landedCallback();
+                c->landedCallback(contact.getShapeB()->getBody());
             } else { // onContactEnd
-                c->leftCallback();
+                c->leftCallback(contact.getShapeB()->getBody());
             }
+        } else if (nodeB->getTag() == CLIMBEABLE_TAG && c->characterName == "Monkey") {
+            // TODO: hacky, fix
+            std::cout << "Hit climeable" << std::endl;
+            Monkey *m = (Monkey *)c;
+            if (begin) {
+                m->enteringClimeable();
+            } else {
+                m->leavingClimeable();
+            }
+        }
+        if (!begin) {
+            c->rebalanceImpulse();
         }
         if (!begin) {
             c->rebalanceImpulse();
@@ -55,9 +71,18 @@ bool HelloWorld::onContactHandler(cocos2d::PhysicsContact& contact, bool begin) 
         // If B is the character, then for landing on a flat platform, the normal is 0, 1.
         if (normal.dot(cocos2d::Vec2(0, 1)) > std::cos(M_PI /4.0)) {
             if (begin) {
-                c->landedCallback();
+                c->landedCallback(contact.getShapeA()->getBody());
             } else { // onContactEnd
-                c->leftCallback();
+                c->leftCallback(contact.getShapeA()->getBody());
+            }
+        } else if (nodeA->getTag() == CLIMBEABLE_TAG && c->characterName == "Monkey") {
+            // TODO: Hacky, fix.
+            std::cout << "Hit climeable" << std::endl;
+            Monkey *m = (Monkey *)c;
+            if (begin) {
+                m->enteringClimeable();
+            } else {
+                m->leavingClimeable();
             }
         }
         if (!begin) {
@@ -113,17 +138,17 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
         
         if (pAtt["moveable"]) {
             cocos2d::Vec2 centerA(centerX, centerY);
-            double centerBX = vp.metersToPixels((double)pAtt["center2X"]);
-            double centerBY = vp.metersToPixels((double)pAtt["center2Y"]);
+            double centerBX = vp.metersToPixels((double)pAtt["endX"]);
+            double centerBY = vp.metersToPixels((double)pAtt["endY"]);
             cocos2d::Vec2 centerB(centerBX, centerBY);
-            double maximumVelocity = vp.metersToPixels((double)pAtt["maximumVelocity"]);
+            double maximumVelocity = vp.metersToPixels((double)pAtt["velocity"]);
             MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), maximumVelocity);
 
             levelLayer->addChild(p->image, platformZ);
             platforms.push_back(p);
             moveables.push_back(p);
         } else {
-            Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight));
+            Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climbable"]);
         
             levelLayer->addChild(p->getImage(), platformZ);
             platforms.push_back(p);
@@ -138,7 +163,7 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
             double startX = vp.metersToPixels((double)characterStruct[charNames[i]]["startingXPos"]);
             double startY = vp.metersToPixels((double)characterStruct[charNames[i]]["startingYPos"]);
 
-            Character *c = new Character(charNames[i], PhysicsMaterial(1.0, 0.0, 1.0), cocos2d::Vec2(startX, startY), cocos2d::Size(characterWidth, characterHeight));
+            Character *c = Character::createFromName(charNames[i], cocos2d::Vec2(startX, startY), cocos2d::Size(characterWidth, characterHeight));
             characters.push_back(c);
             levelLayer->addChild(c, i);
             AiAgent *agent = new AiAgent(c);
@@ -147,6 +172,12 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
         }
     }
     
+    if (agents.size() == 0) {
+        // Handle Error!
+        std::cout << "You cant have a level with no characters!" << std::endl;
+        //menuCloseCallback(nullptr);
+        throw std::domain_error("No characters");
+    }
     player = agents[0];
     player->_controlledCharacter->currentCrown->setVisible(true);
 
@@ -191,7 +222,18 @@ bool HelloWorld::init(std::string levelToLoad) {
     // 1.7/130.0 means that 1.7 meters in the game world (average human male height) is represented by 180 pixels on screen.
     vp = Viewpoint(visibleSize, 1.7/130.0);
 
-    cocos2d::Layer *layer = parseLevelFromJson(levelToLoad, debugOn);
+    cocos2d::Layer *layer;
+    try {
+        layer = parseLevelFromJson(levelToLoad, debugOn);
+    } catch (std::domain_error ex) {
+        std::cout<< "Json was mal-formed, or expected members were not found" << std::endl;
+        return false;
+    }
+ 
+    if (layer == nullptr) {
+        std::cout << "Level file corrupted!" << std::endl;
+        return false;
+    }
  
     vp.setLayer(layer);
 
@@ -218,9 +260,12 @@ bool HelloWorld::init(std::string levelToLoad) {
                 break;
             case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
             case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+            case EventKeyboard::KeyCode::KEY_UP_ARROW:
+            case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
             case EventKeyboard::KeyCode::KEY_SPACE:
             case EventKeyboard::KeyCode::KEY_A:
             case EventKeyboard::KeyCode::KEY_O:
+            case EventKeyboard::KeyCode::KEY_S:
                 player->plan(characters, keyCode, true);
                 for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
                     if ((*xAgent) != player) {
@@ -253,6 +298,9 @@ bool HelloWorld::init(std::string levelToLoad) {
 }
 
 void HelloWorld::switchToCharacter(int charIndex) {
+    if (charIndex > agents.size() - 1) {
+        return;
+    }
     auto nextPlayer = agents[charIndex];
     if (nextPlayer == player) {
         return; // don't do shit!
@@ -316,4 +364,3 @@ void HelloWorld::update(float delta) {
     }
     vp.followCharacter(player->_controlledCharacter, delta);
 }
-

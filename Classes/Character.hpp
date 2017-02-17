@@ -1,11 +1,3 @@
-//
-//  PCharacter.hpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/3/17.
-//
-//
-
 #ifndef PCharacter_hpp
 #define PCharacter_hpp
 
@@ -26,11 +18,7 @@ enum Action {
     JUMP
 };
 
-// Forward declaration of Platform.
-class Platform;
-
-
-const int CHARACTER_TAG = 14;
+const int CHARACTER_TAG = 10;
 
 /**
  * @brief Class for interactive characters based on physics.
@@ -44,6 +32,8 @@ public:
         STANDING,
         MID_AIR
     };
+    
+    static Character *createFromName(const std::string name, cocos2d::Vec2 startPosition, cocos2d::Size dimensions);
     
     Character(const std::string artFileName, cocos2d::PhysicsMaterial mat, cocos2d::Vec2 startPosition, cocos2d::Size dimensions);
 
@@ -65,14 +55,16 @@ public:
     virtual void stop();
     
     // Allows the character to jump.
-    void jump();
+    virtual void jump() = 0;
     void jumpFromForce(double fprime_y);
+    
+    virtual void characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) = 0;
     
     bool isMovingLeft() const;
     bool isMovingRight() const;
     
-    void landedCallback();
-    void leftCallback();
+    void landedCallback(cocos2d::PhysicsBody *plat);
+    void leftCallback(cocos2d::PhysicsBody *plat);
     
     void transferVelocity(Character *reciever);
     
@@ -91,12 +83,15 @@ public:
     
     void updateAnimation();
 
+protected:
+    void jump(double force);
+    State _currentState = State::STANDING;
+    
+
 private:
     void updateAnimation(State oldState);
        
     cocos2d::Vec2 _startingPosition;
-    
-    State _currentState = State::STANDING;
     
     double leftMomentum = 0.0;
     double rightMomentum = 0.0;
@@ -104,7 +99,9 @@ private:
     cocos2d::Vec2 _oldVel;
     
     int platformsStandingOn = 0;
-
+    
+    cocos2d::PhysicsBody *referenceBody = nullptr;
+    cocos2d::Vec2 lastRefVel = cocos2d::Vec2::ZERO;
 };
 }
 

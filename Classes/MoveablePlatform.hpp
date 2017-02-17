@@ -9,6 +9,9 @@ namespace JTTW {
 // Forward declaration of Viewpoint.
 class Viewpoint;
 
+
+const int MOVEABLE_TAG = 12;
+
 class MoveablePlatform : public Platform {
 public:
     enum State {

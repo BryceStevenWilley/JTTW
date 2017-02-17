@@ -1,11 +1,3 @@
-//
-//  LevelSelectScene.hpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/4/17.
-//
-//
-
 #ifndef LevelSelectScene_hpp
 #define LevelSelectScene_hpp
 
@@ -20,10 +12,15 @@ public:
     
     CREATE_FUNC(LevelSelect);
     
-    void menuCallback(cocos2d::Ref *fromItem);
+    void menuCallback(std::string newLevel);
     
 private:
+    cocos2d::EventListenerKeyboard *keyListener;
+    cocos2d::Label *levelName;
     std::map<int, std::string> tagToFileName;
+    std::vector<std::string> allLevels;
+    std::vector<std::string>::iterator currentLevel;
+    cocos2d::Label *titleLabel;
 };
 
 }

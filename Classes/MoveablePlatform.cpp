@@ -24,6 +24,8 @@ MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerA,
     _velocities = maxVelocity * (centerB - centerA)/(centerB - centerA).getLength();
     
     image->setPosition(centerA);
+    
+    image->setTag(MOVEABLE_TAG);
 }
 
 MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerAm, cocos2d::Vec2 centerBm, cocos2d::Size imageSizeM, cocos2d::Vec2 boxM, double maxVelocity, Viewpoint vp) :
@@ -34,7 +36,7 @@ MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerAm
     cocos2d::Size actual = image->getContentSize(); // actual image size.
     image->setScaleX(vp.metersToPixels(imageSizeM.width) / actual.width);
     image->setScaleY(vp.metersToPixels(imageSizeM.height) / actual.height);
-    body = cocos2d::PhysicsBody::createBox(image->getContentSize(), cocos2d::PhysicsMaterial(1.0, 0.0, 0.0));
+    body = cocos2d::PhysicsBody::createBox(image->getContentSize(), cocos2d::PhysicsMaterial(1.0, 0.0, 1.0));
     body->setDynamic(false); // moving platforms are kinematic bodies.
     body->setGravityEnable(false);
     
@@ -47,6 +49,10 @@ MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerAm
     _velocities = vp.metersToPixels(maxVelocity) * (_centerB - _centerA)/(_centerB - _centerA).getLength();
 }
 
+// TODO: Make platforms gradually move
+// Few Choices: Spring based
+//    Based on a Sin wave
+//    Based on a control thing with low may force applied.
 void MoveablePlatform::move(float deltaTime, bool debugOn) {
     auto position = image->getPosition() + _velocities * deltaTime;
 

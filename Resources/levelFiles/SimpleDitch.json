@@ -1,5 +1,5 @@
 {
-    "levelEndX" : -1,
+    "levelEndX" : 48,
     "nextLevelName" : "",
     "background" : {
         "imageName" : "bgSunny.png",
@@ -23,6 +23,7 @@
             "imageSizeHeight" : 5.0,
             "collisionWidth" : 18.5,
             "collisionHeight" : 5.0,
+            "climbable" : false,
             "moveable" : false
         },
         {
@@ -33,16 +34,18 @@
             "imageSizeHeight": 13.0,
             "collisionWidth": 3.0,
             "collisionHeight": 9.0,
+            "climbable" : false,
             "moveable": false
         },
         {
             "imageName" : "canyonL.png",
-            "centerX" : 5.0,
-            "centerY" : 4.0,
+            "centerX" : 6.2,
+            "centerY" : 5.2,
             "imageSizeWidth": 10.0,
             "imageSizeHeight": 10.0,
             "collisionWidth": 8.5,
             "collisionHeight": 10.0,
+            "climbable" : false,
             "moveable": false
         },
         {
@@ -53,6 +56,7 @@
            "imageSizeHeight": 10.0,
            "collisionWidth" : 8.5,
            "collisionHeight" : 9.0,
+           "climbable" : false,
            "moveable": false
         },
         {
@@ -63,10 +67,11 @@
            "imageSizeHeight": 2.0,
            "collisionWidth": 1.5,
            "collisionHeight": 1.0,
+           "climbable" : false,
            "moveable": true,
-           "center2X": 11.0,
-           "center2Y": 15.0,
-           "maximumVelocity": 2.0
+           "endX": 11.0,
+           "endY": 15.0,
+           "velocity": 2.0
        },
        {
            "imageName": "Rock1.png",
@@ -78,9 +83,39 @@
            "collisionHeight": 9.0,
            "moveable": false
        },
+              {
+           "imageName": "Rock2.png",
+           "centerX": 30.0,
+           "centerY": 5.0,
+           "imageSizeWidth": 4.0,
+           "imageSizeHeight": 15.0,
+           "collisionWidth": 3.0,
+           "collisionHeight": 11.0,
+           "moveable": false
+       },
+       {
+           "imageName": "Rock3.png",
+           "centerX": 39.0,
+           "centerY": 5.0,
+           "imageSizeWidth": 4.0,
+           "imageSizeHeight": 13.0,
+           "collisionWidth": 3.0,
+           "collisionHeight": 9.0,
+           "moveable": false
+       },
+       {
+           "imageName": "Rock4.png",
+           "centerX": 46.0,
+           "centerY": 5.0,
+           "imageSizeWidth": 4.0,
+           "imageSizeHeight": 11.0,
+           "collisionWidth": 3.0,
+           "collisionHeight": 8.0,
+           "moveable": false
+       },
        {
            "imageName": "Pedestal.png",
-           "centerX": 30.0,
+           "centerX": 50.0,
            "centerY": 5.0,
            "imageSizeWidth": 4.0,
            "imageSizeHeight": 1.3,

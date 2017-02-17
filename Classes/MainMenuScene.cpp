@@ -115,11 +115,11 @@ bool MainMenu::init() {
     this->addChild(titleImage, -6);
     this->addChild(m, -6);
     
-    auto eventListener = cocos2d::EventListenerKeyboard::create();
+    eventListener = cocos2d::EventListenerKeyboard::create();
     eventListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
-        //if (keyCode == cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE) {
-        //    this->exitGame();
-        //}
+        if (keyCode == cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE) {
+            this->exitGame();
+        }
     };
     this->_eventDispatcher->addEventListenerWithFixedPriority(eventListener, 1);
     
@@ -127,6 +127,7 @@ bool MainMenu::init() {
 }
 
 void MainMenu::openStartScene() {
+    this->_eventDispatcher->removeEventListener(eventListener);
     auto startScene = LevelSelect::createScene();
     auto fade = cocos2d::TransitionCrossFade::create(.5, startScene);
     cocos2d::Director::getInstance()->replaceScene(fade);

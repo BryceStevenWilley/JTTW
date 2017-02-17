@@ -1,11 +1,3 @@
-//
-//  MainMenuScene.hpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/4/17.
-//
-//
-
 #ifndef MainMenuScene_hpp
 #define MainMenuScene_hpp
 
@@ -25,6 +17,9 @@ public:
     void openSettings();
     
     void exitGame();
+    
+private:
+    cocos2d::EventListenerKeyboard *eventListener;
 };
 } // JTTW
 
