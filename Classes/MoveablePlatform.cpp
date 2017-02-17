@@ -7,7 +7,7 @@ using namespace JTTW;
 MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerA, cocos2d::Vec2 centerB, cocos2d::Size imageSize, cocos2d::Vec2 box, double maxVelocity) : image(cocos2d::Sprite::create(fileName)), _centerA(centerA), _centerB(centerB) {
     image->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
 
-    body = cocos2d::PhysicsBody::createBox(image->getContentSize(), cocos2d::PhysicsMaterial(1.0, 0.0, 0.0));
+    body = cocos2d::PhysicsBody::createBox(image->getContentSize(), cocos2d::PhysicsMaterial(1.0, 0.0, 1.0));
     body->setDynamic(false); // moving platforms are kinematic bodies.
     body->setGravityEnable(false);
     body->setTag((int)CollisionCategory::Platform);
@@ -34,7 +34,7 @@ MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerAm
     cocos2d::Size actual = image->getContentSize(); // actual image size.
     image->setScaleX(vp.metersToPixels(imageSizeM.width) / actual.width);
     image->setScaleY(vp.metersToPixels(imageSizeM.height) / actual.height);
-    body = cocos2d::PhysicsBody::createBox(image->getContentSize(), cocos2d::PhysicsMaterial(1.0, 0.0, 0.0));
+    body = cocos2d::PhysicsBody::createBox(image->getContentSize(), cocos2d::PhysicsMaterial(1.0, 0.0, 1.0));
     body->setDynamic(false); // moving platforms are kinematic bodies.
     body->setGravityEnable(false);
     

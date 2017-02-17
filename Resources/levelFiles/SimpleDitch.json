@@ -91,7 +91,15 @@
     ],
     
     "interactables" : {
-      "boulders" : []
+      "boulders" : [
+        {
+            "imageName" : "Sandy.png",
+            "centerX" : -12.7,
+            "centerY" : 20.0,
+            "radius" : 4,
+            "friction" : 1
+        }
+      ]
     }
       
 }

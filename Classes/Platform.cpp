@@ -15,7 +15,7 @@ Platform::Platform(std::string fileName, cocos2d::Vec2 centerMeters, cocos2d::Si
     image->setPosition(center);
     cocos2d::Size actual = image->getContentSize(); // actual image size.
     
-    auto body = cocos2d::PhysicsBody::createBox(cocos2d::Size(vp.metersToPixels(boxMeters.x), vp.metersToPixels(boxMeters.y)), cocos2d::PhysicsMaterial(1.0, 0.0, 0.0));
+    auto body = cocos2d::PhysicsBody::createBox(cocos2d::Size(vp.metersToPixels(boxMeters.x), vp.metersToPixels(boxMeters.y)), cocos2d::PhysicsMaterial(1.0, 0.0, 1.0));
     body->setDynamic(false);
     body->setGravityEnable(false);
     body->setTag((int)CollisionCategory::Platform);
@@ -34,7 +34,7 @@ image(cocos2d::Sprite::create(fileName)) {
     image->setPosition(center);
     image->setContentSize(imageSize);
     
-    auto body = cocos2d::PhysicsBody::createBox(cocos2d::Size(box.x, box.y), cocos2d::PhysicsMaterial(1.0, 0.0, 0.0));
+    auto body = cocos2d::PhysicsBody::createBox(cocos2d::Size(box.x, box.y), cocos2d::PhysicsMaterial(1.0, 0.0, 1.0));
     body->setDynamic(false);
     body->setGravityEnable(false);
     body->setTag((int)CollisionCategory::Platform);

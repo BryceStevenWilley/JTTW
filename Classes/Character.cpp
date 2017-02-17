@@ -56,15 +56,17 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
 }
 
 void Character::impulseLeft(float deltaVel) {
-    double impulse = body->getMass() * deltaVel;
+    double impulse = body->getMass() * deltaVel * 1000;
     leftMomentum += impulse;
-    rebalanceImpulse();
+    //rebalanceImpulse();
+    body->applyForce(cocos2d::Vec2(-impulse, 0.0));
 }
 
 void Character::impulseRight(float deltaVel) {
-    double impulse = body->getMass() * deltaVel;
+    double impulse = body->getMass() * deltaVel * 1000;
     rightMomentum += impulse;
-    rebalanceImpulse();
+    //rebalanceImpulse();
+    body->applyForce(cocos2d::Vec2(impulse, 0.0));
 }
 
 void Character::applyForceRight(double fprime_x) {
