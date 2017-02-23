@@ -51,6 +51,7 @@
     },
   "npcs" : [ {
       "name" : String,
+      "imageName" : String,
       "startingXPos" : double,
       "startingYPos" : double
   }
@@ -79,7 +80,7 @@
         ]
        },
        ...       
-       ],
+       ]
     },
     "terrain" : {
       "wind" : [ {
@@ -104,6 +105,7 @@
     ...
   ],
   "vines" : [ {
+    "imageName" : String,"
     "swingCenterX" : double, // The center point that the swinging swings around.
     "swingCenterY" : double,
     "length" : double,
