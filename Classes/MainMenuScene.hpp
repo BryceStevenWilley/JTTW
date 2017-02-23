@@ -19,7 +19,12 @@ public:
     void exitGame();
     
 private:
+    void addCharacterAni(std::string name, cocos2d::Vec2);
+
     cocos2d::EventListenerKeyboard *eventListener;
+    
+    std::vector<cocos2d::MenuItemSprite *> options;
+    std::vector<cocos2d::MenuItemSprite *>::iterator currentOption;
 };
 } // JTTW
 
