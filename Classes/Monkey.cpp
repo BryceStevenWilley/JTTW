@@ -3,7 +3,7 @@
 using namespace JTTW;
 
 Monkey::Monkey(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
- Character("Monkey", cocos2d::PhysicsMaterial(1.0, 0.0, 1.0), startPosition, dimensions) {}
+ Character("Monkey", cocos2d::PhysicsMaterial(1.0, 0.0, 1.0), startPosition, dimensions), _state(NORMAL) {}
 
 void Monkey::impulseLeft(float deltaVel) {
     if (_state != CLIMBING) {
@@ -26,11 +26,26 @@ void Monkey::impulseRight(float deltaVel) {
 }
 
 void Monkey::jump() {
+    float jumpPower = 400;
     if (_state == CLIMBING) {
+        std::cout << "Currently Climbing" << std::endl;
         leavingClimeable();
         this->_currentState = Character::State::STANDING;
+        jumpPower = 350;
     }
-    Character::jump(400);
+    if (_state == SWINGING) {
+        std::cout << "Currently swinging" << std::endl;
+        if (j != nullptr) {
+            j->removeFormWorld();
+            j = nullptr;
+        }
+        this->_currentState = Character::State::STANDING;
+        jumpPower = 100;
+        _state = NORMAL;
+        //j->setEnable(false);
+        //sthis->body(setPositionX(this->body->getPosition())
+    }
+    Character::jump(jumpPower);
 }
 
 void Monkey::characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) {
@@ -86,4 +101,29 @@ void Monkey::leavingClimeable() {
     climbUpVel = 0.0;
     climbDownVel = 0.0;
     body->setGravityEnable(true);
+}
+
+void Monkey::enteringVine(cocos2d::PhysicsWorld *world, cocos2d::PhysicsBody *vine, double offset, cocos2d::Vec2 collisionPoint) {
+    if (_state == NORMAL) {
+        if (j != nullptr) {
+            j->removeFormWorld();
+            j = nullptr;
+        }
+        // create a joint between you and the vine.
+        j = cocos2d::PhysicsJointPin::construct(this->body, vine, cocos2d::Vec2::ZERO, cocos2d::Vec2(0, offset));
+        world->addJoint(j);
+        _state = SWINGING;
+        this->setAnimation(0, "ClimbIdle", true);
+    } if (_state == SWINGING) {
+        if (j != nullptr) {
+            j->removeFormWorld();
+            j = nullptr;
+        }
+        //j->removeFormWorld();
+        // create a joint between you and the vine.
+        j = cocos2d::PhysicsJointPin::construct(this->body, vine, cocos2d::Vec2::ZERO, cocos2d::Vec2(0, offset));
+        world->addJoint(j);
+        _state = SWINGING;
+        this->setAnimation(0, "ClimbIdle", true);
+    }
 }

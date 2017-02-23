@@ -9,6 +9,7 @@
 #include "MoveablePlatform.hpp"
 #include <spine/spine-cocos2dx.h>
 #include <deque>
+#include "Vine.hpp"
 #include "json.hpp"
 
 namespace JTTW {
@@ -16,15 +17,15 @@ namespace JTTW {
 class HelloWorld : public cocos2d::Layer {
 public:
     static cocos2d::Scene* createScene(std::string levelToLoad);
-    virtual bool init(std::string levelToLoad);
+    virtual bool init(std::string levelToLoad, cocos2d::PhysicsWorld *w);
     void menuCloseCallback(cocos2d::Ref* pSender);
     void nextLevelCallback();
     void switchToCharacter(int charIndex);
     
     //CREATE_FUNC(HelloWorld);
-    static HelloWorld* create(std::string levelToLoad){
+    static HelloWorld* create(std::string levelToLoad, cocos2d::PhysicsWorld *w){
         HelloWorld *pRet = new HelloWorld();
-        if (pRet && pRet->init(levelToLoad)) {
+        if (pRet && pRet->init(levelToLoad, w)) {
             pRet->autorelease();
             return pRet;
         }
@@ -51,6 +52,7 @@ private:
     AiAgent *player = nullptr;
     std::vector<Platform *> platforms = std::vector<Platform *>();
     std::vector<MoveablePlatform *> moveables = std::vector<MoveablePlatform *>();
+    std::vector<Vine *> vines = std::vector<Vine *>();
     bool debugOn = true; // currently, will just turn on collision boxes.
 
     bool nextLevelStarting = false;
@@ -61,6 +63,8 @@ private:
     std::string _nextLevel;
 
     cocos2d::EventListenerKeyboard *eventListener;
+    
+    cocos2d::PhysicsWorld *_w;
     //static bool pedestalPopped;
     //static bool cloudSunk;
     //static bool cloudSinking;

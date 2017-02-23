@@ -1,5 +1,6 @@
 {
-    "levelE-ndX" : 50,
+    "mToPixel" : 76.47,
+    "levelEndX" : 50,
     "nextLevelName" : "SimpleDitch",
     "background" : {
         "imageName" : "Background.png",
@@ -9,10 +10,10 @@
         "height" : 0.0
     },
     "characters" : {
-        "Sandy" : {"present": true, "startingXPos": 0.8, "startingYPos": 10},
-        "Piggy" : {"present": true, "startingXPos": 2.5, "startingYPos": 10},
-        "Monk" : {"present": true, "startingXPos": 4.2, "startingYPos": 10},
-        "Monkey" : {"present": true, "startingXPos":5.7, "startingYPos": 10}
+        "Sandy" : {"present": true, "startingXPos": 0.8, "startingYPos": 8.5},
+        "Piggy" : {"present": true, "startingXPos": 2.5, "startingYPos": 8.5},
+        "Monk" : {"present": true, "startingXPos": 3.5, "startingYPos": 8.5},
+        "Monkey" : {"present": true, "startingXPos":5.7, "startingYPos": 8.5}
     },
     "platforms" : [
         {
@@ -110,5 +111,11 @@
     
     "interactables" : {
       "boulders" : []
-    }
+    },
+    "vines": [{
+        "swingCenterX": 5.7,
+        "swingCenterY": 13,
+        "length": 5
+    }]
+    "traps": []
 }

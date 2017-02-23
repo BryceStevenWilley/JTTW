@@ -14,6 +14,7 @@ public:
     Viewpoint(cocos2d::Size screenDims, double metersPerPixel);
     
     void setLayer(cocos2d::Layer *level);
+    void setRatio(double mToPixel);
     
     void panToCharacter(Character *player);
     void followCharacter(Character *player, float delta);

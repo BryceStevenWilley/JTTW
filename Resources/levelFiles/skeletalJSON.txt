@@ -80,14 +80,6 @@
        },
        ...       
        ],
-       "vines" : [ {
-         "swingCenterX" : double, // The center point that the swinging swings around.
-         "swingCenterY" : double,
-         "length" : double,
-         "arcLimit" : double  // How big an arc it can make. degrees? radians? I don't know.
-       },
-       ...
-       ]
     },
     "terrain" : {
       "wind" : [ {
@@ -111,6 +103,14 @@
     },
     ...
   ],
+  "vines" : [ {
+    "swingCenterX" : double, // The center point that the swinging swings around.
+    "swingCenterY" : double,
+    "length" : double,
+    "arcLimit" : double  // How big an arc it can make. degrees? radians? I don't know.
+  },
+  ...
+  ]
   "respawnPs" : [ {
     "xPos" : double,  // If the player is closest to this x coordinate, respawn at the specified coordinates.
     "respawnX" : double,

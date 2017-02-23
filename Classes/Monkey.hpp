@@ -9,7 +9,8 @@ class Monkey : public Character {
 public:
     enum State {
         NORMAL,
-        CLIMBING
+        CLIMBING,
+        SWINGING
     };
 
     Monkey(cocos2d::Vec2 startPosition, cocos2d::Size dimensions);
@@ -21,6 +22,8 @@ public:
     
     void enteringClimeable();
     void leavingClimeable();
+    void enteringVine(cocos2d::PhysicsWorld *world, cocos2d::PhysicsBody *vine, double vineLength, cocos2d::Vec2 collisionPoint);
+    void leavingVine(cocos2d::PhysicsWorld *w);
     
 private:
     void updateClimbingVel();
@@ -29,6 +32,8 @@ private:
     
     double climbUpVel;
     double climbDownVel;
+    
+    cocos2d::PhysicsJoint* j = nullptr;
 };
 }
 
