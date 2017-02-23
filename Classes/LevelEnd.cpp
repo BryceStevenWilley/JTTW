@@ -70,6 +70,13 @@ void LevelEnd::menuCallback() {
     std::cout << ss.str() << std::endl;
     
     auto startScene = HelloWorld::createScene(ss.str());
+    if (startScene == nullptr) {
+       std::cout << "There is no next level! Return to main" << std::endl;
+       
+       auto mainmenu = MainMenu::createScene();
+       cocos2d::Director::getInstance()->replaceScene(mainmenu);
+       return;
+    }
     auto fade = cocos2d::TransitionFade::create(3, startScene);
     
     cocos2d::Director::getInstance()->replaceScene(fade);

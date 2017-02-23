@@ -11,6 +11,10 @@
 
 namespace JTTW {
 
+const int CLIMBEABLE_TAG = 11;
+const int MOVEABLE_TAG = 12;
+const int VINE_TAG = 13;
+
 enum class CollisionCategory {
     None = 0,
     Character = (1 << 0), // 1

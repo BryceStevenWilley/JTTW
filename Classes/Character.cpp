@@ -24,10 +24,11 @@ Character * Character::createFromName(const std::string name, cocos2d::Vec2 star
 Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial mat, cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
         spine::SkeletonAnimation(),
         body(cocos2d::PhysicsBody::createBox(cocos2d::Size(480.0f, 780.0f), mat)),
-        characterName(artFilePrefix) {
+        characterName(artFilePrefix), _currentState(MID_AIR) {
     
     this->initWithJsonFile(artFilePrefix + ".json", artFilePrefix + ".atlas", 1.0f);
     this->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+    //this->setContentSize(dimensions);
     this->setScaleX(dimensions.width / 780.0f);
     this->setScaleY(dimensions.height / 780.0f);
 

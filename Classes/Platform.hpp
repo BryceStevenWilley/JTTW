@@ -8,8 +8,6 @@ namespace JTTW {
 // Forward declaration of Viewpoint.
 class Viewpoint;
     
-const int CLIMBEABLE_TAG = 11;
-
 class Platform {
     cocos2d::Sprite *image; // to access the physics body, use .getComponent("PhysicsBody");
     
