@@ -16,7 +16,7 @@
     },
     "platforms" : [
         {
-            "imageName" : "Blue Ground.png",
+            "imageName" : "blueGround.png",
             "centerX" : -5.0,
             "centerY" : 5.0,
             "imageSizeWidth" : 20.0,
@@ -81,7 +81,8 @@
            "imageSizeHeight": 13.0,
            "collisionWidth": 3.0,
            "collisionHeight": 9.0,
-           "moveable": false
+           "moveable": false,
+           "climbable" : false
        },
               {
            "imageName": "Rock2.png",
@@ -91,7 +92,8 @@
            "imageSizeHeight": 15.0,
            "collisionWidth": 3.0,
            "collisionHeight": 11.0,
-           "moveable": false
+           "moveable": false,
+           "climbable" : false
        },
        {
            "imageName": "Rock3.png",
@@ -101,7 +103,8 @@
            "imageSizeHeight": 13.0,
            "collisionWidth": 3.0,
            "collisionHeight": 9.0,
-           "moveable": false
+           "moveable": false,
+           "climbable" : false
        },
        {
            "imageName": "Rock4.png",
@@ -111,7 +114,8 @@
            "imageSizeHeight": 11.0,
            "collisionWidth": 3.0,
            "collisionHeight": 8.0,
-           "moveable": false
+           "moveable": false,
+           "climbable" : false
        },
        {
            "imageName": "Pedestal.png",
@@ -121,7 +125,8 @@
            "imageSizeHeight": 1.3,
            "collisionWidth": 4.0,
            "collisionHeight": 1.3,
-           "moveable": false
+           "moveable": false,
+           "climbable" : false
        }
     ],
     
@@ -135,6 +140,8 @@
             "friction" : 1
         }
       ]
-    }
-      
+    },
+    
+    "vines" :[],
+    "traps" :[]
 }

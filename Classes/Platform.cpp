@@ -7,6 +7,9 @@ Platform::Platform() : image(cocos2d::Sprite::create()) {}
 
 Platform::Platform(std::string &fileName, cocos2d::Vec2 center, cocos2d::Size imageSize, cocos2d::Vec2 box, bool climeable) :
 image(cocos2d::Sprite::create(fileName)) {
+    if (image == NULL) {
+        throw std::invalid_argument(fileName);
+    }
     image->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
     image->setPosition(center);
     image->setContentSize(imageSize);

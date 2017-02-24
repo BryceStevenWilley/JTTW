@@ -24,9 +24,8 @@ using namespace JTTW;
 cocos2d::Scene* HelloWorld::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::createWithPhysics();
-    //scene->autorelease();
     scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -298));
-    //scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
+    scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = HelloWorld::create(levelToLoad, scene->getPhysicsWorld());
     if (layer == NULL) {
         return NULL;
