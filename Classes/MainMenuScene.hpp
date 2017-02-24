@@ -1,11 +1,3 @@
-//
-//  MainMenuScene.hpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/4/17.
-//
-//
-
 #ifndef MainMenuScene_hpp
 #define MainMenuScene_hpp
 
@@ -25,6 +17,14 @@ public:
     void openSettings();
     
     void exitGame();
+    
+private:
+    void addCharacterAni(std::string name, cocos2d::Vec2);
+
+    cocos2d::EventListenerKeyboard *eventListener;
+    
+    std::vector<cocos2d::MenuItemSprite *> options;
+    std::vector<cocos2d::MenuItemSprite *>::iterator currentOption;
 };
 } // JTTW
 

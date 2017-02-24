@@ -1,11 +1,3 @@
-//
-//  LevelEnd.cpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/14/17.
-//
-//
-
 #include "LevelEnd.hpp"
 #include "MainGameScene.h"
 #include "MainMenuScene.hpp"
@@ -38,7 +30,16 @@ bool LevelEnd::init(std::string &nextLevelToLoad) {
     textLabel->enableShadow();
     textLabel->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (3.0 / 4.0));
     
-     this->addChild(textLabel);
+    this->addChild(textLabel);
+    
+    auto smallLabel = cocos2d::Label::createWithTTF("(click or press any key to continue)", "fonts/WaitingfortheSunrise.ttf", 40);
+    
+    smallLabel->setTextColor(cocos2d::Color4B::WHITE);
+    smallLabel->setTextColor(cocos2d::Color4B::BLACK);
+    smallLabel->enableShadow();
+    smallLabel->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/4.0));
+    
+    this->addChild(smallLabel);
     
     keyListener = cocos2d::EventListenerKeyboard::create();
     keyListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) {
@@ -64,12 +65,19 @@ void LevelEnd::menuCallback() {
         return;
     }
     std::stringstream ss;
-    ss << "levelFiles/" << _nextLevelToLoad;
+    ss << "levelFiles/" << _nextLevelToLoad << ".json";
     
     std::cout << ss.str() << std::endl;
     
     auto startScene = HelloWorld::createScene(ss.str());
-    auto fade = cocos2d::TransitionFade::create(5, startScene);
+    if (startScene == nullptr) {
+       std::cout << "There is no next level! Return to main" << std::endl;
+       
+       auto mainmenu = MainMenu::createScene();
+       cocos2d::Director::getInstance()->replaceScene(mainmenu);
+       return;
+    }
+    auto fade = cocos2d::TransitionFade::create(3, startScene);
     
     cocos2d::Director::getInstance()->replaceScene(fade);
 }

@@ -1,13 +1,6 @@
-//
-//  LevelSelectScene.cpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/4/17.
-//
-//
-
 #include "LevelSelectScene.hpp"
 #include "MainGameScene.h"
+#include "MainMenuScene.hpp"
 #include "cocos-ext.h"
 #include <iostream>
 
@@ -66,7 +59,7 @@ bool LevelSelect::init() {
     this->addChild(background, -8);
     
     // Set the title text as a label.
-    auto titleLabel = cocos2d::Label::createWithTTF("Choose a level!", "fonts/WaitingfortheSunrise.ttf", 100);
+    titleLabel = cocos2d::Label::createWithTTF("Choose a level!", "fonts/WaitingfortheSunrise.ttf", 100);
     titleLabel->setTextColor(cocos2d::Color4B::WHITE);
     titleLabel->enableOutline(cocos2d::Color4B::BLACK);
     titleLabel->enableShadow();
@@ -74,36 +67,83 @@ bool LevelSelect::init() {
     this->addChild(titleLabel);
 
     // Create menu items for each of the level files that we have.
-    // TODO: This won't work well for many level files (they'll fall off the bottom.
-    std::vector<std::string> allLevels = findLevelFiles();
-    cocos2d::Vector<cocos2d::MenuItem *> menuButtons;
-    int levelHash = 0;
-    for (auto level : allLevels) {
-        auto levelName = cocos2d::Label::createWithTTF(level, "fonts/WaitingfortheSunrise.ttf", 40);
-        levelName->enableShadow();
-        cocos2d::MenuItem *levelItem = cocos2d::MenuItemLabel::create(levelName, CC_CALLBACK_1(LevelSelect::menuCallback, this));
-        levelItem->setTag(levelHash);
-        menuButtons.pushBack(levelItem);
-        
-        tagToFileName[levelHash] = level;
-        levelHash += 1;
-    }
+    // TODO: This won't work well for many level files (they'll fall off the bottom).
+    allLevels = findLevelFiles();
+    currentLevel = allLevels.begin();
+    
+    levelName = cocos2d::Label::createWithTTF(*currentLevel, "fonts/WaitingfortheSunrise.ttf", 40);
+    
+    levelName->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height / 2.0);
+    levelName->enableShadow();
+    
+    this->addChild(levelName);
+    
+    auto leftArrow = cocos2d::Label::createWithTTF("<", "fonts/WaitingfortheSunrise.ttf", 100);
+    auto rightArrow = cocos2d::Label::createWithTTF(">", "fonts/WaitingfortheSunrise.ttf", 100);
+    leftArrow->setTextColor(cocos2d::Color4B::WHITE);
+    leftArrow->enableOutline(cocos2d::Color4B::BLACK);
+    leftArrow->enableShadow();
+    rightArrow->setTextColor(cocos2d::Color4B::WHITE);
+    rightArrow->enableOutline(cocos2d::Color4B::BLACK);
+    rightArrow->enableShadow();
+    leftArrow->setPosition(origin.x + visibleSize.width / 4.0, origin.y + visibleSize.height / 2.0);
+    rightArrow->setPosition(origin.x + visibleSize.width * (3.0/4.0), origin.y + visibleSize.height / 2.0);
+    
+    this->addChild(leftArrow);
+    this->addChild(rightArrow);
 
-    // Display and activate the menu items.
-    cocos2d::Menu *m = cocos2d::Menu::createWithArray(menuButtons);
-    m->alignItemsVerticallyWithPadding(40);
-    this->addChild(m);
-
+    keyListener = cocos2d::EventListenerKeyboard::create();
+    keyListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) {
+        switch(keyCode) {
+            case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+                if (currentLevel == allLevels.begin()) {
+                    currentLevel = allLevels.end();
+                }
+                currentLevel--;
+                levelName->setString(*currentLevel);
+                break;
+            
+            case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+                currentLevel++;
+                if (currentLevel == allLevels.end()) {
+                    currentLevel = allLevels.begin();
+                }
+                levelName->setString(*currentLevel);
+                break;
+            
+            case cocos2d::EventKeyboard::KeyCode::KEY_ENTER:
+                this->menuCallback(*currentLevel);
+                break;
+                
+            case cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE: {
+                this->_eventDispatcher->removeEventListener(keyListener);
+                auto mainmenu = MainMenu::createScene();
+                cocos2d::Director::getInstance()->replaceScene(mainmenu);
+                return;
+            }
+                
+            default:
+                // do nothing.
+                break;
+        }
+    };
+    
+    this->_eventDispatcher->addEventListenerWithFixedPriority(keyListener, 3);
     return true;
 }
 
 // Go to whatever level was selected.
-void LevelSelect::menuCallback(cocos2d::Ref* fromItem) {
-    auto menuSelection = (cocos2d::ui::Button *) fromItem;
+void LevelSelect::menuCallback(std::string newLevel) {
     cocos2d::Scene *startScene;
     std::stringstream ss;
-    ss << "levelFiles/" << tagToFileName[menuSelection->getTag()];
+    ss << "levelFiles/" << newLevel;
     startScene = HelloWorld::createScene(ss.str());
+    if (startScene == NULL) {
+        titleLabel->setString("Something went wrong!\n Choose a different level!");
+        titleLabel->setBMFontSize(40);
+        return;
+    }
+    this->_eventDispatcher->removeEventListener(keyListener);
     auto fade = cocos2d::TransitionFade::create(1.5, startScene);
     cocos2d::Director::getInstance()->replaceScene(fade);
 }

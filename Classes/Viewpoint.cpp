@@ -17,6 +17,10 @@ void Viewpoint::setLayer(cocos2d::Layer *level) {
     _level = level;
 }
 
+void Viewpoint::setRatio(double mToPixel) {
+    _metersPerPixel = 1.0/mToPixel;
+}
+
 int Viewpoint::metersToPixels(double meters) const {
     return meters / _metersPerPixel;
 }

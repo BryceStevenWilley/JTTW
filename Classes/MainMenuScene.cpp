@@ -53,47 +53,20 @@ bool MainMenu::init() {
     settingsImageS->setScale(1.3);
     exitImageS->setScale(1.3);
     
+    /*Set up idle characters.*/
+    addCharacterAni("Monk", cocos2d::Vec2(origin.x + (middleX/2), origin.y + visibleSize.height / 8));
+    addCharacterAni("Monkey", cocos2d::Vec2(origin.x + (middleX/4), origin.y + visibleSize.height / 8));
+    addCharacterAni("Piggy", cocos2d::Vec2(visibleSize.width - (middleX/2.0), origin.y + visibleSize.height / 15.0));
+    addCharacterAni("Sandy", cocos2d::Vec2(visibleSize.width - (middleX/4.0), origin.y + visibleSize.height / 15.0));
+        
     cocos2d::MenuItemSprite *playItem = cocos2d::MenuItemSprite::create(playImage, playImageS, CC_CALLBACK_0(MainMenu::openStartScene, this));
     cocos2d::MenuItemSprite *settingsItem = cocos2d::MenuItemSprite::create(settingsImage, settingsImageS, settingsImage, CC_CALLBACK_0(MainMenu::openSettings, this));
     cocos2d::MenuItemSprite *exitItem = cocos2d::MenuItemSprite::create(exitImage, exitImageS, CC_CALLBACK_0(MainMenu::exitGame, this));
     
-    /*Set up idle characters.*/
-    
-    // Monk.
-    spine::SkeletonAnimation *monk = spine::SkeletonAnimation::createWithJsonFile("Monk.json", "Monk.atlas", 1.0f);
-    monk->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    monk->setPosition(origin.x + (middleX/2), origin.y + visibleSize.height / 8);
-    monk->setAnimation(0, "idle", true);
-    monk->setScale(.15);
-    this->addChild(monk);
-    
-    // Monkey.
-    spine::SkeletonAnimation *monkey = spine::SkeletonAnimation::createWithJsonFile("Monkey.json", "Monkey.atlas", 1.0f);
-    monkey->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    monkey->setPosition(origin.x + (middleX/4), origin.y + visibleSize.height / 8);
-    monkey->setAnimation(0, "idle", true);
-    monkey->setScale(.15);
-    this->addChild(monkey);
-    
-    // Piggy.
-    spine::SkeletonAnimation *piggy = spine::SkeletonAnimation::createWithJsonFile("Piggy.json", "Piggy.atlas", 1.0f);
-    piggy->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    piggy->setPosition(visibleSize.width - (middleX/2), origin.y + visibleSize.height / 15);
-    piggy->setAnimation(0, "idle", true);
-    piggy->setScale(.15);
-    // Mirror the image.
-    piggy->setScaleX(-1 * piggy->getScaleX());
-    this->addChild(piggy);
-    
-    // Sandy.
-    spine::SkeletonAnimation *sandy = spine::SkeletonAnimation::createWithJsonFile("Sandy.json", "Sandy.atlas", 1.0f);
-    sandy->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    sandy->setPosition(visibleSize.width - (middleX/4), origin.y + visibleSize.height / 15);
-    sandy->setAnimation(0, "idle", true);
-    sandy->setScale(.15);
-    // Mirror the image.
-    sandy->setScaleX(-1 * sandy->getScaleX());
-    this->addChild(sandy);
+    options.push_back(playItem);
+    options.push_back(settingsItem);
+    options.push_back(exitItem);
+    currentOption = options.begin();
     
     cocos2d::Size menuItemSize = titleSize * 0.4;
     playItem->setScale(menuItemSize.width / playItem->getContentSize().width, menuItemSize.height / playItem->getContentSize().height);
@@ -106,27 +79,78 @@ bool MainMenu::init() {
     settingsItem->setPosition(middleX + 20, origin.y + visibleSize.height / 3.0);
     exitItem->setPosition(middleX + 20, origin.y + visibleSize.height / 5.0);
     
-    // TODO: right now, the menu only changes to selected when clicked.
-    // Make it so that the first starts being selected, can navigate with arrow keys, or if the mouse starts moving, it selects
-    // whichever it intersects with.
     cocos2d::Menu *m = cocos2d::Menu::create(playItem, settingsItem, exitItem, NULL);
     m->setPosition(0,0);
+    
     
     this->addChild(titleImage, -6);
     this->addChild(m, -6);
     
-    auto eventListener = cocos2d::EventListenerKeyboard::create();
+    (*currentOption)->selected();
+    
+    eventListener = cocos2d::EventListenerKeyboard::create();
     eventListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
-        //if (keyCode == cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE) {
-        //    this->exitGame();
-        //}
+        switch(keyCode) {
+            case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
+                (*currentOption)->unselected();
+                if (currentOption == options.begin()) {
+                    currentOption = options.end();
+                }
+                currentOption--;
+                (*currentOption)->selected();
+                break;
+            
+            case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+                (*currentOption)->unselected();
+                currentOption++;
+                if (currentOption == options.end()) {
+                    currentOption = options.begin();
+                }
+                (*currentOption)->selected();
+                break;
+            
+            case cocos2d::EventKeyboard::KeyCode::KEY_ENTER:
+                (*currentOption)->activate();
+                break;
+                
+            case cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE: {
+                this->exitGame();
+            }
+                
+            default:
+                // do nothing.
+                break;
+        }
+
     };
     this->_eventDispatcher->addEventListenerWithFixedPriority(eventListener, 1);
     
     return true;
 }
 
+void MainMenu::addCharacterAni(std::string name, cocos2d::Vec2 position) {
+    auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+    cocos2d::Vec2 origin = cocos2d::Director::getInstance()->getVisibleOrigin();
+    float middleX = origin.x + visibleSize.width / 2.0;
+
+    // .15 is what the scale was when the screen was 512 by 384, so keep that aspect ratio.
+    double charScale = .15 * visibleSize.width / 512.0;
+
+    spine::SkeletonAnimation *c = spine::SkeletonAnimation::createWithJsonFile(name + ".json", name + ".atlas", 1.0f);
+    c->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+    c->setPosition(position);
+    c->setAnimation(0, "idle", true);
+    if (position.x > middleX) {
+         c->setScale(charScale);
+         c->setScaleX(c->getScaleX() * -1);// Mirror the image.
+    } else {
+         c->setScale(charScale);
+    }
+    this->addChild(c);
+}
+
 void MainMenu::openStartScene() {
+    this->_eventDispatcher->removeEventListener(eventListener);
     auto startScene = LevelSelect::createScene();
     auto fade = cocos2d::TransitionCrossFade::create(.5, startScene);
     cocos2d::Director::getInstance()->replaceScene(fade);

@@ -59,7 +59,8 @@ void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeybo
             _controlledCharacter->jump();
             break;
         default:
-            // do nothing
+            // Try the charecter's special controls.
+            _controlledCharacter->characterSpecial(code, pressed);
             break;
     }
     return;

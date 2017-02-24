@@ -24,6 +24,8 @@ MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerA,
     _velocities = maxVelocity * (centerB - centerA)/(centerB - centerA).getLength();
     
     image->setPosition(centerA);
+    
+    image->setTag(MOVEABLE_TAG);
 }
 
 MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerAm, cocos2d::Vec2 centerBm, cocos2d::Size imageSizeM, cocos2d::Vec2 boxM, double maxVelocity, Viewpoint vp) :
@@ -42,21 +44,26 @@ MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerAm
     body->setContactTestBitmask((int)CollisionCategory::CharacterAndBoulder);
     body->setCollisionBitmask((int)CollisionCategory::CharacterAndBoulder);
     
-    
     // Set initial speed.
     _velocities = vp.metersToPixels(maxVelocity) * (_centerB - _centerA)/(_centerB - _centerA).getLength();
 }
 
+// TODO: Make platforms gradually move
+// Few Choices: Spring based
+//    Based on a Sin wave
+//    Based on a control thing with low may force applied.
 void MoveablePlatform::move(float deltaTime, bool debugOn) {
     auto position = image->getPosition() + _velocities * deltaTime;
-
+    
     // Use get lengthSq because it saves up 2 square root operations.
     if (currentState == TOWARDS_B && (position - _centerA).getLengthSq() > (_centerB - _centerA).getLengthSq()) {
         // We've gone too far towards B, so let's turn around again.
         _velocities = - _velocities;
+        currentState = TOWARDS_A;
     } else if (currentState == TOWARDS_A && (position - _centerB).getLengthSq() > (_centerA - _centerB).getLengthSq()) {
         // We've gone too far towards A, so let's turn around again.
         _velocities = - _velocities;
+        currentState = TOWARDS_B;
     }
     body->setVelocity(_velocities);
 }

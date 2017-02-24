@@ -1,6 +1,7 @@
 {
-    "levelEndX" : 5,
-    "nextLevelName" : "SimpleDitch.json",
+    "mToPixel" : 76.47,
+    "levelEndX" : 50,
+    "nextLevelName" : "SimpleDitch",
     "background" : {
         "imageName" : "Background.png",
         "centerX" : 0.0,
@@ -9,10 +10,10 @@
         "height" : 0.0
     },
     "characters" : {
-        "Sandy" : {"present": true, "startingXPos": 0.8, "startingYPos": 10},
-        "Piggy" : {"present": true, "startingXPos": 2.5, "startingYPos": 10},
-        "Monk" : {"present": true, "startingXPos": 4.2, "startingYPos": 10},
-        "Monkey" : {"present": true, "startingXPos":5.7, "startingYPos": 10}
+        "Sandy" : {"present": true, "startingXPos": 0.8, "startingYPos": 8.5},
+        "Piggy" : {"present": true, "startingXPos": 2.5, "startingYPos": 8.5},
+        "Monk" : {"present": true, "startingXPos": 3.5, "startingYPos": 8.5},
+        "Monkey" : {"present": true, "startingXPos":5.7, "startingYPos": 8.5}
     },
     "platforms" : [
         {
@@ -23,6 +24,7 @@
             "imageSizeHeight": 10.0,
             "collisionWidth": 8.5,
             "collisionHeight": 10.0,
+            "climbable" : false,
             "moveable": false
         },
         {
@@ -33,6 +35,7 @@
            "imageSizeHeight": 10.0,
            "collisionWidth" : 8.5,
            "collisionHeight" : 9.0,
+           "climbable" : false,
            "moveable": false
         },
         {
@@ -44,9 +47,10 @@
            "collisionWidth": 1.5,
            "collisionHeight": 1.0,
            "moveable": true,
-           "center2X": 11.0,
-           "center2Y": 10.0,
-           "maximumVelocity": 1.0
+           "endX": 11.0,
+           "endY": 10.0,
+           "climbable" : false,
+           "velocity": 1.0
        },
        {
            "imageName": "Rock1.png",
@@ -56,6 +60,7 @@
            "imageSizeHeight": 13.0,
            "collisionWidth": 3.0,
            "collisionHeight": 9.0,
+           "climbable" : true,
            "moveable": false
        },
        {
@@ -66,6 +71,7 @@
            "imageSizeHeight": 15.0,
            "collisionWidth": 3.0,
            "collisionHeight": 11.0,
+           "climbable" : true,
            "moveable": false
        },
        {
@@ -76,6 +82,7 @@
            "imageSizeHeight": 13.0,
            "collisionWidth": 3.0,
            "collisionHeight": 9.0,
+           "climbable" : true,
            "moveable": false
        },
        {
@@ -86,6 +93,7 @@
            "imageSizeHeight": 11.0,
            "collisionWidth": 3.0,
            "collisionHeight": 8.0,
+           "climbable" : true,
            "moveable": false
        },
        {
@@ -96,11 +104,20 @@
            "imageSizeHeight": 1.3,
            "collisionWidth": 4.0,
            "collisionHeight": 1.3,
+           "climbable" : false,
            "moveable": false
        }
     ],
-    
     "interactables" : {
       "boulders" : []
-    }
+    },
+    "vines": [
+        {
+            "width": 0.3,
+            "swingCenterX": 5.7,
+            "swingCenterY": 13,
+            "length": 5
+        }
+    ],
+    "traps": []
 }

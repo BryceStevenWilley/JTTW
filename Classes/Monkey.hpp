@@ -1,0 +1,40 @@
+#ifndef Monkey_hpp
+#define Monkey_hpp
+
+#include <iostream>
+#include "Character.hpp"
+
+namespace JTTW {
+class Monkey : public Character {
+public:
+    enum State {
+        NORMAL,
+        CLIMBING,
+        SWINGING
+    };
+
+    Monkey(cocos2d::Vec2 startPosition, cocos2d::Size dimensions);
+    
+    virtual void impulseLeft(float deltaVel) override;
+    virtual void impulseRight(float deltaVel) override;
+    virtual void jump() override;
+    virtual void characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) override;
+    
+    void enteringClimeable();
+    void leavingClimeable();
+    void enteringVine(cocos2d::PhysicsWorld *world, cocos2d::PhysicsBody *vine, double vineLength, cocos2d::Vec2 collisionPoint);
+    void leavingVine(cocos2d::PhysicsWorld *w);
+    
+private:
+    void updateClimbingVel();
+
+    State _state;
+    
+    double climbUpVel;
+    double climbDownVel;
+    
+    cocos2d::PhysicsJoint* j = nullptr;
+};
+}
+
+#endif /* Monkey_hpp */
