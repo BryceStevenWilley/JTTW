@@ -10,10 +10,10 @@
         "height" : 0.0
     },
     "characters" : {
-        "Sandy" : {"present": true, "startingXPos": 0.8, "startingYPos": 8.5},
-        "Piggy" : {"present": true, "startingXPos": 2.5, "startingYPos": 8.5},
-        "Monk" : {"present": true, "startingXPos": 3.5, "startingYPos": 8.5},
-        "Monkey" : {"present": true, "startingXPos":5.7, "startingYPos": 8.5}
+        "Sandy" : {"present": true, "startingXPos": 5.7, "startingYPos": 8.5},
+        "Piggy" : {"present": true, "startingXPos": 3.5, "startingYPos": 8.5},
+        "Monk" : {"present": true, "startingXPos": 2.5, "startingYPos": 8.5},
+        "Monkey" : {"present": true, "startingXPos": 0.8, "startingYPos": 8.5}
     },
     "platforms" : [
         {

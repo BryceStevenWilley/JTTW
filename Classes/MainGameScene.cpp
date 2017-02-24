@@ -24,6 +24,10 @@ using namespace JTTW;
 //bool HelloWorld::cloudSunk = false;
 //bool HelloWorld::cloudSinking = false;
 
+const int UI_LAYER_Z_IDX = 2;
+const int LVL_LAYER_Z_IDX = 1;
+
+
 cocos2d::Scene* HelloWorld::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::createWithPhysics();
@@ -161,6 +165,7 @@ bool HelloWorld::onContactEnd(cocos2d::PhysicsContact& contact) {
 cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugOn) {
     
     cocos2d::Layer *levelLayer = cocos2d::Layer::create();
+    cocos2d::Layer *uiLayer = cocos2d::Layer::create();
     
     const int platformZ = 4;
     
@@ -217,6 +222,8 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
     std::vector<std::string> charNames = {"Monkey", "Monk", "Piggy", "Sandy"};
     int characterHeight = vp.metersToPixels(1.7);
     int characterWidth = vp.metersToPixels(1.7);
+    
+    cocos2d::Vec2 uiHeadLocation(40, 40);
     for (int i = 0; i < 4; i++) {
         if (characterStruct[charNames[i]]["present"]) {
             double startX = vp.metersToPixels((double)characterStruct[charNames[i]]["startingXPos"]);
@@ -228,6 +235,16 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
             AiAgent *agent = new AiAgent(c);
             agent->setPlayerPosOffset(c->getPosition() - characters[0]->getPosition());
             agents.push_back(agent);
+            
+            // Set the ui head.
+            std::stringstream ss;
+            ss << charNames[i] << "Head.png";
+            cocos2d::Sprite *head = cocos2d::Sprite::create(ss.str());
+
+            head->setScale(.13);
+            head->setPosition(uiHeadLocation);
+            uiHeadLocation += cocos2d::Vec2(70, 0);
+            uiLayer->addChild(head);
         }
     }
     
@@ -362,7 +379,8 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
     levelEndX = lvl["levelEndX"];
     _nextLevel = lvl["nextLevelName"];
     
-    
+    // Set the ui layer here.
+    this->addChild(uiLayer, UI_LAYER_Z_IDX);
     
     return levelLayer;
 }
@@ -399,7 +417,7 @@ bool HelloWorld::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
  
     vp.setLayer(layer);
 
-    this->addChild(layer, 1);
+    this->addChild(layer, LVL_LAYER_Z_IDX);
     
     eventListener = cocos2d::EventListenerKeyboard::create();
     eventListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) mutable {
