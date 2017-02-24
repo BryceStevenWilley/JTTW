@@ -136,8 +136,9 @@
             "imageName" : "Sandy.png",
             "centerX" : -12.7,
             "centerY" : 20.0,
+            "type" : "circle",
             "radius" : 4,
-            "friction" : 1
+            "mass" : 5000
         }
       ]
     },
