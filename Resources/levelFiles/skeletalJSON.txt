@@ -3,6 +3,9 @@
 { "levelName" : String,
   "nextLevelName" : String, // This is blank on the final level.
   "levelEndX" : double, // The X position of where the level officially ends.
+  "levelEndY" : double,
+  "xGreater" : boolean, // True if the EOL is triggered walking [right] of it.
+  "yGreater" : boolean, // True if the EOL is triggered reaching a height [above] it.
   "mToPixel" : double, // The number of pixels in a meter. For example, 80 = 80 px per meter.
   "background" : {        
     "imageName" : String, 
