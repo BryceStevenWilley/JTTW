@@ -14,7 +14,6 @@
 namespace JTTW {
 class Vine : public cocos2d::Sprite {
 private:
-    //cocos2d::Sprite *image; // to get physics body use .getComponent("PhysicsBody");
     cocos2d::PhysicsBody *body;
     cocos2d::Vec2 rotCenter;
     

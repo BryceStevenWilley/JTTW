@@ -65,6 +65,9 @@
 		521A8EAA19F11F5000D177D7 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 521A8EA819F11F5000D177D7 /* fonts */; };
 		52B47A471A53D09C004E4C60 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52B47A461A53D09B004E4C60 /* Security.framework */; };
 		8262943E1AAF051F00CB7CF7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8262943D1AAF051F00CB7CF7 /* Security.framework */; };
+		9F15D9181E5FD4D300F77DF6 /* Boulder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F15D9161E5FD4D300F77DF6 /* Boulder.cpp */; };
+		9F15D9191E5FD4D300F77DF6 /* Boulder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F15D9161E5FD4D300F77DF6 /* Boulder.cpp */; };
+		9F15D91A1E5FD4D300F77DF6 /* Boulder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F15D9161E5FD4D300F77DF6 /* Boulder.cpp */; };
 		9F16FC001E54CC5F00D9DBCA /* Monkey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F16FBFE1E54CC5F00D9DBCA /* Monkey.cpp */; };
 		9F16FC011E54CC5F00D9DBCA /* Monkey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F16FBFE1E54CC5F00D9DBCA /* Monkey.cpp */; };
 		9F16FC021E54CC5F00D9DBCA /* Monkey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F16FBFE1E54CC5F00D9DBCA /* Monkey.cpp */; };
@@ -320,6 +323,8 @@
 		521A8EA819F11F5000D177D7 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		52B47A461A53D09B004E4C60 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.1.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		8262943D1AAF051F00CB7CF7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		9F15D9161E5FD4D300F77DF6 /* Boulder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Boulder.cpp; sourceTree = "<group>"; };
+		9F15D9171E5FD4D300F77DF6 /* Boulder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Boulder.hpp; sourceTree = "<group>"; };
 		9F16FBFE1E54CC5F00D9DBCA /* Monkey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Monkey.cpp; sourceTree = "<group>"; };
 		9F16FBFF1E54CC5F00D9DBCA /* Monkey.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Monkey.hpp; sourceTree = "<group>"; };
 		9F16FC041E54CCA500D9DBCA /* Monk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Monk.cpp; sourceTree = "<group>"; };
@@ -688,6 +693,8 @@
 				9F8E656E1E3DA0060058958F /* MoveablePlatform.hpp */,
 				9F192EB51E5B634A001FE88A /* Vine.cpp */,
 				9F192EB61E5B634A001FE88A /* Vine.hpp */,
+				9F15D9161E5FD4D300F77DF6 /* Boulder.cpp */,
+				9F15D9171E5FD4D300F77DF6 /* Boulder.hpp */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
@@ -982,6 +989,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F16FC001E54CC5F00D9DBCA /* Monkey.cpp in Sources */,
+				9F15D9181E5FD4D300F77DF6 /* Boulder.cpp in Sources */,
 				46880B8819C43A87006E1F66 /* AppDelegate.cpp in Sources */,
 				46880B8A19C43A87006E1F66 /* MainGameScene.cpp in Sources */,
 				9FB69E071E46EE88006325A3 /* LevelSelectScene.cpp in Sources */,
@@ -1018,6 +1026,7 @@
 				9F98AF921E2C99E2009559C7 /* Viewpoint.cpp in Sources */,
 				9FB69DDC1E459B90006325A3 /* Character.cpp in Sources */,
 				9F16FC111E54CCDB00D9DBCA /* Piggy.cpp in Sources */,
+				9F15D9191E5FD4D300F77DF6 /* Boulder.cpp in Sources */,
 				503AE10517EB98FF00D1A890 /* main.cpp in Sources */,
 				46880B8B19C43A87006E1F66 /* MainGameScene.cpp in Sources */,
 				9F666E591E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */,
@@ -1032,6 +1041,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F16FC021E54CC5F00D9DBCA /* Monkey.cpp in Sources */,
+				9F15D91A1E5FD4D300F77DF6 /* Boulder.cpp in Sources */,
 				9FB69DD51E459AA4006325A3 /* Platform.cpp in Sources */,
 				9FD41BEF1E2D54490077779E /* AppDelegate.cpp in Sources */,
 				9FD41BF01E2D54490077779E /* Viewpoint.cpp in Sources */,

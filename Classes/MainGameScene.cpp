@@ -11,8 +11,11 @@
 #include <stdio.h>
 #include "cocos2d.h"
 #include "json.hpp"
+#include "Boulder.hpp"
 #include <iostream>
 #include <fstream>
+#include <algorithm>
+#include <string>
 
 using namespace cocos2d;
 using namespace JTTW;
@@ -24,9 +27,8 @@ using namespace JTTW;
 cocos2d::Scene* HelloWorld::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::createWithPhysics();
-    //scene->autorelease();
     scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -298));
-    //scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
+    scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = HelloWorld::create(levelToLoad, scene->getPhysicsWorld());
     if (layer == NULL) {
         return NULL;
@@ -201,13 +203,13 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
             double maximumVelocity = vp.metersToPixels((double)pAtt["velocity"]);
             MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), maximumVelocity);
 
-            levelLayer->addChild(p->image, platformZ);
+            levelLayer->addChild(p, platformZ);
             platforms.push_back(p);
             moveables.push_back(p);
         } else {
             Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climbable"]);
         
-            levelLayer->addChild(p->getImage(), platformZ);
+            levelLayer->addChild(p, platformZ);
             platforms.push_back(p);
         }
     }
@@ -240,24 +242,20 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
 
     nlohmann::json boulders = lvl["interactables"]["boulders"];
     for (auto& bAtt: boulders) {
-        std::cout << "Reading in boulders" << std::endl;
-        cocos2d::PhysicsBody *body = cocos2d::PhysicsBody::createCircle(vp.metersToPixels((double)bAtt["radius"]));
-        body->setCategoryBitmask((int)CollisionCategory::Boulder);
-        body->setCollisionBitmask((int)CollisionCategory::ALL);
-        body->setContactTestBitmask((int)CollisionCategory::ALL);
-        body->setRotationEnable(true);
-        
-        body->setVelocityLimit(600);
-        body->setDynamic(true);
-        
-        cocos2d::Sprite * bSprite = cocos2d::Sprite::create("Sandy2.png");
-        bSprite->setPosition(vp.metersToPixels((double)bAtt["centerX"]), vp.metersToPixels((double)bAtt["centerY"]));
-        bSprite->addComponent(body);
-        dynamics.push_back(bSprite);
-        
-        levelLayer->addChild(bSprite, 10);
-        
-        std::cout << "Added boulder to level" << std::endl;
+        std::string type = bAtt["type"];
+        std::transform(type.begin(), type.end(), type.begin(), ::toupper);
+        if (type == "CIRCLE") {
+            Boulder *b = new Boulder(
+                    vp.metersToPixels((double)bAtt["radius"]),
+                    bAtt["imageName"],
+                    vp.metersToPixels(cocos2d::Vec2((double)bAtt["centerX"], (double)bAtt["centerY"])),
+                    bAtt["mass"]);
+            dynamics.push_back(b);
+            levelLayer->addChild(b, 10);
+        } else if (type == "POLYGON") {
+            std::cout << "Don't support polygonal boulders yet!" << std::endl;
+            throw std::invalid_argument("no polygonal boulders yet");
+        }
     }
     
     nlohmann::json in_vines = lvl["vines"];
@@ -387,10 +385,10 @@ bool HelloWorld::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     try {
         layer = parseLevelFromJson(levelToLoad, debugOn);
     } catch (std::domain_error ex) {
-        std::cout<< "Json was mal-formed, or expected members were not found" << std::endl;
+        std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
         return false;
     } catch (std::invalid_argument ex) {
-        std::cout<< "Json was mal-formed, or expected members were not found" << std::endl;
+        std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
         return false;
     }
  

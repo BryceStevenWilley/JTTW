@@ -8,14 +8,13 @@ namespace JTTW {
 // Forward declaration of Viewpoint.
 class Viewpoint;
     
-class Platform {
-    cocos2d::Sprite *image; // to access the physics body, use .getComponent("PhysicsBody");
-    
+class Platform: public cocos2d::Sprite {
 public:
     Platform();
     Platform(std::string &fileName, cocos2d::Vec2 center, cocos2d::Size imageSize, cocos2d::Vec2 box, bool climeable);
-
-    cocos2d::Sprite *getImage() { return image; }
+    
+protected:
+    cocos2d::PhysicsBody *body;
 };
 }
 #endif /* Platform_hpp */

@@ -17,23 +17,23 @@
     "imageSizeHeight" : double,
     "disappears" : boolean,    // Whether the platform should disappear from under the player or not.
     "moveable" : boolean, // Whether a still or moving platform.
-    /* IF MOVEABLE */
+    /** IF MOVEABLE **/
     "endX" : double,
     "endY" : double,
     "velocity" : double,
-    /* IF BOX COORDINATES */
+    /** IF BOX COORDINATES **/
     "collisionWidth", double,
     "collisionHeight", double,
-    /* ELSE IF POLYGON COORDINATES */
+    /** ELSE IF POLYGON COORDINATES **/
     "collisionPoints" : [ {
         "x" : double,
         "y" : double
         },
         ...       
-        ]
-    },
+    ],
+    /** END **/
     "sinkable" : boolean,
-    /* IF SINKABLE */
+    /** IF SINKABLE **/
     "springCK" : double,  // Spring constant k.
     "climbable" : boolean
     ],
@@ -61,10 +61,19 @@
         "imageName" : String,
         "centerX" : double,
         "centerY" : double,
+        "type" : String // Must either be polygon or circle for now
+        /** IF type == POLYGON **/
+       "collisionPoints" : [ {
+            "x" : double,
+            "y" : double
+            },
+           ...
+        ],
+        /** ELSE IF type == CIRCLE **/
         "radius" : double,
-        "friction" : double,  // Physics requirements to be updated by Bryce.
-        "density" : double,
-        "mass" : double
+        /** END **/
+        "mass" : double // should be in the range of 1_000 for smaller boulders to 10_000 for larger ones. Will have
+                        // to playtest extensively.
       },
       ...
       ],

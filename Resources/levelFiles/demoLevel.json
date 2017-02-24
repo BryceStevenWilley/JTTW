@@ -108,14 +108,18 @@
            "moveable": false
        }
     ],
-    
     "interactables" : {
-      "boulders" : []
+      "boulders" : [
+      
+      ]
     },
-    "vines": [{
-        "swingCenterX": 5.7,
-        "swingCenterY": 13,
-        "length": 5
-    }]
+    "vines": [
+        {
+            "width": 0.3,
+            "swingCenterX": 5.7,
+            "swingCenterY": 13,
+            "length": 5
+        }
+    ],
     "traps": []
 }
