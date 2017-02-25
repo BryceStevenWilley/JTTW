@@ -56,7 +56,7 @@ private:
     bool debugOn = true; // currently, will just turn on collision boxes.
 
     bool nextLevelStarting = false;
-    bool firstClick = false;
+    bool afterFirstClick = false;
 
     double levelEndX;
     

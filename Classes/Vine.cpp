@@ -14,7 +14,7 @@ Vine::Vine(std::string fileName, cocos2d::Vec2 rotCenter, double width, double l
     this->setPosition(center);
     this->setContentSize(imageSize);
     
-    body = cocos2d::PhysicsBody::createBox(cocos2d::Size(box.x, box.y), cocos2d::PhysicsMaterial(1.0, 0.0, 0.0));
+    body = cocos2d::PhysicsBody::createBox(cocos2d::Size(box.x, box.y), cocos2d::PhysicsMaterial(0.5, 0.0, 0.0));
     
     body->setDynamic(true);
     body->setGravityEnable(true);

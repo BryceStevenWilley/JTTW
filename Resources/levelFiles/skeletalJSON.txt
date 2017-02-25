@@ -106,10 +106,13 @@
       ...
       ]
     },
-  "traps" : [ { // I am not sure what traps need.
+  "traps" : [ { // Specifically, for cage traps that fall on top of you.
     "imageName" : String,
     "centerX" : double,
     "centerY" : double,
+    "density" : double, // density instead of mass b/c there are different parts, varies from >= 0.0, normalized at 1.0. 
+
+
     },
     ...
   ],

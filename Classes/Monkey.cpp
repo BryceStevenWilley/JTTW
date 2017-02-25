@@ -6,9 +6,11 @@ Monkey::Monkey(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
  Character("Monkey", cocos2d::PhysicsMaterial(1.0, 0.0, 0.0), startPosition, dimensions), _state(NORMAL) {}
 
 void Monkey::impulseLeft(float deltaVel) {
-    if (_state != CLIMBING) {
+    if (_state == NORMAL) {
         Character::impulseLeft(deltaVel);
-    } else if (this->getScaleX() > 0) {
+    } else if (_state == SWINGING) {
+        Character::impulseLeft(deltaVel); // so you don't have to swing as much to get momentum.
+    } else if (this->getScaleX() > 0) { // _state == CLIMBING
         // Facing right
         leavingClimeable();
         Character::impulseLeft(deltaVel);
@@ -16,9 +18,11 @@ void Monkey::impulseLeft(float deltaVel) {
 }
 
 void Monkey::impulseRight(float deltaVel) {
-    if (_state != CLIMBING) {
+    if (_state == NORMAL) {
         Character::impulseRight(deltaVel);
-    } else if (this->getScaleX() < 0) {
+    } else if (_state == SWINGING) {
+        Character::impulseRight(deltaVel);
+    } else if (this->getScaleX() < 0) { // _state == CLIMBING
         // Facing right
         leavingClimeable();
         Character::impulseRight(deltaVel);
@@ -26,12 +30,12 @@ void Monkey::impulseRight(float deltaVel) {
 }
 
 void Monkey::jump() {
-    float jumpPower = 400;
+    float jumpPower = 500;
     if (_state == CLIMBING) {
         std::cout << "Currently Climbing" << std::endl;
         leavingClimeable();
         this->_currentState = Character::State::STANDING;
-        jumpPower = 350;
+        jumpPower = 400;
     }
     if (_state == SWINGING) {
         std::cout << "Currently swinging" << std::endl;
@@ -40,10 +44,18 @@ void Monkey::jump() {
             j = nullptr;
         }
         this->_currentState = Character::State::STANDING;
-        jumpPower = 100;
+        jumpPower = 90;
         _state = NORMAL;
+        //Character::jump(jumpPower);
+        cocos2d::Vec2 vel = body->getVelocity();
+        body->applyImpulse(body->getMass() * vel * .7); // Double the current velocity!
+        this->_currentState = Character::State::MID_AIR;
+        return;
         //j->setEnable(false);
         //sthis->body(setPositionX(this->body->getPosition())
+    }
+    if (_state == NORMAL) {
+        
     }
     Character::jump(jumpPower);
 }
