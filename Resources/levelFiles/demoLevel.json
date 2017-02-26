@@ -121,5 +121,20 @@
             "length": 5
         }
     ],
-    "traps": []
+    "traps": [
+        {
+           "imageName" : "cage1.png",
+           "density" : 2.0,
+           "bounciness" : 0.35,
+           "friction" : 1.0,
+           "centerX" : 10.7,
+           "centerY" : 15.5,
+           "wallThickness" : 0.131,
+           "trapWidth" : 2.877,
+           "trapHeight" : 2.61,
+           "offset" : -0.52,
+           "imageWidth" : 2.877,
+           "imageHeight" : 3.66
+        }
+    ]
 }

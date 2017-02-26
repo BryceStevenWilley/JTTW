@@ -137,7 +137,7 @@ void LevelSelect::menuCallback(std::string newLevel) {
     cocos2d::Scene *startScene;
     std::stringstream ss;
     ss << "levelFiles/" << newLevel;
-    startScene = HelloWorld::createScene(ss.str());
+    startScene = MainGameScene::createScene(ss.str());
     if (startScene == NULL) {
         titleLabel->setString("Something went wrong!\n Choose a different level!");
         titleLabel->setBMFontSize(40);

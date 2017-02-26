@@ -22,8 +22,6 @@ public:
 
     cocos2d::PhysicsBody *getBody();
     cocos2d::Vec2 getRotationCenter();
-    
-    void move();
 };
 }
 

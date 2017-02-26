@@ -30,10 +30,6 @@ cocos2d::PhysicsBody *Vine::getBody() {
     return body;
 }
 
-void Vine::move() {
-
-}
-
 cocos2d::Vec2 Vine::getRotationCenter() {
     return rotCenter;
 }

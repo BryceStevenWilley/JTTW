@@ -69,7 +69,7 @@ void LevelEnd::menuCallback() {
     
     std::cout << ss.str() << std::endl;
     
-    auto startScene = HelloWorld::createScene(ss.str());
+    auto startScene = MainGameScene::createScene(ss.str());
     if (startScene == nullptr) {
        std::cout << "There is no next level! Return to main" << std::endl;
        

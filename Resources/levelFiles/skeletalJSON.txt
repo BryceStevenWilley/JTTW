@@ -111,8 +111,14 @@
     "centerX" : double,
     "centerY" : double,
     "density" : double, // density instead of mass b/c there are different parts, varies from >= 0.0, normalized at 1.0. 
-
-
+    "bounciness": double, // normalized at 1.0 too
+    "friction" : double, // normalized at 1.0 too.
+    "wallThickness" : double, // thickness of the trap wall.
+    "trapWidth" : double, // distance from center of left trap wall to center of right wall
+    "trapHeight" : double, // distance from top to bottom of the trap
+    "offset" : double, // the y-axis offset of your center of the trap body compared to the center of the trap image
+    "imageWidth" : double, // width of the image, should be a little bigger than trapWidth
+    "imageHeight" : doublue // height of the image, should be a little taller than trapHeight.
     },
     ...
   ],

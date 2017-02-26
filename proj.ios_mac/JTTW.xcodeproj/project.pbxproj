@@ -223,6 +223,9 @@
 		9FD41CCA1E2DB2AF0077779E /* spineboy.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 9FD41CC41E2DB2A60077779E /* spineboy.atlas */; };
 		9FD41CCB1E2DB2AF0077779E /* spineboy.json in Resources */ = {isa = PBXBuildFile; fileRef = 9FD41CC51E2DB2A60077779E /* spineboy.json */; };
 		9FD41CCC1E2DB2AF0077779E /* spineboy.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FD41CC61E2DB2A60077779E /* spineboy.png */; };
+		9FFAAC721E62A74300AF523E /* Trap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FFAAC701E62A74300AF523E /* Trap.cpp */; };
+		9FFAAC731E62A74300AF523E /* Trap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FFAAC701E62A74300AF523E /* Trap.cpp */; };
+		9FFAAC741E62A74300AF523E /* Trap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FFAAC701E62A74300AF523E /* Trap.cpp */; };
 		BF171245129291EC00B8313A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB012928DE900B8313A /* OpenGLES.framework */; };
 		BF1712471292920000B8313A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB412928DE900B8313A /* libz.dylib */; };
 		BF1C47F01293687400B63C5D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1C47EA1293683800B63C5D /* QuartzCore.framework */; };
@@ -405,6 +408,8 @@
 		9FD41CC41E2DB2A60077779E /* spineboy.atlas */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spineboy.atlas; sourceTree = "<group>"; };
 		9FD41CC51E2DB2A60077779E /* spineboy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = spineboy.json; sourceTree = "<group>"; };
 		9FD41CC61E2DB2A60077779E /* spineboy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spineboy.png; sourceTree = "<group>"; };
+		9FFAAC701E62A74300AF523E /* Trap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Trap.cpp; sourceTree = "<group>"; };
+		9FFAAC711E62A74300AF523E /* Trap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Trap.hpp; sourceTree = "<group>"; };
 		BF170DB012928DE900B8313A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BF170DB412928DE900B8313A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		BF1C47EA1293683800B63C5D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -715,6 +720,8 @@
 				9F192EB61E5B634A001FE88A /* Vine.hpp */,
 				9F15D9161E5FD4D300F77DF6 /* Boulder.cpp */,
 				9F15D9171E5FD4D300F77DF6 /* Boulder.hpp */,
+				9FFAAC701E62A74300AF523E /* Trap.cpp */,
+				9FFAAC711E62A74300AF523E /* Trap.hpp */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
@@ -1029,6 +1036,7 @@
 				9FB69DE21E46D93D006325A3 /* MainMenuScene.cpp in Sources */,
 				503AE10017EB989F00D1A890 /* AppController.mm in Sources */,
 				9FC4C2EF1E39293F00ABD648 /* Platform.cpp in Sources */,
+				9FFAAC721E62A74300AF523E /* Trap.cpp in Sources */,
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,
 				9FC97C871E540E0300EF6C31 /* LevelEnd.cpp in Sources */,
 				9F666E581E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */,
@@ -1058,6 +1066,7 @@
 				9F98AF921E2C99E2009559C7 /* Viewpoint.cpp in Sources */,
 				9FB69DDC1E459B90006325A3 /* Character.cpp in Sources */,
 				9F16FC111E54CCDB00D9DBCA /* Piggy.cpp in Sources */,
+				9FFAAC731E62A74300AF523E /* Trap.cpp in Sources */,
 				9F15D9191E5FD4D300F77DF6 /* Boulder.cpp in Sources */,
 				503AE10517EB98FF00D1A890 /* main.cpp in Sources */,
 				46880B8B19C43A87006E1F66 /* MainGameScene.cpp in Sources */,
@@ -1081,6 +1090,7 @@
 				9FD41C151E2D56220077779E /* main.cpp in Sources */,
 				9FB69DE41E46D93D006325A3 /* MainMenuScene.cpp in Sources */,
 				9FD41C131E2D55C80077779E /* TestDelegate.cpp in Sources */,
+				9FFAAC741E62A74300AF523E /* Trap.cpp in Sources */,
 				9FD41C101E2D55920077779E /* testCharacter.cpp in Sources */,
 				9FC97C891E540E0300EF6C31 /* LevelEnd.cpp in Sources */,
 				9FD41BF31E2D54490077779E /* MainGameScene.cpp in Sources */,

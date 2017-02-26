@@ -1,5 +1,5 @@
-#ifndef HelloWorldScene_h
-#define HelloWorldScene_h
+#ifndef MainGameSceneScene_h
+#define MainGameSceneScene_h
 
 #include "cocos2d.h"
 #include "Character.hpp"
@@ -8,13 +8,13 @@
 #include "Viewpoint.hpp"
 #include "MoveablePlatform.hpp"
 #include <spine/spine-cocos2dx.h>
-#include <deque>
 #include "Vine.hpp"
+#include "Trap.hpp"
 #include "json.hpp"
 
 namespace JTTW {
     
-class HelloWorld : public cocos2d::Layer {
+class MainGameScene : public cocos2d::Layer {
 public:
     static cocos2d::Scene* createScene(std::string levelToLoad);
     virtual bool init(std::string levelToLoad, cocos2d::PhysicsWorld *w);
@@ -22,9 +22,9 @@ public:
     void nextLevelCallback();
     void switchToCharacter(int charIndex);
     
-    //CREATE_FUNC(HelloWorld);
-    static HelloWorld* create(std::string levelToLoad, cocos2d::PhysicsWorld *w){
-        HelloWorld *pRet = new HelloWorld();
+    //CREATE_FUNC(MainGameScene);
+    static MainGameScene* create(std::string levelToLoad, cocos2d::PhysicsWorld *w){
+        MainGameScene *pRet = new MainGameScene();
         if (pRet && pRet->init(levelToLoad, w)) {
             pRet->autorelease();
             return pRet;
@@ -48,8 +48,10 @@ private:
     Viewpoint vp = Viewpoint(cocos2d::Size(1.0, 1.0), 1.0);
     std::vector<Character *> characters = std::vector<Character *>();
     std::vector<AiAgent *> agents = std::vector<AiAgent *>();
-    std::vector<cocos2d::Sprite *> dynamics = std::vector<cocos2d::Sprite *>();
     AiAgent *player = nullptr;
+    
+    std::vector<cocos2d::Sprite *> dynamics = std::vector<cocos2d::Sprite *>();
+    std::vector<Trap *> trapsToTrigger = std::vector<Trap *>();
     std::vector<Platform *> platforms = std::vector<Platform *>();
     std::vector<MoveablePlatform *> moveables = std::vector<MoveablePlatform *>();
     std::vector<Vine *> vines = std::vector<Vine *>();
@@ -65,10 +67,7 @@ private:
     cocos2d::EventListenerKeyboard *eventListener;
     
     cocos2d::PhysicsWorld *_w;
-    //static bool pedestalPopped;
-    //static bool cloudSunk;
-    //static bool cloudSinking;
 };
 } // JTTW
 
-#endif // HelloWorldScene_h
+#endif // MainGameSceneScene_h
