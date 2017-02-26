@@ -275,9 +275,10 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
     for (auto& vAtt: in_vines) {
         double width = vp.metersToPixels((double)vAtt["width"]);
         double length = vp.metersToPixels((double)vAtt["length"]);
+        double startingAngVel = vAtt["startingVelocity"];
         cocos2d::Vec2 center = cocos2d::Vec2(vp.metersToPixels((double)vAtt["swingCenterX"]),
                   vp.metersToPixels((double)vAtt["swingCenterY"]));
-        Vine *v = new Vine("vine3.png", center, width, length);
+        Vine *v = new Vine("vine3.png", center, width, length, startingAngVel);
         
         cocos2d::PhysicsBody *b = cocos2d::PhysicsBody::createBox(cocos2d::Size(3, 3));
         b->setRotationEnable(false);

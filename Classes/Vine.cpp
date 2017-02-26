@@ -3,7 +3,7 @@
 
 using namespace JTTW;
 
-Vine::Vine(std::string fileName, cocos2d::Vec2 rotCenter, double width, double length) :
+Vine::Vine(std::string fileName, cocos2d::Vec2 rotCenter, double width, double length, double startingAngVel) :
      cocos2d::Sprite(), rotCenter(rotCenter){
     
     this->initWithFile(fileName);
@@ -21,6 +21,7 @@ Vine::Vine(std::string fileName, cocos2d::Vec2 rotCenter, double width, double l
     body->setRotationEnable(true);
     body->setCollisionBitmask((int)CollisionCategory::None);
     body->setContactTestBitmask((int)CollisionCategory::Character);
+    body->setAngularVelocity(startingAngVel);
 
     this->addComponent(body);
     this->setTag(VINE_TAG);

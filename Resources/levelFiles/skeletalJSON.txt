@@ -127,7 +127,8 @@
     "swingCenterX" : double, // The center point that the swinging swings around.
     "swingCenterY" : double,
     "length" : double,
-    "arcLimit" : double  // How big an arc it can make. degrees? radians? I don't know.
+    "arcLimit" : double  // How big an arc it can make. radians
+    "startingVelocity": double // starting speed, in radians.
   },
   ...
   ]
