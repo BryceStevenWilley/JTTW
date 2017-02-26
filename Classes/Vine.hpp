@@ -18,12 +18,10 @@ private:
     cocos2d::Vec2 rotCenter;
     
 public:
-    Vine(std::string fileName, cocos2d::Vec2 rotCenter, double width, double length);
+    Vine(std::string fileName, cocos2d::Vec2 rotCenter, double width, double length, double startingAngVel);
 
     cocos2d::PhysicsBody *getBody();
     cocos2d::Vec2 getRotationCenter();
-    
-    void move();
 };
 }
 

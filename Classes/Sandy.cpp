@@ -7,7 +7,7 @@ Sandy::Sandy(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
 
 
 void Sandy::jump() {
-    Character::jump(350);
+    Character::jump(450);
 }
 
 

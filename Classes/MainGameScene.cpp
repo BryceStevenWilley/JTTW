@@ -2,13 +2,8 @@
 #include "SimpleAudioEngine.h"
 #include "MainMenuScene.hpp"
 #include "Collisions.hpp"
-#include <iostream>
-#include "Character.hpp"
 #include "Monkey.hpp"
 #include "LevelEnd.hpp"
-#include "Platform.hpp"
-#include "Vine.hpp"
-#include <stdio.h>
 #include "cocos2d.h"
 #include "json.hpp"
 #include "Boulder.hpp"
@@ -20,20 +15,15 @@
 using namespace cocos2d;
 using namespace JTTW;
 
-//bool HelloWorld::pedestalPopped;
-//bool HelloWorld::cloudSunk = false;
-//bool HelloWorld::cloudSinking = false;
-
 const int UI_LAYER_Z_IDX = 2;
 const int LVL_LAYER_Z_IDX = 1;
 
-
-cocos2d::Scene* HelloWorld::createScene(std::string levelToLoad) {
+cocos2d::Scene* MainGameScene::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::createWithPhysics();
-    scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -298));
+    scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -498));
     scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
-    auto layer = HelloWorld::create(levelToLoad, scene->getPhysicsWorld());
+    auto layer = MainGameScene::create(levelToLoad, scene->getPhysicsWorld());
     if (layer == NULL) {
         return NULL;
     }
@@ -42,7 +32,7 @@ cocos2d::Scene* HelloWorld::createScene(std::string levelToLoad) {
     return scene;
 }
 
-bool HelloWorld::onContactHandler(cocos2d::PhysicsContact& contact, bool begin) {
+bool MainGameScene::onContactHandler(cocos2d::PhysicsContact& contact, bool begin) {
     auto nodeA = contact.getShapeA()->getBody()->getNode();
     auto nodeB = contact.getShapeB()->getBody()->getNode();
     cocos2d::Vec2 normal = contact.getContactData()->normal;
@@ -75,6 +65,7 @@ bool HelloWorld::onContactHandler(cocos2d::PhysicsContact& contact, bool begin) 
                  m->enteringVine(this->getScene()->getPhysicsWorld(), v->getPhysicsBody(), offset,  m->getPosition() + cocos2d::Vec2(0.0, m->getContentSize().height));
             } else {
                 //m->leavingClimeable();
+                return true; // don't rebalance impulse!
             }
         }
         if (normal.dot(cocos2d::Vec2(0, -1)) > std::cos(M_PI/4.0)) {
@@ -90,7 +81,7 @@ bool HelloWorld::onContactHandler(cocos2d::PhysicsContact& contact, bool begin) 
             if (begin) {
                 m->enteringClimeable();
             } else {
-                //m->leavingClimeable();
+                m->leavingClimeable();
             }
         }
         if (!begin) {
@@ -129,7 +120,8 @@ bool HelloWorld::onContactHandler(cocos2d::PhysicsContact& contact, bool begin) 
                  }
                  m->enteringVine(this->getScene()->getPhysicsWorld(), v->getPhysicsBody(), offset,  m->getPosition() + cocos2d::Vec2(0.0, m->getContentSize().height));
             } else {
-                m->leavingClimeable();
+                //m->leavingClimeable();
+                return true; // don't rebalance impulse!
             }
         } else if (normal.dot(cocos2d::Vec2(0, 1)) > std::cos(M_PI /4.0)) {
             if (begin) {
@@ -154,20 +146,22 @@ bool HelloWorld::onContactHandler(cocos2d::PhysicsContact& contact, bool begin) 
     return true;
 }
 
-bool HelloWorld::onContactBegin(cocos2d::PhysicsContact& contact) {
+bool MainGameScene::onContactBegin(cocos2d::PhysicsContact& contact) {
     return onContactHandler(contact, true);
 }
 
-bool HelloWorld::onContactEnd(cocos2d::PhysicsContact& contact) {
+bool MainGameScene::onContactEnd(cocos2d::PhysicsContact& contact) {
     return onContactHandler(contact, false);
 }
 
-cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugOn) {
+const int PLATFORM_Z = 4;
+const int VINE_Z = 3;
+
+cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool debugOn) {
+    auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
     
     cocos2d::Layer *levelLayer = cocos2d::Layer::create();
     cocos2d::Layer *uiLayer = cocos2d::Layer::create();
-    
-    const int platformZ = 4;
     
     std::ifstream inFile(fileName);
     nlohmann::json lvl;
@@ -208,13 +202,13 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
             double maximumVelocity = vp.metersToPixels((double)pAtt["velocity"]);
             MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), maximumVelocity);
 
-            levelLayer->addChild(p, platformZ);
+            levelLayer->addChild(p, PLATFORM_Z);
             platforms.push_back(p);
             moveables.push_back(p);
         } else {
             Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climbable"]);
         
-            levelLayer->addChild(p, platformZ);
+            levelLayer->addChild(p, PLATFORM_Z);
             platforms.push_back(p);
         }
     }
@@ -241,7 +235,9 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
             ss << charNames[i] << "Head.png";
             cocos2d::Sprite *head = cocos2d::Sprite::create(ss.str());
 
-            head->setScale(.13);
+            double headScale = .13 * visibleSize.width / 1024.0;
+
+            head->setScale(headScale);
             head->setPosition(uiHeadLocation);
             uiHeadLocation += cocos2d::Vec2(70, 0);
             uiLayer->addChild(head);
@@ -279,101 +275,44 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
     for (auto& vAtt: in_vines) {
         double width = vp.metersToPixels((double)vAtt["width"]);
         double length = vp.metersToPixels((double)vAtt["length"]);
+        double startingAngVel = vAtt["startingVelocity"];
         cocos2d::Vec2 center = cocos2d::Vec2(vp.metersToPixels((double)vAtt["swingCenterX"]),
                   vp.metersToPixels((double)vAtt["swingCenterY"]));
-        Vine *v = new Vine("vine3.png", center, width, length);
+        Vine *v = new Vine("vine3.png", center, width, length, startingAngVel);
         
         cocos2d::PhysicsBody *b = cocos2d::PhysicsBody::createBox(cocos2d::Size(3, 3));
         b->setRotationEnable(false);
         b->setDynamic(false);
         b->setCollisionBitmask((int)CollisionCategory::None);
 
-        cocos2d::Sprite *n = cocos2d::Sprite::create("cage1.png");
-        n->setContentSize(cocos2d::Size(10, 10));
+        cocos2d::Sprite *n = cocos2d::Sprite::create();
         n->setPosition(center);
         n->addComponent(b);
 
         vines.push_back(v);
-        levelLayer->addChild(v, 10);
+        levelLayer->addChild(v, VINE_Z);
         auto j = cocos2d::PhysicsJointPin::construct(v->getBody(), b, cocos2d::Vec2(0, length/2.0), cocos2d::Vec2::ZERO);
         _w->addJoint(j);
-        levelLayer->addChild(n, 10);
+        levelLayer->addChild(n, VINE_Z);
     }
     
     nlohmann::json in_traps = lvl["traps"];
     for (auto& tAtt: in_traps) {
-        cocos2d::PhysicsShapeBox *l = cocos2d::PhysicsShapeBox::create(cocos2d::Size(30, 200), cocos2d::PhysicsMaterial(2.0, 0.1, 1.0), cocos2d::Vec2(-110, 0));
-        cocos2d::PhysicsShapeBox *r = cocos2d::PhysicsShapeBox::create(cocos2d::Size(30, 200),
-            cocos2d::PhysicsMaterial(2.0, 0.1, 1.0), cocos2d::Vec2(110, 0));
-        cocos2d::PhysicsShapeBox *t = cocos2d::PhysicsShapeBox::create(cocos2d::Size(220, 30),
-            cocos2d::PhysicsMaterial(2.0, 0.1, 1.0), cocos2d::Vec2(0, 100));
-        cocos2d::PhysicsBody *body = cocos2d::PhysicsBody::create();
-        body->addShape(l);
-        body->addShape(r);
-        body->addShape(t);
-        //cocos2d::PhysicsBody *bodyR = cocos2d::PhysicsBody::createBox(cocos2d::Size(30, 150));
-        //cocos2d::PhysicsBody *bodyTop = cocos2d::PhysicsBody::createBox(cocos2d::Size(150, 30));
+        // TODO: Read in density and inner and outer box.
+        double wallWidth = vp.metersToPixels((double)tAtt["wallThickness"]);
+        double trapWidth = vp.metersToPixels((double)tAtt["trapWidth"]);
+        double trapHeight = vp.metersToPixels((double)tAtt["trapHeight"]);
+        double offset = vp.metersToPixels((double)tAtt["offset"]);
+        cocos2d::Size imgSize(vp.metersToPixels((double)tAtt["imageWidth"]), vp.metersToPixels((double)tAtt["imageHeight"]));
+        cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)tAtt["centerX"], (double)tAtt["centerY"]));
         
-        body->setCategoryBitmask((int)CollisionCategory::Boulder);
-        body->setCollisionBitmask((int)CollisionCategory::ALL);
-        body->setContactTestBitmask((int)CollisionCategory::ALL);
-        body->setRotationEnable(true);
-        
-        body->setVelocityLimit(600);
-        body->setDynamic(true);
-        body->setPositionOffset(cocos2d::Vec2(0, -40));
-        
-        //bodyR->setCategoryBitmask((int)CollisionCategory::Boulder);
-        //bodyR->setCollisionBitmask((int)CollisionCategory::ALL);
-        //bodyR->setContactTestBitmask((int)CollisionCategory::ALL);
-        //bodyR->setRotationEnable(true);
-        
-        //bodyR->setVelocityLimit(600);
-        //bodyR->setDynamic(true);
-        
-        //bodyTop->setCategoryBitmask((int)CollisionCategory::Boulder);
-        //bodyTop->setCollisionBitmask((int)CollisionCategory::ALL);
-        //bodyTop->setContactTestBitmask((int)CollisionCategory::ALL);
-        //bodyTop->setRotationEnable(true);
-        
-        //bodyTop->setVelocityLimit(600);
-        //bodyTop->setDynamic(true);
-        
-        //cocos2d::PhysicsJoint* j1 = cocos2d::PhysicsJointFixed::construct(bodyL, bodyTop, cocos2d::Vec2::ANCHOR_MIDDLE_TOP);
-        
-        //cocos2d::PhysicsJoint* j2 = cocos2d::PhysicsJointFixed::construct(bodyTop, bodyR, cocos2d::Vec2::ANCHOR_BOTTOM_RIGHT);
-        //j2->createConstraints();
-        //j1->createConstraints();
-        //j1->setDistance(0.0);
-        //j2->setDistance(0.0);
-        //j2->createConstraints();
-        //j1->createConstraints();
-        
-        //cocos2d::Sprite * lSprite = cocos2d::Sprite::create("Sandy2.png");
-        //lSprite->setPosition(vp.metersToPixels((double)tAtt["centerX"]), vp.metersToPixels((double)tAtt["centerY"]) + 75);
-        //lSprite->setContentSize(cocos2d::Size(30, 150));
-        //lSprite->addComponent(bodyL);
-        
-        cocos2d::Sprite * rS = cocos2d::Sprite::create("cage1.png");
-        rS->setPosition(vp.metersToPixels((double)tAtt["centerX"]), vp.metersToPixels((double)tAtt["centerY"]));
-        rS->setContentSize(cocos2d::Size(200, 280));
-        rS->addComponent(body);
-        
-        //cocos2d::Sprite * tSprite = cocos2d::Sprite::create("Sandy2.png");
-        //tSprite->setPosition(vp.metersToPixels((double)tAtt["centerX"] - 75), vp.metersToPixels((double)tAtt["centerY"]));
-        //tSprite->setContentSize(cocos2d::Size(30, 150));
-        //tSprite->addComponent(bodyTop);
-   
-        dynamics.push_back(rS);
-        //dynamics.push_back(rSprite);
-        //dynamics.push_back(tSprite);
-        
-        levelLayer->addChild(rS, 10);
-        //levelLayer->addChild(rSprite, 10);
-        //levelLayer->addChild(tSprite, 10);
-        
-        //_w->addJoint(j1);
-        //_w->addJoint(j2);
+        std::string imageName = tAtt["imageName"];
+        if (imageName == "cage1.png") {
+            cocos2d::PhysicsMaterial material = cocos2d::PhysicsMaterial(tAtt["density"], tAtt["bounciness"], tAtt["friction"]);
+            Trap* rS = new Trap(imageName, center, material, cocos2d::Size(trapWidth, trapHeight), imgSize, wallWidth, offset);
+            trapsToTrigger.push_back(rS);
+            levelLayer->addChild(rS, 10);
+        }
     }
 
     levelEndX = lvl["levelEndX"];
@@ -385,7 +324,7 @@ cocos2d::Layer *HelloWorld::parseLevelFromJson(std::string fileName, bool debugO
     return levelLayer;
 }
 
-bool HelloWorld::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
+bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     if ( !Layer::init() ) {
         return false;
     }
@@ -402,7 +341,8 @@ bool HelloWorld::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     cocos2d::Layer *layer;
     try {
         layer = parseLevelFromJson(levelToLoad, debugOn);
-    } catch (std::domain_error ex) {
+    }
+    catch (std::domain_error ex) {
         std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
         return false;
     } catch (std::invalid_argument ex) {
@@ -421,7 +361,7 @@ bool HelloWorld::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     
     eventListener = cocos2d::EventListenerKeyboard::create();
     eventListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) mutable {
-        firstClick = true;
+        afterFirstClick = true;
         switch(keyCode) {
             case EventKeyboard::KeyCode::KEY_Z:
                 switchToCharacter(0);
@@ -461,7 +401,7 @@ bool HelloWorld::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     };
     
     eventListener->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event* event) mutable {
-            if (firstClick) {
+            if (afterFirstClick) {
                 player->plan(characters, keyCode, false);
             }
     };
@@ -469,15 +409,15 @@ bool HelloWorld::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     this->_eventDispatcher->addEventListenerWithFixedPriority(eventListener, 1);
     
     auto contactListener = cocos2d::EventListenerPhysicsContact::create();
-    contactListener->onContactBegin = CC_CALLBACK_1(HelloWorld::onContactBegin, this);
-    contactListener->onContactSeparate = CC_CALLBACK_1(HelloWorld::onContactEnd, this);
+    contactListener->onContactBegin = CC_CALLBACK_1(MainGameScene::onContactBegin, this);
+    contactListener->onContactSeparate = CC_CALLBACK_1(MainGameScene::onContactEnd, this);
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 
     this->scheduleUpdate();
     return true;
 }
 
-void HelloWorld::switchToCharacter(int charIndex) {
+void MainGameScene::switchToCharacter(int charIndex) {
     if (charIndex > agents.size() - 1) {
         return;
     }
@@ -497,13 +437,13 @@ void HelloWorld::switchToCharacter(int charIndex) {
     }
 }
 
-void HelloWorld::menuCloseCallback(Ref* pSender) {
+void MainGameScene::menuCloseCallback(Ref* pSender) {
     auto startScene = MainMenu::createScene();
     this->_eventDispatcher->removeEventListener(eventListener);
     cocos2d::Director::getInstance()->replaceScene(startScene);
 }
 
-void HelloWorld::nextLevelCallback() {
+void MainGameScene::nextLevelCallback() {
     if (!nextLevelStarting) {
         this->_eventDispatcher->removeEventListener(eventListener);
         std::cout << "Starting next level, " << _nextLevel << std::endl;
@@ -514,7 +454,7 @@ void HelloWorld::nextLevelCallback() {
     }
 }
 
-void HelloWorld::update(float delta) {
+void MainGameScene::update(float delta) {
     for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
         if ((*xAgent) != player) {
             (*xAgent)->plan(player->_controlledCharacter, characters);
@@ -543,8 +483,11 @@ void HelloWorld::update(float delta) {
         moveables[i]->move(delta, false);
     }
     
-    for (int i = 0; i < vines.size(); i++) {
-        vines[i]->move();
+    for (int i = 0; i < trapsToTrigger.size(); i++) {
+        for (int j = 0; j < characters.size(); j++) {
+            trapsToTrigger[i]->triggerIfUnder(characters[j]->getPosition());
+        }
     }
+
     vp.followCharacter(player->_controlledCharacter, delta);
 }

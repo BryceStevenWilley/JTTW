@@ -21,7 +21,7 @@ void Piggy::impulseRight(float deltaVel) {
 
 void Piggy::jump() {
     if (_state != BOULDER_MODE) {
-        Character::jump(330);
+        Character::jump(400);
     }
 }
 

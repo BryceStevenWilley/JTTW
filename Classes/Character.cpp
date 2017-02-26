@@ -45,13 +45,13 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
     this->setAnimation(0, "idle", true);
 
     followcrown = cocos2d::Sprite::create("Selection Crown.png");
-    followcrown->setScale(.2);
+    followcrown->setScale(.3);
     followcrown->setPosition(0.0, 940);
     followcrown->setVisible(false);
     this->addChild(followcrown);
     
     alonecrown = cocos2d::Sprite::create("AloneCrown.png");
-    alonecrown->setScale(.2);
+    alonecrown->setScale(.3);
     alonecrown->setPosition(0.0, 940);
     alonecrown->setVisible(false);
     this->addChild(alonecrown);
