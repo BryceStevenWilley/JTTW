@@ -66,7 +66,7 @@
         "centerY" : double,
         "type" : String // Must either be polygon or circle for now
         /** IF type == POLYGON **/
-       "collisionPoints" : [ {
+       "points" : [ {
             "x" : double,
             "y" : double
             },

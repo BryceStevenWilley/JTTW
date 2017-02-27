@@ -185,6 +185,8 @@
 		9FB69E071E46EE88006325A3 /* LevelSelectScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */; };
 		9FB69E081E46EE88006325A3 /* LevelSelectScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */; };
 		9FB69E091E46EE88006325A3 /* LevelSelectScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */; };
+		9FC226FF1E64B2B000AA75D5 /* Boulders in Resources */ = {isa = PBXBuildFile; fileRef = 9FC226FE1E64B2B000AA75D5 /* Boulders */; };
+		9FC227011E64B5CD00AA75D5 /* Boulders in Resources */ = {isa = PBXBuildFile; fileRef = 9FC226FE1E64B2B000AA75D5 /* Boulders */; };
 		9FC493381E4BA873009B9598 /* AloneCrown.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FC493371E4BA873009B9598 /* AloneCrown.png */; };
 		9FC4933A1E4BA881009B9598 /* AloneCrown.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FC493371E4BA873009B9598 /* AloneCrown.png */; };
 		9FC4933B1E4BA891009B9598 /* AloneCrown.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FC493371E4BA873009B9598 /* AloneCrown.png */; };
@@ -392,6 +394,7 @@
 		9FB69E001E46E93A006325A3 /* levelFiles */ = {isa = PBXFileReference; lastKnownFileType = folder; path = levelFiles; sourceTree = "<group>"; };
 		9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelSelectScene.cpp; sourceTree = "<group>"; };
 		9FB69E061E46EE88006325A3 /* LevelSelectScene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LevelSelectScene.hpp; sourceTree = "<group>"; };
+		9FC226FE1E64B2B000AA75D5 /* Boulders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Boulders; sourceTree = "<group>"; };
 		9FC493371E4BA873009B9598 /* AloneCrown.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AloneCrown.png; sourceTree = "<group>"; };
 		9FC4C2ED1E39293F00ABD648 /* Platform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Platform.cpp; sourceTree = "<group>"; };
 		9FC4C2EE1E39293F00ABD648 /* Platform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Platform.hpp; sourceTree = "<group>"; };
@@ -581,6 +584,7 @@
 		46880B7519C43A67006E1F66 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9FC226FE1E64B2B000AA75D5 /* Boulders */,
 				9F15D91C1E5FE64D00F77DF6 /* SandyHead.png */,
 				9F15D91D1E5FE64D00F77DF6 /* MonkeyHead.png */,
 				9F15D91E1E5FE64D00F77DF6 /* PiggyHead.png */,
@@ -930,6 +934,7 @@
 				50EF629717ECD46A001EB2F8 /* Icon-58.png in Resources */,
 				9F45C0121E35EE7700C06D0C /* Sandy2.png in Resources */,
 				9F3189781E272A810005B84E /* image.png in Resources */,
+				9FC226FF1E64B2B000AA75D5 /* Boulders in Resources */,
 				454B170E1E2F39280035467D /* platforms in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -938,6 +943,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FC227011E64B5CD00AA75D5 /* Boulders in Resources */,
 				9FC4933A1E4BA881009B9598 /* AloneCrown.png in Resources */,
 				9FB69E041E46EAE9006325A3 /* levelFiles in Resources */,
 				9F15D9271E5FE64D00F77DF6 /* PiggyHead.png in Resources */,

@@ -3,7 +3,7 @@
 
 using namespace JTTW;
 
-Boulder::Boulder(double radius, std::string imageName, cocos2d::Vec2 center, double mass) :
+Boulder::Boulder(double radius, std::string imageName, cocos2d::Vec2 center, double mass, cocos2d::Size imgSize) :
         cocos2d::Sprite() {
     this->initWithFile(imageName);
     
@@ -17,11 +17,12 @@ Boulder::Boulder(double radius, std::string imageName, cocos2d::Vec2 center, dou
     body->setMass(mass);
     
     this->setPosition(center);
+    this->setContentSize(imgSize);
     this->setPhysicsBody(body);
 }
 
 // TODO: don't know how to handle image sizes yet. 
-Boulder::Boulder(std::vector<cocos2d::Vec2> points, std::string imageName, cocos2d::Vec2 center, double mass) : cocos2d::Sprite() {
+Boulder::Boulder(std::vector<cocos2d::Vec2> points, std::string imageName, cocos2d::Vec2 center, double mass, cocos2d::Size imgSize) : cocos2d::Sprite() {
     this->initWithFile(imageName);
     
     cocos2d::PhysicsBody *body = cocos2d::PhysicsBody::createPolygon(points.data(), (int)points.size());
@@ -32,7 +33,9 @@ Boulder::Boulder(std::vector<cocos2d::Vec2> points, std::string imageName, cocos
     body->setVelocityLimit(600);
     body->setDynamic(true);
     body->setMass(mass);
+    body->setVelocity(cocos2d::Vec2::ZERO);
     
     this->setPosition(center);
+    this->setContentSize(imgSize);
     this->setPhysicsBody(body);
 }
