@@ -21,7 +21,6 @@ Boulder::Boulder(double radius, std::string imageName, cocos2d::Vec2 center, dou
     this->setPhysicsBody(body);
 }
 
-// TODO: don't know how to handle image sizes yet. 
 Boulder::Boulder(std::vector<cocos2d::Vec2> points, std::string imageName, cocos2d::Vec2 center, double mass, cocos2d::Size imgSize) : cocos2d::Sprite() {
     this->initWithFile(imageName);
     

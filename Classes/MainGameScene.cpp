@@ -232,7 +232,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
             
             // Set the ui head.
             std::stringstream ss;
-            ss << charNames[i] << "Head.png";
+            ss << "characters/" << charNames[i] << "Head.png";
             cocos2d::Sprite *head = cocos2d::Sprite::create(ss.str());
 
             double headScale = .13 * visibleSize.width / 1024.0;
