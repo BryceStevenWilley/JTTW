@@ -9,7 +9,7 @@
         "height" : 0.0
     },
     "characters" : {
-    "Monkey" : {"present": true, "startingXPos": -12.7, "startingYPos": 10},
+    "Monkey" : {"present": true, "startingXPos": -12.7, "startingYPos": 5},
         "Monk" : {"present": true, "startingXPos": -11.0, "startingYPos": 10},
         "Piggy" : {"present": true, "startingXPos": -9.3, "startingYPos": 10},
         "Sandy" : {"present": true, "startingXPos":-7.6, "startingYPos": 10}

@@ -3,7 +3,7 @@
     "levelEndX" : 50,
     "nextLevelName" : "SimpleDitch",
     "background" : {
-        "imageName" : "Background.png",
+        "imageName" : "bgSunny.png",
         "centerX" : 0.0,
         "centerY" : 0.0,
         "width" : 0.0,
