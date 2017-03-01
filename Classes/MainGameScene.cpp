@@ -232,7 +232,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
             
             // Set the ui head.
             std::stringstream ss;
-            ss << charNames[i] << "Head.png";
+            ss << "characters/" << charNames[i] << "Head.png";
             cocos2d::Sprite *head = cocos2d::Sprite::create(ss.str());
 
             double headScale = .13 * visibleSize.width / 1024.0;
@@ -255,20 +255,35 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
 
     nlohmann::json boulders = lvl["interactables"]["boulders"];
     for (auto& bAtt: boulders) {
+        cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)bAtt["centerX"], (double)bAtt["centerY"]));
+        std::stringstream ss;
+        std::string temp = bAtt["imageName"];
+        ss << "Boulders/" << temp;
+        std::string imageName = ss.str();
+        double mass = bAtt["mass"];
         std::string type = bAtt["type"];
+        cocos2d::Size imgSize = cocos2d::Size(vp.metersToPixels((double)bAtt["width"]), vp.metersToPixels((double)bAtt["height"]));
         std::transform(type.begin(), type.end(), type.begin(), ::toupper);
+        Boulder *b;
         if (type == "CIRCLE") {
-            Boulder *b = new Boulder(
+            b = new Boulder(
                     vp.metersToPixels((double)bAtt["radius"]),
-                    bAtt["imageName"],
-                    vp.metersToPixels(cocos2d::Vec2((double)bAtt["centerX"], (double)bAtt["centerY"])),
-                    bAtt["mass"]);
-            dynamics.push_back(b);
-            levelLayer->addChild(b, 10);
+                    imageName,
+                    center,
+                    mass,
+                    imgSize);
         } else if (type == "POLYGON") {
-            std::cout << "Don't support polygonal boulders yet!" << std::endl;
-            throw std::invalid_argument("no polygonal boulders yet");
+            std::vector<cocos2d::Vec2> points;
+            for (auto& point: bAtt["points"]) {
+                points.push_back(vp.metersToPixels(cocos2d::Vec2((double)point["x"], (double)point["y"])));
+            }
+            b = new Boulder(points, imageName, center, mass, imgSize);
+        } else {
+            std::cout << "Boulder type should be either CIRCLE or POLYGON, not " << type << std::endl;
+            throw std::invalid_argument("Boulder type should be circle or polygon");
         }
+        dynamics.push_back(b);
+        levelLayer->addChild(b, 10);
     }
     
     nlohmann::json in_vines = lvl["vines"];

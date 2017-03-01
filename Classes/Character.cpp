@@ -26,7 +26,7 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
         body(cocos2d::PhysicsBody::createBox(cocos2d::Size(480.0f, 780.0f), mat)),
         characterName(artFilePrefix), _currentState(MID_AIR) {
     
-    this->initWithJsonFile(artFilePrefix + ".json", artFilePrefix + ".atlas", 1.0f);
+    this->initWithJsonFile("characters/" + artFilePrefix + ".json", "characters/" + artFilePrefix + ".atlas", 1.0f);
     this->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
     //this->setContentSize(dimensions);
     this->setScaleX(dimensions.width / 780.0f);
@@ -44,13 +44,13 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
     this->setPhysicsBody(body);
     this->setAnimation(0, "idle", true);
 
-    followcrown = cocos2d::Sprite::create("Selection Crown.png");
+    followcrown = cocos2d::Sprite::create("characters/Selection Crown.png");
     followcrown->setScale(.3);
     followcrown->setPosition(0.0, 940);
     followcrown->setVisible(false);
     this->addChild(followcrown);
     
-    alonecrown = cocos2d::Sprite::create("AloneCrown.png");
+    alonecrown = cocos2d::Sprite::create("characters/AloneCrown.png");
     alonecrown->setScale(.3);
     alonecrown->setPosition(0.0, 940);
     alonecrown->setVisible(false);

@@ -9,7 +9,7 @@
         "height" : 0.0
     },
     "characters" : {
-    "Monkey" : {"present": true, "startingXPos": -12.7, "startingYPos": 10},
+    "Monkey" : {"present": true, "startingXPos": -12.7, "startingYPos": 5},
         "Monk" : {"present": true, "startingXPos": -11.0, "startingYPos": 10},
         "Piggy" : {"present": true, "startingXPos": -9.3, "startingYPos": 10},
         "Sandy" : {"present": true, "startingXPos":-7.6, "startingYPos": 10}
@@ -133,11 +133,23 @@
     "interactables" : {
       "boulders" : [
         {
-            "imageName" : "Sandy.png",
+            "width":3.0,
+            "height":3.0,
+            "points":[{"x":-1.43,"y":-1.47},{"x":-1.4,"y":-0.57},{"x":-0.92,"y":-0.08},{"x":-0.44,"y":1.23},{"x":0.35,"y":1.46},{"x":0.91,"y":0.36},{"x":1.51,"y":-0.54},{"x":0.87,"y":-1.33}],
+            "imageName" : "A.png",
             "centerX" : -12.7,
             "centerY" : 20.0,
-            "type" : "circle",
-            "radius" : 4,
+            "type" : "POLYGON",
+            "mass" : 5000
+        },
+        {
+            "width":3.0,
+            "height":3.0,
+            "points":[{"x":-1.23,"y":-1.28},{"x":-1.47,"y":-0.53},{"x":-1.39,"y":0.05},{"x":-1.44,"y":0.73},{"x":-1.27,"y":1.02},{"x":-0.68,"y":1.02},{"x":0.22,"y":1.46},{"x":0.91,"y":0.88},{"x":1.06,"y":0.03},{"x":1.28,"y":-0.63},{"x":1.47,"y":-0.85},{"x":1.42,"y":-1.37},{"x":0.47,"y":-1.4},{"x":0.17,"y":-1.5},{"x":-0.56,"y":-1.52}],
+            "imageName" : "B.png",
+            "centerX" : -10.7,
+            "centerY" : 20.0,
+            "type" : "POLYGON",
             "mass" : 5000
         }
       ]

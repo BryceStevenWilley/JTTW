@@ -136,7 +136,7 @@ void MainMenu::addCharacterAni(std::string name, cocos2d::Vec2 position) {
     // .15 is what the scale was when the screen was 512 by 384, so keep that aspect ratio.
     double charScale = .15 * visibleSize.width / 512.0;
 
-    spine::SkeletonAnimation *c = spine::SkeletonAnimation::createWithJsonFile(name + ".json", name + ".atlas", 1.0f);
+    spine::SkeletonAnimation *c = spine::SkeletonAnimation::createWithJsonFile("characters/" + name + ".json", "characters/" + name + ".atlas", 1.0f);
     c->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
     c->setPosition(position);
     c->setAnimation(0, "idle", true);
