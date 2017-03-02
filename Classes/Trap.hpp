@@ -1,6 +1,7 @@
 #ifndef Trap_hpp
 #define Trap_hpp
 
+#include "cocos2d.h"
 #include <iostream>
 
 namespace JTTW {

@@ -26,8 +26,11 @@ std::vector<std::string> findLevelFiles() {
     
     currentDir = opendir("levelFiles");
     if (currentDir == NULL) {
-        std::cout << "Couldn't open level files." << std::endl;
-        return toReturn;
+        std::cout << "Couldn't open level files, are we running on Linux?" << std::endl;
+        currentDir = opendir("Resources/levelFiles");
+        if (currentDir == NULL) {
+            return toReturn;
+        }
     }
     
     // Iterater through all the entries in this directory.

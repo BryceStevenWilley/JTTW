@@ -1,9 +1,8 @@
 #ifndef Boulder_hpp
 #define Boulder_hpp
 
+#include "cocos2d.h"
 #include <iostream>
-
-#endif /* Boulder_hpp */
 
 namespace JTTW {
 
@@ -14,3 +13,4 @@ public:
 };
 
 }
+#endif /* Boulder_hpp */

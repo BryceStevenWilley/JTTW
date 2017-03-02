@@ -1,14 +1,7 @@
-//
-//  Vine.hpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/20/17.
-//
-//
-
 #ifndef Vine_hpp
 #define Vine_hpp
 
+#include "cocos2d.h"
 #include <iostream>
 
 namespace JTTW {
