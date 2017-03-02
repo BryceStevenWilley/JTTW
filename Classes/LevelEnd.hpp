@@ -1,6 +1,7 @@
 #ifndef LevelEnd_hpp
 #define LevelEnd_hpp
 
+#include "cocos2d.h"
 #include <iostream>
 
 namespace JTTW {

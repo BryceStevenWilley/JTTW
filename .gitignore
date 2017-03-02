@@ -59,6 +59,7 @@ out/
 # Stop all build folders.
 cocos2d/build/build
 proj.ios_mac/build
+linux-build
 
 
 

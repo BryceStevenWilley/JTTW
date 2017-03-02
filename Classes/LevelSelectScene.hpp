@@ -1,6 +1,7 @@
 #ifndef LevelSelectScene_hpp
 #define LevelSelectScene_hpp
 
+#include "cocos2d.h"
 #include <iostream>
 
 namespace JTTW {

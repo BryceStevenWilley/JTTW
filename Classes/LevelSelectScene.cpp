@@ -69,6 +69,10 @@ bool LevelSelect::init() {
     // Create menu items for each of the level files that we have.
     // TODO: This won't work well for many level files (they'll fall off the bottom).
     allLevels = findLevelFiles();
+    if (allLevels.size() == 0) {
+        std::cout << "Can't find any level files!" << std::endl;
+        return false;
+    }
     currentLevel = allLevels.begin();
     
     levelName = cocos2d::Label::createWithTTF(*currentLevel, "fonts/WaitingfortheSunrise.ttf", 40);

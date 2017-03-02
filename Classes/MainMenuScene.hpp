@@ -1,6 +1,7 @@
 #ifndef MainMenuScene_hpp
 #define MainMenuScene_hpp
 
+#include "cocos2d.h"
 #include <iostream>
 
 namespace JTTW {
