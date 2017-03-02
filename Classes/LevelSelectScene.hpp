@@ -17,6 +17,7 @@ public:
 private:
     cocos2d::EventListenerKeyboard *keyListener;
     cocos2d::Label *levelName;
+    cocos2d::Label *devMode;
     std::map<int, std::string> tagToFileName;
     std::vector<std::string> allLevels;
     std::vector<std::string>::iterator currentLevel;

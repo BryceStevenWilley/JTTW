@@ -23,26 +23,25 @@ Character * Character::createFromName(const std::string name, cocos2d::Vec2 star
 
 Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial mat, cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
         spine::SkeletonAnimation(),
-        body(cocos2d::PhysicsBody::createBox(cocos2d::Size(480.0f, 780.0f), mat)),
+        body(cocos2d::PhysicsBody::create()),    ///Box(cocos2d::Size(480.0f, 780.0f), mat)),
         characterName(artFilePrefix), _currentState(MID_AIR) {
     
-    this->initWithJsonFile("characters/" + artFilePrefix + ".json", "characters/" + artFilePrefix + ".atlas", 1.0f);
-    this->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    //this->setContentSize(dimensions);
-    this->setScaleX(dimensions.width / 780.0f);
-    this->setScaleY(dimensions.height / 780.0f);
-
+    auto bodyShape = cocos2d::PhysicsShapeBox::create(cocos2d::Size(480.0f, 780.0f), mat); //, cocos2d::Vec2(-dimensions.width * 2.0, 0)); //dimensions.height / 2.0));
+    body->addShape(bodyShape);
     body->setCategoryBitmask((int)CollisionCategory::Character);
     body->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
     body->setContactTestBitmask((int)CollisionCategory::PlatformAndBoulder);
     body->setRotationEnable(false);
 
-    body->setPositionOffset(cocos2d::Vec2(0.0, dimensions.height / 2.0));
-
     body->setVelocityLimit(600);
-
-    this->setPhysicsBody(body);
+    
+    this->initWithJsonFile("characters/" + artFilePrefix + ".json", "characters/" + artFilePrefix + ".atlas", 1.0f);
+    //this->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+    this->setContentSize(cocos2d::Size(/*480.0f*/0.0, 780.0f));
+    this->setScaleX(dimensions.width / 780.0f);
+    this->setScaleY(dimensions.height / 780.0f);
     this->setAnimation(0, "idle", true);
+    this->setPhysicsBody(body);
 
     followcrown = cocos2d::Sprite::create("characters/Selection Crown.png");
     followcrown->setScale(.3);
@@ -75,6 +74,16 @@ void Character::impulseRight(float deltaVel) {
     double impulse = body->getMass() * deltaVel;
     rightMomentum += impulse;
     rebalanceImpulse();
+}
+
+void Character::impulseLeftButNoRebalance(float deltaVel) {
+    double impulse = body->getMass() * deltaVel;
+    leftMomentum += impulse;
+}
+
+void Character::impulseRightButNoRebalance(float deltaVel) {
+    double impulse = body->getMass() * deltaVel;
+    rightMomentum += impulse;
 }
 
 void Character::applyForceRight(double fprime_x) {
