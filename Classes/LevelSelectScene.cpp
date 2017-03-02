@@ -26,11 +26,8 @@ std::vector<std::string> findLevelFiles() {
     
     currentDir = opendir("levelFiles");
     if (currentDir == NULL) {
-        std::cout << "Couldn't open level files, are we running on Linux?" << std::endl;
-        currentDir = opendir("Resources/levelFiles");
-        if (currentDir == NULL) {
-            return toReturn;
-        }
+        std::cout << "Couldn't open level files." << std::endl;
+        return toReturn;
     }
     
     // Iterater through all the entries in this directory.
@@ -72,6 +69,10 @@ bool LevelSelect::init() {
     // Create menu items for each of the level files that we have.
     // TODO: This won't work well for many level files (they'll fall off the bottom).
     allLevels = findLevelFiles();
+    if (allLevels.size() == 0) {
+        std::cout << "Can't find any level files!" << std::endl;
+        return false;
+    }
     currentLevel = allLevels.begin();
     
     levelName = cocos2d::Label::createWithTTF(*currentLevel, "fonts/WaitingfortheSunrise.ttf", 40);
