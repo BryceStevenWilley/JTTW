@@ -19,7 +19,7 @@ cocos2d::Scene* LevelSelect::createScene() {
     return scene;
 }
 
-std::vector<std::string> findLevelFiles() {
+std::vector<std::string> findLevelFiles(bool includeDev) {
     std::vector<std::string> toReturn;
     DIR *currentDir;
     struct dirent *dirEntry;
@@ -35,6 +35,9 @@ std::vector<std::string> findLevelFiles() {
         if ((dirEntry = readdir(currentDir)) != NULL) {
             // If the file ends in ".json", it's a level file.
             if (strcmp(strrchr(dirEntry->d_name, '.'), ".json") == 0) {
+                toReturn.push_back(std::string(dirEntry->d_name));
+            }
+            if (includeDev && strcmp(strrchr(dirEntry->d_name, '.'), ".old") == 0) {
                 toReturn.push_back(std::string(dirEntry->d_name));
             }
         }
@@ -67,8 +70,7 @@ bool LevelSelect::init() {
     this->addChild(titleLabel);
 
     // Create menu items for each of the level files that we have.
-    // TODO: This won't work well for many level files (they'll fall off the bottom).
-    allLevels = findLevelFiles();
+    allLevels = findLevelFiles(false);
     if (allLevels.size() == 0) {
         std::cout << "Can't find any level files!" << std::endl;
         return false;
@@ -95,6 +97,13 @@ bool LevelSelect::init() {
     
     this->addChild(leftArrow);
     this->addChild(rightArrow);
+    
+    devMode = cocos2d::Label::createWithTTF("DEV MODE = ON", "fonts/WaitingfortheSunrise.ttf", 40);
+    
+    devMode->setPosition(origin.x + visibleSize.width / 4.0, origin.y + visibleSize.height / 4.0);
+    devMode->enableShadow();
+    devMode->setVisible(false);
+    this->addChild(devMode);
 
     keyListener = cocos2d::EventListenerKeyboard::create();
     keyListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) {
@@ -125,6 +134,14 @@ bool LevelSelect::init() {
                 cocos2d::Director::getInstance()->replaceScene(mainmenu);
                 return;
             }
+            
+            case cocos2d::EventKeyboard::KeyCode::KEY_9:
+                // Activates debug mode!
+                allLevels = findLevelFiles(true);
+                currentLevel = allLevels.begin();
+                levelName->setString(*currentLevel);
+                devMode->setVisible(true);
+                break;
                 
             default:
                 // do nothing.

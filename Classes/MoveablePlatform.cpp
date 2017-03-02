@@ -5,8 +5,9 @@
 using namespace JTTW;
 
 const bool NOT_CLIMABLE = false;
+const bool COLLIDABLE = true;
 
-MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerA, cocos2d::Vec2 centerB, cocos2d::Size imageSize, cocos2d::Vec2 box, double maxVelocity) : Platform(fileName, centerA, imageSize, box, NOT_CLIMABLE), _centerA(centerA), _centerB(centerB) {
+MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerA, cocos2d::Vec2 centerB, cocos2d::Size imageSize, cocos2d::Vec2 box, double maxVelocity) : Platform(fileName, centerA, imageSize, box, NOT_CLIMABLE, COLLIDABLE), _centerA(centerA), _centerB(centerB) {
     // Set initial speed.
     _velocities = maxVelocity * (centerB - centerA)/(centerB - centerA).getLength();
     body->setVelocity(_velocities);

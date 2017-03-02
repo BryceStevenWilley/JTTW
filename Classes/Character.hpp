@@ -42,10 +42,13 @@ public:
     // Applies an impulse going to the left of the character.
     //     deltaVel - the amount that the velocity going to the left should change.
     virtual void impulseLeft(float deltaVel);
+    virtual void impulseLeftButNoRebalance(float deltaVel);
     
     // Applies an impulse going to the right of the character.
     //     deltaVel - the amount that the velocity going to the right should change.
     virtual void impulseRight(float deltaVel);
+    virtual void impulseRightButNoRebalance(float deltaVel);
+    
     
     void applyForceRight(double fprimex);
     

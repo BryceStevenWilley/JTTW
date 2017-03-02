@@ -155,6 +155,7 @@ bool MainGameScene::onContactEnd(cocos2d::PhysicsContact& contact) {
 }
 
 const int PLATFORM_Z = 4;
+const int CLIMBABLE_Z = 3;
 const int VINE_Z = 3;
 
 cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool debugOn) {
@@ -206,9 +207,13 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
             platforms.push_back(p);
             moveables.push_back(p);
         } else {
-            Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climbable"]);
+            Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climbable"], pAtt["collidable"]);
         
-            levelLayer->addChild(p, PLATFORM_Z);
+            if (p->getTag() == CLIMBEABLE_TAG) {
+                levelLayer->addChild(p, CLIMBABLE_Z);
+            } else {
+                levelLayer->addChild(p, PLATFORM_Z);
+            }
             platforms.push_back(p);
         }
     }

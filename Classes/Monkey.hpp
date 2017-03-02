@@ -33,7 +33,8 @@ private:
     double climbUpVel;
     double climbDownVel;
     
-    cocos2d::PhysicsJoint* j = nullptr;
+    cocos2d::PhysicsJoint* pinJoint = nullptr;
+    cocos2d::PhysicsJoint* gearJoint = nullptr;
 };
 }
 
