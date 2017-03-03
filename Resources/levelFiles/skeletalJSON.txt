@@ -60,26 +60,38 @@
   }
   ],
   "interactables" : {
-      "boulders" : [ {
-        "imageName" : String,
-        "centerX" : double,
-        "centerY" : double,
-        "type" : String // Must either be polygon or circle for now
-        /** IF type == POLYGON **/
-       "points" : [ {
+      "boulders" : [
+        {
+          "id" : int, // unique
+          "imageName" : String,
+          "centerX" : double,
+          "centerY" : double,
+          "type" : String // Must either be polygon or circle for now
+          /** IF type == POLYGON **/
+         "points" : [ {
             "x" : double,
             "y" : double
             },
-           ...
-        ],
-        /** ELSE IF type == CIRCLE **/
-        "radius" : double,
-        /** END **/
-        "mass" : double // should be in the range of 1_000 for smaller boulders to 10_000 for larger ones. Will have
+            ...
+          ],
+          /** ELSE IF type == CIRCLE **/
+          "radius" : double,
+          /** END **/
+          "mass" : double // should be in the range of 1_000 for smaller boulders to 10_000 for larger ones. Will have
                         // to playtest extensively.
-      },
-      ...
+        },
+        ...
       ],
+      "boulderJoints" : [
+          {
+             "id1" : int, //id of boulder 1
+             "id2" : int, //id of boulder 2
+             "anchor1x": double, // the x, y offset from the center of boulder 1
+             "anchor1y": double,
+             "anchor2x": double, // the x, y offset from the center of boulder 2
+             "anchor2y": double,
+          }
+      ]
       "goldenPegs" : [ {
         "imageName" : String,
         "centerX" : double,
@@ -135,10 +147,9 @@
   },
   ...
   ]
-  "respawnPs" : [ {
-    "xPos" : double,  // If the player is closest to this x coordinate, respawn at the specified coordinates.
-    "respawnX" : double,
-    "respawnY" : double
+  "respawnPoints" : [ {    
+    "x" : double,
+    "y" : double
     },
     ...
    ]
