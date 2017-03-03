@@ -6,43 +6,33 @@ Monkey::Monkey(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
  Character("Monkey", cocos2d::PhysicsMaterial(1.0, 0.0, 0.0), startPosition, dimensions), _state(NORMAL) {}
 
 void Monkey::impulseLeft(float deltaVel) {
-    if (_state == NORMAL) {
+    if (_state == NORMAL || _state == SWINGING) {
         Character::impulseLeft(deltaVel);
-    } else if (_state == SWINGING) {
-        Character::impulseLeft(deltaVel); // so you don't have to swing as much to get momentum.
-    } else if (this->getScaleX() > 0) { // _state == CLIMBING
-        // Facing right
-        leavingClimeable();
-        Character::impulseLeft(deltaVel);
-    } else if (this->getScaleX() < 0  && deltaVel > 0) {
-        // Facing left, towards the obstacle.
-        Character::impulseLeftButNoRebalance(deltaVel);
+    } else { // _state == CLIMBING
+        if (this->getScaleX() > 0 && deltaVel > 0) { // Facing right
+            leavingClimeable();
+            Character::impulseLeft(deltaVel);
+        } else {
+            Character::impulseLeftButNoRebalance(deltaVel);
+        }
     }
 }
 
 void Monkey::impulseRight(float deltaVel) {
-    if (_state == NORMAL) {
+    if (_state == NORMAL || _state == SWINGING) {
         Character::impulseRight(deltaVel);
-    } else if (_state == SWINGING) {
-        Character::impulseRight(deltaVel);
-    } else if (this->getScaleX() < 0) { // _state == CLIMBING
-        // Facing right
-        leavingClimeable();
-        Character::impulseRight(deltaVel);
-    } else if (this->getScaleX() > 0 && deltaVel > 0) {
-        // Facing right, towards the obstacle.
-        Character::impulseRightButNoRebalance(deltaVel);
+    } else { // _state == CLIMBING
+        if (this->getScaleX() < 0 && deltaVel > 0) { // Facing right
+            leavingClimeable();
+            Character::impulseRight(deltaVel);
+        } else {
+            Character::impulseRightButNoRebalance(deltaVel);
+        }
     }
 }
 
 void Monkey::jump() {
     float jumpPower = 500;
-    if (_state == CLIMBING) {
-        std::cout << "Currently Climbing" << std::endl;
-        leavingClimeable();
-        this->_currentState = Character::State::STANDING;
-        jumpPower = 400;
-    }
     if (_state == SWINGING) {
         std::cout << "Currently swinging" << std::endl;
         if (pinJoint != nullptr) {
@@ -69,19 +59,26 @@ void Monkey::jump() {
         return;
     }
     if (_state == NORMAL) {
-        
+        Character::jump(jumpPower);
     }
-    Character::jump(jumpPower);
+    if (_state == CLIMBING) {
+        std::cout << "Currently Climbing" << std::endl;
+        leavingClimeable();
+        this->_currentState = Character::State::STANDING;
+        jumpPower = 400;
+        Character::jump(jumpPower);
+        this->_currentState = Character::State::MID_AIR;
+    }
 }
 
 void Monkey::characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) {
     if (code == cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW) {
+        if (pressed) {
+            climbUpVel += 200;
+        } else {
+            climbUpVel -= 200;
+        }
         if (_state == CLIMBING) {
-            if (pressed) {
-                climbUpVel += 200;
-            } else {
-                climbUpVel -= 200;
-            }
             updateClimbingVel();
         } else if (_state == SWINGING) {
             //pinJoint->removeFormWorld();
@@ -90,12 +87,12 @@ void Monkey::characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed
     }
     
     if (code == cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW) {
+        if (pressed) {
+            climbDownVel += 200;
+        } else {
+            climbDownVel -= 200;
+        }
         if (_state == CLIMBING) {
-            if (pressed) {
-                climbDownVel += 200;
-            } else {
-                climbDownVel -= 200;
-            }
             updateClimbingVel();
         } else if (_state == SWINGING) {
         
@@ -117,24 +114,24 @@ void Monkey::updateClimbingVel() {
 
 void Monkey::enteringClimeable() {
     if (_state == NORMAL) {
-        std::cout << "Toggling climbing" << std::endl;
+        std::cout << "Now climbing" << std::endl;
         // Stick to where you are.
         body->setGravityEnable(false);
-        Character::stop();
+        //Character::stop();
         body->setVelocity(cocos2d::Vec2::ZERO);
         _state = CLIMBING;
         this->setAnimation(0, "ClimbIdle", true);
+        updateClimbingVel(); // Because we're still tracking kepresses even off of the trees.
     }
 }
 
 void Monkey::leavingClimeable() {
+    std::cout << "Leaving climbing" << std::endl;
     if (_state == CLIMBING) {
         this->setTimeScale(1.0);
         this->setAnimation(0, "JumpForwardFromClimb", false);
     }
     _state = NORMAL;
-    climbUpVel = 0.0;
-    climbDownVel = 0.0;
     body->setGravityEnable(true);
 }
 

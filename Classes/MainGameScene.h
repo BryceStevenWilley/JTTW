@@ -44,6 +44,7 @@ public:
  
 private:
     cocos2d::Layer *parseLevelFromJson(std::string fileName, bool debugOn);
+    bool characterCollision(cocos2d::PhysicsContact& contact, bool begin, Character *c, cocos2d::PhysicsBody *body, cocos2d::Node *node, cocos2d::Vec2 normal);
 
     Viewpoint vp = Viewpoint(cocos2d::Size(1.0, 1.0), 1.0);
     std::vector<Character *> characters = std::vector<Character *>();
@@ -55,6 +56,7 @@ private:
     std::vector<Platform *> platforms = std::vector<Platform *>();
     std::vector<MoveablePlatform *> moveables = std::vector<MoveablePlatform *>();
     std::vector<Vine *> vines = std::vector<Vine *>();
+    std::vector<cocos2d::Vec2> respawnPoints = std::vector<cocos2d::Vec2>();
     bool debugOn = true; // currently, will just turn on collision boxes.
 
     bool nextLevelStarting = false;

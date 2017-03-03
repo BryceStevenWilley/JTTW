@@ -24,7 +24,7 @@ Character * Character::createFromName(const std::string name, cocos2d::Vec2 star
 Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial mat, cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
         spine::SkeletonAnimation(),
         body(cocos2d::PhysicsBody::create()),    ///Box(cocos2d::Size(480.0f, 780.0f), mat)),
-        characterName(artFilePrefix), _currentState(MID_AIR) {
+        characterName(artFilePrefix), _currentState(MID_AIR), _dimensions(dimensions) {
     
     auto bodyShape = cocos2d::PhysicsShapeBox::create(cocos2d::Size(480.0f, 780.0f), mat); //, cocos2d::Vec2(-dimensions.width * 2.0, 0)); //dimensions.height / 2.0));
     body->addShape(bodyShape);
@@ -59,21 +59,29 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
 
     this->setPosition(startPosition);
     
-    _startingPosition = startPosition;
+    _respawnPosition = startPosition;
     
     this->setTag(CHARACTER_TAG);
+}
+
+cocos2d::Size Character::getSize() {
+    return _dimensions;
 }
 
 void Character::impulseLeft(float deltaVel) {
     double impulse = body->getMass() * deltaVel;
     leftMomentum += impulse;
-    rebalanceImpulse();
+    if (_currentState != State::FROZEN) {
+        rebalanceImpulse();
+    }
 }
 
 void Character::impulseRight(float deltaVel) {
     double impulse = body->getMass() * deltaVel;
     rightMomentum += impulse;
-    rebalanceImpulse();
+    if (_currentState != State::FROZEN) {
+        rebalanceImpulse();
+    }
 }
 
 void Character::impulseLeftButNoRebalance(float deltaVel) {
@@ -110,9 +118,17 @@ void Character::stop() {
     rightMomentum = 0.0;
     body->applyImpulse(cocos2d::Vec2(body->getMass() * -(body->getVelocity().x), 0));
 }
+
+void Character::freeze() {
+    State oldState = _currentState;
+    _currentState = State::FROZEN;
+    updateAnimation(oldState);
+    _frozenTimer = 3.0; // seconds
+    body->setVelocity(cocos2d::Vec2(0.0, body->getVelocity().y));
+}
     
 void Character::jump(double force) {
-    if (_currentState == State::MID_AIR) {
+    if (_currentState == State::MID_AIR || _currentState == State::FROZEN) {
         // Can't jump while you're in the air, dummy!
         return;
     }
@@ -121,7 +137,7 @@ void Character::jump(double force) {
 }
 
 void Character::jumpFromForce(double fprime_y) {
-    if (_currentState == State::MID_AIR) {
+    if (_currentState == State::MID_AIR || _currentState == State::FROZEN) {
         // Can't jump while you're in the air, dummy!
         return;
     }
@@ -143,10 +159,12 @@ bool Character::justJumped() const {
 }
 
 void Character::landedCallback(cocos2d::PhysicsBody *plat) {
-    State oldState = _currentState;
-    _currentState = State::STANDING;
     platformsStandingOn += 1;
-    updateAnimation(oldState);
+    if (_currentState != State::FROZEN) {
+        State oldState = _currentState;
+        _currentState = State::STANDING;
+        updateAnimation(oldState);
+    }
     if (plat->getNode()->getTag() == MOVEABLE_TAG) {
         referenceBody = plat;
         body->setVelocity(body->getVelocity() + referenceBody->getVelocity());
@@ -186,7 +204,23 @@ const Character::State Character::getCurrentState() const {
     return _currentState;
 }
 
-void Character::updateAnimation() {
+void Character::updateAnimation(float delta) {
+    // Kinda unrelated stuff regarding frozen.
+    if (_currentState == State::FROZEN) {
+        _frozenTimer -= delta;
+        std::cout << "timer is " << _frozenTimer  << std::endl;
+        if (_frozenTimer <= 0.0) {
+            std::cout << "Un-freezing" << std::endl;
+            State oldState = _currentState;
+            if (platformsStandingOn > 0) {
+                _currentState = State::STANDING;
+            } else {
+                _currentState = State::MID_AIR;
+            }
+            updateAnimation(oldState);
+        }
+    }
+
     // Update velocity if needed.
     if (referenceBody != nullptr && lastRefVel != referenceBody->getVelocity()) {
         body->setVelocity(cocos2d::Vec2(body->getVelocity().x - lastRefVel.x + referenceBody->getVelocity().x, 0.0));
@@ -224,7 +258,7 @@ void Character::updateAnimation() {
 }
 
 void Character::updateAnimation(State oldState) {
-   if (oldState == State::MID_AIR && _currentState == State::STANDING) {
+   if ((oldState == State::MID_AIR || oldState == State::FROZEN) && _currentState == State::STANDING) {
         this->setTimeScale(1.0);
         if (body->getVelocity().x > 10.0 || body->getVelocity().x < -10.0) {
             // TODO: Set walk or run depending on the speed (interpolate?)
@@ -239,10 +273,24 @@ void Character::updateAnimation(State oldState) {
         this->setAnimation(0, "jump", false);
         this->setTimeScale(0.9);
    }
+
+   if (_currentState == State::FROZEN) {
+       // TODO: wait for Mei's new animation.
+   }
+
+   // TODO: haven't covered from frozen to mid air. (what it do?)
 }
 
-void Character::restartFromStart() {
+void Character::restartFromRespawn() {
     body->setVelocity(cocos2d::Vec2(0, 0));
-    this->setPosition(_startingPosition);
+    this->setPosition(_respawnPosition);
+}
+
+void Character::setNewRespawn(cocos2d::Vec2 newRespawn) {
+    _respawnPosition = newRespawn;
+}
+
+double Character::getRespawnProgress() const {
+    return _respawnPosition.x;
 }
 

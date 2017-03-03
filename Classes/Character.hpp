@@ -30,7 +30,8 @@ class Character : public spine::SkeletonAnimation {
 public:
     enum State {
         STANDING,
-        MID_AIR
+        MID_AIR,
+        FROZEN,
     };
     
     static Character *createFromName(const std::string name, cocos2d::Vec2 startPosition, cocos2d::Size dimensions);
@@ -49,13 +50,14 @@ public:
     virtual void impulseRight(float deltaVel);
     virtual void impulseRightButNoRebalance(float deltaVel);
     
-    
     void applyForceRight(double fprimex);
     
     void rebalanceImpulse(); 
     
     // Stops the character by applying an impulse that sets the velocity to 0.
     virtual void stop();
+
+    void freeze();
     
     // Allows the character to jump.
     virtual void jump() = 0;
@@ -77,14 +79,17 @@ public:
     const std::string characterName;
     
     float getMass() const;
+    cocos2d::Size getSize();
     
     cocos2d::Sprite *followcrown;
     cocos2d::Sprite *alonecrown;
     
     cocos2d::Sprite *currentCrown;
-    void restartFromStart();
+    void restartFromRespawn();
+    void setNewRespawn(cocos2d::Vec2 newRespawn);
+    double getRespawnProgress() const;
     
-    void updateAnimation();
+    void updateAnimation(float delta);
 
 protected:
     void jump(double force);
@@ -94,7 +99,7 @@ protected:
 private:
     void updateAnimation(State oldState);
        
-    cocos2d::Vec2 _startingPosition;
+    cocos2d::Vec2 _respawnPosition;
     
     double leftMomentum = 0.0;
     double rightMomentum = 0.0;
@@ -105,6 +110,9 @@ private:
     
     cocos2d::PhysicsBody *referenceBody = nullptr;
     cocos2d::Vec2 lastRefVel = cocos2d::Vec2::ZERO;
+    cocos2d::Size _dimensions;
+
+    double _frozenTimer = 0.0;
 };
 }
 

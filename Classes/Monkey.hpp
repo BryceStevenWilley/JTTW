@@ -30,8 +30,8 @@ private:
 
     State _state;
     
-    double climbUpVel;
-    double climbDownVel;
+    double climbUpVel = 0.0;
+    double climbDownVel = 0.0;
     
     cocos2d::PhysicsJoint* pinJoint = nullptr;
     cocos2d::PhysicsJoint* gearJoint = nullptr;

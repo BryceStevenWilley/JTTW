@@ -48,8 +48,10 @@ Trap::Trap(std::string imageName, cocos2d::Vec2 center, cocos2d::PhysicsMaterial
     minY = center.y - trapSize.height / 2.0;
 }
 
-void Trap::triggerIfUnder(cocos2d::Vec2 characterCenter) {
-    if (characterCenter.x < maxX && characterCenter.x > minX && characterCenter.y < minY) {
+bool Trap::triggerIfUnder(cocos2d::Vec2 characterCenter, cocos2d::Size characterSize) {
+    if (characterCenter.x + characterSize.width / 2.0 < maxX && characterCenter.x - characterSize.width / 2.0 > minX && characterCenter.y < minY) {
         body->setGravityEnable(true);
+        return true;
     }
+    return false;
 }
