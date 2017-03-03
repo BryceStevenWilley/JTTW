@@ -7,6 +7,7 @@
 #include "cocos2d.h"
 #include "json.hpp"
 #include "Boulder.hpp"
+#include "CageTrap.hpp"
 #include <iostream>
 #include <fstream>
 #include <algorithm>
@@ -176,6 +177,9 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
                 levelLayer->addChild(p, PLATFORM_Z);
             }
             platforms.push_back(p);
+            if (pAtt["disappears"]) {
+                disappearing.push_back(p);
+            }
         }
     }
     nlohmann::json characterStruct = lvl["characters"];
@@ -213,7 +217,6 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
     if (agents.size() == 0) {
         // Handle Error!
         std::cout << "You cant have a level with no characters!" << std::endl;
-        //menuCloseCallback(nullptr);
         throw std::domain_error("No characters");
     }
     player = agents[0];
@@ -290,7 +293,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         std::string imageName = tAtt["imageName"];
         if (imageName == "cage1.png") {
             cocos2d::PhysicsMaterial material = cocos2d::PhysicsMaterial(tAtt["density"], tAtt["bounciness"], tAtt["friction"]);
-            Trap* rS = new Trap(imageName, center, material, cocos2d::Size(trapWidth, trapHeight), imgSize, wallWidth, offset);
+            Trap* rS = new CageTrap(imageName, center, material, cocos2d::Size(trapWidth, trapHeight), imgSize, wallWidth, offset);
             trapsToTrigger.push_back(rS);
             levelLayer->addChild(rS, 10);
         }
@@ -326,16 +329,16 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     vp = Viewpoint(visibleSize, 1.7/130.0);
 
     cocos2d::Layer *layer;
-    //try {
+    try {
         layer = parseLevelFromJson(levelToLoad, debugOn);
-    //}
-    /*catch (std::domain_error ex) {
+    }
+    catch (std::domain_error ex) {
         std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
        return false;
     } catch (std::invalid_argument ex) {
         std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
         return false;
-    }*/
+    }
  
     if (layer == nullptr) {
         std::cout << "Level file corrupted!" << std::endl;
@@ -477,10 +480,11 @@ void MainGameScene::update(float delta) {
         (*m)->move(delta, false);
     }
     
+    // Trigger any traps, but don't trigger them again.
     std::vector<Trap *> toRemove;
     for (auto trap = trapsToTrigger.begin(); trap != trapsToTrigger.end(); trap++) {
         for (int j = 0; j < (int)characters.size(); j++) {
-            if ((*trap)->triggerIfUnder(characters[j]->getPosition(), characters[j]->getSize())) {
+            if ((*trap)->triggerTrap(characters[j]->getPosition(), characters[j]->getSize())) {
                 // freeze the character for a few seconds.
                 characters[j]->freeze();
                 // remove the trap from the array.

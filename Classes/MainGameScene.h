@@ -55,8 +55,10 @@ private:
     std::vector<Trap *> trapsToTrigger = std::vector<Trap *>();
     std::vector<Platform *> platforms = std::vector<Platform *>();
     std::vector<MoveablePlatform *> moveables = std::vector<MoveablePlatform *>();
+    std::vector<Platform *> disappearing = std::vector<Platform *>();
     std::vector<Vine *> vines = std::vector<Vine *>();
     std::vector<cocos2d::Vec2> respawnPoints = std::vector<cocos2d::Vec2>();
+
     bool debugOn = true; // currently, will just turn on collision boxes.
 
     bool nextLevelStarting = false;

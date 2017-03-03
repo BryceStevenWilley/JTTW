@@ -146,7 +146,7 @@ set(GAME_SRC
   Classes/Piggy.cpp
   Classes/Sandy.cpp
   Classes/Platform.cpp
-  Classes/Trap.cpp
+  Classes/CageTrap.cpp
   Classes/Viewpoint.cpp
   Classes/Vine.cpp
   ${PLATFORM_SPECIFIC_SRC}

@@ -39,7 +39,7 @@ void LevelSelect::findLevelFiles(bool includeDev) {
             if (strrchr(dirEntry->d_name, '.') != NULL && strcmp(strrchr(dirEntry->d_name, '.'), ".json") == 0) {
                 toReturn.push_back(std::string(dirEntry->d_name));
             }
-            if (strrchr(dirEntry->d_name, '.') != NULL && includeDev && strcmp(strrchr(dirEntry->d_name, '.'), ".old") == 0) {
+            if (strrchr(dirEntry->d_name, '.') != NULL && includeDev && strcmp(strrchr(dirEntry->d_name, '.'), ".dev") == 0) {
                 toReturn.push_back(std::string(dirEntry->d_name));
             }
         }
@@ -58,9 +58,9 @@ void LevelSelect::findLevelFiles(bool includeDev) {
         inFile >> lvl;
     
         try {
-            allLevelNames.push_back(lvl["levelName"]);
-            std::stringstream ss;
             std::string levelName = lvl["levelName"];
+            allLevelNames.push_back(levelName);
+            std::stringstream ss;
             ss << "levelFiles/previews/" << levelName << "Preview.png";
             std::string imgPath = ss.str();
 
@@ -69,11 +69,11 @@ void LevelSelect::findLevelFiles(bool includeDev) {
                 allLevelThumbnails.push_back(img);
             } else {
                 std::cout << "couldn't find image file for " << imgPath << std::endl;
-                img = cocos2d::Sprite::create();
+                img = cocos2d::Sprite::create("backgrounds/bgSunny.png");
                 allLevelThumbnails.push_back(img);
             }
         } catch (std::domain_error ex) {
-            std::cout << "Couldn't find the level name for " << allLevelPaths[i];
+            std::cout << "Failed to parse " << allLevelPaths[i] << std::endl;
             allLevelNames.push_back(allLevelPaths[i]);
             cocos2d::Sprite *img = cocos2d::Sprite::create();
             allLevelThumbnails.push_back(img);
