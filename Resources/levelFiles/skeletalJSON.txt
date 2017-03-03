@@ -147,7 +147,7 @@
   },
   ...
   ]
-  "respawnPs" : [ {    
+  "respawnPoints" : [ {    
     "x" : double,
     "y" : double
     },
