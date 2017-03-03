@@ -34,11 +34,12 @@ void LevelSelect::findLevelFiles(bool includeDev) {
     // Iterater through all the entries in this directory.
     do {
         if ((dirEntry = readdir(currentDir)) != NULL) {
+            
             // If the file ends in ".json", it's a level file.
-            if (strcmp(strrchr(dirEntry->d_name, '.'), ".json") == 0) {
+            if (strrchr(dirEntry->d_name, '.') != NULL && strcmp(strrchr(dirEntry->d_name, '.'), ".json") == 0) {
                 toReturn.push_back(std::string(dirEntry->d_name));
             }
-            if (includeDev && strcmp(strrchr(dirEntry->d_name, '.'), ".old") == 0) {
+            if (strrchr(dirEntry->d_name, '.') != NULL && includeDev && strcmp(strrchr(dirEntry->d_name, '.'), ".old") == 0) {
                 toReturn.push_back(std::string(dirEntry->d_name));
             }
         }
@@ -59,23 +60,23 @@ void LevelSelect::findLevelFiles(bool includeDev) {
         try {
             allLevelNames.push_back(lvl["levelName"]);
             std::stringstream ss;
-            ss << "levelFiles/previews/" << lvl["levelName"] << "Preview.png";
+            std::string levelName = lvl["levelName"];
+            ss << "levelFiles/previews/" << levelName << "Preview.png";
             std::string imgPath = ss.str();
 
             cocos2d::Sprite *img = cocos2d::Sprite::create(imgPath);
             if (img != NULL) {
-                //allLevelThumbnails.push_back(img);
-                //this->addChild(img);
+                allLevelThumbnails.push_back(img);
             } else {
-                //std::cout << "couldn't find image file for " << imgPath << std::endl;
-                //img = cocos2d::Sprite::create();
-                //allLevelThumbnails.push_back(img);
+                std::cout << "couldn't find image file for " << imgPath << std::endl;
+                img = cocos2d::Sprite::create();
+                allLevelThumbnails.push_back(img);
             }
         } catch (std::domain_error ex) {
             std::cout << "Couldn't find the level name for " << allLevelPaths[i];
             allLevelNames.push_back(allLevelPaths[i]);
-            //cocos2d::Sprite *img = cocos2d::Sprite::create();
-            //allLevelThumbnails.push_back(img);
+            cocos2d::Sprite *img = cocos2d::Sprite::create();
+            allLevelThumbnails.push_back(img);
         }
     }
 }
@@ -108,7 +109,14 @@ bool LevelSelect::init() {
         std::cout << "Can't find any level files!" << std::endl;
         return false;
     }
+    for (int i = 0; i < (int)allLevelThumbnails.size(); i++) {
+        allLevelThumbnails[i]->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height / 4.0);
+        allLevelThumbnails[i]->setVisible(false);
+        this->addChild(allLevelThumbnails[i]);
+    }
+    
     currentLevel = 0;
+    allLevelThumbnails[currentLevel]->setVisible(true);
     
     levelName = cocos2d::Label::createWithTTF(allLevelNames[currentLevel], "fonts/WaitingfortheSunrise.ttf", 40);
     
@@ -142,19 +150,23 @@ bool LevelSelect::init() {
     keyListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) {
         switch(keyCode) {
             case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+                allLevelThumbnails[currentLevel]->setVisible(false);
                 if (currentLevel == 0) {
                     currentLevel = allLevelNames.size();
                 }
                 currentLevel--;
                 levelName->setString(allLevelNames[currentLevel]);
+                allLevelThumbnails[currentLevel]->setVisible(true);
                 break;
             
             case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+                allLevelThumbnails[currentLevel]->setVisible(false);
                 currentLevel++;
                 if (currentLevel == allLevelNames.size()) {
                     currentLevel = 0;
                 }
                 levelName->setString(allLevelNames[currentLevel]);
+                allLevelThumbnails[currentLevel]->setVisible(true);
                 break;
             
             case cocos2d::EventKeyboard::KeyCode::KEY_ENTER:
@@ -169,13 +181,19 @@ bool LevelSelect::init() {
             }
             
             case cocos2d::EventKeyboard::KeyCode::KEY_9:
+                for (int i = 0; i < (int)allLevelThumbnails.size(); i++) {
+                    this->removeChild(allLevelThumbnails[i]);
+                }
+            
                 // Activates debug mode!
                 allLevelNames.clear();
                 allLevelPaths.clear();
                 allLevelThumbnails.clear();
+                
                 findLevelFiles(true);
                 currentLevel = 0;
                 levelName->setString(allLevelNames[currentLevel]);
+                allLevelThumbnails[currentLevel]->setVisible(true);
                 devMode->setVisible(true);
                 break;
                 

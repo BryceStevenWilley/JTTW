@@ -14,7 +14,6 @@
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
 		294D0D641D0D56D500F7F5D4 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 294D0D631D0D56D500F7F5D4 /* CoreText.framework */; };
 		3EACC98F19EE6D4300EB3C5E /* res in Resources */ = {isa = PBXBuildFile; fileRef = 3EACC98E19EE6D4300EB3C5E /* res */; };
-		3EACC99019EE6D4300EB3C5E /* res in Resources */ = {isa = PBXBuildFile; fileRef = 3EACC98E19EE6D4300EB3C5E /* res */; };
 		454B170E1E2F39280035467D /* platforms in Resources */ = {isa = PBXBuildFile; fileRef = 454B170B1E2F39280035467D /* platforms */; };
 		454B170F1E2F39280035467D /* platforms in Resources */ = {isa = PBXBuildFile; fileRef = 454B170B1E2F39280035467D /* platforms */; };
 		454B17121E2FC6D30035467D /* backgrounds in Resources */ = {isa = PBXBuildFile; fileRef = 454B17111E2FC6D30035467D /* backgrounds */; };
@@ -770,7 +769,6 @@
 				9F192EC11E5B8900001FE88A /* cage1.png in Resources */,
 				9F192EBD1E5B6DA7001FE88A /* vine3.png in Resources */,
 				503AE0F817EB97AB00D1A890 /* Icon.icns in Resources */,
-				3EACC99019EE6D4300EB3C5E /* res in Resources */,
 				454B17131E2FC6D30035467D /* backgrounds in Resources */,
 				521A8EAA19F11F5000D177D7 /* fonts in Resources */,
 				454B170F1E2F39280035467D /* platforms in Resources */,
