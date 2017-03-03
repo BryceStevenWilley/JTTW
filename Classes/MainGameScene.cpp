@@ -32,116 +32,71 @@ cocos2d::Scene* MainGameScene::createScene(std::string levelToLoad) {
     return scene;
 }
 
+bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool begin, Character *c, cocos2d::PhysicsBody *body, Node *node, cocos2d::Vec2 normal) {
+    if (node->getTag() == VINE_TAG && c->characterName == "Monkey") {
+        Vine *v = (Vine *)node;
+        Monkey *m = (Monkey *)c;
+        if (begin) {
+             std::cout << "Collided with a vine" << std::endl;
+             cocos2d::Vec2 nodePoint = m->convertToNodeSpace(contact.getContactData()->points[0]);
+             cocos2d::Vec2 collisionPosition = m->getPosition(); // + nodePoint;
+             float distFromCenter = collisionPosition.distance(v->getPosition());
+             float distFromRotCenter = collisionPosition.distance(v->getRotationCenter());
+             float halfLength = v->getRotationCenter().distance(v->getPosition());
+             float offset;
+             if (distFromRotCenter > halfLength && distFromCenter < halfLength) {
+                 offset = -distFromCenter;
+             } else if (distFromRotCenter < halfLength && distFromCenter < halfLength) {
+                 offset = distFromCenter;
+             } else {
+                 // IDK what's happening?
+                 std::cout << "WEIRDNESS HERE!" << std::endl;
+                 std::cout << "distFromRotCenter: " << distFromRotCenter << std::endl;
+                 std::cout << "distFromCenter: " << distFromCenter << std::endl;
+                 std::cout << "halfLength: " << halfLength << std::endl;
+                 offset = -(halfLength - 5);
+             }
+             m->enteringVine(this->getScene()->getPhysicsWorld(), v->getPhysicsBody(), offset, m->getPosition() + cocos2d::Vec2(0.0, m->getContentSize().height));
+        } else {
+            //m->leavingClimeable();
+            return true; // don't rebalance impulse!
+        }
+    }
+    if (normal.dot(cocos2d::Vec2(0, -1)) > std::cos(M_PI / 4.0)) {
+        if (begin) {
+            c->landedCallback(body);
+        } else { // onContactEnd
+            c->leftCallback(body);
+        }
+    } else if (node->getTag() == CLIMBEABLE_TAG && c->characterName == "Monkey") {
+        // TODO: hacky, fix
+        Monkey *m = (Monkey *)c;
+        if (begin) {
+            m->enteringClimeable();
+        } else {
+            m->leavingClimeable();
+        }
+    } 
+    if (!begin) {
+        c->rebalanceImpulse();
+    }
+    return true;
+}
+
 bool MainGameScene::onContactHandler(cocos2d::PhysicsContact& contact, bool begin) {
     auto nodeA = contact.getShapeA()->getBody()->getNode();
     auto nodeB = contact.getShapeB()->getBody()->getNode();
-    cocos2d::Vec2 normal = contact.getContactData()->normal;
+    auto normal = contact.getContactData()->normal;
     if (nodeA->getTag() == CHARACTER_TAG) {
         Character *c = (Character *)nodeA;
         // If A is the character, then for landing on a flat platform, the normal is 0, -1.
-        if (nodeB->getTag() == VINE_TAG && c->characterName == "Monkey") {
-            Vine *v = (Vine *)nodeB;
-            Monkey *m = (Monkey *)c;
-            if (begin) {
-                 std::cout << "Collided with a vine" << std::endl;
-                 cocos2d::Vec2 nodePoint = m->convertToNodeSpace(contact.getContactData()->points[0]);
-                 cocos2d::Vec2 collisionPosition = m->getPosition(); // + nodePoint;
-                 float distFromCenter = collisionPosition.distance(v->getPosition());
-                 float distFromRotCenter = collisionPosition.distance(v->getRotationCenter());
-                 float halfLength = v->getRotationCenter().distance(v->getPosition());
-                 float offset;
-                 if (distFromRotCenter > halfLength && distFromCenter < halfLength) {
-                     offset = -distFromCenter;
-                 } else if (distFromRotCenter < halfLength && distFromCenter < halfLength) {
-                     offset = distFromCenter;
-                 } else {
-                     // IDK what's happening?
-                     std::cout << "WEIRDNESS HERE!" << std::endl;
-                     std::cout << "distFromRotCenter: " << distFromRotCenter << std::endl;
-                     std::cout << "distFromCenter: " << distFromCenter << std::endl;
-                     std::cout << "halfLength: " << halfLength << std::endl;
-                     offset = -(halfLength - 5);
-                 }
-                 m->enteringVine(this->getScene()->getPhysicsWorld(), v->getPhysicsBody(), offset,  m->getPosition() + cocos2d::Vec2(0.0, m->getContentSize().height));
-            } else {
-                //m->leavingClimeable();
-                return true; // don't rebalance impulse!
-            }
-        }
-        if (normal.dot(cocos2d::Vec2(0, -1)) > std::cos(M_PI/4.0)) {
-            if (begin) {
-                c->landedCallback(contact.getShapeB()->getBody());
-            } else { // onContactEnd
-                c->leftCallback(contact.getShapeB()->getBody());
-            }
-        } else if (nodeB->getTag() == CLIMBEABLE_TAG && c->characterName == "Monkey") {
-            // TODO: hacky, fix
-            std::cout << "Hit climeable" << std::endl;
-            Monkey *m = (Monkey *)c;
-            if (begin) {
-                m->enteringClimeable();
-            } else {
-                m->leavingClimeable();
-            }
-        }
-        if (!begin) {
-            c->rebalanceImpulse();
-        }
-        if (!begin) {
-            c->rebalanceImpulse();
-        }
+        characterCollision(contact, begin, c, contact.getShapeB()->getBody(), nodeB, normal);
     }
     
     if (nodeB->getTag() == CHARACTER_TAG) {
         Character *c = (Character *)nodeB;
         // If B is the character, then for landing on a flat platform, the normal is 0, 1.
-        if (nodeA->getTag() == VINE_TAG && c->characterName == "Monkey") {
-            Vine *v = (Vine *)nodeA;
-            Monkey *m = (Monkey *)c;
-            if (begin) {
-                 std::cout << "Collided with a vine" << std::endl;
-                 cocos2d::Vec2 nodePoint = m->convertToNodeSpace(contact.getContactData()->points[0]);
-                 cocos2d::Vec2 collisionPosition = m->getPosition(); // + nodePoint;
-                 float distFromCenter = collisionPosition.distance(v->getPosition());
-                 float distFromRotCenter = collisionPosition.distance(v->getRotationCenter());
-                 float halfLength = v->getRotationCenter().distance(v->getPosition());
-                 float offset;
-                 if (distFromRotCenter > halfLength && distFromCenter < halfLength) {
-                     offset = -distFromCenter;
-                 } else if (distFromRotCenter < halfLength && distFromCenter < halfLength) {
-                     offset = distFromCenter;
-                 } else {
-                     // IDK what's happening?
-                     std::cout << "WEIRDNESS HERE!" << std::endl;
-                     std::cout << "distFromRotCenter: " << distFromRotCenter << std::endl;
-                     std::cout << "distFromCenter: " << distFromCenter << std::endl;
-                     std::cout << "halfLength: " << halfLength << std::endl;
-                     offset = -(halfLength - 5);
-                 }
-                 m->enteringVine(this->getScene()->getPhysicsWorld(), v->getPhysicsBody(), offset,  m->getPosition() + cocos2d::Vec2(0.0, m->getContentSize().height));
-            } else {
-                //m->leavingClimeable();
-                return true; // don't rebalance impulse!
-            }
-        } else if (normal.dot(cocos2d::Vec2(0, 1)) > std::cos(M_PI /4.0)) {
-            if (begin) {
-                c->landedCallback(contact.getShapeA()->getBody());
-            } else { // onContactEnd
-                c->leftCallback(contact.getShapeA()->getBody());
-            }
-        } else if (nodeA->getTag() == CLIMBEABLE_TAG && c->characterName == "Monkey") {
-            // TODO: Hacky, fix.
-            std::cout << "Hit climeable" << std::endl;
-            Monkey *m = (Monkey *)c;
-            if (begin) {
-                m->enteringClimeable();
-            } else {
-                m->leavingClimeable();
-            }
-        }
-        if (!begin) {
-            c->rebalanceImpulse();
-        }
+        characterCollision(contact, begin, c, contact.getShapeA()->getBody(), nodeA, -normal);
     }
     return true;
 }
@@ -194,20 +149,27 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         // Get the collision Width and height.
         double collisionWidth = vp.metersToPixels((double)pAtt["collisionWidth"]);
         double collisionHeight = vp.metersToPixels((double)pAtt["collisionHeight"]);
-        
+        if (!pAtt["moveable"].is_boolean()) {
+            // Something is wrong!
+            std::cout << "Platform " << fullImagePath << " doesn't have a moveable member." << std::endl;
+            throw std::domain_error("No moveable");
+        }
+
         if (pAtt["moveable"]) {
             cocos2d::Vec2 centerA(centerX, centerY);
             double centerBX = vp.metersToPixels((double)pAtt["endX"]);
             double centerBY = vp.metersToPixels((double)pAtt["endY"]);
             cocos2d::Vec2 centerB(centerBX, centerBY);
             double maximumVelocity = vp.metersToPixels((double)pAtt["velocity"]);
-            MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), maximumVelocity);
+            MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, 
+                    cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), maximumVelocity);
 
             levelLayer->addChild(p, PLATFORM_Z);
             platforms.push_back(p);
             moveables.push_back(p);
         } else {
-            Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climbable"], pAtt["collidable"]);
+            Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), 
+                    cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climbable"], true);//pAtt["collidable"]);
         
             if (p->getTag() == CLIMBEABLE_TAG) {
                 levelLayer->addChild(p, CLIMBABLE_Z);
@@ -364,7 +326,7 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     }
     catch (std::domain_error ex) {
         std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
-        return false;
+       return false;
     } catch (std::invalid_argument ex) {
         std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
         return false;
@@ -414,6 +376,8 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
                 }
                 break;
                 
+            case EventKeyboard::KeyCode::KEY_ENTER:
+                std::cout << std::endl;
             default:
                 // do nothing.
                 break;
@@ -438,7 +402,7 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
 }
 
 void MainGameScene::switchToCharacter(int charIndex) {
-    if (charIndex > agents.size() - 1) {
+    if (charIndex > (int)agents.size() - 1) {
         return;
     }
     auto nextPlayer = agents[charIndex];
@@ -483,8 +447,8 @@ void MainGameScene::update(float delta) {
     }
     
     bool done = true;
-    for (int i = 0; i < characters.size(); i++) {
-        characters[i]->updateAnimation();
+    for (int i = 0; i < (int)characters.size(); i++) {
+        characters[i]->updateAnimation(delta);
         if (characters[i]->getPosition().y < -100) { // TODO: un-hardcode this.
             done = false; // don't go to the next level if all characters die at once!
             characters[i]->restartFromStart();
@@ -493,20 +457,30 @@ void MainGameScene::update(float delta) {
         }
     }
     if (done) {
-        for (int i = 0; i < characters.size(); i++) {
+        for (int i = 0; i < (int)characters.size(); i++) {
             characters[i]->stop();
         }
         nextLevelCallback();
     }
     
-    for (int i = 0; i < moveables.size(); i++) {
-        moveables[i]->move(delta, false);
+    for (auto m = moveables.begin(); m != moveables.end(); m++) {
+        (*m)->move(delta, false);
     }
     
-    for (int i = 0; i < trapsToTrigger.size(); i++) {
-        for (int j = 0; j < characters.size(); j++) {
-            trapsToTrigger[i]->triggerIfUnder(characters[j]->getPosition());
+    std::vector<Trap *> toRemove;
+    for (auto trap = trapsToTrigger.begin(); trap != trapsToTrigger.end(); trap++) {
+        for (int j = 0; j < (int)characters.size(); j++) {
+            if ((*trap)->triggerIfUnder(characters[j]->getPosition(), characters[j]->getSize())) {
+                // freeze the character for a few seconds.
+                characters[j]->freeze();
+                // remove the trap from the array.
+                toRemove.push_back(*trap);
+            }
         }
+    }
+
+    for (auto trap = toRemove.begin(); trap != toRemove.end(); trap++) {
+        trapsToTrigger.erase(std::remove(trapsToTrigger.begin(), trapsToTrigger.end(), *trap), trapsToTrigger.end());
     }
 
     vp.followCharacter(player->_controlledCharacter, delta);
