@@ -56,7 +56,7 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
                  std::cout << "halfLength: " << halfLength << std::endl;
                  offset = -(halfLength - 5);
              }
-             m->enteringVine(this->getScene()->getPhysicsWorld(), v->getPhysicsBody(), offset, m->getPosition() + cocos2d::Vec2(0.0, m->getContentSize().height));
+             m->enteringVine(this->getScene()->getPhysicsWorld(), v, offset, m->getPosition() + cocos2d::Vec2(0.0, m->getContentSize().height));
         } else {
             //m->leavingClimeable();
             return true; // don't rebalance impulse!

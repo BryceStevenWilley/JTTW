@@ -44,6 +44,9 @@ void Monkey::jump() {
             gearJoint->removeFormWorld();
             gearJoint = nullptr;
         }
+
+        currentVine = nullptr;
+        currentVineOffset = 0.0;
         
         this->_currentState = Character::State::STANDING;
         jumpPower = 90;
@@ -81,8 +84,9 @@ void Monkey::characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed
         if (_state == CLIMBING) {
             updateClimbingVel();
         } else if (_state == SWINGING) {
-            //pinJoint->removeFormWorld();
-            
+            if (pressed) {
+                moveAlongVine(30);
+            }
         }
     }
     
@@ -95,7 +99,7 @@ void Monkey::characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed
         if (_state == CLIMBING) {
             updateClimbingVel();
         } else if (_state == SWINGING) {
-        
+            moveAlongVine(-30);
         }
     }
 }
@@ -135,7 +139,7 @@ void Monkey::leavingClimeable() {
     body->setGravityEnable(true);
 }
 
-void Monkey::enteringVine(cocos2d::PhysicsWorld *world, cocos2d::PhysicsBody *vine, double offset, cocos2d::Vec2 collisionPoint) {
+void Monkey::enteringVine(cocos2d::PhysicsWorld *world, Vine *vine, double offset, cocos2d::Vec2 collisionPoint) {
     if (pinJoint != nullptr) {
         pinJoint->removeFormWorld();
         pinJoint = nullptr;
@@ -145,18 +149,30 @@ void Monkey::enteringVine(cocos2d::PhysicsWorld *world, cocos2d::PhysicsBody *vi
         gearJoint = nullptr;
     }
     // create a joint between you and the vine.
-    pinJoint = cocos2d::PhysicsJointPin::construct(this->body, vine, cocos2d::Vec2::ZERO, cocos2d::Vec2(0, offset));
+    pinJoint = cocos2d::PhysicsJointPin::construct(this->body, vine->getPhysicsBody(), cocos2d::Vec2::ZERO, cocos2d::Vec2(0, offset));
     world->addJoint(pinJoint);
     _state = SWINGING;
     this->setTimeScale(2.0);
     this->setAnimation(0, "JumpToSwing", false);
     this->addAnimation(0, "Swing", true);
-    //this->setTimeScale(1.0);
+    
     // set the character to rotate with the vine.
     body->setRotationEnable(true);
     body->setRotationOffset(0.0);
     double gearPhase = 0.0;
     double gearRatio = 1.0;
-    gearJoint = cocos2d::PhysicsJointGear::construct(body, vine, gearPhase, gearRatio);
+    gearJoint = cocos2d::PhysicsJointGear::construct(body, vine->getPhysicsBody(), gearPhase, gearRatio);
     world->addJoint(gearJoint);
+
+    // set these params so you can climb later.
+    currentVine = vine;
+    currentVineOffset = offset;
+    currentWorld = world;
+}
+
+void Monkey::moveAlongVine(float deltaP) {
+    std::cout << "Moving along vine!: " << deltaP << " much, currentVineOffset = " << currentVineOffset << std::endl;
+    if (currentVineOffset + deltaP > -currentVine->getLength() / 2.0 && currentVineOffset + deltaP < currentVine->getLength() / 2.0) {
+        enteringVine(currentWorld, currentVine, currentVineOffset + deltaP, cocos2d::Vec2::ZERO);
+    }
 }
