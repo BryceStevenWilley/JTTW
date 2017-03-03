@@ -84,6 +84,7 @@
       ],
       "boulderJoints" : [
           {
+             "jointId": int,
              "id1" : int, //id of boulder 1
              "id2" : int, //id of boulder 2
              "anchor1x": double, // the x, y offset from the center of boulder 1
@@ -95,13 +96,11 @@
       "goldenPegs" : [ {
         "imageName" : String,
         "centerX" : double,
-        "centerY" : double,        
-        "collisionPoints" : [ { // I'm assuming four points, so that the box can be tilted if needed
-          "x" : double,
-          "y" : double
-        },
-        ...
-        ]
+        "centerY" : double,
+        "rotation": double, // radians
+        "imageWidth": double,
+        "imageHeight": double,
+        "jointId": double,
        },
        ...       
        ]

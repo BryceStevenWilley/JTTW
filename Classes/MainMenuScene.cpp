@@ -58,7 +58,8 @@ bool MainMenu::init() {
     addCharacterAni("Monkey", cocos2d::Vec2(origin.x + (middleX/4), origin.y + visibleSize.height / 8));
     addCharacterAni("Piggy", cocos2d::Vec2(visibleSize.width - (middleX/2.0), origin.y + visibleSize.height / 15.0));
     addCharacterAni("Sandy", cocos2d::Vec2(visibleSize.width - (middleX/4.0), origin.y + visibleSize.height / 15.0));
-        
+    
+    //cocos2d::MenuItemLabel *playItem = cocos2d::MenuItemLabel::create( CC_CALLBACK_);
     cocos2d::MenuItemSprite *playItem = cocos2d::MenuItemSprite::create(playImage, playImageS, CC_CALLBACK_0(MainMenu::openStartScene, this));
     cocos2d::MenuItemSprite *settingsItem = cocos2d::MenuItemSprite::create(settingsImage, settingsImageS, settingsImage, CC_CALLBACK_0(MainMenu::openSettings, this));
     cocos2d::MenuItemSprite *exitItem = cocos2d::MenuItemSprite::create(exitImage, exitImageS, CC_CALLBACK_0(MainMenu::exitGame, this));
