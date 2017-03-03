@@ -281,8 +281,16 @@ void Character::updateAnimation(State oldState) {
    // TODO: haven't covered from frozen to mid air. (what it do?)
 }
 
-void Character::restartFromStart() {
+void Character::restartFromRespawn() {
     body->setVelocity(cocos2d::Vec2(0, 0));
     this->setPosition(_respawnPosition);
+}
+
+void Character::setNewRespawn(cocos2d::Vec2 newRespawn) {
+    _respawnPosition = newRespawn;
+}
+
+double Character::getRespawnProgress() const {
+    return _respawnPosition.x;
 }
 

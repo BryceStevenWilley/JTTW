@@ -194,6 +194,8 @@ if (LINUX)
     file(COPY Resources/levelFiles DESTINATION bin)
     file(COPY Resources/platforms DESTINATION bin)
     file(COPY Resources/characters DESTINATION bin)
+    file(COPY Resources/backgrounds DESTINATION bin)
+    file(COPY Resources/Boulders DESTINATION bin)
 endif()
 
 

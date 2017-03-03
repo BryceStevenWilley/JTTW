@@ -3,8 +3,9 @@
 #include "MainMenuScene.hpp"
 #include "cocos-ext.h"
 #include <iostream>
+#include "json.hpp"
 
-#include <stdio.h>
+#include <fstream>
 #include <string.h>
 #include <dirent.h>
 
@@ -19,7 +20,7 @@ cocos2d::Scene* LevelSelect::createScene() {
     return scene;
 }
 
-std::vector<std::string> findLevelFiles(bool includeDev) {
+void LevelSelect::findLevelFiles(bool includeDev) {
     std::vector<std::string> toReturn;
     DIR *currentDir;
     struct dirent *dirEntry;
@@ -27,7 +28,7 @@ std::vector<std::string> findLevelFiles(bool includeDev) {
     currentDir = opendir("levelFiles");
     if (currentDir == NULL) {
         std::cout << "Couldn't open level files." << std::endl;
-        return toReturn;
+        return;
     }
     
     // Iterater through all the entries in this directory.
@@ -44,7 +45,39 @@ std::vector<std::string> findLevelFiles(bool includeDev) {
     } while (dirEntry != NULL);
     
     (void) closedir(currentDir);
-    return toReturn;
+
+    for (int i = 0; i < (int)toReturn.size(); i++) {
+        std::stringstream ss1;
+        ss1 << "levelFiles/" << toReturn[i];
+        allLevelPaths.push_back(ss1.str());
+    }
+    for (int i = 0; i < (int)allLevelPaths.size(); i++) {
+        std::ifstream inFile(allLevelPaths[i]);
+        nlohmann::json lvl;
+        inFile >> lvl;
+    
+        try {
+            allLevelNames.push_back(lvl["levelName"]);
+            std::stringstream ss;
+            ss << "levelFiles/previews/" << lvl["levelName"] << "Preview.png";
+            std::string imgPath = ss.str();
+
+            cocos2d::Sprite *img = cocos2d::Sprite::create(imgPath);
+            if (img != NULL) {
+                //allLevelThumbnails.push_back(img);
+                //this->addChild(img);
+            } else {
+                //std::cout << "couldn't find image file for " << imgPath << std::endl;
+                //img = cocos2d::Sprite::create();
+                //allLevelThumbnails.push_back(img);
+            }
+        } catch (std::domain_error ex) {
+            std::cout << "Couldn't find the level name for " << allLevelPaths[i];
+            allLevelNames.push_back(allLevelPaths[i]);
+            //cocos2d::Sprite *img = cocos2d::Sprite::create();
+            //allLevelThumbnails.push_back(img);
+        }
+    }
 }
 
 // Sets up the selection menu by looking through the level folder and displaying
@@ -70,14 +103,14 @@ bool LevelSelect::init() {
     this->addChild(titleLabel);
 
     // Create menu items for each of the level files that we have.
-    allLevels = findLevelFiles(false);
-    if (allLevels.size() == 0) {
+    findLevelFiles(false);
+    if (allLevelPaths.size() == 0) {
         std::cout << "Can't find any level files!" << std::endl;
         return false;
     }
-    currentLevel = allLevels.begin();
+    currentLevel = 0;
     
-    levelName = cocos2d::Label::createWithTTF(*currentLevel, "fonts/WaitingfortheSunrise.ttf", 40);
+    levelName = cocos2d::Label::createWithTTF(allLevelNames[currentLevel], "fonts/WaitingfortheSunrise.ttf", 40);
     
     levelName->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height / 2.0);
     levelName->enableShadow();
@@ -109,23 +142,23 @@ bool LevelSelect::init() {
     keyListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) {
         switch(keyCode) {
             case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-                if (currentLevel == allLevels.begin()) {
-                    currentLevel = allLevels.end();
+                if (currentLevel == 0) {
+                    currentLevel = allLevelNames.size();
                 }
                 currentLevel--;
-                levelName->setString(*currentLevel);
+                levelName->setString(allLevelNames[currentLevel]);
                 break;
             
             case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
                 currentLevel++;
-                if (currentLevel == allLevels.end()) {
-                    currentLevel = allLevels.begin();
+                if (currentLevel == allLevelNames.size()) {
+                    currentLevel = 0;
                 }
-                levelName->setString(*currentLevel);
+                levelName->setString(allLevelNames[currentLevel]);
                 break;
             
             case cocos2d::EventKeyboard::KeyCode::KEY_ENTER:
-                this->menuCallback(*currentLevel);
+                this->menuCallback(allLevelPaths[currentLevel]);
                 break;
                 
             case cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE: {
@@ -137,9 +170,12 @@ bool LevelSelect::init() {
             
             case cocos2d::EventKeyboard::KeyCode::KEY_9:
                 // Activates debug mode!
-                allLevels = findLevelFiles(true);
-                currentLevel = allLevels.begin();
-                levelName->setString(*currentLevel);
+                allLevelNames.clear();
+                allLevelPaths.clear();
+                allLevelThumbnails.clear();
+                findLevelFiles(true);
+                currentLevel = 0;
+                levelName->setString(allLevelNames[currentLevel]);
                 devMode->setVisible(true);
                 break;
                 
@@ -156,9 +192,7 @@ bool LevelSelect::init() {
 // Go to whatever level was selected.
 void LevelSelect::menuCallback(std::string newLevel) {
     cocos2d::Scene *startScene;
-    std::stringstream ss;
-    ss << "levelFiles/" << newLevel;
-    startScene = MainGameScene::createScene(ss.str());
+    startScene = MainGameScene::createScene(newLevel);
     if (startScene == NULL) {
         titleLabel->setString("Something went wrong!\n Choose a different level!");
         titleLabel->setBMFontSize(40);

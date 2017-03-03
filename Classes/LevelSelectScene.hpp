@@ -16,12 +16,16 @@ public:
     void menuCallback(std::string newLevel);
     
 private:
+    void findLevelFiles(bool includeDev);
+
     cocos2d::EventListenerKeyboard *keyListener;
     cocos2d::Label *levelName;
     cocos2d::Label *devMode;
     std::map<int, std::string> tagToFileName;
-    std::vector<std::string> allLevels;
-    std::vector<std::string>::iterator currentLevel;
+    std::vector<std::string> allLevelPaths;
+    std::vector<std::string> allLevelNames;
+    std::vector<cocos2d::Sprite *> allLevelThumbnails;
+    unsigned int currentLevel;
     cocos2d::Label *titleLabel;
 };
 

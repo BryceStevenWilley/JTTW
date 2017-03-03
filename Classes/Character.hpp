@@ -85,7 +85,9 @@ public:
     cocos2d::Sprite *alonecrown;
     
     cocos2d::Sprite *currentCrown;
-    void restartFromStart();
+    void restartFromRespawn();
+    void setNewRespawn(cocos2d::Vec2 newRespawn);
+    double getRespawnProgress() const;
     
     void updateAnimation(float delta);
 

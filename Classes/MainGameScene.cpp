@@ -122,7 +122,6 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
     std::ifstream inFile(fileName);
     nlohmann::json lvl;
     
-    std::cout.flush();
     inFile >> lvl;
     
     //vp.setRatio(lvl["mToPixel"]);
@@ -169,7 +168,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
             moveables.push_back(p);
         } else {
             Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), 
-                    cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climbable"], true);//pAtt["collidable"]);
+                    cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climbable"], pAtt["collidable"]);
         
             if (p->getTag() == CLIMBEABLE_TAG) {
                 levelLayer->addChild(p, CLIMBABLE_Z);
@@ -297,8 +296,14 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         }
     }
 
-    levelEndX = lvl["levelEndX"];
+    levelEndX = vp.metersToPixels((double)lvl["levelEndX"]);
     _nextLevel = lvl["nextLevelName"];
+    nlohmann::json respawns = lvl["respawnPoints"];
+    for (auto& rps: respawns) {
+        double x = vp.metersToPixels((double)rps["x"]);
+        double y = vp.metersToPixels((double)rps["y"]);
+        respawnPoints.push_back(cocos2d::Vec2(x, y));
+    }
     
     // Set the ui layer here.
     this->addChild(uiLayer, UI_LAYER_Z_IDX);
@@ -449,10 +454,15 @@ void MainGameScene::update(float delta) {
     bool done = true;
     for (int i = 0; i < (int)characters.size(); i++) {
         characters[i]->updateAnimation(delta);
+        for (int j = 0; j < (int)respawnPoints.size(); j++) {
+            if (characters[i]->getPosition().x > respawnPoints[j].x && respawnPoints[j].x > characters[i]->getRespawnProgress()) {
+                characters[i]->setNewRespawn(respawnPoints[j]);
+            } 
+        }
         if (characters[i]->getPosition().y < -100) { // TODO: un-hardcode this.
             done = false; // don't go to the next level if all characters die at once!
-            characters[i]->restartFromStart();
-        }  else if (vp.pixelsToMeters(characters[i]->getPosition().x) < levelEndX) {
+            characters[i]->restartFromRespawn();
+        }  else if (characters[i]->getPosition().x < levelEndX) {
             done = false;
         }
     }
