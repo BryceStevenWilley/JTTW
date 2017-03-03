@@ -147,10 +147,9 @@
   },
   ...
   ]
-  "respawnPs" : [ {
-    "xPos" : double,  // If the player is closest to this x coordinate, respawn at the specified coordinates.
-    "respawnX" : double,
-    "respawnY" : double
+  "respawnPs" : [ {    
+    "x" : double,
+    "y" : double
     },
     ...
    ]
