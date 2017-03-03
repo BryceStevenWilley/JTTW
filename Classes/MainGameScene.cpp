@@ -207,7 +207,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
             platforms.push_back(p);
             moveables.push_back(p);
         } else {
-            Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climbable"], pAtt["collidable"]);
+            Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climbable"], true);//pAtt["collidable"]);
         
             if (p->getTag() == CLIMBEABLE_TAG) {
                 levelLayer->addChild(p, CLIMBABLE_Z);
@@ -359,16 +359,16 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     vp = Viewpoint(visibleSize, 1.7/130.0);
 
     cocos2d::Layer *layer;
-    try {
+    //try {
         layer = parseLevelFromJson(levelToLoad, debugOn);
-    }
-    catch (std::domain_error ex) {
+    //}
+    /*catch (std::domain_error ex) {
         std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
         return false;
     } catch (std::invalid_argument ex) {
         std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
         return false;
-    }
+    }*/
  
     if (layer == nullptr) {
         std::cout << "Level file corrupted!" << std::endl;
