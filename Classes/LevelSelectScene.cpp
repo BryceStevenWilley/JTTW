@@ -103,6 +103,13 @@ bool LevelSelect::init() {
     titleLabel->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (3.0 / 4.0));
     this->addChild(titleLabel);
 
+    auto instructions = cocos2d::Label::createWithTTF("<Enter>=Select\n<Esc>=Exit", "fonts/WaitingfortheSunrise.ttf", 60);
+    instructions->setTextColor(cocos2d::Color4B::WHITE);
+    instructions->enableOutline(cocos2d::Color4B::BLACK);
+    instructions->enableShadow();
+    instructions->setPosition(origin.x + visibleSize.width / 8.0, origin.y + visibleSize.height / 13.0);
+    this->addChild(instructions);
+
     // Create menu items for each of the level files that we have.
     findLevelFiles(false);
     if (allLevelPaths.size() == 0) {

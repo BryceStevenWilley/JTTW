@@ -31,7 +31,7 @@ bool MainMenu::init() {
     titleImage->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
     
     float middleX = origin.x + visibleSize.width / 2.0;
-    titleImage->setPosition(middleX, origin.y + visibleSize.height * (3.0 / 4.0));
+    titleImage->setPosition(middleX, origin.y + visibleSize.height * (3.3 / 4.0));
     cocos2d::Size titleSize = cocos2d::Size(visibleSize.width / 2.0, visibleSize.height / 3.0);
     titleImage->setScale(titleSize.width / titleImage->getContentSize().width, titleSize.height / titleImage->getContentSize().height);
     
@@ -81,10 +81,30 @@ bool MainMenu::init() {
     
     cocos2d::Menu *m = cocos2d::Menu::create(playItem, settingsItem, exitItem, NULL);
     m->setPosition(0,0);
-    
-    
+
     this->addChild(titleImage, -6);
     this->addChild(m, -6);
+
+    auto instructions = cocos2d::Label::createWithTTF("<Enter>=Select\n<Esc>=Exit", "fonts/WaitingfortheSunrise.ttf", 60);
+    instructions->setTextColor(cocos2d::Color4B::WHITE);
+    instructions->enableOutline(cocos2d::Color4B::BLACK);
+    instructions->enableShadow();
+    instructions->setPosition(origin.x + visibleSize.width / 8.0, origin.y + visibleSize.height / 13.0);
+    this->addChild(instructions);
+
+    auto up = cocos2d::Label::createWithTTF("^", "fonts/WaitingfortheSunrise.ttf", 100);
+    up->setTextColor(cocos2d::Color4B::WHITE);
+    up->enableOutline(cocos2d::Color4B::BLACK);
+    up->enableShadow();
+    up->setPosition(middleX, origin.y + visibleSize.height * (1.0 / 1.7));
+    this->addChild(up);
+        
+    auto down = cocos2d::Label::createWithTTF("v", "fonts/WaitingfortheSunrise.ttf", 100);
+    down->setTextColor(cocos2d::Color4B::WHITE);
+    down->enableOutline(cocos2d::Color4B::BLACK);
+    down->enableShadow();
+    down->setPosition(middleX, origin.y + visibleSize.height * (1.0 / 9.0));
+    this->addChild(down);
     
     (*currentOption)->selected();
     
