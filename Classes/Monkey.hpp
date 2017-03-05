@@ -24,7 +24,9 @@ public:
     void enteringClimeable();
     void leavingClimeable();
     void enteringVine(cocos2d::PhysicsWorld *world, Vine *vine, double offset, cocos2d::Vec2 collisionPoint);
-    void leavingVine(cocos2d::PhysicsWorld *w);
+    void leavingVine();
+    
+    virtual void restartFromRespawn() override;
     
 private:
     void updateClimbingVel();

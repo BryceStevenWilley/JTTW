@@ -59,16 +59,17 @@
       "startingYPos" : double
   }
   ],
-  "interactables" : {
       "boulders" : [
         {
           "id" : int, // unique
           "imageName" : String,
           "centerX" : double,
           "centerY" : double,
+          "imageSizeWidth" : double,
+          "imageSizeHeight" : double,
           "type" : String // Must either be polygon or circle for now
           /** IF type == POLYGON **/
-         "points" : [ {
+         "collisionPoints" : [ {
             "x" : double,
             "y" : double
             },
@@ -103,8 +104,7 @@
         "jointId": double,
        },
        ...       
-       ]
-    },
+       ],
     "terrain" : {
       "wind" : [ {
         "directionX" : double,  // Strength of wind is now determined by directino vector.
@@ -136,6 +136,14 @@
     },
     ...
   ],
+  "attackZones": [ // square area where you are attacked with spears.
+    {
+      "minX": double,
+      "maxX": double,
+      "minY": double,
+      "maxY": double,
+    }
+  ]
   "vines" : [ {
     "imageName" : String,"
     "swingCenterX" : double, // The center point that the swinging swings around.

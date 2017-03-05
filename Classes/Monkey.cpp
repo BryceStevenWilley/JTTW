@@ -34,20 +34,8 @@ void Monkey::impulseRight(float deltaVel) {
 void Monkey::jump() {
     float jumpPower = 500;
     if (_state == SWINGING) {
-        std::cout << "Currently swinging" << std::endl;
-        if (pinJoint != nullptr) {
-            pinJoint->removeFormWorld();
-            pinJoint = nullptr;
-        }
-        
-        if (gearJoint != nullptr) {
-            gearJoint->removeFormWorld();
-            gearJoint = nullptr;
-        }
+        leavingVine();
 
-        currentVine = nullptr;
-        currentVineOffset = 0.0;
-        
         this->_currentState = Character::State::STANDING;
         jumpPower = 90;
         _state = NORMAL;
@@ -55,9 +43,6 @@ void Monkey::jump() {
         cocos2d::Vec2 vel = body->getVelocity();
         body->applyImpulse(body->getMass() * vel * .7); // Double the current velocity!
         this->_currentState = Character::State::MID_AIR;
-        body->setRotationEnable(false);
-        body->setAngularVelocity(0.0);
-        this->setRotation(0.0);
         this->setAnimation(0, "JumpForwardFromSwing", false);
         return;
     }
@@ -140,14 +125,7 @@ void Monkey::leavingClimeable() {
 }
 
 void Monkey::enteringVine(cocos2d::PhysicsWorld *world, Vine *vine, double offset, cocos2d::Vec2 collisionPoint) {
-    if (pinJoint != nullptr) {
-        pinJoint->removeFormWorld();
-        pinJoint = nullptr;
-    }
-    if (gearJoint != nullptr) {
-        gearJoint->removeFormWorld();
-        gearJoint = nullptr;
-    }
+    leavingVine();
     // create a joint between you and the vine.
     pinJoint = cocos2d::PhysicsJointPin::construct(this->body, vine->getPhysicsBody(), cocos2d::Vec2::ZERO, cocos2d::Vec2(0, offset));
     world->addJoint(pinJoint);
@@ -170,9 +148,39 @@ void Monkey::enteringVine(cocos2d::PhysicsWorld *world, Vine *vine, double offse
     currentWorld = world;
 }
 
+void Monkey::leavingVine() {
+        if (pinJoint != nullptr) {
+            pinJoint->removeFormWorld();
+            pinJoint = nullptr;
+        }
+        
+        if (gearJoint != nullptr) {
+            gearJoint->removeFormWorld();
+            gearJoint = nullptr;
+        }
+
+        currentVine = nullptr;
+        currentVineOffset = 0.0;
+    
+        _state = NORMAL;
+        this->_currentState = Character::State::MID_AIR;
+        body->setRotationEnable(false);
+        body->setAngularVelocity(0.0);
+        this->setRotation(0.0);
+}
+
 void Monkey::moveAlongVine(float deltaP) {
     std::cout << "Moving along vine!: " << deltaP << " much, currentVineOffset = " << currentVineOffset << std::endl;
     if (currentVineOffset + deltaP > -currentVine->getLength() / 2.0 && currentVineOffset + deltaP < currentVine->getLength() / 2.0) {
         enteringVine(currentWorld, currentVine, currentVineOffset + deltaP, cocos2d::Vec2::ZERO);
     }
+}
+
+void Monkey::restartFromRespawn() {
+    if (_state == SWINGING) {
+        leavingVine();
+    } else
+    leavingClimeable();
+    Character::restartFromRespawn();
+    leavingClimeable();
 }

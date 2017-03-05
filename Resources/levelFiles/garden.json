@@ -15,4 +15,13 @@
            "imageWidth" : 2.877,
            "imageHeight" : 3.66
         }
-    ]}
+    ],
+    
+"attackZones": [
+  {
+    "minX" :  15,
+    "maxX" : 40,
+    "minY" : 0,
+    "maxY" : 15
+  }
+]}

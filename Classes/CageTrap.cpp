@@ -23,8 +23,8 @@ CageTrap::CageTrap(std::string imageName, cocos2d::Vec2 center, cocos2d::Physics
     body->addShape(topRight);
 
     body->setCategoryBitmask((int)CollisionCategory::Boulder);
-    body->setCollisionBitmask((int)CollisionCategory::ALL);
-    body->setContactTestBitmask((int)CollisionCategory::ALL);
+    body->setCollisionBitmask((int)CollisionCategory::CharacterPlatformAndBoulder);
+    body->setContactTestBitmask((int)CollisionCategory::CharacterPlatformAndBoulder);
     body->setRotationEnable(true);
     body->setGravityEnable(false);
         

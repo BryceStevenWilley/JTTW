@@ -1,4 +1,5 @@
 #include "MainMenuScene.hpp"
+#include "MainGameScene.h"
 #include "LevelSelectScene.hpp"
 #include <spine/spine-cocos2dx.h>
 #include <iostream>
@@ -14,9 +15,18 @@ cocos2d::Scene* MainMenu::createScene() {
     return scene;
 }
 
+cocos2d::Label * createSunriseLabel(std::string content, int size) {
+    auto label = cocos2d::Label::createWithTTF(content, "fonts/WaitingfortheSunrise.ttf", size);
+    label->setTextColor(cocos2d::Color4B::WHITE);
+    label->enableOutline(cocos2d::Color4B::BLACK);
+    label->enableShadow();
+    return label;
+}
+
 bool MainMenu::init() {
     auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
     cocos2d::Vec2 origin = cocos2d::Director::getInstance()->getVisibleOrigin();
+    float middleX = origin.x + visibleSize.width / 2.0;
 
     // Sets the background image to fill the screen.
     auto background = cocos2d::Sprite::create("backgrounds/Splash.png");
@@ -29,114 +39,74 @@ bool MainMenu::init() {
     // Set the Font on the screen. (TODO: make it fly in?)
     auto titleImage = cocos2d::Sprite::create("UI/MenuTitle.png");
     titleImage->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    
-    float middleX = origin.x + visibleSize.width / 2.0;
-    titleImage->setPosition(middleX, origin.y + visibleSize.height * (3.3 / 4.0));
     cocos2d::Size titleSize = cocos2d::Size(visibleSize.width / 2.0, visibleSize.height / 3.0);
     titleImage->setScale(titleSize.width / titleImage->getContentSize().width, titleSize.height / titleImage->getContentSize().height);
+
+    auto playNode = createSunriseLabel("New Game", 100);
+    auto sceneNode = createSunriseLabel("Scene Select", 100);
+    auto exitNode = createSunriseLabel("Exit", 100);
     
-    auto playImage = cocos2d::Sprite::create("UI/MenuPlay.png");
-    auto settingsImage = cocos2d::Sprite::create("UI/MenuSettings.png");
-    auto exitImage = cocos2d::Sprite::create("UI/MenuExit.png");
-    
-    playImage->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    settingsImage->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    exitImage->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    
-    auto playImageS = cocos2d::Sprite::create("UI/MenuPlay.png");
-    auto settingsImageS = cocos2d::Sprite::create("UI/MenuSettings.png");
-    auto exitImageS = cocos2d::Sprite::create("UI/MenuExit.png");
-    playImageS->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    settingsImageS->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    exitImageS->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    playImageS->setScale(1.3);
-    settingsImageS->setScale(1.3);
-    exitImageS->setScale(1.3);
-    
-    /*Set up idle characters.*/
-    addCharacterAni("Monk", cocos2d::Vec2(origin.x + (middleX/2), origin.y + visibleSize.height / 8));
-    addCharacterAni("Monkey", cocos2d::Vec2(origin.x + (middleX/4), origin.y + visibleSize.height / 8));
-    addCharacterAni("Piggy", cocos2d::Vec2(visibleSize.width - (middleX/2.0), origin.y + visibleSize.height / 15.0));
-    addCharacterAni("Sandy", cocos2d::Vec2(visibleSize.width - (middleX/4.0), origin.y + visibleSize.height / 15.0));
-    
-    //cocos2d::MenuItemLabel *playItem = cocos2d::MenuItemLabel::create( CC_CALLBACK_);
-    cocos2d::MenuItemSprite *playItem = cocos2d::MenuItemSprite::create(playImage, playImageS, CC_CALLBACK_0(MainMenu::openStartScene, this));
-    cocos2d::MenuItemSprite *settingsItem = cocos2d::MenuItemSprite::create(settingsImage, settingsImageS, settingsImage, CC_CALLBACK_0(MainMenu::openSettings, this));
-    cocos2d::MenuItemSprite *exitItem = cocos2d::MenuItemSprite::create(exitImage, exitImageS, CC_CALLBACK_0(MainMenu::exitGame, this));
+    cocos2d::MenuItemLabel *playItem = cocos2d::MenuItemLabel::create(playNode, CC_CALLBACK_0(MainMenu::openFirstLevel, this));
+    cocos2d::MenuItemLabel *sceneItem = cocos2d::MenuItemLabel::create(sceneNode, CC_CALLBACK_0(MainMenu::openStartScene, this));
+    cocos2d::MenuItemLabel *exitItem = cocos2d::MenuItemLabel::create(exitNode, CC_CALLBACK_0(MainMenu::exitGame, this));
     
     options.push_back(playItem);
-    options.push_back(settingsItem);
+    options.push_back(sceneItem);
     options.push_back(exitItem);
     currentOption = options.begin();
-    
-    cocos2d::Size menuItemSize = titleSize * 0.4;
-    playItem->setScale(menuItemSize.width / playItem->getContentSize().width, menuItemSize.height / playItem->getContentSize().height);
-    exitItem->setScale(menuItemSize.width / exitItem->getContentSize().width, menuItemSize.height / exitItem->getContentSize().height);
-    menuItemSize.width *= 2.5;
-    menuItemSize.height *= 1.5;
-    settingsItem->setScale(menuItemSize.width / settingsItem->getContentSize().width, menuItemSize.height / settingsItem->getContentSize().height);
 
-    playItem->setPosition(middleX + 20, origin.y + visibleSize.height / 2.0);
-    settingsItem->setPosition(middleX + 20, origin.y + visibleSize.height / 3.0);
-    exitItem->setPosition(middleX + 20, origin.y + visibleSize.height / 5.0);
+    playItem->setPosition(middleX + 20, origin.y + visibleSize.height * (4.0/ 9.0));
+    sceneItem->setPosition(middleX + 20, origin.y + visibleSize.height * (3.0 / 9.0));
+    exitItem->setPosition(middleX + 20, origin.y + visibleSize.height * (2.0/ 9.0));
     
-    cocos2d::Menu *m = cocos2d::Menu::create(playItem, settingsItem, exitItem, NULL);
+    cocos2d::Menu *m = cocos2d::Menu::create(playItem, sceneItem, exitItem, NULL);
     m->setPosition(0,0);
 
-    this->addChild(titleImage, -6);
     this->addChild(m, -6);
-
-    auto instructions = cocos2d::Label::createWithTTF("<Enter>=Select\n<Esc>=Exit", "fonts/WaitingfortheSunrise.ttf", 60);
-    instructions->setTextColor(cocos2d::Color4B::WHITE);
-    instructions->enableOutline(cocos2d::Color4B::BLACK);
-    instructions->enableShadow();
+    
+    auto instructions = createSunriseLabel("<Enter>=Select", 60);
     instructions->setPosition(origin.x + visibleSize.width / 8.0, origin.y + visibleSize.height / 13.0);
     this->addChild(instructions);
 
-    auto up = cocos2d::Label::createWithTTF("^", "fonts/WaitingfortheSunrise.ttf", 100);
-    up->setTextColor(cocos2d::Color4B::WHITE);
-    up->enableOutline(cocos2d::Color4B::BLACK);
-    up->enableShadow();
-    up->setPosition(middleX, origin.y + visibleSize.height * (1.0 / 1.7));
+    auto up = createSunriseLabel("^", 100);
+    up->setPosition(middleX, origin.y + visibleSize.height * (4.7 / 9.0));
     this->addChild(up);
         
-    auto down = cocos2d::Label::createWithTTF("v", "fonts/WaitingfortheSunrise.ttf", 100);
-    down->setTextColor(cocos2d::Color4B::WHITE);
-    down->enableOutline(cocos2d::Color4B::BLACK);
-    down->enableShadow();
+    auto down = createSunriseLabel("v", 100);
     down->setPosition(middleX, origin.y + visibleSize.height * (1.0 / 9.0));
     this->addChild(down);
     
+    (*currentOption)->setColor(SELECTED);
     (*currentOption)->selected();
     
     eventListener = cocos2d::EventListenerKeyboard::create();
     eventListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
         switch(keyCode) {
             case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
+                (*currentOption)->setColor(UNSELECTED);
                 (*currentOption)->unselected();
                 if (currentOption == options.begin()) {
                     currentOption = options.end();
                 }
                 currentOption--;
+                (*currentOption)->setColor(SELECTED);
                 (*currentOption)->selected();
                 break;
             
             case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+                (*currentOption)->setColor(UNSELECTED);
                 (*currentOption)->unselected();
                 currentOption++;
                 if (currentOption == options.end()) {
                     currentOption = options.begin();
                 }
+                (*currentOption)->setColor(SELECTED);
                 (*currentOption)->selected();
                 break;
             
             case cocos2d::EventKeyboard::KeyCode::KEY_ENTER:
                 (*currentOption)->activate();
                 break;
-                
-            case cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE: {
-                this->exitGame();
-            }
                 
             default:
                 // do nothing.
@@ -146,10 +116,61 @@ bool MainMenu::init() {
     };
     this->_eventDispatcher->addEventListenerWithFixedPriority(eventListener, 1);
     
+    /*Set up idle characters.*/
+    auto mk = addCharacterAni("Monk", cocos2d::Vec2(origin.x - (middleX/2), origin.y + visibleSize.height / 8));
+    auto mky = addCharacterAni("Monkey", cocos2d::Vec2(origin.x - (middleX/4), origin.y + visibleSize.height / 8));
+    auto p = addCharacterAni("Piggy", cocos2d::Vec2(visibleSize.width + (middleX/2.0), origin.y + visibleSize.height / 15.0));
+    auto s = addCharacterAni("Sandy", cocos2d::Vec2(visibleSize.width + (middleX/4.0), origin.y + visibleSize.height / 15.0));
+    
+    // Animate the titles to move in.
+    titleImage->setPosition(middleX, origin.y + visibleSize.height * (5.0 / 4.0));
+    auto titleAni = cocos2d::MoveTo::create(3.0, cocos2d::Vec2(middleX, origin.y + visibleSize.height * (3.3 / 4.0)));
+    this->addChild(titleImage, -6);
+    titleImage->runAction(cocos2d::EaseIn::create(titleAni, 0.5));
+    
+    up->setCascadeOpacityEnabled(true);
+    down->setCascadeOpacityEnabled(true);
+    up->setOpacity(0);
+    down->setOpacity(0);
+    up->runAction(cocos2d::FadeIn::create(5.0));
+    down->runAction(cocos2d::FadeIn::create(5.0));
+    
+    playItem->setCascadeOpacityEnabled(true);
+    sceneItem->setCascadeOpacityEnabled(true);
+    exitItem->setCascadeOpacityEnabled(true);
+    playItem->setOpacity(0);
+    sceneItem->setOpacity(0);
+    exitItem->setOpacity(0);
+    playItem->runAction(cocos2d::FadeIn::create(5.0));
+    sceneItem->runAction(cocos2d::FadeIn::create(5.0));
+    exitItem->runAction(cocos2d::FadeIn::create(5.0));
+    
+    auto cmk = cocos2d::CallFunc::create([mk]() {
+        mk->setAnimation(0, "idle", true);
+    });
+    auto cmky = cocos2d::CallFunc::create([mky]() {
+        mky->setAnimation(0, "idle", true);
+    });
+    auto cp = cocos2d::CallFunc::create([p]() {
+        p->setAnimation(0, "idle", true);
+    });
+    auto cs = cocos2d::CallFunc::create([s]() {
+        s->setAnimation(0, "idle", true);
+    });
+    auto seqMk = cocos2d::Sequence::create(cocos2d::MoveTo::create(3.0, cocos2d::Vec2(origin.x + (middleX/2), origin.y + visibleSize.height / 8)), cmk, nullptr);
+    auto seqMky = cocos2d::Sequence::create(cocos2d::MoveTo::create(3.0, cocos2d::Vec2(origin.x + (middleX/4), origin.y + visibleSize.height / 8)), cmky, nullptr);
+    auto seqP = cocos2d::Sequence::create(cocos2d::MoveTo::create(3.0, cocos2d::Vec2(visibleSize.width - (middleX/2.0), origin.y + visibleSize.height / 15.0)), cp, nullptr);
+    auto seqS = cocos2d::Sequence::create(cocos2d::MoveTo::create(3.0, cocos2d::Vec2(visibleSize.width - (middleX/4.0), origin.y + visibleSize.height / 15.0)), cs, nullptr);
+    
+    mk->runAction(seqMk);
+    mky->runAction(seqMky);
+    p->runAction(seqP);
+    s->runAction(seqS);
+    
     return true;
 }
 
-void MainMenu::addCharacterAni(std::string name, cocos2d::Vec2 position) {
+spine::SkeletonAnimation *MainMenu::addCharacterAni(std::string name, cocos2d::Vec2 position) {
     auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
     cocos2d::Vec2 origin = cocos2d::Director::getInstance()->getVisibleOrigin();
     float middleX = origin.x + visibleSize.width / 2.0;
@@ -160,7 +181,8 @@ void MainMenu::addCharacterAni(std::string name, cocos2d::Vec2 position) {
     spine::SkeletonAnimation *c = spine::SkeletonAnimation::createWithJsonFile("characters/" + name + ".json", "characters/" + name + ".atlas", 1.0f);
     c->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
     c->setPosition(position);
-    c->setAnimation(0, "idle", true);
+    c->setTimeScale(0.5);
+    c->setAnimation(0, "walk", true);
     if (position.x > middleX) {
          c->setScale(charScale);
          c->setScaleX(c->getScaleX() * -1);// Mirror the image.
@@ -168,6 +190,7 @@ void MainMenu::addCharacterAni(std::string name, cocos2d::Vec2 position) {
          c->setScale(charScale);
     }
     this->addChild(c);
+    return c;
 }
 
 void MainMenu::openStartScene() {
@@ -177,9 +200,18 @@ void MainMenu::openStartScene() {
     cocos2d::Director::getInstance()->replaceScene(fade);
 }
 
-void MainMenu::openSettings() {
-    std::cout << "Opened settings!" << std::endl;
-    // TODO: Actually open settings.
+void MainMenu::openFirstLevel() {
+    cocos2d::Scene *startScene;
+    startScene = MainGameScene::createScene("levelFiles/friday-level-v2.json");
+    if (startScene == NULL) {
+        //titleLabel->setString("Something went wrong!\n Choose a different level!");
+        //titleLabel->setBMFontSize(40);
+        std::cout << "WHY CAN'T WE CHOOSE THE FIRST LEVEL?" << std::endl;
+        return;
+    }
+    this->_eventDispatcher->removeEventListener(eventListener);
+    auto fade = cocos2d::TransitionFade::create(1.5, startScene);
+    cocos2d::Director::getInstance()->replaceScene(fade);
 }
 
 void MainMenu::exitGame() {

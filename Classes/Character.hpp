@@ -85,7 +85,7 @@ public:
     cocos2d::Sprite *alonecrown;
     
     cocos2d::Sprite *currentCrown;
-    void restartFromRespawn();
+    virtual void restartFromRespawn();
     void setNewRespawn(cocos2d::Vec2 newRespawn);
     double getRespawnProgress() const;
     

@@ -7,12 +7,28 @@
 #include "AiAgent.hpp"
 #include "Viewpoint.hpp"
 #include "MoveablePlatform.hpp"
+#include "Boulder.hpp"
 #include <spine/spine-cocos2dx.h>
+#include <map>
 #include "Vine.hpp"
 #include "Trap.hpp"
 #include "json.hpp"
 
 namespace JTTW {
+
+struct Zone {
+private:
+    cocos2d::Vec2 bottomLeft;
+    cocos2d::Vec2 topRight;
+    
+public:
+    Zone(cocos2d::Vec2 a, cocos2d::Vec2 b): bottomLeft(a), topRight(b) {}
+    
+    bool containsPoint(cocos2d::Vec2 p) {
+        return (p.x >= bottomLeft.x && p.x <= topRight.x && p.y >= bottomLeft.y && p.y <= topRight.y);
+    }
+};
+
     
 class MainGameScene : public cocos2d::Layer {
 public:
@@ -51,13 +67,17 @@ private:
     std::vector<AiAgent *> agents = std::vector<AiAgent *>();
     AiAgent *player = nullptr;
     
-    std::vector<cocos2d::Sprite *> dynamics = std::vector<cocos2d::Sprite *>();
     std::vector<Trap *> trapsToTrigger = std::vector<Trap *>();
     std::vector<Platform *> platforms = std::vector<Platform *>();
     std::vector<MoveablePlatform *> moveables = std::vector<MoveablePlatform *>();
     std::vector<Platform *> disappearing = std::vector<Platform *>();
     std::vector<Vine *> vines = std::vector<Vine *>();
     std::vector<cocos2d::Vec2> respawnPoints = std::vector<cocos2d::Vec2>();
+    std::vector<Zone> attackZones = std::vector<Zone>();
+ 
+    std::map<int, Boulder *> boulders = std::map<int, Boulder *>();
+    std::map<Character *, bool> attacking = std::map<Character *, bool>();
+    std::map<Character *, double> attackCountdown = std::map<Character *, double>();
 
     bool debugOn = true; // currently, will just turn on collision boxes.
 
@@ -71,6 +91,8 @@ private:
     cocos2d::EventListenerKeyboard *eventListener;
     
     cocos2d::PhysicsWorld *_w;
+    
+    cocos2d::Layer *layer;
 };
 } // JTTW
 
