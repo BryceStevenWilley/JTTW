@@ -1,19 +1,11 @@
-//
-//  Trap.cpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/26/17.
-//
-//
-
-#include "Trap.hpp"
+#include "CageTrap.hpp"
 #include "Collisions.hpp"
 
 using namespace JTTW;
 
-Trap::Trap(std::string imageName, cocos2d::Vec2 center, cocos2d::PhysicsMaterial material, cocos2d::Size trapSize, cocos2d::Size imageSize, double wallThickness, double offset) :
-        cocos2d::Sprite() {
-    this->initWithFile(imageName);
+CageTrap::CageTrap(std::string imageName, cocos2d::Vec2 center, cocos2d::PhysicsMaterial material, 
+        cocos2d::Size trapSize, cocos2d::Size imageSize, double wallThickness, double offset) :
+        Trap(imageName, imageSize, trapSize, center) {
     auto left = cocos2d::PhysicsShapeBox::create(cocos2d::Size(wallThickness, trapSize.height * 5.0/6.0), material, cocos2d::Vec2(-trapSize.width/2.0, offset - 1.0/12 * trapSize.height));
     auto right = cocos2d::PhysicsShapeBox::create(cocos2d::Size(wallThickness, trapSize.height * 5.0/6.0), material, cocos2d::Vec2(trapSize.width/2.0, offset - 1.0/12 * trapSize.height));
     auto top = cocos2d::PhysicsShapeBox::create(cocos2d::Size(trapSize.width / 2, wallThickness), material, cocos2d::Vec2(0, trapSize.height/1.7 + offset));
@@ -31,26 +23,26 @@ Trap::Trap(std::string imageName, cocos2d::Vec2 center, cocos2d::PhysicsMaterial
     body->addShape(topRight);
 
     body->setCategoryBitmask((int)CollisionCategory::Boulder);
-    body->setCollisionBitmask((int)CollisionCategory::ALL);
-    body->setContactTestBitmask((int)CollisionCategory::ALL);
+    body->setCollisionBitmask((int)CollisionCategory::CharacterPlatformAndBoulder);
+    body->setContactTestBitmask((int)CollisionCategory::CharacterPlatformAndBoulder);
     body->setRotationEnable(true);
     body->setGravityEnable(false);
         
     body->setVelocityLimit(600);
     body->setDynamic(true);
             
-    this->setPosition(center);
-    this->setContentSize(imageSize);
     this->addComponent(body);
+    this->setVisible(false);
     
     minX = center.x - trapSize.width / 2.0;
     maxX = center.x + trapSize.width / 2.0;
     minY = center.y - trapSize.height / 2.0;
 }
 
-bool Trap::triggerIfUnder(cocos2d::Vec2 characterCenter, cocos2d::Size characterSize) {
+bool CageTrap::triggerTrap(cocos2d::Vec2 characterCenter, cocos2d::Size characterSize) {
     if (characterCenter.x + characterSize.width / 2.0 < maxX && characterCenter.x - characterSize.width / 2.0 > minX && characterCenter.y < minY) {
         body->setGravityEnable(true);
+        this->setVisible(true);
         return true;
     }
     return false;

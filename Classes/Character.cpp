@@ -8,7 +8,7 @@
 #include <iostream>
 
 using namespace JTTW;
-   
+
 Character * Character::createFromName(const std::string name, cocos2d::Vec2 startPosition, cocos2d::Size dimensions) {
     if (name == "Monkey") {
         return (Character *)new Monkey(startPosition, dimensions);
@@ -30,7 +30,7 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
     body->addShape(bodyShape);
     body->setCategoryBitmask((int)CollisionCategory::Character);
     body->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
-    body->setContactTestBitmask((int)CollisionCategory::PlatformAndBoulder);
+    body->setContactTestBitmask((int)CollisionCategory::PlatformBoulderAndProjectile);
     body->setRotationEnable(false);
 
     body->setVelocityLimit(600);
@@ -282,7 +282,9 @@ void Character::updateAnimation(State oldState) {
 }
 
 void Character::restartFromRespawn() {
+    std::cout << "Restarting " << characterName << " at " << _respawnPosition.x << ", " << _respawnPosition.y << std::endl;
     body->setVelocity(cocos2d::Vec2(0, 0));
+    this->setPosition(_respawnPosition);
     this->setPosition(_respawnPosition);
 }
 

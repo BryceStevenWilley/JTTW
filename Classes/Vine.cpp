@@ -4,7 +4,7 @@
 using namespace JTTW;
 
 Vine::Vine(std::string fileName, cocos2d::Vec2 rotCenter, double width, double length, double startingAngVel) :
-     cocos2d::Sprite(), rotCenter(rotCenter){
+     cocos2d::Sprite(), rotCenter(rotCenter), _length(length) {
     
     this->initWithFile(fileName);
     cocos2d::Size imageSize = cocos2d::Size(width, length);
@@ -33,4 +33,8 @@ cocos2d::PhysicsBody *Vine::getBody() {
 
 cocos2d::Vec2 Vine::getRotationCenter() {
     return rotCenter;
+}
+
+double Vine::getLength() const {
+    return _length;
 }

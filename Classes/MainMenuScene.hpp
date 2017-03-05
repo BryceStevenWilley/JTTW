@@ -2,6 +2,7 @@
 #define MainMenuScene_hpp
 
 #include "cocos2d.h"
+#include <spine/spine-cocos2dx.h>
 #include <iostream>
 
 namespace JTTW {
@@ -15,17 +16,20 @@ public:
     
     void openStartScene();
     
-    void openSettings();
+    void openFirstLevel();
     
     void exitGame();
     
 private:
-    void addCharacterAni(std::string name, cocos2d::Vec2);
+    spine::SkeletonAnimation *addCharacterAni(std::string name, cocos2d::Vec2);
 
     cocos2d::EventListenerKeyboard *eventListener;
     
-    std::vector<cocos2d::MenuItemSprite *> options;
-    std::vector<cocos2d::MenuItemSprite *>::iterator currentOption;
+    std::vector<cocos2d::MenuItem *> options;
+    std::vector<cocos2d::MenuItem *>::iterator currentOption;
+    
+    const cocos2d::Color3B SELECTED = cocos2d::Color3B(206.0, 208.0, 103.0);
+    const cocos2d::Color3B UNSELECTED = cocos2d::Color3B(255.0, 255.0, 255.0);
 };
 } // JTTW
 

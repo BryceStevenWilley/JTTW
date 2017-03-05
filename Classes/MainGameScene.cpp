@@ -7,6 +7,7 @@
 #include "cocos2d.h"
 #include "json.hpp"
 #include "Boulder.hpp"
+#include "CageTrap.hpp"
 #include <iostream>
 #include <fstream>
 #include <algorithm>
@@ -22,7 +23,7 @@ cocos2d::Scene* MainGameScene::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::createWithPhysics();
     scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -498));
-    scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
+    //scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = MainGameScene::create(levelToLoad, scene->getPhysicsWorld());
     if (layer == NULL) {
         return NULL;
@@ -56,11 +57,16 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
                  std::cout << "halfLength: " << halfLength << std::endl;
                  offset = -(halfLength - 5);
              }
-             m->enteringVine(this->getScene()->getPhysicsWorld(), v->getPhysicsBody(), offset, m->getPosition() + cocos2d::Vec2(0.0, m->getContentSize().height));
+             m->enteringVine(this->getScene()->getPhysicsWorld(), v, offset, m->getPosition() + cocos2d::Vec2(0.0, m->getContentSize().height));
         } else {
             //m->leavingClimeable();
             return true; // don't rebalance impulse!
         }
+    }
+    if (node->getTag() == PROJECTILE_TAG) {
+        std::cout << "Hit Projectile!" << std::endl;
+        c->restartFromRespawn();
+        return true;
     }
     if (normal.dot(cocos2d::Vec2(0, -1)) > std::cos(M_PI / 4.0)) {
         if (begin) {
@@ -76,7 +82,7 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
         } else {
             m->leavingClimeable();
         }
-    } 
+    }
     if (!begin) {
         c->rebalanceImpulse();
     }
@@ -90,14 +96,19 @@ bool MainGameScene::onContactHandler(cocos2d::PhysicsContact& contact, bool begi
     if (nodeA->getTag() == CHARACTER_TAG) {
         Character *c = (Character *)nodeA;
         // If A is the character, then for landing on a flat platform, the normal is 0, -1.
-        characterCollision(contact, begin, c, contact.getShapeB()->getBody(), nodeB, normal);
+        return characterCollision(contact, begin, c, contact.getShapeB()->getBody(), nodeB, normal);
     }
     
     if (nodeB->getTag() == CHARACTER_TAG) {
         Character *c = (Character *)nodeB;
         // If B is the character, then for landing on a flat platform, the normal is 0, 1.
-        characterCollision(contact, begin, c, contact.getShapeA()->getBody(), nodeA, -normal);
+        return characterCollision(contact, begin, c, contact.getShapeA()->getBody(), nodeA, -normal);
     }
+    
+    if (begin && (nodeA->getTag() == PROJECTILE_TAG || nodeB->getTag() == PROJECTILE_TAG)) {
+        return false; // don't collide with anything.
+    }
+    
     return true;
 }
 
@@ -176,6 +187,9 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
                 levelLayer->addChild(p, PLATFORM_Z);
             }
             platforms.push_back(p);
+            if (pAtt["disappears"]) {
+                disappearing.push_back(p);
+            }
         }
     }
     nlohmann::json characterStruct = lvl["characters"];
@@ -213,14 +227,13 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
     if (agents.size() == 0) {
         // Handle Error!
         std::cout << "You cant have a level with no characters!" << std::endl;
-        //menuCloseCallback(nullptr);
         throw std::domain_error("No characters");
     }
     player = agents[0];
     player->_controlledCharacter->currentCrown->setVisible(true);
 
-    nlohmann::json boulders = lvl["interactables"]["boulders"];
-    for (auto& bAtt: boulders) {
+    nlohmann::json boulderJson = lvl["boulders"];
+    for (auto& bAtt: boulderJson) {
         cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)bAtt["centerX"], (double)bAtt["centerY"]));
         std::stringstream ss;
         std::string temp = bAtt["imageName"];
@@ -228,7 +241,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         std::string imageName = ss.str();
         double mass = bAtt["mass"];
         std::string type = bAtt["type"];
-        cocos2d::Size imgSize = cocos2d::Size(vp.metersToPixels((double)bAtt["width"]), vp.metersToPixels((double)bAtt["height"]));
+        cocos2d::Size imgSize = cocos2d::Size(vp.metersToPixels((double)bAtt["imageSizeWidth"]), vp.metersToPixels((double)bAtt["imageSizeHeight"]));
         std::transform(type.begin(), type.end(), type.begin(), ::toupper);
         Boulder *b;
         if (type == "CIRCLE") {
@@ -240,7 +253,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
                     imgSize);
         } else if (type == "POLYGON") {
             std::vector<cocos2d::Vec2> points;
-            for (auto& point: bAtt["points"]) {
+            for (auto& point: bAtt["collisionPoints"]) {
                 points.push_back(vp.metersToPixels(cocos2d::Vec2((double)point["x"], (double)point["y"])));
             }
             b = new Boulder(points, imageName, center, mass, imgSize);
@@ -248,9 +261,28 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
             std::cout << "Boulder type should be either CIRCLE or POLYGON, not " << type << std::endl;
             throw std::invalid_argument("Boulder type should be circle or polygon");
         }
-        dynamics.push_back(b);
+        boulders[(int)bAtt["ticket"]] = b;
         levelLayer->addChild(b, 10);
     }
+    
+    nlohmann::json boulderJoints = lvl["boulderJoints"];
+    for (auto&jAtt : boulderJoints) {
+        Boulder *b1 = boulders[(int)jAtt["id1"]];
+        Boulder *b2 = boulders[(int)jAtt["id2"]];
+        b1->getBody()->setCollisionBitmask((int)CollisionCategory::CharacterAndPlatform);
+        b2->getBody()->setCollisionBitmask((int)CollisionCategory::CharacterAndPlatform);
+        b1->getBody()->setContactTestBitmask((int)CollisionCategory::CharacterAndPlatform);
+        b2->getBody()->setContactTestBitmask((int)CollisionCategory::CharacterAndPlatform);
+        
+        cocos2d::Vec2 offset1 = vp.metersToPixels(cocos2d::Vec2((double)jAtt["anchor1x"], (double)jAtt["anchor1y"]));
+        cocos2d::Vec2 offset2 = vp.metersToPixels(cocos2d::Vec2((double)jAtt["anchor2x"], (double)jAtt["anchor2y"]));
+        
+        auto pin = cocos2d::PhysicsJointPin::construct(b1->getBody(), b2->getBody(), offset1, offset2);
+        auto gear = cocos2d::PhysicsJointGear::construct(b1->getBody(), b2->getBody(), 0, 1.0);
+        _w->addJoint(pin);
+        _w->addJoint(gear);
+    }
+    
     
     nlohmann::json in_vines = lvl["vines"];
     for (auto& vAtt: in_vines) {
@@ -290,10 +322,22 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         std::string imageName = tAtt["imageName"];
         if (imageName == "cage1.png") {
             cocos2d::PhysicsMaterial material = cocos2d::PhysicsMaterial(tAtt["density"], tAtt["bounciness"], tAtt["friction"]);
-            Trap* rS = new Trap(imageName, center, material, cocos2d::Size(trapWidth, trapHeight), imgSize, wallWidth, offset);
+            Trap* rS = new CageTrap(imageName, center, material, cocos2d::Size(trapWidth, trapHeight), imgSize, wallWidth, offset);
             trapsToTrigger.push_back(rS);
             levelLayer->addChild(rS, 10);
         }
+    }
+    
+    if (lvl["attackZones"].is_array()) {
+        nlohmann::json zones = lvl["attackZones"];
+        for (auto& zAtt : zones) {
+            std::cout << "Reading zone" << std::endl;
+            attackZones.push_back(Zone(
+                    vp.metersToPixels(cocos2d::Vec2((double)zAtt["minX"], (double)zAtt["minY"])),
+                    vp.metersToPixels(cocos2d::Vec2((double)zAtt["maxX"], (double)zAtt["maxY"]))));
+        }
+    } else {
+        std::cout << "Note: no zones in this level." << std::endl;
     }
 
     levelEndX = vp.metersToPixels((double)lvl["levelEndX"]);
@@ -325,17 +369,16 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     // 1.7/130.0 means that 1.7 meters in the game world (average human male height) is represented by 180 pixels on screen.
     vp = Viewpoint(visibleSize, 1.7/130.0);
 
-    cocos2d::Layer *layer;
-    //try {
+    try {
         layer = parseLevelFromJson(levelToLoad, debugOn);
-    //}
-    /*catch (std::domain_error ex) {
+    }
+    catch (std::domain_error ex) {
         std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
        return false;
     } catch (std::invalid_argument ex) {
         std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
         return false;
-    }*/
+    }
  
     if (layer == nullptr) {
         std::cout << "Level file corrupted!" << std::endl;
@@ -381,8 +424,25 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
                 }
                 break;
                 
-            case EventKeyboard::KeyCode::KEY_ENTER:
-                std::cout << std::endl;
+            case EventKeyboard::KeyCode::KEY_0: {
+                // Throw a projectile somewhere!
+                auto body = cocos2d::PhysicsBody::createBox(cocos2d::Size(300, 50));
+                body->setDynamic(true);
+                body->setGravityEnable(true);
+                body->setTag((int)CollisionCategory::Projectile);
+                body->setCollisionBitmask((int)CollisionCategory::None);
+                body->setContactTestBitmask((int)CollisionCategory::Character);
+                body->setVelocity(cocos2d::Vec2(100, 10));
+                auto sprite = cocos2d::Sprite::create("spear.png");
+                cocos2d::Vec2 pos = player->_controlledCharacter->getPosition();
+                sprite->setPosition(pos.x - 500, pos.y + 100);
+                sprite->setContentSize(cocos2d::Size(300, 50));
+                sprite->addComponent(body);
+                sprite->setTag(PROJECTILE_TAG);
+                layer->addChild(sprite);
+                break;
+            }
+
             default:
                 // do nothing.
                 break;
@@ -454,6 +514,17 @@ void MainGameScene::update(float delta) {
     bool done = true;
     for (int i = 0; i < (int)characters.size(); i++) {
         characters[i]->updateAnimation(delta);
+        for (auto& zone : attackZones) {
+            if (zone.containsPoint(characters[i]->getPosition())) {
+                if (attacking[characters[i]] == false) {
+                    std::cout << "Attacking " << characters[i]->characterName << "!" << std::endl;
+                    attacking[characters[i]] = true;
+                    attackCountdown[characters[i]] = 1.0;
+                }
+            } else {
+                attacking[characters[i]] = false;
+            }
+        }
         for (int j = 0; j < (int)respawnPoints.size(); j++) {
             if (characters[i]->getPosition().x > respawnPoints[j].x && respawnPoints[j].x > characters[i]->getRespawnProgress()) {
                 characters[i]->setNewRespawn(respawnPoints[j]);
@@ -473,14 +544,40 @@ void MainGameScene::update(float delta) {
         nextLevelCallback();
     }
     
-    for (auto m = moveables.begin(); m != moveables.end(); m++) {
-        (*m)->move(delta, false);
+    for (auto &m : moveables) {
+        m->move(delta, false);
     }
     
+    for (auto entry = attacking.begin(); entry != attacking.end(); entry++) {
+        if (entry->second) {
+             if (attackCountdown[entry->first] <= 0) {
+                attackCountdown[entry->first] = 5.0;
+                // Throw a projectile somewhere!
+                auto body = cocos2d::PhysicsBody::createBox(cocos2d::Size(300, 50));
+                body->setDynamic(true);
+                body->setGravityEnable(true);
+                body->setTag((int)CollisionCategory::Projectile);
+                body->setCollisionBitmask((int)CollisionCategory::None);
+                body->setContactTestBitmask((int)CollisionCategory::Character);
+                body->setVelocity(cocos2d::Vec2(1000, 100));
+                auto sprite = cocos2d::Sprite::create("spear.png");
+                cocos2d::Vec2 pos = entry->first->getPosition();
+                sprite->setPosition(pos.x - 500, pos.y + 100);
+                sprite->setContentSize(cocos2d::Size(300, 50));
+                sprite->addComponent(body);
+                sprite->setTag(PROJECTILE_TAG);
+                layer->addChild(sprite);
+                break;
+            }
+            attackCountdown[entry->first] = attackCountdown[entry->first] - delta;
+        }
+    }
+    
+    // Trigger any traps, but don't trigger them again.
     std::vector<Trap *> toRemove;
     for (auto trap = trapsToTrigger.begin(); trap != trapsToTrigger.end(); trap++) {
         for (int j = 0; j < (int)characters.size(); j++) {
-            if ((*trap)->triggerIfUnder(characters[j]->getPosition(), characters[j]->getSize())) {
+            if ((*trap)->triggerTrap(characters[j]->getPosition(), characters[j]->getSize())) {
                 // freeze the character for a few seconds.
                 characters[j]->freeze();
                 // remove the trap from the array.

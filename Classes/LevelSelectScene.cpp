@@ -39,7 +39,7 @@ void LevelSelect::findLevelFiles(bool includeDev) {
             if (strrchr(dirEntry->d_name, '.') != NULL && strcmp(strrchr(dirEntry->d_name, '.'), ".json") == 0) {
                 toReturn.push_back(std::string(dirEntry->d_name));
             }
-            if (strrchr(dirEntry->d_name, '.') != NULL && includeDev && strcmp(strrchr(dirEntry->d_name, '.'), ".old") == 0) {
+            if (strrchr(dirEntry->d_name, '.') != NULL && includeDev && strcmp(strrchr(dirEntry->d_name, '.'), ".dev") == 0) {
                 toReturn.push_back(std::string(dirEntry->d_name));
             }
         }
@@ -58,9 +58,9 @@ void LevelSelect::findLevelFiles(bool includeDev) {
         inFile >> lvl;
     
         try {
-            allLevelNames.push_back(lvl["levelName"]);
-            std::stringstream ss;
             std::string levelName = lvl["levelName"];
+            allLevelNames.push_back(levelName);
+            std::stringstream ss;
             ss << "levelFiles/previews/" << levelName << "Preview.png";
             std::string imgPath = ss.str();
 
@@ -69,11 +69,11 @@ void LevelSelect::findLevelFiles(bool includeDev) {
                 allLevelThumbnails.push_back(img);
             } else {
                 std::cout << "couldn't find image file for " << imgPath << std::endl;
-                img = cocos2d::Sprite::create();
+                img = cocos2d::Sprite::create("backgrounds/bgSunny.png");
                 allLevelThumbnails.push_back(img);
             }
         } catch (std::domain_error ex) {
-            std::cout << "Couldn't find the level name for " << allLevelPaths[i];
+            std::cout << "Failed to parse " << allLevelPaths[i] << std::endl;
             allLevelNames.push_back(allLevelPaths[i]);
             cocos2d::Sprite *img = cocos2d::Sprite::create();
             allLevelThumbnails.push_back(img);
@@ -100,7 +100,7 @@ bool LevelSelect::init() {
     titleLabel->setTextColor(cocos2d::Color4B::WHITE);
     titleLabel->enableOutline(cocos2d::Color4B::BLACK);
     titleLabel->enableShadow();
-    titleLabel->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (3.0 / 4.0));
+    titleLabel->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (6.0 / 7.0));
     this->addChild(titleLabel);
 
     auto instructions = cocos2d::Label::createWithTTF("<Enter>=Select\n<Esc>=Exit", "fonts/WaitingfortheSunrise.ttf", 60);
@@ -117,17 +117,21 @@ bool LevelSelect::init() {
         return false;
     }
     for (int i = 0; i < (int)allLevelThumbnails.size(); i++) {
-        allLevelThumbnails[i]->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height / 4.0);
+        allLevelThumbnails[i]->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/2.0));
         allLevelThumbnails[i]->setVisible(false);
         this->addChild(allLevelThumbnails[i]);
     }
-    
     currentLevel = 0;
     allLevelThumbnails[currentLevel]->setVisible(true);
     
-    levelName = cocos2d::Label::createWithTTF(allLevelNames[currentLevel], "fonts/WaitingfortheSunrise.ttf", 40);
+    auto border = cocos2d::Sprite::create("levelFiles/previews/Border.png");
+    border->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/2.0));
+    border->setScaleX(border->getScaleX() * .97);
+    this->addChild(border);
     
-    levelName->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height / 2.0);
+    levelName = cocos2d::Label::createWithTTF(allLevelNames[currentLevel], "fonts/WaitingfortheSunrise.ttf", 60);
+    
+    levelName->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/7.0));
     levelName->enableShadow();
     
     this->addChild(levelName);
@@ -140,8 +144,8 @@ bool LevelSelect::init() {
     rightArrow->setTextColor(cocos2d::Color4B::WHITE);
     rightArrow->enableOutline(cocos2d::Color4B::BLACK);
     rightArrow->enableShadow();
-    leftArrow->setPosition(origin.x + visibleSize.width / 4.0, origin.y + visibleSize.height / 2.0);
-    rightArrow->setPosition(origin.x + visibleSize.width * (3.0/4.0), origin.y + visibleSize.height / 2.0);
+    leftArrow->setPosition(origin.x + visibleSize.width * (1.0 /6.0), origin.y + visibleSize.height / 2.0);
+    rightArrow->setPosition(origin.x + visibleSize.width * (5.0/6.0), origin.y + visibleSize.height / 2.0);
     
     this->addChild(leftArrow);
     this->addChild(rightArrow);
@@ -159,7 +163,7 @@ bool LevelSelect::init() {
             case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
                 allLevelThumbnails[currentLevel]->setVisible(false);
                 if (currentLevel == 0) {
-                    currentLevel = allLevelNames.size();
+                    currentLevel = (int)allLevelNames.size();
                 }
                 currentLevel--;
                 levelName->setString(allLevelNames[currentLevel]);

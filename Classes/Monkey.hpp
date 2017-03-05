@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Character.hpp"
+#include "Vine.hpp"
 
 namespace JTTW {
 class Monkey : public Character {
@@ -22,11 +23,14 @@ public:
     
     void enteringClimeable();
     void leavingClimeable();
-    void enteringVine(cocos2d::PhysicsWorld *world, cocos2d::PhysicsBody *vine, double vineLength, cocos2d::Vec2 collisionPoint);
-    void leavingVine(cocos2d::PhysicsWorld *w);
+    void enteringVine(cocos2d::PhysicsWorld *world, Vine *vine, double offset, cocos2d::Vec2 collisionPoint);
+    void leavingVine();
+    
+    virtual void restartFromRespawn() override;
     
 private:
     void updateClimbingVel();
+    void moveAlongVine(float deltaP);
 
     State _state;
     
@@ -35,6 +39,9 @@ private:
     
     cocos2d::PhysicsJoint* pinJoint = nullptr;
     cocos2d::PhysicsJoint* gearJoint = nullptr;
+    Vine *currentVine = nullptr;
+    double currentVineOffset = 0.0;
+    cocos2d::PhysicsWorld *currentWorld;
 };
 }
 
