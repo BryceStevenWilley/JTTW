@@ -23,7 +23,7 @@ cocos2d::Scene* MainGameScene::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::createWithPhysics();
     scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -498));
-    //scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
+    scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = MainGameScene::create(levelToLoad, scene->getPhysicsWorld());
     if (layer == NULL) {
         return NULL;

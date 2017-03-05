@@ -11,6 +11,7 @@ Boulder::Boulder(double radius, std::string imageName, cocos2d::Vec2 center, dou
     body->setCategoryBitmask((int)CollisionCategory::Boulder);
     body->setCollisionBitmask((int)CollisionCategory::CharacterPlatformAndBoulder);
     body->setContactTestBitmask((int)CollisionCategory::CharacterPlatformAndBoulder);
+    body->setGravityEnable(true);
     body->setRotationEnable(true);
     body->setVelocityLimit(600);
     body->setDynamic(true);
@@ -28,6 +29,7 @@ Boulder::Boulder(std::vector<cocos2d::Vec2> points, std::string imageName, cocos
     body->setCategoryBitmask((int)CollisionCategory::Boulder);
     body->setCollisionBitmask((int)CollisionCategory::CharacterPlatformAndBoulder);
     body->setContactTestBitmask((int)CollisionCategory::CharacterPlatformAndBoulder);
+    body->setGravityEnable(true);
     body->setRotationEnable(true);
     body->setVelocityLimit(600);
     body->setDynamic(true);
