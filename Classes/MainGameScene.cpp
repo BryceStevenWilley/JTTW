@@ -298,8 +298,17 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         //_w->addJoint(gear);
     }
     
-    nlohmann::json pegs = lvl["goldenPegs"];
-    for (auto& gAtt: pegs) {
+    nlohmann::json inputpegs = lvl["goldenPegs"];
+    for (auto& gAtt: inputpegs) {
+        std::cout << gAtt << std::endl;
+        std::cout << gAtt["imageWidth"] << std::endl;
+        if (gAtt.is_null() || gAtt["imageWidth"].is_null()) {
+            std::cout << "WTF IS HAPPENING?" << std::endl;
+            continue;
+        }
+        if (!gAtt["imageName"].is_string()) {
+            throw std::domain_error("Golden peg doesn't have an image name!");
+        }
         std::string imageName = gAtt["imageName"];
         cocos2d::Size imageSize = cocos2d::Size(vp.metersToPixels((double)gAtt["imageWidth"]), vp.metersToPixels((double)gAtt["imageHeight"]));
         cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)gAtt["centerX"], (double)gAtt["centerY"]));
@@ -308,9 +317,12 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         for (auto i: joints[(int)gAtt["jointID"]]) {
             bouldersToRelease.push_back(boulders[i]);
         }
-        auto peg = new Peg(imageName, center, imageSize, rotation, bouldersToRelease);
+        auto peg = new Peg("peg.png", center, imageSize, rotation, bouldersToRelease);
         pegs.push_back(peg);
         levelLayer->addChild(peg);
+        
+        // TODO: MOVE THIS ELSEWHERE.
+        
     }
     
     nlohmann::json in_vines = lvl["vines"];
@@ -406,16 +418,16 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     // 1.7/130.0 means that 1.7 meters in the game world (average human male height) is represented by 180 pixels on screen.
     vp = Viewpoint(visibleSize, 1.7/130.0);
 
-    try {
+    //try {
         layer = parseLevelFromJson(levelToLoad, debugOn);
-    }
-    catch (std::domain_error ex) {
-        std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
-       return false;
-    } catch (std::invalid_argument ex) {
-        std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
-        return false;
-    }
+    //}
+    //catch (std::domain_error ex) {
+    //    std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
+    //   return false;
+    //} catch (std::invalid_argument ex) {
+    //    std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
+    //    return false;
+    //}
  
     if (layer == nullptr) {
         std::cout << "Level file corrupted!" << std::endl;
