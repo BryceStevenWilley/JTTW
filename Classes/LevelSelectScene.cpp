@@ -221,7 +221,9 @@ bool LevelSelect::init() {
 // Go to whatever level was selected.
 void LevelSelect::menuCallback(std::string newLevel) {
     cocos2d::Scene *startScene;
+    CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
     startScene = MainGameScene::createScene(newLevel);
+    //CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     if (startScene == NULL) {
         titleLabel->setString("Something went wrong!\n Choose a different level!");
         titleLabel->setBMFontSize(40);

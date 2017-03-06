@@ -1,5 +1,6 @@
 #include "AppDelegate.h"
 #include "MainMenuScene.hpp"
+#include "SimpleAudioEngine.h"
 
 using namespace cocos2d;
 
@@ -78,7 +79,12 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // run
     director->runWithScene(scene);
-
+    
+    // Audio!
+    auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
+    audio->preloadBackgroundMusic("Music/MenuScreen.mp3");
+    audio->playBackgroundMusic("Music/MenuScreen.mp3");
+    
     return true;
 }
 
@@ -87,7 +93,7 @@ void AppDelegate::applicationDidEnterBackground() {
     Director::getInstance()->stopAnimation();
 
     // if you use SimpleAudioEngine, it must be paused
-    // SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+    CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
 
 // this function will be called when the app is active again
@@ -95,5 +101,5 @@ void AppDelegate::applicationWillEnterForeground() {
     Director::getInstance()->startAnimation();
 
     // if you use SimpleAudioEngine, it must resume here
-    // SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+    CocosDenshion::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }

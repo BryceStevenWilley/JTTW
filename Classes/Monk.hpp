@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Character.hpp"
+#include "Peg.hpp"
 
 namespace JTTW {
 class Monk : public Character {
@@ -11,6 +12,11 @@ public:
     
     virtual void jump() override;
     virtual void characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) override;
+    
+    void addReachiblePeg(Peg *p);
+    
+private:
+    Peg *reachiblePeg = nullptr;
     
 };
 }

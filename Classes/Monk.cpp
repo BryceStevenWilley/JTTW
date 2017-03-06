@@ -11,5 +11,13 @@ void Monk::jump() {
 
 
 void Monk::characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) {
+    if (pressed && code == cocos2d::EventKeyboard::KeyCode::KEY_S && reachiblePeg != nullptr) {
+        reachiblePeg->triggerPeg(this->getPosition());
+        reachiblePeg = nullptr;
+    }
+}
 
+void Monk::addReachiblePeg(Peg *p) {
+    std::cout << "Adding reachible peg." << std::endl;
+    reachiblePeg = p;
 }

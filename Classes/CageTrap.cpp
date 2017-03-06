@@ -1,5 +1,6 @@
 #include "CageTrap.hpp"
 #include "Collisions.hpp"
+#include "SimpleAudioEngine.h"
 
 using namespace JTTW;
 
@@ -41,6 +42,8 @@ CageTrap::CageTrap(std::string imageName, cocos2d::Vec2 center, cocos2d::Physics
 
 bool CageTrap::triggerTrap(cocos2d::Vec2 characterCenter, cocos2d::Size characterSize) {
     if (characterCenter.x + characterSize.width / 2.0 < maxX && characterCenter.x - characterSize.width / 2.0 > minX && characterCenter.y < minY) {
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/CageRelease.wav");
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/CageFall.wav");
         body->setGravityEnable(true);
         this->setVisible(true);
         return true;

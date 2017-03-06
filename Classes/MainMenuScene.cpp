@@ -2,6 +2,7 @@
 #include "MainGameScene.h"
 #include "LevelSelectScene.hpp"
 #include <spine/spine-cocos2dx.h>
+#include "SimpleAudioEngine.h"
 #include <iostream>
 
 using namespace JTTW;
@@ -202,6 +203,7 @@ void MainMenu::openStartScene() {
 
 void MainMenu::openFirstLevel() {
     cocos2d::Scene *startScene;
+    CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     startScene = MainGameScene::createScene("levelFiles/friday-level-v2.json");
     if (startScene == NULL) {
         //titleLabel->setString("Something went wrong!\n Choose a different level!");

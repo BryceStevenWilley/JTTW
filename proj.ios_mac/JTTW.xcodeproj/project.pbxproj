@@ -85,6 +85,18 @@
 		9F192EC01E5B8900001FE88A /* cage1.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F192EBF1E5B8900001FE88A /* cage1.png */; };
 		9F192EC11E5B8900001FE88A /* cage1.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F192EBF1E5B8900001FE88A /* cage1.png */; };
 		9F192EC21E5B8900001FE88A /* cage1.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F192EBF1E5B8900001FE88A /* cage1.png */; };
+		9F36A4CA1E6D0AEF0016232D /* Peg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F36A4C81E6D0AEF0016232D /* Peg.cpp */; };
+		9F36A4CB1E6D0AEF0016232D /* Peg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F36A4C81E6D0AEF0016232D /* Peg.cpp */; };
+		9F36A4CC1E6D0AEF0016232D /* Peg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F36A4C81E6D0AEF0016232D /* Peg.cpp */; };
+		9F36A4D01E6D4E650016232D /* Sound in Resources */ = {isa = PBXBuildFile; fileRef = 9F36A4CE1E6D4E650016232D /* Sound */; };
+		9F36A4D11E6D4E650016232D /* Sound in Resources */ = {isa = PBXBuildFile; fileRef = 9F36A4CE1E6D4E650016232D /* Sound */; };
+		9F36A4D21E6D4E650016232D /* Sound in Resources */ = {isa = PBXBuildFile; fileRef = 9F36A4CE1E6D4E650016232D /* Sound */; };
+		9F36A4D31E6D4E650016232D /* Music in Resources */ = {isa = PBXBuildFile; fileRef = 9F36A4CF1E6D4E650016232D /* Music */; };
+		9F36A4D41E6D4E650016232D /* Music in Resources */ = {isa = PBXBuildFile; fileRef = 9F36A4CF1E6D4E650016232D /* Music */; };
+		9F36A4D51E6D4E650016232D /* Music in Resources */ = {isa = PBXBuildFile; fileRef = 9F36A4CF1E6D4E650016232D /* Music */; };
+		9F36A4D81E6D56F70016232D /* Spear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F36A4D61E6D56F70016232D /* Spear.cpp */; };
+		9F36A4D91E6D56F70016232D /* Spear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F36A4D61E6D56F70016232D /* Spear.cpp */; };
+		9F36A4DA1E6D56F70016232D /* Spear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F36A4D61E6D56F70016232D /* Spear.cpp */; };
 		9F666E461E30201C00F9BB90 /* AiAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F666E451E30201C00F9BB90 /* AiAgent.cpp */; };
 		9F666E471E30201C00F9BB90 /* AiAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F666E451E30201C00F9BB90 /* AiAgent.cpp */; };
 		9F666E481E30201C00F9BB90 /* AiAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F666E451E30201C00F9BB90 /* AiAgent.cpp */; };
@@ -142,6 +154,8 @@
 		9FD41C101E2D55920077779E /* testCharacter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C0E1E2D55920077779E /* testCharacter.cpp */; };
 		9FD41C131E2D55C80077779E /* TestDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C111E2D55C80077779E /* TestDelegate.cpp */; };
 		9FD41C151E2D56220077779E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C141E2D56220077779E /* main.cpp */; };
+		9FD598FC1E6CF50B00BF2E9F /* peg.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FD598FB1E6CF50B00BF2E9F /* peg.png */; };
+		9FD598FD1E6CF52100BF2E9F /* peg.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FD598FB1E6CF50B00BF2E9F /* peg.png */; };
 		9FE1642B1E64BB5600FE4233 /* Boulders in Resources */ = {isa = PBXBuildFile; fileRef = 9FC226FE1E64B2B000AA75D5 /* Boulders */; };
 		9FE1642C1E64BB5600FE4233 /* levelFiles in Resources */ = {isa = PBXBuildFile; fileRef = 9FB69E001E46E93A006325A3 /* levelFiles */; };
 		9FE1642D1E64BB5600FE4233 /* characters in Resources */ = {isa = PBXBuildFile; fileRef = 454B170A1E2F39280035467D /* characters */; };
@@ -272,6 +286,12 @@
 		9F192EBB1E5B6DA7001FE88A /* vine3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vine3.png; sourceTree = "<group>"; };
 		9F192EBF1E5B8900001FE88A /* cage1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cage1.png; sourceTree = "<group>"; };
 		9F300C831E4805340051284B /* Collisions.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Collisions.hpp; sourceTree = "<group>"; };
+		9F36A4C81E6D0AEF0016232D /* Peg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Peg.cpp; sourceTree = "<group>"; };
+		9F36A4C91E6D0AEF0016232D /* Peg.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Peg.hpp; sourceTree = "<group>"; };
+		9F36A4CE1E6D4E650016232D /* Sound */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sound; sourceTree = "<group>"; };
+		9F36A4CF1E6D4E650016232D /* Music */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Music; sourceTree = "<group>"; };
+		9F36A4D61E6D56F70016232D /* Spear.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Spear.cpp; sourceTree = "<group>"; };
+		9F36A4D71E6D56F70016232D /* Spear.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Spear.hpp; sourceTree = "<group>"; };
 		9F666E451E30201C00F9BB90 /* AiAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AiAgent.cpp; sourceTree = "<group>"; };
 		9F666E571E31D89500F9BB90 /* AiAgentBehaviors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AiAgentBehaviors.cpp; sourceTree = "<group>"; };
 		9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoveablePlatform.cpp; sourceTree = "<group>"; };
@@ -300,6 +320,7 @@
 		9FD41C111E2D55C80077779E /* TestDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestDelegate.cpp; path = ../Tests/TestDelegate.cpp; sourceTree = SOURCE_ROOT; };
 		9FD41C121E2D55C80077779E /* TestDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestDelegate.h; path = ../Tests/TestDelegate.h; sourceTree = SOURCE_ROOT; };
 		9FD41C141E2D56220077779E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../Tests/main.cpp; sourceTree = SOURCE_ROOT; };
+		9FD598FB1E6CF50B00BF2E9F /* peg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = peg.png; sourceTree = "<group>"; };
 		9FFAAC711E62A74300AF523E /* Trap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Trap.hpp; sourceTree = "<group>"; };
 		BF170DB012928DE900B8313A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BF170DB412928DE900B8313A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -456,6 +477,9 @@
 		46880B7519C43A67006E1F66 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9F36A4CE1E6D4E650016232D /* Sound */,
+				9F36A4CF1E6D4E650016232D /* Music */,
+				9FD598FB1E6CF50B00BF2E9F /* peg.png */,
 				9F158C0F1E6A62C5002D21A6 /* spear.png */,
 				9FC226FE1E64B2B000AA75D5 /* Boulders */,
 				9F192EBF1E5B8900001FE88A /* cage1.png */,
@@ -578,6 +602,10 @@
 				9F15D9161E5FD4D300F77DF6 /* Boulder.cpp */,
 				9F15D9171E5FD4D300F77DF6 /* Boulder.hpp */,
 				9FFAAC711E62A74300AF523E /* Trap.hpp */,
+				9F36A4C81E6D0AEF0016232D /* Peg.cpp */,
+				9F36A4C91E6D0AEF0016232D /* Peg.hpp */,
+				9F36A4D61E6D56F70016232D /* Spear.cpp */,
+				9F36A4D71E6D56F70016232D /* Spear.hpp */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
@@ -742,11 +770,13 @@
 				5087E77D17EB970100C73F5D /* Default-568h@2x.png in Resources */,
 				5087E78517EB970100C73F5D /* Icon-72.png in Resources */,
 				521A8E6519F0C34300D177D7 /* Default-736h@3x.png in Resources */,
+				9F36A4D01E6D4E650016232D /* Sound in Resources */,
 				521A8EA919F11F5000D177D7 /* fonts in Resources */,
 				50EF62A317ECD613001EB2F8 /* Icon-50.png in Resources */,
 				5087E78017EB970100C73F5D /* Icon-114.png in Resources */,
 				50EF62A217ECD613001EB2F8 /* Icon-29.png in Resources */,
 				50EF629617ECD46A001EB2F8 /* Icon-40.png in Resources */,
+				9FD598FC1E6CF50B00BF2E9F /* peg.png in Resources */,
 				5087E78217EB970100C73F5D /* Icon-144.png in Resources */,
 				9F192EC01E5B8900001FE88A /* cage1.png in Resources */,
 				9FB69E011E46E93A006325A3 /* levelFiles in Resources */,
@@ -756,6 +786,7 @@
 				521A8E6419F0C34300D177D7 /* Default-667h@2x.png in Resources */,
 				50EF629717ECD46A001EB2F8 /* Icon-58.png in Resources */,
 				9FC226FF1E64B2B000AA75D5 /* Boulders in Resources */,
+				9F36A4D31E6D4E650016232D /* Music in Resources */,
 				454B170E1E2F39280035467D /* platforms in Resources */,
 				9F158C101E6A62C5002D21A6 /* spear.png in Resources */,
 			);
@@ -765,6 +796,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F36A4D41E6D4E650016232D /* Music in Resources */,
+				9FD598FD1E6CF52100BF2E9F /* peg.png in Resources */,
 				9F158C111E6A6400002D21A6 /* spear.png in Resources */,
 				9FC227041E64BA1300AA75D5 /* characters in Resources */,
 				9FC227011E64B5CD00AA75D5 /* Boulders in Resources */,
@@ -776,6 +809,7 @@
 				454B17131E2FC6D30035467D /* backgrounds in Resources */,
 				521A8EAA19F11F5000D177D7 /* fonts in Resources */,
 				454B170F1E2F39280035467D /* platforms in Resources */,
+				9F36A4D11E6D4E650016232D /* Sound in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -783,11 +817,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F36A4D21E6D4E650016232D /* Sound in Resources */,
 				9FE1642B1E64BB5600FE4233 /* Boulders in Resources */,
 				9FE1642C1E64BB5600FE4233 /* levelFiles in Resources */,
 				9FE1642D1E64BB5600FE4233 /* characters in Resources */,
 				9F192EBE1E5B6DA7001FE88A /* vine3.png in Resources */,
 				9FB69E031E46E950006325A3 /* UI in Resources */,
+				9F36A4D51E6D4E650016232D /* Music in Resources */,
 				9F666E6C1E329BF000F9BB90 /* backgrounds in Resources */,
 				9F192EC21E5B8900001FE88A /* cage1.png in Resources */,
 				9F666E6E1E329BF200F9BB90 /* platforms in Resources */,
@@ -806,6 +842,7 @@
 				9F16FC001E54CC5F00D9DBCA /* Monkey.cpp in Sources */,
 				9F15D9181E5FD4D300F77DF6 /* Boulder.cpp in Sources */,
 				46880B8819C43A87006E1F66 /* AppDelegate.cpp in Sources */,
+				9F36A4D81E6D56F70016232D /* Spear.cpp in Sources */,
 				46880B8A19C43A87006E1F66 /* MainGameScene.cpp in Sources */,
 				9FB69E071E46EE88006325A3 /* LevelSelectScene.cpp in Sources */,
 				9F98AF911E2C99E2009559C7 /* Viewpoint.cpp in Sources */,
@@ -819,6 +856,7 @@
 				9F192EB71E5B634A001FE88A /* Vine.cpp in Sources */,
 				9F16FC0B1E54CCC200D9DBCA /* Sandy.cpp in Sources */,
 				9F16FC101E54CCDB00D9DBCA /* Piggy.cpp in Sources */,
+				9F36A4CA1E6D0AEF0016232D /* Peg.cpp in Sources */,
 				503AE10117EB989F00D1A890 /* main.m in Sources */,
 				9FB69DDB1E459B90006325A3 /* Character.cpp in Sources */,
 				9F666E461E30201C00F9BB90 /* AiAgent.cpp in Sources */,
@@ -831,6 +869,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F36A4CB1E6D0AEF0016232D /* Peg.cpp in Sources */,
 				9F158C0E1E6A071E002D21A6 /* CageTrap.cpp in Sources */,
 				9F8E654D1E3BB3C60058958F /* Platform.cpp in Sources */,
 				46880B8919C43A87006E1F66 /* AppDelegate.cpp in Sources */,
@@ -850,6 +889,7 @@
 				9F16FC071E54CCA500D9DBCA /* Monk.cpp in Sources */,
 				9F192EB81E5B634A001FE88A /* Vine.cpp in Sources */,
 				9FB69DE31E46D93D006325A3 /* MainMenuScene.cpp in Sources */,
+				9F36A4D91E6D56F70016232D /* Spear.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -860,6 +900,7 @@
 				9F16FC021E54CC5F00D9DBCA /* Monkey.cpp in Sources */,
 				9F15D91A1E5FD4D300F77DF6 /* Boulder.cpp in Sources */,
 				9FB69DD51E459AA4006325A3 /* Platform.cpp in Sources */,
+				9F36A4CC1E6D0AEF0016232D /* Peg.cpp in Sources */,
 				9FD41BEF1E2D54490077779E /* AppDelegate.cpp in Sources */,
 				9FD41BF01E2D54490077779E /* Viewpoint.cpp in Sources */,
 				9FB69E091E46EE88006325A3 /* LevelSelectScene.cpp in Sources */,
@@ -873,6 +914,7 @@
 				9F16FC0D1E54CCC200D9DBCA /* Sandy.cpp in Sources */,
 				9F16FC121E54CCDB00D9DBCA /* Piggy.cpp in Sources */,
 				9F666E5A1E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */,
+				9F36A4DA1E6D56F70016232D /* Spear.cpp in Sources */,
 				9F8E65711E3DA0060058958F /* MoveablePlatform.cpp in Sources */,
 				9FB69DDD1E459B90006325A3 /* Character.cpp in Sources */,
 				9F16FC081E54CCA500D9DBCA /* Monk.cpp in Sources */,

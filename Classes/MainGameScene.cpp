@@ -3,11 +3,13 @@
 #include "MainMenuScene.hpp"
 #include "Collisions.hpp"
 #include "Monkey.hpp"
+#include "Monk.hpp"
 #include "LevelEnd.hpp"
 #include "cocos2d.h"
 #include "json.hpp"
 #include "Boulder.hpp"
 #include "CageTrap.hpp"
+#include "Spear.hpp"
 #include <iostream>
 #include <fstream>
 #include <algorithm>
@@ -64,9 +66,15 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
         }
     }
     if (node->getTag() == PROJECTILE_TAG) {
-        std::cout << "Hit Projectile!" << std::endl;
         c->restartFromRespawn();
         return true;
+    }
+    if (node->getTag() == PEG_TAG && c->characterName == "Monk") {
+        std::cout << "Hit Peg!" << std::endl;
+        // Add peg to Monk's peg hitting thing.
+        Monk *m = (Monk *)c;
+        m->addReachiblePeg((Peg *)node);
+        return false;
     }
     if (normal.dot(cocos2d::Vec2(0, -1)) > std::cos(M_PI / 4.0)) {
         if (begin) {
@@ -113,6 +121,7 @@ bool MainGameScene::onContactHandler(cocos2d::PhysicsContact& contact, bool begi
 }
 
 bool MainGameScene::onContactBegin(cocos2d::PhysicsContact& contact) {
+    //std::cout << "Is it boulder?" << std::endl;
     return onContactHandler(contact, true);
 }
 
@@ -267,22 +276,42 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
     
     nlohmann::json boulderJoints = lvl["boulderJoints"];
     for (auto&jAtt : boulderJoints) {
-        Boulder *b1 = boulders[(int)jAtt["id1"]];
-        Boulder *b2 = boulders[(int)jAtt["id2"]];
-        b1->getBody()->setCollisionBitmask((int)CollisionCategory::CharacterAndPlatform);
-        b2->getBody()->setCollisionBitmask((int)CollisionCategory::CharacterAndPlatform);
-        b1->getBody()->setContactTestBitmask((int)CollisionCategory::CharacterAndPlatform);
-        b2->getBody()->setContactTestBitmask((int)CollisionCategory::CharacterAndPlatform);
+        int id1 = jAtt["id1"];
+        int id2 = jAtt["id2"];
+        Boulder *b1 = boulders[id1];
+        Boulder *b2 = boulders[id2];
+        //b1->getBody()->setCollisionBitmask((int)CollisionCategory::CharacterAndPlatform);
+        //b2->getBody()->setCollisionBitmask((int)CollisionCategory::CharacterAndPlatform);
+        //b1->getBody()->setContactTestBitmask((int)CollisionCategory::CharacterAndPlatform);
+        //b2->getBody()->setContactTestBitmask((int)CollisionCategory::CharacterAndPlatform);
+        b1->getBody()->setDynamic(false);
+        b2->getBody()->setDynamic(false);
         
         cocos2d::Vec2 offset1 = vp.metersToPixels(cocos2d::Vec2((double)jAtt["anchor1x"], (double)jAtt["anchor1y"]));
         cocos2d::Vec2 offset2 = vp.metersToPixels(cocos2d::Vec2((double)jAtt["anchor2x"], (double)jAtt["anchor2y"]));
         
-        auto pin = cocos2d::PhysicsJointPin::construct(b1->getBody(), b2->getBody(), offset1, offset2);
-        auto gear = cocos2d::PhysicsJointGear::construct(b1->getBody(), b2->getBody(), 0, 1.0);
-        _w->addJoint(pin);
-        _w->addJoint(gear);
+        joints[(int)jAtt["jointID"]] = {id1, id2};
+        
+        //auto pin = cocos2d::PhysicsJointPin::construct(b1->getBody(), b2->getBody(), offset1, offset2);
+        //auto gear = cocos2d::PhysicsJointGear::construct(b1->getBody(), b2->getBody(), 0, 1.0);
+        //_w->addJoint(pin);
+        //_w->addJoint(gear);
     }
     
+    nlohmann::json pegs = lvl["goldenPegs"];
+    for (auto& gAtt: pegs) {
+        std::string imageName = gAtt["imageName"];
+        cocos2d::Size imageSize = cocos2d::Size(vp.metersToPixels((double)gAtt["imageWidth"]), vp.metersToPixels((double)gAtt["imageHeight"]));
+        cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)gAtt["centerX"], (double)gAtt["centerY"]));
+        double rotation = 180 * (double)gAtt["rotation"] / 3.1415926;
+        std::vector<Boulder *> bouldersToRelease = std::vector<Boulder *>();
+        for (auto i: joints[(int)gAtt["jointID"]]) {
+            bouldersToRelease.push_back(boulders[i]);
+        }
+        auto peg = new Peg(imageName, center, imageSize, rotation, bouldersToRelease);
+        pegs.push_back(peg);
+        levelLayer->addChild(peg);
+    }
     
     nlohmann::json in_vines = lvl["vines"];
     for (auto& vAtt: in_vines) {
@@ -352,6 +381,12 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
     // Set the ui layer here.
     this->addChild(uiLayer, UI_LAYER_Z_IDX);
     
+    if (lvl["levelName"].is_string()) {
+        std::string levelName = lvl["levelName"];
+    
+        // Audio!
+        audio->playBackgroundMusic((std::string("Music/") + levelName + std::string(".mp3")).c_str());
+    }
     return levelLayer;
 }
 
@@ -359,7 +394,9 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     if ( !Layer::init() ) {
         return false;
     }
+    
     _w = w;
+    audio = CocosDenshion::SimpleAudioEngine::getInstance();
     
     // aka window dimensions
     auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
@@ -426,19 +463,7 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
                 
             case EventKeyboard::KeyCode::KEY_0: {
                 // Throw a projectile somewhere!
-                auto body = cocos2d::PhysicsBody::createBox(cocos2d::Size(300, 50));
-                body->setDynamic(true);
-                body->setGravityEnable(true);
-                body->setTag((int)CollisionCategory::Projectile);
-                body->setCollisionBitmask((int)CollisionCategory::None);
-                body->setContactTestBitmask((int)CollisionCategory::Character);
-                body->setVelocity(cocos2d::Vec2(100, 10));
-                auto sprite = cocos2d::Sprite::create("spear.png");
-                cocos2d::Vec2 pos = player->_controlledCharacter->getPosition();
-                sprite->setPosition(pos.x - 500, pos.y + 100);
-                sprite->setContentSize(cocos2d::Size(300, 50));
-                sprite->addComponent(body);
-                sprite->setTag(PROJECTILE_TAG);
+                Spear *sprite = new Spear(player->_controlledCharacter->getPosition());
                 layer->addChild(sprite);
                 break;
             }
@@ -487,6 +512,7 @@ void MainGameScene::switchToCharacter(int charIndex) {
 }
 
 void MainGameScene::menuCloseCallback(Ref* pSender) {
+    audio->stopBackgroundMusic();
     auto startScene = MainMenu::createScene();
     this->_eventDispatcher->removeEventListener(eventListener);
     cocos2d::Director::getInstance()->replaceScene(startScene);
@@ -496,6 +522,7 @@ void MainGameScene::nextLevelCallback() {
     if (!nextLevelStarting) {
         this->_eventDispatcher->removeEventListener(eventListener);
         std::cout << "Starting next level, " << _nextLevel << std::endl;
+        audio->stopBackgroundMusic();
         auto end = LevelEnd::createScene(_nextLevel);
         auto fade = cocos2d::TransitionFade::create(3.0, end);
         cocos2d::Director::getInstance()->replaceScene(fade);
@@ -552,20 +579,7 @@ void MainGameScene::update(float delta) {
         if (entry->second) {
              if (attackCountdown[entry->first] <= 0) {
                 attackCountdown[entry->first] = 5.0;
-                // Throw a projectile somewhere!
-                auto body = cocos2d::PhysicsBody::createBox(cocos2d::Size(300, 50));
-                body->setDynamic(true);
-                body->setGravityEnable(true);
-                body->setTag((int)CollisionCategory::Projectile);
-                body->setCollisionBitmask((int)CollisionCategory::None);
-                body->setContactTestBitmask((int)CollisionCategory::Character);
-                body->setVelocity(cocos2d::Vec2(1000, 100));
-                auto sprite = cocos2d::Sprite::create("spear.png");
-                cocos2d::Vec2 pos = entry->first->getPosition();
-                sprite->setPosition(pos.x - 500, pos.y + 100);
-                sprite->setContentSize(cocos2d::Size(300, 50));
-                sprite->addComponent(body);
-                sprite->setTag(PROJECTILE_TAG);
+                Spear *sprite = new Spear(entry->first->getPosition());
                 layer->addChild(sprite);
                 break;
             }

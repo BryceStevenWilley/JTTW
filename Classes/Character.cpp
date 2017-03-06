@@ -6,6 +6,7 @@
 #include "Piggy.hpp"
 #include "Sandy.hpp"
 #include <iostream>
+#include "SimpleAudioEngine.h"
 
 using namespace JTTW;
 
@@ -133,6 +134,7 @@ void Character::jump(double force) {
         return;
     }
     
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/Jump.wav");
     body->applyImpulse(cocos2d::Vec2(0, body->getMass() * force));
 }
 

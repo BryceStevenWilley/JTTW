@@ -22,7 +22,7 @@ bool LevelEnd::init(std::string &nextLevelToLoad) {
     auto textLabel = cocos2d::Label::createWithTTF("Your journey continues...", "fonts/WaitingfortheSunrise.ttf", 100);
     if (_nextLevelToLoad == "") {
         // The journey is over!
-        textLabel = cocos2d::Label::createWithTTF("The journey is over. Monk went on to be the President. Piggy decided to go back and get his G.E.D...", "fonts/WaitingfortheSunrise.ttf", 20);
+        textLabel = cocos2d::Label::createWithTTF("The journey is over. Monk went on to be the President.\nPiggy decided to go back and get his G.E.D...", "fonts/WaitingfortheSunrise.ttf", 50);
     }
     
     textLabel->setTextColor(cocos2d::Color4B::WHITE);

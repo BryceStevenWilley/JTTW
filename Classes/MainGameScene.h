@@ -13,6 +13,8 @@
 #include "Vine.hpp"
 #include "Trap.hpp"
 #include "json.hpp"
+#include "Peg.hpp"
+#include "SimpleAudioEngine.h"
 
 namespace JTTW {
 
@@ -73,11 +75,15 @@ private:
     std::vector<Platform *> disappearing = std::vector<Platform *>();
     std::vector<Vine *> vines = std::vector<Vine *>();
     std::vector<cocos2d::Vec2> respawnPoints = std::vector<cocos2d::Vec2>();
+    std::vector<Peg *> pegs = std::vector<Peg *>();
     std::vector<Zone> attackZones = std::vector<Zone>();
  
     std::map<int, Boulder *> boulders = std::map<int, Boulder *>();
+    std::map<int, std::vector<int>> joints = std::map<int, std::vector<int>>();
     std::map<Character *, bool> attacking = std::map<Character *, bool>();
     std::map<Character *, double> attackCountdown = std::map<Character *, double>();
+
+    CocosDenshion::SimpleAudioEngine *audio;
 
     bool debugOn = true; // currently, will just turn on collision boxes.
 
