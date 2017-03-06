@@ -43,3 +43,7 @@ bool Peg::triggerPeg(cocos2d::Vec2 characterCenter) {
     std::cout << "Not triggered!: _triggered = " << _triggered << std::endl;
     return false;
 }
+
+bool Peg::isTriggered() const {
+    return _triggered;
+}

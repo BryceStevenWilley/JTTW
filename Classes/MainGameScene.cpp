@@ -132,6 +132,8 @@ bool MainGameScene::onContactEnd(cocos2d::PhysicsContact& contact) {
 const int PLATFORM_Z = 4;
 const int CLIMBABLE_Z = 3;
 const int VINE_Z = 3;
+const int BOULDER_Z = 5;
+const int CHARACTER_Z = 6;
 
 cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool debugOn) {
     auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
@@ -214,7 +216,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
 
             Character *c = Character::createFromName(charNames[i], cocos2d::Vec2(startX, startY), cocos2d::Size(characterWidth, characterHeight));
             characters.push_back(c);
-            levelLayer->addChild(c, i);
+            levelLayer->addChild(c, CHARACTER_Z);
             AiAgent *agent = new AiAgent(c);
             agent->setPlayerPosOffset(c->getPosition() - characters[0]->getPosition());
             agents.push_back(agent);
@@ -271,7 +273,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
             throw std::invalid_argument("Boulder type should be circle or polygon");
         }
         boulders[(int)bAtt["ticket"]] = b;
-        levelLayer->addChild(b, 10);
+        levelLayer->addChild(b, BOULDER_Z);
     }
     
     nlohmann::json boulderJoints = lvl["boulderJoints"];
@@ -314,7 +316,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)gAtt["centerX"], (double)gAtt["centerY"]));
         double rotation = 180 * (double)gAtt["rotation"] / 3.1415926;
         std::vector<Boulder *> bouldersToRelease = std::vector<Boulder *>();
-        for (auto i: joints[(int)gAtt["jointID"]]) {
+        for (auto i: gAtt["bouldersAffected"]) {//joints[(int)gAtt["jointID"]]) {
             bouldersToRelease.push_back(boulders[i]);
         }
         auto peg = new Peg("peg.png", center, imageSize, rotation, bouldersToRelease);
@@ -322,7 +324,10 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         levelLayer->addChild(peg);
         
         // TODO: MOVE THIS ELSEWHERE.
-        
+        Monkey *m = (Monkey *)characters[0];
+        m->body->setDynamic(false);
+        m->body->setGravityEnable(false);
+        m->freeze();
     }
     
     nlohmann::json in_vines = lvl["vines"];
@@ -614,6 +619,22 @@ void MainGameScene::update(float delta) {
 
     for (auto trap = toRemove.begin(); trap != toRemove.end(); trap++) {
         trapsToTrigger.erase(std::remove(trapsToTrigger.begin(), trapsToTrigger.end(), *trap), trapsToTrigger.end());
+    }
+    
+    if (pegs.size() != 0) {
+        bool allTriggered = true;
+        for (auto &p: pegs) {
+            if (!p->isTriggered()) {
+                allTriggered = false;
+                break;
+            }
+        }
+        if (allTriggered) {
+            pegs.clear();
+            characters[0]->body->setDynamic(true);
+            characters[0]->body->setGravityEnable(true);
+            characters[0]->body->setRotationEnable(false);
+        }
     }
 
     vp.followCharacter(player->_controlledCharacter, delta);

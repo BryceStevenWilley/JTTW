@@ -16,6 +16,7 @@ public:
     Peg(std::string image, cocos2d::Vec2 center, cocos2d::Size imageSize, double rotation, std::vector<Boulder *> bouldersToMakeDynamic);
     
     bool triggerPeg(cocos2d::Vec2 characterCenter);
+    bool isTriggered() const;
     
 private:
     std::vector<Boulder *> _bouldersToMakeDynamic = std::vector<Boulder *>();
