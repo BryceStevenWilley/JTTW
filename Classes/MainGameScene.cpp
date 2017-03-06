@@ -209,6 +209,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
     int characterWidth = vp.metersToPixels(1.7);
     
     cocos2d::Vec2 uiHeadLocation(40, 40);
+    int charPresentCount = 0;
     for (int i = 0; i < 4; i++) {
         if (characterStruct[charNames[i]]["present"]) {
             double startX = vp.metersToPixels((double)characterStruct[charNames[i]]["startingXPos"]);
@@ -225,13 +226,39 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
             std::stringstream ss;
             ss << "characters/" << charNames[i] << "Head.png";
             cocos2d::Sprite *head = cocos2d::Sprite::create(ss.str());
-
+            
             double headScale = .13 * visibleSize.width / 1024.0;
 
             head->setScale(headScale);
-            head->setPosition(uiHeadLocation);
-            uiHeadLocation += cocos2d::Vec2(70, 0);
+            head->setPosition(uiHeadLocation + (charPresentCount * cocos2d::Vec2(70, 0)));
+ 
+            
+            std::string buttonString;
+            switch(charPresentCount) {
+                case 0:
+                    buttonString = "z";
+                    break;
+                case 1:
+                    buttonString = "x";
+                    break;
+                case 2:
+                    buttonString = "c";
+                    break;
+                case 3:
+                    buttonString = "v";
+                    break;
+            }
+            auto label = cocos2d::Label::createWithTTF(buttonString, "fonts/WaitingfortheSunrise.ttf", 40);
+            label->setTextColor(cocos2d::Color4B::WHITE);
+            label->enableOutline(cocos2d::Color4B::BLACK, 1);
+            label->enableShadow();
+            label->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+            label->setPosition(uiHeadLocation + (charPresentCount * cocos2d::Vec2(70, 0)) + cocos2d::Vec2(0, 70));
+            uiLayer->addChild(label, 10);
+            
+            //uiHeadLocation += cocos2d::Vec2(70, 0);
             uiLayer->addChild(head);
+            charPresentCount++;
         }
     }
     
@@ -337,7 +364,9 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         double startingAngVel = vAtt["startingVelocity"];
         cocos2d::Vec2 center = cocos2d::Vec2(vp.metersToPixels((double)vAtt["swingCenterX"]),
                   vp.metersToPixels((double)vAtt["swingCenterY"]));
-        Vine *v = new Vine("vine3.png", center, width, length, startingAngVel);
+        std::string imageName = vAtt["imageName"];
+        imageName.erase(0, 7);
+        Vine *v = new Vine(imageName, center, width, length, startingAngVel);
         
         cocos2d::PhysicsBody *b = cocos2d::PhysicsBody::createBox(cocos2d::Size(3, 3));
         b->setRotationEnable(false);
@@ -384,6 +413,22 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         }
     } else {
         std::cout << "Note: no zones in this level." << std::endl;
+    }
+    
+    if (lvl["tutorials"].is_array()) {
+        nlohmann::json in_tutorials = lvl["tutorials"];
+        for (auto &tAtt : in_tutorials) {
+            std::string tipString = tAtt["tipString"];
+            int fontSize = tAtt["fontSize"];
+            cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)tAtt["centerX"], (double)tAtt["centerY"]));
+            auto label = cocos2d::Label::createWithTTF(tipString, "fonts/WaitingfortheSunrise.ttf", fontSize);
+            label->setTextColor(cocos2d::Color4B::WHITE);
+            label->enableOutline(cocos2d::Color4B::BLACK, 1);
+            label->enableShadow();
+            label->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+            label->setPosition(center);
+            levelLayer->addChild(label, 10);
+        }
     }
 
     levelEndX = vp.metersToPixels((double)lvl["levelEndX"]);

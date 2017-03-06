@@ -98,14 +98,14 @@ bool LevelSelect::init() {
     // Set the title text as a label.
     titleLabel = cocos2d::Label::createWithTTF("Choose a level!", "fonts/WaitingfortheSunrise.ttf", 100);
     titleLabel->setTextColor(cocos2d::Color4B::WHITE);
-    titleLabel->enableOutline(cocos2d::Color4B::BLACK);
+    titleLabel->enableOutline(cocos2d::Color4B::BLACK, 1);
     titleLabel->enableShadow();
     titleLabel->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (6.0 / 7.0));
     this->addChild(titleLabel);
 
     auto instructions = cocos2d::Label::createWithTTF("<Enter>=Select\n<Esc>=Exit", "fonts/WaitingfortheSunrise.ttf", 60);
     instructions->setTextColor(cocos2d::Color4B::WHITE);
-    instructions->enableOutline(cocos2d::Color4B::BLACK);
+    instructions->enableOutline(cocos2d::Color4B::BLACK, 1);
     instructions->enableShadow();
     instructions->setPosition(origin.x + visibleSize.width / 8.0, origin.y + visibleSize.height / 13.0);
     this->addChild(instructions);
@@ -130,7 +130,7 @@ bool LevelSelect::init() {
     this->addChild(border);
     
     levelName = cocos2d::Label::createWithTTF(allLevelNames[currentLevel], "fonts/WaitingfortheSunrise.ttf", 60);
-    
+    levelName->enableOutline(cocos2d::Color4B::BLACK, 1);
     levelName->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/7.0));
     levelName->enableShadow();
     
@@ -139,10 +139,10 @@ bool LevelSelect::init() {
     auto leftArrow = cocos2d::Label::createWithTTF("<", "fonts/WaitingfortheSunrise.ttf", 100);
     auto rightArrow = cocos2d::Label::createWithTTF(">", "fonts/WaitingfortheSunrise.ttf", 100);
     leftArrow->setTextColor(cocos2d::Color4B::WHITE);
-    leftArrow->enableOutline(cocos2d::Color4B::BLACK);
+    leftArrow->enableOutline(cocos2d::Color4B::BLACK, 1);
     leftArrow->enableShadow();
     rightArrow->setTextColor(cocos2d::Color4B::WHITE);
-    rightArrow->enableOutline(cocos2d::Color4B::BLACK);
+    rightArrow->enableOutline(cocos2d::Color4B::BLACK, 1);
     rightArrow->enableShadow();
     leftArrow->setPosition(origin.x + visibleSize.width * (1.0 /6.0), origin.y + visibleSize.height / 2.0);
     rightArrow->setPosition(origin.x + visibleSize.width * (5.0/6.0), origin.y + visibleSize.height / 2.0);

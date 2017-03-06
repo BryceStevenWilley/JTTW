@@ -24,4 +24,13 @@
     "minY" : 0,
     "maxY" : 15
   }
+],
+
+"tutorials": [
+  {
+    "tipString": "Climb up ond down with arrow keys",
+    "fontSize": 50,
+    "centerX": 3.0,
+    "centerY": 9.0
+  }
 ]}

@@ -19,7 +19,7 @@ cocos2d::Scene* MainMenu::createScene() {
 cocos2d::Label * createSunriseLabel(std::string content, int size) {
     auto label = cocos2d::Label::createWithTTF(content, "fonts/WaitingfortheSunrise.ttf", size);
     label->setTextColor(cocos2d::Color4B::WHITE);
-    label->enableOutline(cocos2d::Color4B::BLACK);
+    label->enableOutline(cocos2d::Color4B::BLACK, 1);
     label->enableShadow();
     return label;
 }

@@ -159,6 +159,10 @@
 		9FE1642B1E64BB5600FE4233 /* Boulders in Resources */ = {isa = PBXBuildFile; fileRef = 9FC226FE1E64B2B000AA75D5 /* Boulders */; };
 		9FE1642C1E64BB5600FE4233 /* levelFiles in Resources */ = {isa = PBXBuildFile; fileRef = 9FB69E001E46E93A006325A3 /* levelFiles */; };
 		9FE1642D1E64BB5600FE4233 /* characters in Resources */ = {isa = PBXBuildFile; fileRef = 454B170A1E2F39280035467D /* characters */; };
+		9FEE15DB1E6DAD6B0058D73B /* vine1.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FEE15D91E6DAD6B0058D73B /* vine1.png */; };
+		9FEE15DC1E6DAD6B0058D73B /* vine2.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FEE15DA1E6DAD6B0058D73B /* vine2.png */; };
+		9FEE15DE1E6DAD740058D73B /* vine1.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FEE15D91E6DAD6B0058D73B /* vine1.png */; };
+		9FEE15DF1E6DAD740058D73B /* vine2.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FEE15DA1E6DAD6B0058D73B /* vine2.png */; };
 		BF171245129291EC00B8313A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB012928DE900B8313A /* OpenGLES.framework */; };
 		BF1712471292920000B8313A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB412928DE900B8313A /* libz.dylib */; };
 		BF1C47F01293687400B63C5D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1C47EA1293683800B63C5D /* QuartzCore.framework */; };
@@ -321,6 +325,8 @@
 		9FD41C121E2D55C80077779E /* TestDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestDelegate.h; path = ../Tests/TestDelegate.h; sourceTree = SOURCE_ROOT; };
 		9FD41C141E2D56220077779E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../Tests/main.cpp; sourceTree = SOURCE_ROOT; };
 		9FD598FB1E6CF50B00BF2E9F /* peg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = peg.png; sourceTree = "<group>"; };
+		9FEE15D91E6DAD6B0058D73B /* vine1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vine1.png; sourceTree = "<group>"; };
+		9FEE15DA1E6DAD6B0058D73B /* vine2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vine2.png; sourceTree = "<group>"; };
 		9FFAAC711E62A74300AF523E /* Trap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Trap.hpp; sourceTree = "<group>"; };
 		BF170DB012928DE900B8313A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BF170DB412928DE900B8313A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -477,6 +483,8 @@
 		46880B7519C43A67006E1F66 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9FEE15D91E6DAD6B0058D73B /* vine1.png */,
+				9FEE15DA1E6DAD6B0058D73B /* vine2.png */,
 				9F36A4CE1E6D4E650016232D /* Sound */,
 				9F36A4CF1E6D4E650016232D /* Music */,
 				9FD598FB1E6CF50B00BF2E9F /* peg.png */,
@@ -762,6 +770,7 @@
 				5087E78117EB970100C73F5D /* Icon-120.png in Resources */,
 				454B17121E2FC6D30035467D /* backgrounds in Resources */,
 				5087E78617EB970100C73F5D /* Icon-76.png in Resources */,
+				9FEE15DC1E6DAD6B0058D73B /* vine2.png in Resources */,
 				5087E77F17EB970100C73F5D /* Default@2x.png in Resources */,
 				50EF629917ECD46A001EB2F8 /* Icon-100.png in Resources */,
 				5087E78317EB970100C73F5D /* Icon-152.png in Resources */,
@@ -789,6 +798,7 @@
 				9F36A4D31E6D4E650016232D /* Music in Resources */,
 				454B170E1E2F39280035467D /* platforms in Resources */,
 				9F158C101E6A62C5002D21A6 /* spear.png in Resources */,
+				9FEE15DB1E6DAD6B0058D73B /* vine1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -796,6 +806,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FEE15DE1E6DAD740058D73B /* vine1.png in Resources */,
+				9FEE15DF1E6DAD740058D73B /* vine2.png in Resources */,
 				9F36A4D41E6D4E650016232D /* Music in Resources */,
 				9FD598FD1E6CF52100BF2E9F /* peg.png in Resources */,
 				9F158C111E6A6400002D21A6 /* spear.png in Resources */,
