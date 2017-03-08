@@ -68,7 +68,7 @@ void LevelSelect::findLevelFiles(bool includeDev) {
             img = cocos2d::Sprite::create(imgPath);
             if (img == NULL) {
                 std::cout << "couldn't find image file for " << imgPath << std::endl;
-                img = cocos2d::Sprite::create("backgrounds/bgSunny.png");
+                img = cocos2d::Sprite::create("assets/bgSunny.png");
             }
         } catch (std::domain_error ex) {
             std::cout << "Failed to parse " << allLevelPaths[i] << std::endl;
@@ -91,7 +91,7 @@ bool LevelSelect::init() {
     auto fontScaleFactor = visibleSize.width / 1560.0;
 
     // Sets the background image to fill the screen.
-    auto background = cocos2d::Sprite::create("backgrounds/Splash.png");
+    auto background = cocos2d::Sprite::create("assets/Splash.png");
     background->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
     background->setPosition(origin);
     auto bgSize = background->getContentSize();

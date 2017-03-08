@@ -26,7 +26,7 @@ cocos2d::Scene* MainGameScene::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::createWithPhysics();
     scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -498));
-    scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
+    //scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = MainGameScene::create(levelToLoad, scene->getPhysicsWorld());
     if (layer == NULL) {
         return NULL;
@@ -147,13 +147,11 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
     nlohmann::json lvl;
     
     inFile >> lvl;
-    
-    //vp.setRatio(lvl["mToPixel"]);
-    
+
     // draw and add background
     nlohmann::json backgroundAtts = lvl["background"];
     std::string bgPath = backgroundAtts["imageName"];
-    bgPath = "backgrounds/" + bgPath;
+    bgPath = "assets/" + bgPath;
     auto background = cocos2d::Sprite::create(bgPath);
     background->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
     background->setScale(1.4);
@@ -163,7 +161,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
     nlohmann::json platformAtts = lvl["platforms"];
     for (auto& pAtt: platformAtts) {
         std::string fullImagePath = pAtt["imageName"];
-        fullImagePath = "platforms/" + fullImagePath;
+        fullImagePath = "assets/" + fullImagePath;
         double centerX = vp.metersToPixels((double)pAtt["centerX"]);
         double centerY = vp.metersToPixels((double)pAtt["centerY"]);
         double imageSizeWidth = vp.metersToPixels((double)pAtt["imageSizeWidth"]);
@@ -187,7 +185,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
             MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, 
                     cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), maximumVelocity);
       
-            if (fullImagePath == "platforms/blueGround.png") {
+            if (fullImagePath == "assets/blueGround.png") {
                 std::cout << "Found ground!" << std::endl;
                 levelLayer->addChild(p, FLOOR_Z);
             } else {
@@ -208,7 +206,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         
                 if (p->getTag() == CLIMBEABLE_TAG) {
                     levelLayer->addChild(p, CLIMBABLE_Z);
-                } else if (fullImagePath == "platforms/blueGround.png") {
+                } else if (fullImagePath == "assets/blueGround.png") {
                     levelLayer->addChild(p, FLOOR_Z);
                 } else {
                     levelLayer->addChild(p, PLATFORM_Z);
@@ -289,7 +287,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)bAtt["centerX"], (double)bAtt["centerY"]));
         std::stringstream ss;
         std::string temp = bAtt["imageName"];
-        ss << "Boulders/" << temp;
+        ss << "assets/" << temp;
         std::string imageName = ss.str();
         double mass = bAtt["mass"];
         std::string type = bAtt["type"];
@@ -353,6 +351,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
             throw std::domain_error("Golden peg doesn't have an image name!");
         }
         std::string imageName = gAtt["imageName"];
+        imageName = "assets/" + imageName;
         cocos2d::Size imageSize = cocos2d::Size(vp.metersToPixels((double)gAtt["imageWidth"]), vp.metersToPixels((double)gAtt["imageHeight"]));
         cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)gAtt["centerX"], (double)gAtt["centerY"]));
         double rotation = 180 * (double)gAtt["rotation"] / 3.1415926;
@@ -360,7 +359,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         for (auto i: gAtt["bouldersAffected"]) {//joints[(int)gAtt["jointID"]]) {
             bouldersToRelease.push_back(boulders[i]);
         }
-        auto peg = new Peg("peg.png", center, imageSize, rotation, bouldersToRelease);
+        auto peg = new Peg(imageName, center, imageSize, rotation, bouldersToRelease);
         pegs.push_back(peg);
         levelLayer->addChild(peg);
         
@@ -389,7 +388,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         cocos2d::Vec2 center = cocos2d::Vec2(vp.metersToPixels((double)vAtt["swingCenterX"]),
                   vp.metersToPixels((double)vAtt["swingCenterY"]));
         std::string imageName = vAtt["imageName"];
-        imageName.erase(0, 7);
+        imageName = "assets/" + imageName;
         Vine *v = new Vine(imageName, center, width, length, startingAngVel);
         
         cocos2d::PhysicsBody *b = cocos2d::PhysicsBody::createBox(cocos2d::Size(3, 3));
@@ -421,6 +420,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         std::string imageName = tAtt["imageName"];
         if (imageName == "cage1.png") {
             cocos2d::PhysicsMaterial material = cocos2d::PhysicsMaterial(tAtt["density"], tAtt["bounciness"], tAtt["friction"]);
+            imageName = "assets/" + imageName;
             CageTrap *rS = new CageTrap(imageName, center, material, cocos2d::Size(trapWidth, trapHeight), imgSize, wallWidth, offset);
             trapsToTrigger.push_back(rS);
             levelLayer->addChild(rS, 10);

@@ -19,7 +19,7 @@ cocos2d::Vec2 SpearRNG::getPosition(cocos2d::Vec2 target) {
 
 // TODO: figure out how to rotate it correctly.
 Spear::Spear(cocos2d::Vec2 targetCenter) : cocos2d::Sprite() {
-    this->initWithFile("spear.png");
+    this->initWithFile("assets/spear.png");
     // Throw a projectile somewhere!
     auto body = cocos2d::PhysicsBody::createBox(cocos2d::Size(300, 40));
     body->setDynamic(true);

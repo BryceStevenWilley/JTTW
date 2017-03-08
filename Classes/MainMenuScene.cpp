@@ -32,7 +32,7 @@ bool MainMenu::init() {
     auto fontScaleFactor = visibleSize.width / 1560.0;;
 
     // Sets the background image to fill the screen.
-    auto background = cocos2d::Sprite::create("backgrounds/Splash.png");
+    auto background = cocos2d::Sprite::create("assets/Splash.png");
     background->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
     background->setPosition(origin);
     auto bgSize = background->getContentSize();
