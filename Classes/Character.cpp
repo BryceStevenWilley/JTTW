@@ -265,6 +265,7 @@ void Character::updateAnimation(State oldState) {
         if (body->getVelocity().x > 10.0 || body->getVelocity().x < -10.0) {
             // TODO: Set walk or run depending on the speed (interpolate?)
             this->setAnimation(0, "walk", true);
+            //CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/Walking.wav");
         } else { // x == 0.0
             this->setAnimation(0, "idle", true);
         }

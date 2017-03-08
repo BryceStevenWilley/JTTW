@@ -135,6 +135,9 @@ bool MainMenu::init() {
     down->setOpacity(0);
     up->runAction(cocos2d::FadeIn::create(5.0));
     down->runAction(cocos2d::FadeIn::create(5.0));
+    instructions->setCascadeOpacityEnabled(true);
+    instructions->setOpacity(0);
+    instructions->runAction(cocos2d::FadeIn::create(5.0));
     
     playItem->setCascadeOpacityEnabled(true);
     sceneItem->setCascadeOpacityEnabled(true);

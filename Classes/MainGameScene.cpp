@@ -130,6 +130,7 @@ bool MainGameScene::onContactEnd(cocos2d::PhysicsContact& contact) {
 }
 
 const int PLATFORM_Z = 4;
+const int FLOOR_Z = 7;
 const int CLIMBABLE_Z = 3;
 const int VINE_Z = 3;
 const int BOULDER_Z = 5;
@@ -184,8 +185,14 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
             double maximumVelocity = vp.metersToPixels((double)pAtt["velocity"]);
             MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, 
                     cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), maximumVelocity);
-
-            levelLayer->addChild(p, PLATFORM_Z);
+      
+            if (fullImagePath == "platforms/blueGround.png") {
+                std::cout << "Found ground!" << std::endl;
+                levelLayer->addChild(p, FLOOR_Z);
+            } else {
+                std::cout << fullImagePath << std::endl;
+                levelLayer->addChild(p, PLATFORM_Z);
+            }
             platforms.push_back(p);
             moveables.push_back(p);
         } else {
@@ -194,6 +201,8 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         
             if (p->getTag() == CLIMBEABLE_TAG) {
                 levelLayer->addChild(p, CLIMBABLE_Z);
+            } else if (fullImagePath == "platforms/blueGround.png") {
+                levelLayer->addChild(p, FLOOR_Z);
             } else {
                 levelLayer->addChild(p, PLATFORM_Z);
             }
@@ -354,7 +363,17 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         Monkey *m = (Monkey *)characters[0];
         m->body->setDynamic(false);
         m->body->setGravityEnable(false);
+        m->body->setRotationEnable(false);
         m->freeze();
+        m->findSlot("Body")->a = 0.0;
+        m->findSlot("L Arm")->a = 0.0;
+        m->findSlot("L Calf")->a = 0.0;
+        m->findSlot("L Foot")->a = 0.0;
+        m->findSlot("L Thigh")->a = 0.0;
+        m->findSlot("R Calf")->a = 0.0;
+        m->findSlot("R Foot")->a = 0.0;
+        m->findSlot("R Thigh")->a = 0.0;
+        m->findSlot("R Arm")->a = 0.0;
     }
     
     nlohmann::json in_vines = lvl["vines"];
@@ -674,11 +693,43 @@ void MainGameScene::update(float delta) {
                 break;
             }
         }
+        
         if (allTriggered) {
+            std::cout << "All pegs triggered!" << std::endl;
             pegs.clear();
-            characters[0]->body->setDynamic(true);
-            characters[0]->body->setGravityEnable(true);
-            characters[0]->body->setRotationEnable(false);
+            
+            Monkey *m = (Monkey *)characters[0];
+            layer->removeChild(m);
+            m->body->setDynamic(true);
+            m->body->setGravityEnable(true);
+            m->body->setRotationEnable(false);
+            m->setRotation(0.0);
+            m->findSlot("Body")->a = 255.0;
+            m->findSlot("L Arm")->a = 255.0;
+            m->findSlot("L Calf")->a = 255.0;
+            m->findSlot("L Foot")->a = 255.0;
+            m->findSlot("L Thigh")->a = 255.0;
+            m->findSlot("R Calf")->a = 255.0;
+            m->findSlot("R Foot")->a = 255.0;
+            m->findSlot("R Thigh")->a = 255.0;
+            m->findSlot("R Arm")->a = 255.0;
+            m->update(0);
+            m->removeComponent(m->body);
+            m->body->removeFromWorld();
+            m->body = cocos2d::PhysicsBody::create();
+            auto bodyShape = cocos2d::PhysicsShapeBox::create(cocos2d::Size(480.0f, 780.0f), cocos2d::PhysicsMaterial(1.0, 0.0, 0.0));
+            m->body->addShape(bodyShape);
+            m->body->setCategoryBitmask((int)CollisionCategory::Character);
+            m->body->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
+            m->body->setContactTestBitmask((int)CollisionCategory::PlatformBoulderAndProjectile);
+            m->body->setRotationEnable(false);
+
+            m->body->setVelocityLimit(600);
+    
+            m->addComponent(m->body);
+
+            m->setSlotsToSetupPose();
+            layer->addChild(m, CHARACTER_Z);
         }
     }
 

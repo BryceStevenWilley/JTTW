@@ -1,4 +1,5 @@
 #include "Monk.hpp"
+#include "SimpleAudioEngine.h"
 
 using namespace JTTW;
 
@@ -13,6 +14,7 @@ void Monk::jump() {
 void Monk::characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) {
     if (pressed && code == cocos2d::EventKeyboard::KeyCode::KEY_S && reachiblePeg != nullptr) {
         reachiblePeg->triggerPeg(this->getPosition());
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/BoulderCrumble.wav");
         reachiblePeg = nullptr;
     }
 }

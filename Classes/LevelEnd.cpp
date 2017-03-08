@@ -1,6 +1,7 @@
 #include "LevelEnd.hpp"
 #include "MainGameScene.h"
 #include "MainMenuScene.hpp"
+#include "SimpleAudioEngine.h"
 
 using namespace JTTW;
 
@@ -22,7 +23,7 @@ bool LevelEnd::init(std::string &nextLevelToLoad) {
     auto textLabel = cocos2d::Label::createWithTTF("Your journey continues...", "fonts/WaitingfortheSunrise.ttf", 100);
     if (_nextLevelToLoad == "") {
         // The journey is over!
-        textLabel = cocos2d::Label::createWithTTF("The journey is over. Monk went on to be the President.\nPiggy decided to go back and get his G.E.D...", "fonts/WaitingfortheSunrise.ttf", 50);
+        textLabel = cocos2d::Label::createWithTTF("The journey is over.", "fonts/WaitingfortheSunrise.ttf", 50);
     }
     
     textLabel->setTextColor(cocos2d::Color4B::WHITE);
@@ -52,6 +53,8 @@ bool LevelEnd::init(std::string &nextLevelToLoad) {
     
     this->_eventDispatcher->addEventListenerWithFixedPriority(keyListener, 3);
     this->_eventDispatcher->addEventListenerWithFixedPriority(mouseListener, 3);
+    
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/Gong.wav");
     
     return true;
 }

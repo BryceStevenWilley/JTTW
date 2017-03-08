@@ -1,4 +1,5 @@
 #include "Monkey.hpp"
+#include "SimpleAudioEngine.h"
 
 using namespace JTTW;
 
@@ -35,7 +36,8 @@ void Monkey::jump() {
     float jumpPower = 500;
     if (_state == SWINGING) {
         leavingVine();
-
+        
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/Walking.wav");
         this->_currentState = Character::State::STANDING;
         jumpPower = 90;
         _state = NORMAL;

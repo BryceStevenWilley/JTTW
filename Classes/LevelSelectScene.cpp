@@ -119,6 +119,7 @@ bool LevelSelect::init() {
     for (int i = 0; i < (int)allLevelThumbnails.size(); i++) {
         allLevelThumbnails[i]->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/2.0));
         allLevelThumbnails[i]->setVisible(false);
+        allLevelThumbnails[i]->setContentSize(visibleSize / 4);
         this->addChild(allLevelThumbnails[i]);
     }
     currentLevel = 0;
@@ -127,6 +128,7 @@ bool LevelSelect::init() {
     auto border = cocos2d::Sprite::create("levelFiles/previews/Border.png");
     border->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/2.0));
     border->setScaleX(border->getScaleX() * .97);
+    border->setContentSize(visibleSize / 4);
     this->addChild(border);
     
     levelName = cocos2d::Label::createWithTTF(allLevelNames[currentLevel], "fonts/WaitingfortheSunrise.ttf", 60);
