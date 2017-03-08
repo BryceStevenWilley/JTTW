@@ -27,8 +27,9 @@ private:
     std::vector<cocos2d::Sprite *> allLevelThumbnails;
     unsigned int currentLevel;
     cocos2d::Label *titleLabel;
+    
+    cocos2d::Size visibleSize;
+    cocos2d::Vec2 origin;
 };
-
 }
-
 #endif /* LevelSelectScene_hpp */

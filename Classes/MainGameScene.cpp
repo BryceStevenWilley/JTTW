@@ -1,6 +1,7 @@
 #include "MainGameScene.h"
 #include "SimpleAudioEngine.h"
 #include "MainMenuScene.hpp"
+#include "DisappearingPlatform.hpp"
 #include "Collisions.hpp"
 #include "Monkey.hpp"
 #include "Monk.hpp"
@@ -196,19 +197,23 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
             platforms.push_back(p);
             moveables.push_back(p);
         } else {
-            Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), 
+            if (pAtt["disappears"]) {
+                DisappearingPlatform *p = new DisappearingPlatform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight),
+                    cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climbable"], pAtt["collidable"]);
+                levelLayer->addChild(p, PLATFORM_Z);
+                trapsToTrigger.push_back(p);
+            } else {
+                Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight),
                     cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climbable"], pAtt["collidable"]);
         
-            if (p->getTag() == CLIMBEABLE_TAG) {
-                levelLayer->addChild(p, CLIMBABLE_Z);
-            } else if (fullImagePath == "platforms/blueGround.png") {
-                levelLayer->addChild(p, FLOOR_Z);
-            } else {
-                levelLayer->addChild(p, PLATFORM_Z);
-            }
-            platforms.push_back(p);
-            if (pAtt["disappears"]) {
-                disappearing.push_back(p);
+                if (p->getTag() == CLIMBEABLE_TAG) {
+                    levelLayer->addChild(p, CLIMBABLE_Z);
+                } else if (fullImagePath == "platforms/blueGround.png") {
+                    levelLayer->addChild(p, FLOOR_Z);
+                } else {
+                    levelLayer->addChild(p, PLATFORM_Z);
+                }
+                platforms.push_back(p);
             }
         }
     }
@@ -416,7 +421,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         std::string imageName = tAtt["imageName"];
         if (imageName == "cage1.png") {
             cocos2d::PhysicsMaterial material = cocos2d::PhysicsMaterial(tAtt["density"], tAtt["bounciness"], tAtt["friction"]);
-            Trap* rS = new CageTrap(imageName, center, material, cocos2d::Size(trapWidth, trapHeight), imgSize, wallWidth, offset);
+            CageTrap *rS = new CageTrap(imageName, center, material, cocos2d::Size(trapWidth, trapHeight), imgSize, wallWidth, offset);
             trapsToTrigger.push_back(rS);
             levelLayer->addChild(rS, 10);
         }
@@ -487,16 +492,16 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     // 1.7/130.0 means that 1.7 meters in the game world (average human male height) is represented by 180 pixels on screen.
     vp = Viewpoint(visibleSize, 1.7/130.0);
 
-    //try {
+    try {
         layer = parseLevelFromJson(levelToLoad, debugOn);
-    //}
-    //catch (std::domain_error ex) {
-    //    std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
-    //   return false;
-    //} catch (std::invalid_argument ex) {
-    //    std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
-    //    return false;
-    //}
+    }
+    catch (std::domain_error ex) {
+        std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
+       return false;
+    } catch (std::invalid_argument ex) {
+        std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
+        return false;
+    }
  
     if (layer == nullptr) {
         std::cout << "Level file corrupted!" << std::endl;
@@ -621,7 +626,7 @@ void MainGameScene::update(float delta) {
     
     bool done = true;
     for (int i = 0; i < (int)characters.size(); i++) {
-        characters[i]->updateAnimation(delta);
+        characters[i]->updateLoop(delta);
         for (auto& zone : attackZones) {
             if (zone.containsPoint(characters[i]->getPosition())) {
                 if (attacking[characters[i]] == false) {
@@ -670,13 +675,25 @@ void MainGameScene::update(float delta) {
     
     // Trigger any traps, but don't trigger them again.
     std::vector<Trap *> toRemove;
-    for (auto trap = trapsToTrigger.begin(); trap != trapsToTrigger.end(); trap++) {
-        for (int j = 0; j < (int)characters.size(); j++) {
-            if ((*trap)->triggerTrap(characters[j]->getPosition(), characters[j]->getSize())) {
-                // freeze the character for a few seconds.
-                characters[j]->freeze();
+    for (auto &trap : trapsToTrigger) {
+        for (auto &character : characters) {
+            if (trap->triggerTrap(character->getPosition(), character->getSize())) {
+                std::cout << "Trap triggered!" << std::endl;
+                switch (trap->characterReaction()) {
+                    case FREEZE:
+                        character->freeze();
+                        break;
+                    
+                    case FALL:
+                        character->setAnimation(0, "fall forwards", false);
+                        break;
+                    
+                    default:
+                        // Do nothing.
+                        break;
+                }
                 // remove the trap from the array.
-                toRemove.push_back(*trap);
+                toRemove.push_back(trap);
             }
         }
     }

@@ -1,19 +1,23 @@
 #ifndef DisappearingPlatform_hpp
 #define DisappearingPlatform_hpp
 
+#include "Platform.hpp"
+#include "Trap.hpp"
+
 namespace JTTW {
-class DisappearingPlatform : public Trap {
-    DisappearingPlatform(std::string imageName, cocos2d::Vec2 center, cocos2d::PhysicsMaterial material, 
-            cocos2d::Size trapSize, cocos2d::Size imageSize, double wallThickness, double offset);
-    
+class DisappearingPlatform : public Trap, public Platform {
+public:
+    DisappearingPlatform(std::string &fileName, cocos2d::Vec2 center, cocos2d::Size imageSize, cocos2d::Vec2 box, bool climeable, bool collidable);
+
     /** Returns true if trap was triggered. */
     virtual bool triggerTrap(cocos2d::Vec2 characterCenter, cocos2d::Size characterSize);
+    virtual Action characterReaction() const;
     
 private:
-    cocos2d::PhysicsBody *body;
-    double minX;
-    double maxX;
-    double minY;
+    double _maxX;
+    double _minX;
+    double _maxY;
+    double _minY;
 };
 }
 

@@ -109,6 +109,9 @@
 		9F8E656F1E3DA0060058958F /* MoveablePlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */; };
 		9F8E65701E3DA0060058958F /* MoveablePlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */; };
 		9F8E65711E3DA0060058958F /* MoveablePlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */; };
+		9F9298E11E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9298E01E6FDC7B00959F53 /* DisappearingPlatform.cpp */; };
+		9F9298E21E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9298E01E6FDC7B00959F53 /* DisappearingPlatform.cpp */; };
+		9F9298E31E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9298E01E6FDC7B00959F53 /* DisappearingPlatform.cpp */; };
 		9F98AF911E2C99E2009559C7 /* Viewpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F98AF8F1E2C99E2009559C7 /* Viewpoint.cpp */; };
 		9F98AF921E2C99E2009559C7 /* Viewpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F98AF8F1E2C99E2009559C7 /* Viewpoint.cpp */; };
 		9FB69DD51E459AA4006325A3 /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC4C2ED1E39293F00ABD648 /* Platform.cpp */; };
@@ -300,6 +303,7 @@
 		9F666E571E31D89500F9BB90 /* AiAgentBehaviors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AiAgentBehaviors.cpp; sourceTree = "<group>"; };
 		9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoveablePlatform.cpp; sourceTree = "<group>"; };
 		9F8E656E1E3DA0060058958F /* MoveablePlatform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MoveablePlatform.hpp; sourceTree = "<group>"; };
+		9F9298E01E6FDC7B00959F53 /* DisappearingPlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisappearingPlatform.cpp; sourceTree = "<group>"; };
 		9F98AF8F1E2C99E2009559C7 /* Viewpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Viewpoint.cpp; sourceTree = "<group>"; };
 		9F98AF901E2C99E2009559C7 /* Viewpoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Viewpoint.hpp; sourceTree = "<group>"; };
 		9FAAFDFB1E292DBB0036F58B /* AiAgent.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AiAgent.hpp; sourceTree = "<group>"; };
@@ -614,6 +618,7 @@
 				9F36A4C91E6D0AEF0016232D /* Peg.hpp */,
 				9F36A4D61E6D56F70016232D /* Spear.cpp */,
 				9F36A4D71E6D56F70016232D /* Spear.hpp */,
+				9F9298E01E6FDC7B00959F53 /* DisappearingPlatform.cpp */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
@@ -872,6 +877,7 @@
 				503AE10117EB989F00D1A890 /* main.m in Sources */,
 				9FB69DDB1E459B90006325A3 /* Character.cpp in Sources */,
 				9F666E461E30201C00F9BB90 /* AiAgent.cpp in Sources */,
+				9F9298E11E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */,
 				9F16FC061E54CCA500D9DBCA /* Monk.cpp in Sources */,
 				9F8E656F1E3DA0060058958F /* MoveablePlatform.cpp in Sources */,
 			);
@@ -902,6 +908,7 @@
 				9F192EB81E5B634A001FE88A /* Vine.cpp in Sources */,
 				9FB69DE31E46D93D006325A3 /* MainMenuScene.cpp in Sources */,
 				9F36A4D91E6D56F70016232D /* Spear.cpp in Sources */,
+				9F9298E21E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -918,6 +925,7 @@
 				9FB69E091E46EE88006325A3 /* LevelSelectScene.cpp in Sources */,
 				9FD41C151E2D56220077779E /* main.cpp in Sources */,
 				9FB69DE41E46D93D006325A3 /* MainMenuScene.cpp in Sources */,
+				9F9298E31E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */,
 				9FD41C131E2D55C80077779E /* TestDelegate.cpp in Sources */,
 				9FD41C101E2D55920077779E /* testCharacter.cpp in Sources */,
 				9FC97C891E540E0300EF6C31 /* LevelEnd.cpp in Sources */,

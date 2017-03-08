@@ -61,6 +61,10 @@ cocos2d/build/build
 proj.ios_mac/build
 linux-build
 
+# Stop eclipse stuff.
+.metadata
+.recommenders
+
 
 
 !proj.ios_mac/mac/Prefix.pch

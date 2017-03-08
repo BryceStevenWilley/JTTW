@@ -15,7 +15,9 @@ enum Action {
     STOP,
     MOVE_LEFT,
     MOVE_RIGHT,
-    JUMP
+    JUMP,
+    FREEZE,
+    FALL
 };
 
 const int CHARACTER_TAG = 10;
@@ -89,7 +91,7 @@ public:
     void setNewRespawn(cocos2d::Vec2 newRespawn);
     double getRespawnProgress() const;
     
-    void updateAnimation(float delta);
+    void updateLoop(float delta);
 
 protected:
     void jump(double force);

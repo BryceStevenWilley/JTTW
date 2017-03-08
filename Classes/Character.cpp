@@ -127,7 +127,10 @@ void Character::freeze() {
     _frozenTimer = 3.0; // seconds
     body->setVelocity(cocos2d::Vec2(0.0, body->getVelocity().y));
 }
-    
+
+// TODO: break into initJump and stopJump, one for key press and one for key release.
+// While the key is pressed, apply a force (that is decaying) under a jump time
+// amount.
 void Character::jump(double force) {
     if (_currentState == State::MID_AIR || _currentState == State::FROZEN) {
         // Can't jump while you're in the air, dummy!
@@ -206,7 +209,7 @@ const Character::State Character::getCurrentState() const {
     return _currentState;
 }
 
-void Character::updateAnimation(float delta) {
+void Character::updateLoop(float delta) {
     // Kinda unrelated stuff regarding frozen.
     if (_currentState == State::FROZEN) {
         _frozenTimer -= delta;

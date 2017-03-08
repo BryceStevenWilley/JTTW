@@ -40,8 +40,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
          * Screen size / resolution changed here. See https://www.raywenderlich.com/95835/cocos2d-x-tutorial-beginners
          */
         //glview = GLViewImpl::createWithRect("Bodhi", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
-        glview = GLViewImpl::createWithFullScreen("Bodhi");
-        //glview = GLViewImpl::createWithRect("Bodhi", Rect(0,0,1560,1000), 1.0);
+        //glview = GLViewImpl::createWithFullScreen("Bodhi");
+        glview = GLViewImpl::createWithRect("Bodhi", Rect(0, 0, 1560, 1000), 1.0);
         //glview = GLViewImpl::createWithRect("Bodhi", Rect(0,0,512, 384), 1.0);
 #else
         glview = GLViewImpl::create("Not WIN/MAC/LINUX");
@@ -84,9 +84,6 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
     audio->preloadBackgroundMusic("Music/MenuScreen.mp3");
     audio->playBackgroundMusic("Music/MenuScreen.mp3");
-    
-    // 
-    
     
     return true;
 }

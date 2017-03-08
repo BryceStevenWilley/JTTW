@@ -7,6 +7,14 @@
 
 using namespace JTTW;
 
+cocos2d::Label * JTTW::createSunriseLabel(std::string content, int size, float scaleFactor) {
+    auto label = cocos2d::Label::createWithTTF(content, "fonts/WaitingfortheSunrise.ttf", (int)(size * scaleFactor));
+    label->setTextColor(cocos2d::Color4B::WHITE);
+    label->enableOutline(cocos2d::Color4B::BLACK, 1);
+    label->enableShadow();
+    return label;
+}
+
 cocos2d::Scene* MainMenu::createScene() {
     // 'scene and layer are auto-release.
     auto scene = cocos2d::Scene::create();
@@ -16,18 +24,12 @@ cocos2d::Scene* MainMenu::createScene() {
     return scene;
 }
 
-cocos2d::Label * createSunriseLabel(std::string content, int size) {
-    auto label = cocos2d::Label::createWithTTF(content, "fonts/WaitingfortheSunrise.ttf", size);
-    label->setTextColor(cocos2d::Color4B::WHITE);
-    label->enableOutline(cocos2d::Color4B::BLACK, 1);
-    label->enableShadow();
-    return label;
-}
-
 bool MainMenu::init() {
     auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
     cocos2d::Vec2 origin = cocos2d::Director::getInstance()->getVisibleOrigin();
     float middleX = origin.x + visibleSize.width / 2.0;
+
+    auto fontScaleFactor = visibleSize.width / 1560.0;;
 
     // Sets the background image to fill the screen.
     auto background = cocos2d::Sprite::create("backgrounds/Splash.png");
@@ -43,9 +45,9 @@ bool MainMenu::init() {
     cocos2d::Size titleSize = cocos2d::Size(visibleSize.width / 2.0, visibleSize.height / 3.0);
     titleImage->setScale(titleSize.width / titleImage->getContentSize().width, titleSize.height / titleImage->getContentSize().height);
 
-    auto playNode = createSunriseLabel("New Game", 100);
-    auto sceneNode = createSunriseLabel("Scene Select", 100);
-    auto exitNode = createSunriseLabel("Exit", 100);
+    auto playNode = createSunriseLabel("New Game", 100, fontScaleFactor);
+    auto sceneNode = createSunriseLabel("Scene Select", 100, fontScaleFactor);
+    auto exitNode = createSunriseLabel("Exit", 100, fontScaleFactor);
     
     cocos2d::MenuItemLabel *playItem = cocos2d::MenuItemLabel::create(playNode, CC_CALLBACK_0(MainMenu::openFirstLevel, this));
     cocos2d::MenuItemLabel *sceneItem = cocos2d::MenuItemLabel::create(sceneNode, CC_CALLBACK_0(MainMenu::openStartScene, this));
@@ -56,24 +58,24 @@ bool MainMenu::init() {
     options.push_back(exitItem);
     currentOption = options.begin();
 
-    playItem->setPosition(middleX + 20, origin.y + visibleSize.height * (4.0/ 9.0));
-    sceneItem->setPosition(middleX + 20, origin.y + visibleSize.height * (3.0 / 9.0));
-    exitItem->setPosition(middleX + 20, origin.y + visibleSize.height * (2.0/ 9.0));
+    playItem->setPosition(middleX, origin.y + visibleSize.height * (4.0/ 9.0));
+    sceneItem->setPosition(middleX, origin.y + visibleSize.height * (3.0 / 9.0));
+    exitItem->setPosition(middleX, origin.y + visibleSize.height * (2.0/ 9.0));
     
     cocos2d::Menu *m = cocos2d::Menu::create(playItem, sceneItem, exitItem, NULL);
     m->setPosition(0,0);
 
     this->addChild(m, -6);
     
-    auto instructions = createSunriseLabel("<Enter>=Select", 60);
+    auto instructions = createSunriseLabel("<Enter>=Select", 60, fontScaleFactor);
     instructions->setPosition(origin.x + visibleSize.width / 8.0, origin.y + visibleSize.height / 13.0);
     this->addChild(instructions);
 
-    auto up = createSunriseLabel("^", 100);
+    auto up = createSunriseLabel("^", 100, fontScaleFactor);
     up->setPosition(middleX, origin.y + visibleSize.height * (4.7 / 9.0));
     this->addChild(up);
         
-    auto down = createSunriseLabel("v", 100);
+    auto down = createSunriseLabel("v", 100, fontScaleFactor);
     down->setPosition(middleX, origin.y + visibleSize.height * (1.0 / 9.0));
     this->addChild(down);
     
@@ -118,10 +120,14 @@ bool MainMenu::init() {
     this->_eventDispatcher->addEventListenerWithFixedPriority(eventListener, 1);
     
     /*Set up idle characters.*/
-    auto mk = addCharacterAni("Monk", cocos2d::Vec2(origin.x - (middleX/2), origin.y + visibleSize.height / 8));
-    auto mky = addCharacterAni("Monkey", cocos2d::Vec2(origin.x - (middleX/4), origin.y + visibleSize.height / 8));
-    auto p = addCharacterAni("Piggy", cocos2d::Vec2(visibleSize.width + (middleX/2.0), origin.y + visibleSize.height / 15.0));
-    auto s = addCharacterAni("Sandy", cocos2d::Vec2(visibleSize.width + (middleX/4.0), origin.y + visibleSize.height / 15.0));
+    cocos2d::Vec2 monkEnd = cocos2d::Vec2(origin.x + (middleX / 2.0), origin.y + visibleSize.height / 8);
+    addCharacterAni("Monk", monkEnd - cocos2d::Vec2(middleX, 0.0), monkEnd);
+    cocos2d::Vec2 monkeyEnd = cocos2d::Vec2(origin.x + (middleX / 4), origin.y + visibleSize.height / 8);
+    addCharacterAni("Monkey", monkeyEnd - cocos2d::Vec2(middleX / 2.0, 0), monkeyEnd);
+    cocos2d::Vec2 piggyEnd = cocos2d::Vec2(visibleSize.width - (middleX / 2.0), origin.y + visibleSize.height / 15.0);
+    addCharacterAni("Piggy", piggyEnd + cocos2d::Vec2(middleX, 0.0), piggyEnd);
+    cocos2d::Vec2 sandyEnd =  cocos2d::Vec2(visibleSize.width - (middleX / 4.0), origin.y + visibleSize.height / 15.0);
+    addCharacterAni("Sandy", sandyEnd + cocos2d::Vec2(middleX / 2.0, 0), sandyEnd);
     
     // Animate the titles to move in.
     titleImage->setPosition(middleX, origin.y + visibleSize.height * (5.0 / 4.0));
@@ -148,33 +154,11 @@ bool MainMenu::init() {
     playItem->runAction(cocos2d::FadeIn::create(5.0));
     sceneItem->runAction(cocos2d::FadeIn::create(5.0));
     exitItem->runAction(cocos2d::FadeIn::create(5.0));
-    
-    auto cmk = cocos2d::CallFunc::create([mk]() {
-        mk->setAnimation(0, "idle", true);
-    });
-    auto cmky = cocos2d::CallFunc::create([mky]() {
-        mky->setAnimation(0, "idle", true);
-    });
-    auto cp = cocos2d::CallFunc::create([p]() {
-        p->setAnimation(0, "idle", true);
-    });
-    auto cs = cocos2d::CallFunc::create([s]() {
-        s->setAnimation(0, "idle", true);
-    });
-    auto seqMk = cocos2d::Sequence::create(cocos2d::MoveTo::create(3.0, cocos2d::Vec2(origin.x + (middleX/2), origin.y + visibleSize.height / 8)), cmk, nullptr);
-    auto seqMky = cocos2d::Sequence::create(cocos2d::MoveTo::create(3.0, cocos2d::Vec2(origin.x + (middleX/4), origin.y + visibleSize.height / 8)), cmky, nullptr);
-    auto seqP = cocos2d::Sequence::create(cocos2d::MoveTo::create(3.0, cocos2d::Vec2(visibleSize.width - (middleX/2.0), origin.y + visibleSize.height / 15.0)), cp, nullptr);
-    auto seqS = cocos2d::Sequence::create(cocos2d::MoveTo::create(3.0, cocos2d::Vec2(visibleSize.width - (middleX/4.0), origin.y + visibleSize.height / 15.0)), cs, nullptr);
-    
-    mk->runAction(seqMk);
-    mky->runAction(seqMky);
-    p->runAction(seqP);
-    s->runAction(seqS);
-    
+
     return true;
 }
 
-spine::SkeletonAnimation *MainMenu::addCharacterAni(std::string name, cocos2d::Vec2 position) {
+spine::SkeletonAnimation *MainMenu::addCharacterAni(std::string name, cocos2d::Vec2 startPosition, cocos2d::Vec2 endPosition) {
     auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
     cocos2d::Vec2 origin = cocos2d::Director::getInstance()->getVisibleOrigin();
     float middleX = origin.x + visibleSize.width / 2.0;
@@ -184,16 +168,25 @@ spine::SkeletonAnimation *MainMenu::addCharacterAni(std::string name, cocos2d::V
 
     spine::SkeletonAnimation *c = spine::SkeletonAnimation::createWithJsonFile("characters/" + name + ".json", "characters/" + name + ".atlas", 1.0f);
     c->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    c->setPosition(position);
+    c->setPosition(startPosition);
     c->setTimeScale(0.5);
     c->setAnimation(0, "walk", true);
-    if (position.x > middleX) {
+    if (startPosition.x > middleX) {
          c->setScale(charScale);
          c->setScaleX(c->getScaleX() * -1);// Mirror the image.
     } else {
          c->setScale(charScale);
     }
     this->addChild(c);
+    
+    // Animate walking.
+        
+    auto makeIdle = cocos2d::CallFunc::create([c]() {
+        c->setAnimation(0, "idle", true);
+    });
+    auto seqC = cocos2d::Sequence::create(cocos2d::MoveTo::create(3.0, endPosition), makeIdle, nullptr);
+    c->runAction(seqC);
+    
     return c;
 }
 

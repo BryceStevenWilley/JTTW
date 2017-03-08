@@ -7,6 +7,8 @@
 
 namespace JTTW {
 
+cocos2d::Label * createSunriseLabel(std::string content, int size, float scaleFactor);
+
 class MainMenu : public cocos2d::Layer {
 public:
     static cocos2d::Scene*createScene();
@@ -21,7 +23,7 @@ public:
     void exitGame();
     
 private:
-    spine::SkeletonAnimation *addCharacterAni(std::string name, cocos2d::Vec2);
+    spine::SkeletonAnimation *addCharacterAni(std::string name, cocos2d::Vec2 startPosition, cocos2d::Vec2 endPosition);
 
     cocos2d::EventListenerKeyboard *eventListener;
     
