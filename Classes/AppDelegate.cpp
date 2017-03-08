@@ -1,5 +1,6 @@
 #include "AppDelegate.h"
 #include "MainMenuScene.hpp"
+#include "SimpleAudioEngine.h"
 
 using namespace cocos2d;
 
@@ -39,9 +40,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
          * Screen size / resolution changed here. See https://www.raywenderlich.com/95835/cocos2d-x-tutorial-beginners
          */
         //glview = GLViewImpl::createWithRect("Bodhi", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
-        //glview = GLViewImpl::createWithFullScreen("SampleGame");
-        glview = GLViewImpl::createWithRect("SampleGame", Rect(0,0,1560,1000), 1.0);
-        //glview = GLViewImpl::createWithRect("SampleGame", Rect(0,0,512, 384), 1.0);
+        glview = GLViewImpl::createWithFullScreen("Bodhi");
+        //glview = GLViewImpl::createWithRect("Bodhi", Rect(0,0,1560,1000), 1.0);
+        //glview = GLViewImpl::createWithRect("Bodhi", Rect(0,0,512, 384), 1.0);
 #else
         glview = GLViewImpl::create("Not WIN/MAC/LINUX");
 #endif
@@ -78,7 +79,15 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // run
     director->runWithScene(scene);
-
+    
+    // Audio!
+    auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
+    audio->preloadBackgroundMusic("Music/MenuScreen.mp3");
+    audio->playBackgroundMusic("Music/MenuScreen.mp3");
+    
+    // 
+    
+    
     return true;
 }
 
@@ -87,7 +96,7 @@ void AppDelegate::applicationDidEnterBackground() {
     Director::getInstance()->stopAnimation();
 
     // if you use SimpleAudioEngine, it must be paused
-    // SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+    CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
 
 // this function will be called when the app is active again
@@ -95,5 +104,5 @@ void AppDelegate::applicationWillEnterForeground() {
     Director::getInstance()->startAnimation();
 
     // if you use SimpleAudioEngine, it must resume here
-    // SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+    CocosDenshion::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }

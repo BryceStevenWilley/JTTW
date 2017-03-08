@@ -2,6 +2,7 @@
 #include "MainGameScene.h"
 #include "LevelSelectScene.hpp"
 #include <spine/spine-cocos2dx.h>
+#include "SimpleAudioEngine.h"
 #include <iostream>
 
 using namespace JTTW;
@@ -18,7 +19,7 @@ cocos2d::Scene* MainMenu::createScene() {
 cocos2d::Label * createSunriseLabel(std::string content, int size) {
     auto label = cocos2d::Label::createWithTTF(content, "fonts/WaitingfortheSunrise.ttf", size);
     label->setTextColor(cocos2d::Color4B::WHITE);
-    label->enableOutline(cocos2d::Color4B::BLACK);
+    label->enableOutline(cocos2d::Color4B::BLACK, 1);
     label->enableShadow();
     return label;
 }
@@ -134,6 +135,9 @@ bool MainMenu::init() {
     down->setOpacity(0);
     up->runAction(cocos2d::FadeIn::create(5.0));
     down->runAction(cocos2d::FadeIn::create(5.0));
+    instructions->setCascadeOpacityEnabled(true);
+    instructions->setOpacity(0);
+    instructions->runAction(cocos2d::FadeIn::create(5.0));
     
     playItem->setCascadeOpacityEnabled(true);
     sceneItem->setCascadeOpacityEnabled(true);
@@ -202,6 +206,7 @@ void MainMenu::openStartScene() {
 
 void MainMenu::openFirstLevel() {
     cocos2d::Scene *startScene;
+    CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     startScene = MainGameScene::createScene("levelFiles/friday-level-v2.json");
     if (startScene == NULL) {
         //titleLabel->setString("Something went wrong!\n Choose a different level!");

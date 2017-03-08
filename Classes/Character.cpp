@@ -6,6 +6,7 @@
 #include "Piggy.hpp"
 #include "Sandy.hpp"
 #include <iostream>
+#include "SimpleAudioEngine.h"
 
 using namespace JTTW;
 
@@ -133,6 +134,7 @@ void Character::jump(double force) {
         return;
     }
     
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/Jump.wav");
     body->applyImpulse(cocos2d::Vec2(0, body->getMass() * force));
 }
 
@@ -263,6 +265,7 @@ void Character::updateAnimation(State oldState) {
         if (body->getVelocity().x > 10.0 || body->getVelocity().x < -10.0) {
             // TODO: Set walk or run depending on the speed (interpolate?)
             this->setAnimation(0, "walk", true);
+            //CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/Walking.wav");
         } else { // x == 0.0
             this->setAnimation(0, "idle", true);
         }

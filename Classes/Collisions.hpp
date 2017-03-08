@@ -7,6 +7,7 @@ const int CLIMBEABLE_TAG = 11;
 const int MOVEABLE_TAG = 12;
 const int VINE_TAG = 13;
 const int PROJECTILE_TAG = 14;
+const int PEG_TAG = 15;
 
 enum class CollisionCategory {
     None = 0,
