@@ -134,6 +134,7 @@ set(GAME_SRC
   Classes/AppDelegate.cpp
   Classes/MainGameScene.cpp
   Classes/AiAgentBehaviors.cpp
+  Classes/DisappearingPlatform.cpp
   Classes/AiAgent.cpp
   Classes/Boulder.cpp
   Classes/Character.cpp
@@ -149,6 +150,8 @@ set(GAME_SRC
   Classes/CageTrap.cpp
   Classes/Viewpoint.cpp
   Classes/Vine.cpp
+  Classes/Peg.cpp
+  Classes/Spear.cpp
   ${PLATFORM_SPECIFIC_SRC}
 )
 
@@ -191,11 +194,9 @@ else()
     )
 
 if (LINUX)
-    file(COPY Resources/levelFiles DESTINATION bin)
-    file(COPY Resources/platforms DESTINATION bin)
-    file(COPY Resources/characters DESTINATION bin)
-    file(COPY Resources/backgrounds DESTINATION bin)
-    file(COPY Resources/Boulders DESTINATION bin)
+    ADD_CUSTOM_TARGET(link_target ALL
+                  COMMAND ${CMAKE_COMMAND} -E create_symlink Resources/levelFiles bin/levelFiles
+                  COMMAND ${CMAKE_COMMAND} -E create_symlink Resources/assets bin/assets)
 endif()
 
 

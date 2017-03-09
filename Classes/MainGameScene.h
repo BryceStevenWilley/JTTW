@@ -78,7 +78,7 @@ private:
     std::vector<Peg *> pegs = std::vector<Peg *>();
     std::vector<Zone> attackZones = std::vector<Zone>();
  
-    std::map<int, Boulder *> boulders = std::map<int, Boulder *>();
+    std::map<int, Boulder *> boulders; 
     std::map<int, std::vector<int>> joints = std::map<int, std::vector<int>>();
     std::map<Character *, bool> attacking = std::map<Character *, bool>();
     std::map<Character *, double> attackCountdown = std::map<Character *, double>();
