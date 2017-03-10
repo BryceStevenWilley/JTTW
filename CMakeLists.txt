@@ -41,6 +41,8 @@ set(BUILD_LUA_LIBS OFF CACHE BOOL "turn off build lua related targets")
 set(BUILD_JS_LIBS OFF CACHE BOOL "turn off build js related targets")
 add_subdirectory(${COCOS2D_ROOT})
 
+include(${COCOS2D_ROOT}/cocos/editor-support/cocosbuilder/CMakeLists.txt)
+
 # Some macro definitions
 if(WINDOWS)
   if(BUILD_SHARED_LIBS)
@@ -113,6 +115,10 @@ include_directories(
   ${COCOS2D_ROOT}/cocos
   ${COCOS2D_ROOT}/cocos/platform
   ${COCOS2D_ROOT}/cocos/audio/include/
+  ${COCOS2D_ROOT}/cocos/editor-support/
+  ${COCOS2D_ROOT}/extensions
+  ${COCOS2D_ROOT}/external
+  ${COCOS2D_ROOT}/
   Classes
 )
 if ( WIN32 )
@@ -122,15 +128,33 @@ if ( WIN32 )
 )
 endif( WIN32 )
 
+set(SPINE_SRC ${COCOS2D_ROOT}/cocos/editor-support/spine/)
+
 set(GAME_SRC
   Classes/AppDelegate.cpp
-  Classes/HelloWorldScene.cpp
+  Classes/MainGameScene.cpp
+  Classes/AiAgentBehaviors.cpp
+  Classes/AiAgent.cpp
+  Classes/Boulder.cpp
+  Classes/Character.cpp
+  Classes/LevelEnd.cpp
+  Classes/LevelSelectScene.cpp
+  Classes/MainMenuScene.cpp
+  Classes/Monk.cpp
+  Classes/Monkey.cpp
+  Classes/MoveablePlatform.cpp
+  Classes/Piggy.cpp
+  Classes/Sandy.cpp
+  Classes/Platform.cpp
+  Classes/CageTrap.cpp
+  Classes/Viewpoint.cpp
+  Classes/Vine.cpp
   ${PLATFORM_SPECIFIC_SRC}
 )
 
 set(GAME_HEADERS
   Classes/AppDelegate.h
-  Classes/HelloWorldScene.h
+  Classes/MainGameScene.h
   ${PLATFORM_SPECIFIC_HEADERS}
 )
 
@@ -165,5 +189,15 @@ else()
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${APP_BIN_DIR}/Resources
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/Resources ${APP_BIN_DIR}/Resources
     )
+
+if (LINUX)
+    file(COPY Resources/levelFiles DESTINATION bin)
+    file(COPY Resources/platforms DESTINATION bin)
+    file(COPY Resources/characters DESTINATION bin)
+    file(COPY Resources/backgrounds DESTINATION bin)
+    file(COPY Resources/Boulders DESTINATION bin)
+endif()
+
+
 
 endif()

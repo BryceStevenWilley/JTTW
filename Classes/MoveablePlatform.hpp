@@ -16,13 +16,9 @@ public:
         TOWARDS_B
     };
     
-    cocos2d::Sprite *image;
-    cocos2d::PhysicsBody *body;
-
     MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerA, cocos2d::Vec2 centerB, cocos2d::Size imageSize, cocos2d::Vec2 box, double maxVelocity);
 
     MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerA, cocos2d::Vec2 centerB, cocos2d::Size imageSize, std::vector<cocos2d::Vec2> points, double maxVelocity);
-
 
     // NOTE: we currently assume that the platform should hit no other platform when moving, at all.
     void move(float deltaTime, bool debugOn);

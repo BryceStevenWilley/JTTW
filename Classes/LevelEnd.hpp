@@ -1,14 +1,7 @@
-//
-//  LevelEnd.hpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/14/17.
-//
-//
-
 #ifndef LevelEnd_hpp
 #define LevelEnd_hpp
 
+#include "cocos2d.h"
 #include <iostream>
 
 namespace JTTW {

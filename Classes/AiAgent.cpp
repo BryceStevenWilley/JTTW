@@ -3,6 +3,9 @@
 
 using namespace JTTW;
 
+
+const float IMPULSE_AMOUNT = 280.0;
+
 AiAgent::AiAgent(Character *controlledCharacter) :
 _controlledCharacter(controlledCharacter), _currentBehavior(&AiAgent::stationaryBehavior) {}
 
@@ -43,23 +46,26 @@ void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeybo
     switch(code) {
         case KeyCode::KEY_LEFT_ARROW:
             if (pressed) {
-                _controlledCharacter->impulseLeft(200.0);
+                _controlledCharacter->impulseLeft(IMPULSE_AMOUNT);
             } else { // released
-                _controlledCharacter->impulseLeft(-200.0);
+                _controlledCharacter->impulseLeft(-IMPULSE_AMOUNT);
             }
             break;
         case KeyCode::KEY_RIGHT_ARROW:
             if (pressed) {
-                _controlledCharacter->impulseRight(200.0);
+                _controlledCharacter->impulseRight(IMPULSE_AMOUNT);
             } else {
-                _controlledCharacter->impulseRight(-200.0);
+                _controlledCharacter->impulseRight(-IMPULSE_AMOUNT);
             }
             break;
         case KeyCode::KEY_SPACE:
-            _controlledCharacter->jump();
+            if (pressed) {
+                _controlledCharacter->jump();
+            }
             break;
         default:
-            // do nothing
+            // Try the charecter's special controls.
+            _controlledCharacter->characterSpecial(code, pressed);
             break;
     }
     return;

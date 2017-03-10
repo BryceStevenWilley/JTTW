@@ -1,47 +1,57 @@
-//
-//  PCharacter.cpp
-//  JTTW
-//
-//  Created by Bryce Willey on 2/3/17.
-//
-//
-
 #include "Character.hpp"
 #include "Collisions.hpp"
+#include "MoveablePlatform.hpp"
+#include "Monkey.hpp"
+#include "Monk.hpp"
+#include "Piggy.hpp"
+#include "Sandy.hpp"
 #include <iostream>
+#include "SimpleAudioEngine.h"
 
 using namespace JTTW;
 
+Character * Character::createFromName(const std::string name, cocos2d::Vec2 startPosition, cocos2d::Size dimensions) {
+    if (name == "Monkey") {
+        return (Character *)new Monkey(startPosition, dimensions);
+    } else if (name == "Monk") {
+        return (Character *)new Monk(startPosition, dimensions);
+    } else if (name == "Piggy") {
+        return (Character *)new Piggy(startPosition, dimensions);
+    } else { // (name == "Sandy"), ALSO DEFAULT
+        return (Character *)new Sandy(startPosition, dimensions);
+    }
+}
+
 Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial mat, cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
         spine::SkeletonAnimation(),
-        body(cocos2d::PhysicsBody::createBox(cocos2d::Size(600.0f, 720.0f), mat)),
-        characterName(artFilePrefix) {
+        body(cocos2d::PhysicsBody::create()),    ///Box(cocos2d::Size(480.0f, 780.0f), mat)),
+        characterName(artFilePrefix), _currentState(MID_AIR), _dimensions(dimensions) {
     
-    this->initWithJsonFile(artFilePrefix + ".json", artFilePrefix + ".atlas", 1.0f);
-    this->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    this->setScaleX(dimensions.width / 720.0f); // 720.0px is approximately the size of the art at 1.0f.
-    this->setScaleY(dimensions.height / 720.0f);
-
+    auto bodyShape = cocos2d::PhysicsShapeBox::create(cocos2d::Size(480.0f, 780.0f), mat); //, cocos2d::Vec2(-dimensions.width * 2.0, 0)); //dimensions.height / 2.0));
+    body->addShape(bodyShape);
     body->setCategoryBitmask((int)CollisionCategory::Character);
     body->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
-    body->setContactTestBitmask((int)CollisionCategory::PlatformAndBoulder);
+    body->setContactTestBitmask((int)CollisionCategory::PlatformBoulderAndProjectile);
     body->setRotationEnable(false);
 
-    body->setPositionOffset(cocos2d::Vec2(0.0, dimensions.height / 2.0));
-
     body->setVelocityLimit(600);
-
-    this->setPhysicsBody(body);
+    
+    this->initWithJsonFile("characters/" + artFilePrefix + ".json", "characters/" + artFilePrefix + ".atlas", 1.0f);
+    //this->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+    this->setContentSize(cocos2d::Size(/*480.0f*/0.0, 780.0f));
+    this->setScaleX(dimensions.width / 780.0f);
+    this->setScaleY(dimensions.height / 780.0f);
     this->setAnimation(0, "idle", true);
+    this->setPhysicsBody(body);
 
-    followcrown = cocos2d::Sprite::create("Selection Crown.png");
-    followcrown->setScale(.2);
-    followcrown->setPosition(0.0, 950);
+    followcrown = cocos2d::Sprite::create("characters/Selection Crown.png");
+    followcrown->setScale(.3);
+    followcrown->setPosition(0.0, 940);
     followcrown->setVisible(false);
     this->addChild(followcrown);
     
-    alonecrown = cocos2d::Sprite::create("AloneCrown.png");
-    alonecrown->setScale(.2);
+    alonecrown = cocos2d::Sprite::create("characters/AloneCrown.png");
+    alonecrown->setScale(.3);
     alonecrown->setPosition(0.0, 940);
     alonecrown->setVisible(false);
     this->addChild(alonecrown);
@@ -50,21 +60,39 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
 
     this->setPosition(startPosition);
     
-    _startingPosition = startPosition;
+    _respawnPosition = startPosition;
     
     this->setTag(CHARACTER_TAG);
+}
+
+cocos2d::Size Character::getSize() {
+    return _dimensions;
 }
 
 void Character::impulseLeft(float deltaVel) {
     double impulse = body->getMass() * deltaVel;
     leftMomentum += impulse;
-    rebalanceImpulse();
+    if (_currentState != State::FROZEN) {
+        rebalanceImpulse();
+    }
 }
 
 void Character::impulseRight(float deltaVel) {
     double impulse = body->getMass() * deltaVel;
     rightMomentum += impulse;
-    rebalanceImpulse();
+    if (_currentState != State::FROZEN) {
+        rebalanceImpulse();
+    }
+}
+
+void Character::impulseLeftButNoRebalance(float deltaVel) {
+    double impulse = body->getMass() * deltaVel;
+    leftMomentum += impulse;
+}
+
+void Character::impulseRightButNoRebalance(float deltaVel) {
+    double impulse = body->getMass() * deltaVel;
+    rightMomentum += impulse;
 }
 
 void Character::applyForceRight(double fprime_x) {
@@ -74,9 +102,10 @@ void Character::applyForceRight(double fprime_x) {
 }
 
 void Character::rebalanceImpulse() {
-    std::cout << characterName << " right momentum: " << rightMomentum << ", left: " << leftMomentum << std::endl;
     double totalMomentum = rightMomentum - leftMomentum;
     double targetVelocity = totalMomentum / body->getMass();
+    
+    targetVelocity += lastRefVel.x;
     
     double actualDeltaVel = targetVelocity - body->getVelocity().x;
     
@@ -90,18 +119,30 @@ void Character::stop() {
     rightMomentum = 0.0;
     body->applyImpulse(cocos2d::Vec2(body->getMass() * -(body->getVelocity().x), 0));
 }
-    
-void Character::jump() {
-    if (_currentState == State::MID_AIR) {
+
+void Character::freeze() {
+    State oldState = _currentState;
+    _currentState = State::FROZEN;
+    updateAnimation(oldState);
+    _frozenTimer = 3.0; // seconds
+    body->setVelocity(cocos2d::Vec2(0.0, body->getVelocity().y));
+}
+
+// TODO: break into initJump and stopJump, one for key press and one for key release.
+// While the key is pressed, apply a force (that is decaying) under a jump time
+// amount.
+void Character::jump(double force) {
+    if (_currentState == State::MID_AIR || _currentState == State::FROZEN) {
         // Can't jump while you're in the air, dummy!
         return;
     }
     
-    body->applyImpulse(cocos2d::Vec2(0, body->getMass() * 250));
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/Jump.wav");
+    body->applyImpulse(cocos2d::Vec2(0, body->getMass() * force));
 }
 
 void Character::jumpFromForce(double fprime_y) {
-    if (_currentState == State::MID_AIR) {
+    if (_currentState == State::MID_AIR || _currentState == State::FROZEN) {
         // Can't jump while you're in the air, dummy!
         return;
     }
@@ -122,19 +163,30 @@ bool Character::justJumped() const {
     return body->getVelocity().y > 100;
 }
 
-void Character::landedCallback() {
-    State oldState = _currentState;
-    _currentState = State::STANDING;
+void Character::landedCallback(cocos2d::PhysicsBody *plat) {
     platformsStandingOn += 1;
-    updateAnimation(oldState);
+    if (_currentState != State::FROZEN) {
+        State oldState = _currentState;
+        _currentState = State::STANDING;
+        updateAnimation(oldState);
+    }
+    if (plat->getNode()->getTag() == MOVEABLE_TAG) {
+        referenceBody = plat;
+        body->setVelocity(body->getVelocity() + referenceBody->getVelocity());
+        lastRefVel = referenceBody->getVelocity();
+    }
 }
 
-void Character::leftCallback() {
+void Character::leftCallback(cocos2d::PhysicsBody *plat) {
     platformsStandingOn -= 1;
     if (platformsStandingOn == 0) {
         State oldState = _currentState;
         _currentState = State::MID_AIR;
         updateAnimation(oldState);
+        if (plat->getNode()->getTag() == MOVEABLE_TAG) {
+            referenceBody = nullptr;
+            lastRefVel = cocos2d::Vec2::ZERO;
+        }
     } else if (platformsStandingOn < 0) {
         std::cerr << "ERROR: how can " << characterName << " stand on negative platforms?!" << std::endl;
         platformsStandingOn = 0;
@@ -157,38 +209,66 @@ const Character::State Character::getCurrentState() const {
     return _currentState;
 }
 
-void Character::updateAnimation() {
-    if (_oldVel == body->getVelocity()) {
+void Character::updateLoop(float delta) {
+    // Kinda unrelated stuff regarding frozen.
+    if (_currentState == State::FROZEN) {
+        _frozenTimer -= delta;
+        std::cout << "timer is " << _frozenTimer  << std::endl;
+        if (_frozenTimer <= 0.0) {
+            std::cout << "Un-freezing" << std::endl;
+            State oldState = _currentState;
+            if (platformsStandingOn > 0) {
+                _currentState = State::STANDING;
+            } else {
+                _currentState = State::MID_AIR;
+            }
+            updateAnimation(oldState);
+        }
+    }
+
+    // Update velocity if needed.
+    if (referenceBody != nullptr && lastRefVel != referenceBody->getVelocity()) {
+        body->setVelocity(cocos2d::Vec2(body->getVelocity().x - lastRefVel.x + referenceBody->getVelocity().x, 0.0));
+        lastRefVel = referenceBody->getVelocity();
+    }
+    
+    auto currentRelVel = cocos2d::Vec2((rightMomentum - leftMomentum)/ body->getMass(), body->getVelocity().y - lastRefVel.y);
+    
+    //auto currentRelVel = body->getVelocity() - lastRefVel;
+    if (_oldVel == currentRelVel) {
         // nothing changed.
         return;
     }
-    if (std::abs(_oldVel.x) >= 5 && std::abs(body->getVelocity().x) < 5) {
-        // Slowing down.
-        this->setAnimation(0, "idle", true);
-    }
-    if (std::abs(_oldVel.x) < 5 && std::abs(body->getVelocity().x) >= 5) {
-        // Speeding up.
-        this->setAnimation(0, "walk", true);
+    if (_currentState == STANDING) {
+        if (std::abs(_oldVel.x) >= 5 && std::abs(currentRelVel.x) < 5) {
+            // Slowing down.
+            this->setAnimation(0, "idle", true);
+        }
+        if (std::abs(_oldVel.x) < 5 && std::abs(currentRelVel.x) >= 5) {
+            // Speeding up.
+            this->setAnimation(0, "walk", true);
+        }
     }
     
     //  Left vs. Right
-    if (_oldVel.x <= 0.0 && body->getVelocity().x > 0.0) {
+    if (_oldVel.x <= 0.0 && currentRelVel.x > 0.0) {
       // Set to go right.
       this->setScaleX(std::abs(this->getScaleX()));
     }
-    if (_oldVel.x >= 0.0 && body->getVelocity().x < 0.0) {
+    if (_oldVel.x >= 0.0 && currentRelVel.x < 0.0) {
       this->setScaleX(-1 * std::abs(this->getScaleX()));
     }
     
-    _oldVel = body->getVelocity();
+    _oldVel = currentRelVel;
 }
 
 void Character::updateAnimation(State oldState) {
-   if (oldState == State::MID_AIR && _currentState == State::STANDING) {
+   if ((oldState == State::MID_AIR || oldState == State::FROZEN) && _currentState == State::STANDING) {
         this->setTimeScale(1.0);
         if (body->getVelocity().x > 10.0 || body->getVelocity().x < -10.0) {
             // TODO: Set walk or run depending on the speed (interpolate?)
             this->setAnimation(0, "walk", true);
+            //CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/Walking.wav");
         } else { // x == 0.0
             this->setAnimation(0, "idle", true);
         }
@@ -199,10 +279,26 @@ void Character::updateAnimation(State oldState) {
         this->setAnimation(0, "jump", false);
         this->setTimeScale(0.9);
    }
+
+   if (_currentState == State::FROZEN) {
+       // TODO: wait for Mei's new animation.
+   }
+
+   // TODO: haven't covered from frozen to mid air. (what it do?)
 }
 
-void Character::restartFromStart() {
+void Character::restartFromRespawn() {
+    std::cout << "Restarting " << characterName << " at " << _respawnPosition.x << ", " << _respawnPosition.y << std::endl;
     body->setVelocity(cocos2d::Vec2(0, 0));
-    this->setPosition(_startingPosition);
+    this->setPosition(_respawnPosition);
+    this->setPosition(_respawnPosition);
+}
+
+void Character::setNewRespawn(cocos2d::Vec2 newRespawn) {
+    _respawnPosition = newRespawn;
+}
+
+double Character::getRespawnProgress() const {
+    return _respawnPosition.x;
 }
 
