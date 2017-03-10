@@ -4,7 +4,7 @@
 using namespace JTTW;
 
 Monkey::Monkey(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
- Character("Monkey", cocos2d::PhysicsMaterial(1.0, 0.0, 0.0), startPosition, dimensions), _state(NORMAL) {}
+ Character("Monkey", cocos2d::PhysicsMaterial(.8, 0.0, 1.0), startPosition, dimensions), _state(NORMAL) {}
 
 void Monkey::impulseLeft(float deltaVel) {
     if (_state == NORMAL || _state == SWINGING) {

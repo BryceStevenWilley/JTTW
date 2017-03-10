@@ -27,8 +27,12 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
         body(cocos2d::PhysicsBody::create()),    ///Box(cocos2d::Size(480.0f, 780.0f), mat)),
         characterName(artFilePrefix), _currentState(MID_AIR), _dimensions(dimensions) {
     
-    auto bodyShape = cocos2d::PhysicsShapeBox::create(cocos2d::Size(480.0f, 780.0f), mat); //, cocos2d::Vec2(-dimensions.width * 2.0, 0)); //dimensions.height / 2.0));
+    double width = 480.0f;
+    double height = 780.0f;
+    auto bodyShape = cocos2d::PhysicsShapeBox::create(cocos2d::Size(width, height * (2.0/3.0)), mat, cocos2d::Vec2(0.0, height/4.0));
+    auto bottomSemiCircle = cocos2d::PhysicsShapeCircle::create(width/2.0, mat, cocos2d::Vec2(0.0, -height/4.0));
     body->addShape(bodyShape);
+    body->addShape(bottomSemiCircle);
     body->setCategoryBitmask((int)CollisionCategory::Character);
     body->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
     body->setContactTestBitmask((int)CollisionCategory::PlatformBoulderAndProjectile);
@@ -96,9 +100,12 @@ void Character::impulseRightButNoRebalance(float deltaVel) {
 }
 
 void Character::applyForceRight(double fprime_x) {
-    cocos2d::Vec2 oldVel = cocos2d::Vec2(body->getVelocity().x, body->getVelocity().y);
+    //cocos2d::Vec2 oldVel = cocos2d::Vec2(body->getVelocity().x, body->getVelocity().y);
     cocos2d::Vec2 F_x = cocos2d::Vec2(fprime_x * body->getMass(), 0);
-    body->applyForce(F_x);
+    
+    
+    
+    body->applyForce(F_x.project(_rightVector));
 }
 
 void Character::rebalanceImpulse() {
@@ -111,13 +118,22 @@ void Character::rebalanceImpulse() {
     
     double actualImpulse = body->getMass() * actualDeltaVel;
     
-    body->applyImpulse(cocos2d::Vec2(actualImpulse, 0));
+    auto finalVec = cocos2d::Vec2(actualImpulse, 0);
+    body->applyImpulse(finalVec.project(_rightVector));
 }
+
+void Character::continueMotion() {
+    if (platformsStandingOn != 0 && std::abs(rightMomentum - leftMomentum)/body->getMass() > 0.01) {
+        rebalanceImpulse();
+    }
+}
+
 
 void Character::stop() {
     leftMomentum = 0.0;
     rightMomentum = 0.0;
-    body->applyImpulse(cocos2d::Vec2(body->getMass() * -(body->getVelocity().x), 0));
+    auto finalVec = body->getMass() * -(body->getVelocity().project(_rightVector));
+    body->applyImpulse(finalVec);
 }
 
 void Character::freeze() {
@@ -125,7 +141,7 @@ void Character::freeze() {
     _currentState = State::FROZEN;
     updateAnimation(oldState);
     _frozenTimer = 3.0; // seconds
-    body->setVelocity(cocos2d::Vec2(0.0, body->getVelocity().y));
+    body->setVelocity(cocos2d::Vec2(0.0, 0.0)); // ????? (how to stop on a ramp?) body->getVelocity().y));
 }
 
 // TODO: break into initJump and stopJump, one for key press and one for key release.
@@ -163,13 +179,18 @@ bool Character::justJumped() const {
     return body->getVelocity().y > 100;
 }
 
-void Character::landedCallback(cocos2d::PhysicsBody *plat) {
+void Character::landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRightDir) {
     platformsStandingOn += 1;
+    
+    // TODO: check if we don't need to do this for plats > 2
+    _rightVector = newRightDir;
+    
     if (_currentState != State::FROZEN) {
         State oldState = _currentState;
         _currentState = State::STANDING;
         updateAnimation(oldState);
     }
+    
     if (plat->getNode()->getTag() == MOVEABLE_TAG) {
         referenceBody = plat;
         body->setVelocity(body->getVelocity() + referenceBody->getVelocity());
@@ -182,6 +203,7 @@ void Character::leftCallback(cocos2d::PhysicsBody *plat) {
     if (platformsStandingOn == 0) {
         State oldState = _currentState;
         _currentState = State::MID_AIR;
+        _rightVector = cocos2d::Vec2(1, 0);
         updateAnimation(oldState);
         if (plat->getNode()->getTag() == MOVEABLE_TAG) {
             referenceBody = nullptr;

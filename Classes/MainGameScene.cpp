@@ -79,7 +79,7 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
     }
     if (normal.dot(cocos2d::Vec2(0, -1)) > std::cos(M_PI / 4.0)) {
         if (begin) {
-            c->landedCallback(body);
+            c->landedCallback(body, normal.getPerp());
         } else { // onContactEnd
             c->leftCallback(body);
         }
@@ -620,6 +620,8 @@ void MainGameScene::update(float delta) {
         if ((*xAgent) != player) {
             (*xAgent)->plan(player->_controlledCharacter, characters);
             (*xAgent)->executeControl(delta);
+        } else {
+            (*xAgent)->_controlledCharacter->continueMotion();
         }
     }
     
