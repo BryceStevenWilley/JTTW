@@ -29,7 +29,7 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
     
     double width = 480.0f;
     double height = 780.0f;
-    auto bodyShape = cocos2d::PhysicsShapeBox::create(cocos2d::Size(width, height * (2.0/3.0)), mat, cocos2d::Vec2(0.0, height/4.0));
+    auto bodyShape = cocos2d::PhysicsShapeBox::create(cocos2d::Size(width, height * (2.0/3.0)), mat, cocos2d::Vec2(0.0, height/9.0));
     auto bottomSemiCircle = cocos2d::PhysicsShapeCircle::create(width/2.0, mat, cocos2d::Vec2(0.0, -height/4.0));
     body->addShape(bodyShape);
     body->addShape(bottomSemiCircle);
@@ -123,7 +123,9 @@ void Character::rebalanceImpulse() {
 }
 
 void Character::continueMotion() {
-    if (platformsStandingOn != 0 && std::abs(rightMomentum - leftMomentum)/body->getMass() > 0.01) {
+    if (_currentState != State::FROZEN &&
+            platformsStandingOn != 0 &&
+            std::abs(rightMomentum - leftMomentum)/body->getMass() > 0.01) {
         rebalanceImpulse();
     }
 }

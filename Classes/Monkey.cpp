@@ -86,7 +86,9 @@ void Monkey::characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed
         if (_state == CLIMBING) {
             updateClimbingVel();
         } else if (_state == SWINGING) {
-            moveAlongVine(-30);
+            if (pressed) {
+                moveAlongVine(-30);
+            }
         }
     }
 }
@@ -100,10 +102,10 @@ void Monkey::updateClimbingVel() {
         this->setTimeScale(1.0);
         this->setAnimation(0, "ClimbIdle", true);
     }
-    body->setVelocity(cocos2d::Vec2(0, sum));
+    body->setVelocity(cocos2d::Vec2(0, sum).project(_upDir));
 }
 
-void Monkey::enteringClimeable() {
+void Monkey::enteringClimeable(cocos2d::Vec2 upDir) {
     if (_state == NORMAL) {
         std::cout << "Now climbing" << std::endl;
         // Stick to where you are.
@@ -111,6 +113,7 @@ void Monkey::enteringClimeable() {
         //Character::stop();
         body->setVelocity(cocos2d::Vec2::ZERO);
         _state = CLIMBING;
+        _upDir = upDir;
         this->setAnimation(0, "ClimbIdle", true);
         updateClimbingVel(); // Because we're still tracking kepresses even off of the trees.
     }
@@ -126,15 +129,26 @@ void Monkey::leavingClimeable() {
     body->setGravityEnable(true);
 }
 
-void Monkey::enteringVine(cocos2d::PhysicsWorld *world, Vine *vine, double offset, cocos2d::Vec2 collisionPoint) {
+/**
+ * 'alreadyOn' is only to change the animation.
+ */
+void Monkey::enteringVine(cocos2d::PhysicsWorld *world, Vine *vine, double offset, cocos2d::Vec2 collisionPoint, bool alreadyOn) {
     leavingVine();
     // create a joint between you and the vine.
     pinJoint = cocos2d::PhysicsJointPin::construct(this->body, vine->getPhysicsBody(), cocos2d::Vec2::ZERO, cocos2d::Vec2(0, offset));
     world->addJoint(pinJoint);
     _state = SWINGING;
-    this->setTimeScale(2.0);
-    this->setAnimation(0, "JumpToSwing", false);
-    this->addAnimation(0, "Swing", true);
+    
+    if (!alreadyOn) {
+        this->setTimeScale(2.0);
+        this->setAnimation(0, "JumpToSwing", false);
+        this->addAnimation(0, "Swing", true);
+    } else {
+        this->setTimeScale(2.0);
+        this->setTimeScale(1.0);
+        this->setAnimation(0, "Climb", false);
+        this->addAnimation(0, "Swing", true);
+    }
     
     // set the character to rotate with the vine.
     body->setRotationEnable(true);
@@ -172,9 +186,8 @@ void Monkey::leavingVine() {
 }
 
 void Monkey::moveAlongVine(float deltaP) {
-    std::cout << "Moving along vine!: " << deltaP << " much, currentVineOffset = " << currentVineOffset << std::endl;
     if (currentVineOffset + deltaP > -currentVine->getLength() / 2.0 && currentVineOffset + deltaP < currentVine->getLength() / 2.0) {
-        enteringVine(currentWorld, currentVine, currentVineOffset + deltaP, cocos2d::Vec2::ZERO);
+        enteringVine(currentWorld, currentVine, currentVineOffset + deltaP, cocos2d::Vec2::ZERO, true);
     }
 }
 

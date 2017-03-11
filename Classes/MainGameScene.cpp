@@ -60,7 +60,7 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
                  std::cout << "halfLength: " << halfLength << std::endl;
                  offset = -(halfLength - 5);
              }
-             m->enteringVine(this->getScene()->getPhysicsWorld(), v, offset, m->getPosition() + cocos2d::Vec2(0.0, m->getContentSize().height));
+             m->enteringVine(this->getScene()->getPhysicsWorld(), v, offset, m->getPosition() + cocos2d::Vec2(0.0, m->getContentSize().height), false);
         } else {
             //m->leavingClimeable();
             return true; // don't rebalance impulse!
@@ -87,7 +87,7 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
         // TODO: hacky, fix
         Monkey *m = (Monkey *)c;
         if (begin) {
-            m->enteringClimeable();
+            m->enteringClimeable(normal.getPerp());
         } else {
             m->leavingClimeable();
         }
@@ -598,6 +598,8 @@ void MainGameScene::switchToCharacter(int charIndex) {
 
 void MainGameScene::menuCloseCallback(Ref* pSender) {
     audio->stopBackgroundMusic();
+    audio->preloadBackgroundMusic("Music/MenuScreen.mp3");
+    audio->playBackgroundMusic("Music/MenuScreen.mp3");
     auto startScene = MainMenu::createScene();
     this->_eventDispatcher->removeEventListener(eventListener);
     cocos2d::Director::getInstance()->replaceScene(startScene);
