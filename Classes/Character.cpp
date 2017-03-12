@@ -100,11 +100,9 @@ void Character::impulseRightButNoRebalance(float deltaVel) {
 }
 
 void Character::applyForceRight(double fprime_x) {
-    //cocos2d::Vec2 oldVel = cocos2d::Vec2(body->getVelocity().x, body->getVelocity().y);
     cocos2d::Vec2 F_x = cocos2d::Vec2(fprime_x * body->getMass(), 0);
-    
-    
-    
+    // Project the force onto the right direction vector to avoid 
+    // bumping into objects as much as possible.
     body->applyForce(F_x.project(_rightVector));
 }
 

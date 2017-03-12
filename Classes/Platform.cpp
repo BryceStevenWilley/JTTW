@@ -8,7 +8,10 @@ Platform::Platform() : cocos2d::Sprite() {
 }
 
 
-Platform::Platform(std::string &fileName, cocos2d::Vec2 center, cocos2d::Size imageSize, std::vector<cocos2d::Vec2> points, bool climeable, bool collidable) : cocos2d::Sprite() {
+Platform::Platform(std::string &fileName, cocos2d::Vec2 center, 
+                   cocos2d::Size imageSize, std::vector<cocos2d::Vec2> points, 
+                   bool climeable, bool collidable) 
+        : cocos2d::Sprite() {
     if (!this->initWithFile(fileName)) {
         throw std::invalid_argument(fileName);
     }
@@ -17,31 +20,7 @@ Platform::Platform(std::string &fileName, cocos2d::Vec2 center, cocos2d::Size im
     this->setContentSize(imageSize);
     
     if (collidable) {
-        body = cocos2d::PhysicsBody::createPolygon(points.data(), (int)points.size(), cocos2d::PhysicsMaterial(1.0, 0.0, 1.0));
-        body->setDynamic(false);
-        body->setGravityEnable(false);
-        body->setTag((int)CollisionCategory::Platform);
-        body->setContactTestBitmask((int)CollisionCategory::CharacterAndBoulder);
-        body->setCollisionBitmask((int)CollisionCategory::CharacterAndBoulder);
-    
-        this->addComponent(body);
-    }
-
-    if (climeable) {
-        this->setTag(CLIMBEABLE_TAG);
-    }
-}
-
-Platform::Platform(std::string &fileName, cocos2d::Vec2 center, cocos2d::Size imageSize, cocos2d::Vec2 box, bool climeable, bool collidable) : cocos2d::Sprite() {
-    if (!this->initWithFile(fileName)) {
-        throw std::invalid_argument(fileName);
-    }
-    this->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    this->setPosition(center);
-    this->setContentSize(imageSize);
-    
-    if (collidable) {
-        body = cocos2d::PhysicsBody::createBox(cocos2d::Size(box.x, box.y), cocos2d::PhysicsMaterial(1.0, 0.0, 1.0));
+        body = cocos2d::PhysicsBody::createPolygon(points.data(), (int)points.size(), DEFAULT_MATERIAL);
         body->setDynamic(false);
         body->setGravityEnable(false);
         body->setTag((int)CollisionCategory::Platform);
