@@ -200,7 +200,7 @@ void MainMenu::openStartScene() {
 void MainMenu::openFirstLevel() {
     cocos2d::Scene *startScene;
     CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
-    startScene = MainGameScene::createScene("levelFiles/friday-level-v2.json");
+    startScene = MainGameScene::createScene("levelFiles/Paradise.json");
     if (startScene == NULL) {
         //titleLabel->setString("Something went wrong!\n Choose a different level!");
         //titleLabel->setBMFontSize(40);

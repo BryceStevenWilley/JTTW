@@ -4,7 +4,7 @@
 using namespace JTTW;
 
 Piggy::Piggy(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
- Character("Piggy", cocos2d::PhysicsMaterial(1.0, 0.0, 0.0), startPosition, dimensions) {}
+ Character("Piggy", cocos2d::PhysicsMaterial(0.8, 0.0, 0.5), startPosition, dimensions) {}
 
 
 void Piggy::impulseLeft(float deltaVel) {

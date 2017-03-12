@@ -70,7 +70,7 @@ public:
     bool isMovingLeft() const;
     bool isMovingRight() const;
     
-    void landedCallback(cocos2d::PhysicsBody *plat);
+    void landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRightDir);
     void leftCallback(cocos2d::PhysicsBody *plat);
     
     void transferVelocity(Character *reciever);
@@ -92,6 +92,7 @@ public:
     double getRespawnProgress() const;
     
     void updateLoop(float delta);
+    void continueMotion();
 
 protected:
     void jump(double force);
@@ -115,6 +116,8 @@ private:
     cocos2d::Size _dimensions;
 
     double _frozenTimer = 0.0;
+    
+    cocos2d::Vec2 _rightVector = cocos2d::Vec2(1, 0);
 };
 }
 

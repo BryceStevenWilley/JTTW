@@ -60,7 +60,7 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
                  std::cout << "halfLength: " << halfLength << std::endl;
                  offset = -(halfLength - 5);
              }
-             m->enteringVine(this->getScene()->getPhysicsWorld(), v, offset, m->getPosition() + cocos2d::Vec2(0.0, m->getContentSize().height));
+             m->enteringVine(this->getScene()->getPhysicsWorld(), v, offset, m->getPosition() + cocos2d::Vec2(0.0, m->getContentSize().height), false);
         } else {
             //m->leavingClimeable();
             return true; // don't rebalance impulse!
@@ -79,7 +79,7 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
     }
     if (normal.dot(cocos2d::Vec2(0, -1)) > std::cos(M_PI / 4.0)) {
         if (begin) {
-            c->landedCallback(body);
+            c->landedCallback(body, normal.getPerp());
         } else { // onContactEnd
             c->leftCallback(body);
         }
@@ -87,7 +87,7 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
         // TODO: hacky, fix
         Monkey *m = (Monkey *)c;
         if (begin) {
-            m->enteringClimeable();
+            m->enteringClimeable(normal.getPerp());
         } else {
             m->leavingClimeable();
         }
@@ -167,24 +167,24 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         double imageSizeWidth = vp.metersToPixels((double)pAtt["imageSizeWidth"]);
         double imageSizeHeight = vp.metersToPixels((double)pAtt["imageSizeHeight"]);
         
-        // Get the collision Width and height.
-        double collisionWidth = vp.metersToPixels((double)pAtt["collisionWidth"]);
-        double collisionHeight = vp.metersToPixels((double)pAtt["collisionHeight"]);
+        std::vector<cocos2d::Vec2> ps;
+        for (auto& cPoint: pAtt["collisionPoints"]) {
+            ps.push_back(cocos2d::Vec2(vp.metersToPixels((double)cPoint["x"]), vp.metersToPixels((double)cPoint["y"])));
+        }
         if (!pAtt["moveable"].is_boolean()) {
             // Something is wrong!
             std::cout << "Platform " << fullImagePath << " doesn't have a moveable member." << std::endl;
             throw std::domain_error("No moveable");
         }
-
+        
         if (pAtt["moveable"]) {
             cocos2d::Vec2 centerA(centerX, centerY);
             double centerBX = vp.metersToPixels((double)pAtt["endX"]);
             double centerBY = vp.metersToPixels((double)pAtt["endY"]);
             cocos2d::Vec2 centerB(centerBX, centerBY);
             double maximumVelocity = vp.metersToPixels((double)pAtt["velocity"]);
-            MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, 
-                    cocos2d::Size(imageSizeWidth, imageSizeHeight), cocos2d::Vec2(collisionWidth, collisionHeight), maximumVelocity);
-      
+            MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, cocos2d::Size(imageSizeWidth, imageSizeHeight), ps, maximumVelocity);
+
             if (fullImagePath == "assets/blueGround.png") {
                 std::cout << "Found ground!" << std::endl;
                 levelLayer->addChild(p, FLOOR_Z);
@@ -197,12 +197,11 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
         } else {
             if (pAtt["disappears"]) {
                 DisappearingPlatform *p = new DisappearingPlatform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight),
-                    cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climbable"], pAtt["collidable"]);
+                   ps, pAtt["climbable"], pAtt["collidable"]);
                 levelLayer->addChild(p, PLATFORM_Z);
                 trapsToTrigger.push_back(p);
             } else {
-                Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight),
-                    cocos2d::Vec2(collisionWidth, collisionHeight), pAtt["climbable"], pAtt["collidable"]);
+                Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), ps, pAtt["climbable"], pAtt["collidable"]);
         
                 if (p->getTag() == CLIMBEABLE_TAG) {
                     levelLayer->addChild(p, CLIMBABLE_Z);
@@ -599,6 +598,8 @@ void MainGameScene::switchToCharacter(int charIndex) {
 
 void MainGameScene::menuCloseCallback(Ref* pSender) {
     audio->stopBackgroundMusic();
+    audio->preloadBackgroundMusic("Music/MenuScreen.mp3");
+    audio->playBackgroundMusic("Music/MenuScreen.mp3");
     auto startScene = MainMenu::createScene();
     this->_eventDispatcher->removeEventListener(eventListener);
     cocos2d::Director::getInstance()->replaceScene(startScene);
@@ -621,6 +622,8 @@ void MainGameScene::update(float delta) {
         if ((*xAgent) != player) {
             (*xAgent)->plan(player->_controlledCharacter, characters);
             (*xAgent)->executeControl(delta);
+        } else {
+            (*xAgent)->_controlledCharacter->continueMotion();
         }
     }
     

@@ -16,30 +16,21 @@ cocos2d::Scene* LevelEnd::createScene(std::string &levelToLoad) {
 
 bool LevelEnd::init(std::string &nextLevelToLoad) {
     _nextLevelToLoad = nextLevelToLoad;
-
+    
     auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
     cocos2d::Vec2 origin = cocos2d::Director::getInstance()->getVisibleOrigin();
-    
-    auto textLabel = cocos2d::Label::createWithTTF("Your journey continues...", "fonts/WaitingfortheSunrise.ttf", 100);
+    auto fontScaleFactor = visibleSize.width / 1560.0;;
+
+    auto textLabel = createSunriseLabel("Your journey continues...", 100, fontScaleFactor);
     if (_nextLevelToLoad == "") {
         // The journey is over!
-        textLabel = cocos2d::Label::createWithTTF("The journey is over.", "fonts/WaitingfortheSunrise.ttf", 50);
+        textLabel = createSunriseLabel("The journey is over.", 50, fontScaleFactor);
     }
-    
-    textLabel->setTextColor(cocos2d::Color4B::WHITE);
-    textLabel->enableOutline(cocos2d::Color4B::BLACK);
-    textLabel->enableShadow();
     textLabel->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (3.0 / 4.0));
-    
     this->addChild(textLabel);
     
-    auto smallLabel = cocos2d::Label::createWithTTF("(click or press any key to continue)", "fonts/WaitingfortheSunrise.ttf", 40);
-    
-    smallLabel->setTextColor(cocos2d::Color4B::WHITE);
-    smallLabel->setTextColor(cocos2d::Color4B::BLACK);
-    smallLabel->enableShadow();
+    auto smallLabel = createSunriseLabel("(click or press any key to continue)", 40, fontScaleFactor);
     smallLabel->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/4.0));
-    
     this->addChild(smallLabel);
     
     keyListener = cocos2d::EventListenerKeyboard::create();
