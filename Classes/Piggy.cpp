@@ -3,6 +3,8 @@
 
 using namespace JTTW;
 
+const double Piggy::JUMP_INIT = 450;
+
 Piggy::Piggy(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
  Character("Piggy", cocos2d::PhysicsMaterial(0.8, 0.0, 0.5), startPosition, dimensions) {}
 
@@ -19,9 +21,9 @@ void Piggy::impulseRight(float deltaVel) {
     }
 }
 
-void Piggy::jump() {
+void Piggy::initJump() {
     if (_state != BOULDER_MODE) {
-        Character::jump(400);
+        Character::initJump(JUMP_INIT);
     }
 }
 

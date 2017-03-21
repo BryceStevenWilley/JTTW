@@ -118,8 +118,6 @@
 		9FB69E071E46EE88006325A3 /* LevelSelectScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */; };
 		9FB69E081E46EE88006325A3 /* LevelSelectScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */; };
 		9FB69E091E46EE88006325A3 /* LevelSelectScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */; };
-		9FC226FF1E64B2B000AA75D5 /* Boulders in Resources */ = {isa = PBXBuildFile; fileRef = 9FC226FE1E64B2B000AA75D5 /* Boulders */; };
-		9FC227011E64B5CD00AA75D5 /* Boulders in Resources */ = {isa = PBXBuildFile; fileRef = 9FC226FE1E64B2B000AA75D5 /* Boulders */; };
 		9FC227041E64BA1300AA75D5 /* characters in Resources */ = {isa = PBXBuildFile; fileRef = 454B170A1E2F39280035467D /* characters */; };
 		9FC227051E64BA4000AA75D5 /* characters in Resources */ = {isa = PBXBuildFile; fileRef = 454B170A1E2F39280035467D /* characters */; };
 		9FC4C2EF1E39293F00ABD648 /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC4C2ED1E39293F00ABD648 /* Platform.cpp */; };
@@ -146,7 +144,6 @@
 		9FD41C101E2D55920077779E /* testCharacter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C0E1E2D55920077779E /* testCharacter.cpp */; };
 		9FD41C131E2D55C80077779E /* TestDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C111E2D55C80077779E /* TestDelegate.cpp */; };
 		9FD41C151E2D56220077779E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C141E2D56220077779E /* main.cpp */; };
-		9FE1642B1E64BB5600FE4233 /* Boulders in Resources */ = {isa = PBXBuildFile; fileRef = 9FC226FE1E64B2B000AA75D5 /* Boulders */; };
 		9FE1642C1E64BB5600FE4233 /* levelFiles in Resources */ = {isa = PBXBuildFile; fileRef = 9FB69E001E46E93A006325A3 /* levelFiles */; };
 		9FE1642D1E64BB5600FE4233 /* characters in Resources */ = {isa = PBXBuildFile; fileRef = 454B170A1E2F39280035467D /* characters */; };
 		BF171245129291EC00B8313A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB012928DE900B8313A /* OpenGLES.framework */; };
@@ -294,7 +291,6 @@
 		9FB69E001E46E93A006325A3 /* levelFiles */ = {isa = PBXFileReference; lastKnownFileType = folder; path = levelFiles; sourceTree = "<group>"; };
 		9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelSelectScene.cpp; sourceTree = "<group>"; };
 		9FB69E061E46EE88006325A3 /* LevelSelectScene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LevelSelectScene.hpp; sourceTree = "<group>"; };
-		9FC226FE1E64B2B000AA75D5 /* Boulders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Boulders; sourceTree = "<group>"; };
 		9FC4C2ED1E39293F00ABD648 /* Platform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Platform.cpp; sourceTree = "<group>"; };
 		9FC4C2EE1E39293F00ABD648 /* Platform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Platform.hpp; sourceTree = "<group>"; };
 		9FC4C2F61E3B9BF200ABD648 /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
@@ -466,7 +462,6 @@
 				9F9A04D11E70ACA30069F934 /* assets */,
 				9F36A4CE1E6D4E650016232D /* Sound */,
 				9F36A4CF1E6D4E650016232D /* Music */,
-				9FC226FE1E64B2B000AA75D5 /* Boulders */,
 				9FB69E001E46E93A006325A3 /* levelFiles */,
 				9FB69DFE1E46E92B006325A3 /* UI */,
 				454B170A1E2F39280035467D /* characters */,
@@ -764,7 +759,6 @@
 				5087E77E17EB970100C73F5D /* Default.png in Resources */,
 				521A8E6419F0C34300D177D7 /* Default-667h@2x.png in Resources */,
 				50EF629717ECD46A001EB2F8 /* Icon-58.png in Resources */,
-				9FC226FF1E64B2B000AA75D5 /* Boulders in Resources */,
 				9F36A4D31E6D4E650016232D /* Music in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -776,7 +770,6 @@
 				9F9A04D31E70ACA30069F934 /* assets in Resources */,
 				9F36A4D41E6D4E650016232D /* Music in Resources */,
 				9FC227041E64BA1300AA75D5 /* characters in Resources */,
-				9FC227011E64B5CD00AA75D5 /* Boulders in Resources */,
 				9FB69E041E46EAE9006325A3 /* levelFiles in Resources */,
 				9FB69E021E46E944006325A3 /* UI in Resources */,
 				503AE0F817EB97AB00D1A890 /* Icon.icns in Resources */,
@@ -791,7 +784,6 @@
 			files = (
 				9F9A04D41E70ACA30069F934 /* assets in Resources */,
 				9F36A4D21E6D4E650016232D /* Sound in Resources */,
-				9FE1642B1E64BB5600FE4233 /* Boulders in Resources */,
 				9FE1642C1E64BB5600FE4233 /* levelFiles in Resources */,
 				9FE1642D1E64BB5600FE4233 /* characters in Resources */,
 				9FB69E031E46E950006325A3 /* UI in Resources */,

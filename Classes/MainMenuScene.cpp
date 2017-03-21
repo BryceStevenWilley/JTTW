@@ -29,7 +29,7 @@ bool MainMenu::init() {
     cocos2d::Vec2 origin = cocos2d::Director::getInstance()->getVisibleOrigin();
     float middleX = origin.x + visibleSize.width / 2.0;
 
-    auto fontScaleFactor = visibleSize.width / 1560.0;;
+    auto fontScaleFactor = visibleSize.width / 1560.0;
 
     // Sets the background image to fill the screen.
     auto background = cocos2d::Sprite::create("assets/Splash.png");

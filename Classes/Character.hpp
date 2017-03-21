@@ -30,6 +30,9 @@ const int CHARACTER_TAG = 10;
  */
 class Character : public spine::SkeletonAnimation {
 public:
+    const static double JUMP_DECAY;
+    const static double JUMP_INIT_FRACTION;
+
     enum State {
         STANDING,
         MID_AIR,
@@ -62,7 +65,8 @@ public:
     void freeze();
     
     // Allows the character to jump.
-    virtual void jump() = 0;
+    virtual void initJump() = 0;
+    virtual void stopJump();
     void jumpFromForce(double fprime_y);
     
     virtual void characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) = 0;
@@ -95,7 +99,7 @@ public:
     void continueMotion();
 
 protected:
-    void jump(double force);
+    void initJump(double force);
     State _currentState = State::STANDING;
     
 
@@ -118,6 +122,8 @@ private:
     double _frozenTimer = 0.0;
     
     cocos2d::Vec2 _rightVector = cocos2d::Vec2(1, 0);
+    
+    double jumpForce = 0.0;
 };
 }
 

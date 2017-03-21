@@ -15,6 +15,7 @@ public:
     
     void setLayer(cocos2d::Layer *level);
     void setRatio(double mToPixel);
+    void setScale(double screenOverIdeal);
     
     void panToCharacter(Character *player);
     void followCharacter(Character *player, float delta);
@@ -29,6 +30,8 @@ private:
     double _metersPerPixel; // The dimensions of the portion of the scene shown on screen in meters
     
     cocos2d::Layer *_level; // get from the level layer->getPosition.
+    
+    double _scale;
     
     bool _isPanning = false;
 };

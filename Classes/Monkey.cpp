@@ -3,6 +3,8 @@
 
 using namespace JTTW;
 
+const double Monkey::JUMP_INIT = 560;
+
 Monkey::Monkey(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
  Character("Monkey", cocos2d::PhysicsMaterial(.8, 0.0, 1.0), startPosition, dimensions), _state(NORMAL) {}
 
@@ -32,16 +34,13 @@ void Monkey::impulseRight(float deltaVel) {
     }
 }
 
-void Monkey::jump() {
-    float jumpPower = 500;
+void Monkey::initJump() {
+    float jumpPower = JUMP_INIT;
     if (_state == SWINGING) {
         leavingVine();
-        
-        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/Walking.wav");
+
         this->_currentState = Character::State::STANDING;
-        jumpPower = 90;
         _state = NORMAL;
-        //Character::jump(jumpPower);
         cocos2d::Vec2 vel = body->getVelocity();
         body->applyImpulse(body->getMass() * vel * .7); // Double the current velocity!
         this->_currentState = Character::State::MID_AIR;
@@ -49,14 +48,14 @@ void Monkey::jump() {
         return;
     }
     if (_state == NORMAL) {
-        Character::jump(jumpPower);
+        Character::initJump(jumpPower);
     }
     if (_state == CLIMBING) {
         std::cout << "Currently Climbing" << std::endl;
         leavingClimeable();
         this->_currentState = Character::State::STANDING;
-        jumpPower = 400;
-        Character::jump(jumpPower);
+        jumpPower = jumpPower - 100;
+        Character::initJump(jumpPower);
         this->_currentState = Character::State::MID_AIR;
     }
 }

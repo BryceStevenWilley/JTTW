@@ -60,7 +60,9 @@ void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeybo
             break;
         case KeyCode::KEY_SPACE:
             if (pressed) {
-                _controlledCharacter->jump();
+                _controlledCharacter->initJump();
+            } else { // released
+                _controlledCharacter->stopJump();
             }
             break;
         default:
@@ -121,6 +123,8 @@ void AiAgent::executeControl(float delta) {
     
     _controlledCharacter->applyForceRight(fprime.x);
     if (errorPosition.y > 20.0) {
-        _controlledCharacter->jump();
+        _controlledCharacter->initJump();
+    } else if (errorPosition.y < 5.0) {
+        _controlledCharacter->stopJump();
     }
 }

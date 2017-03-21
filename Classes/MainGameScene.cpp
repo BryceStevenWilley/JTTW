@@ -25,7 +25,7 @@ const int LVL_LAYER_Z_IDX = 1;
 cocos2d::Scene* MainGameScene::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::createWithPhysics();
-    scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -498));
+    scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -698));
     scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = MainGameScene::create(levelToLoad, scene->getPhysicsWorld());
     if (layer == NULL) {
@@ -488,7 +488,7 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     cocos2d::Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     // Creates the camera, or viewpoint for this scene.
-    // 1.7/130.0 means that 1.7 meters in the game world (average human male height) is represented by 180 pixels on screen.
+    // 1.7/130.0 means that 1.7 meters in the game world (average human male height) is represented by 130 pixels on screen.
     vp = Viewpoint(visibleSize, 1.7/130.0);
 
     try {
@@ -506,8 +506,18 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
         std::cout << "Level file corrupted!" << std::endl;
         return false;
     }
- 
+    
+    auto debugSprite = cocos2d::Sprite::create("assets/arEast.png");
+    debugSprite->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+    debugSprite->setPosition(cocos2d::Vec2::ZERO);
+    debugSprite->setContentSize(cocos2d::Size(200.0, 200.0));
+    layer->addChild(debugSprite);
+    
+    // Deal with scale stuff.
+    auto levelScaleFactor = visibleSize.width / 1560.0;
+    layer->setScale(levelScaleFactor);
     vp.setLayer(layer);
+    vp.setScale(levelScaleFactor);
 
     this->addChild(layer, LVL_LAYER_Z_IDX);
     

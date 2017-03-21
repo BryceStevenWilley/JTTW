@@ -10,6 +10,9 @@
 
 using namespace JTTW;
 
+const double Character::JUMP_DECAY = 200;
+const double Character::JUMP_INIT_FRACTION = (7.0 / 12.0);
+
 Character * Character::createFromName(const std::string name, cocos2d::Vec2 startPosition, cocos2d::Size dimensions) {
     if (name == "Monkey") {
         return (Character *)new Monkey(startPosition, dimensions);
@@ -128,7 +131,6 @@ void Character::continueMotion() {
     }
 }
 
-
 void Character::stop() {
     leftMomentum = 0.0;
     rightMomentum = 0.0;
@@ -147,14 +149,20 @@ void Character::freeze() {
 // TODO: break into initJump and stopJump, one for key press and one for key release.
 // While the key is pressed, apply a force (that is decaying) under a jump time
 // amount.
-void Character::jump(double force) {
+void Character::initJump(double force) {
     if (_currentState == State::MID_AIR || _currentState == State::FROZEN) {
         // Can't jump while you're in the air, dummy!
         return;
     }
     
+    jumpForce = force * body->getMass();
+    
     CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/Jump.wav");
-    body->applyImpulse(cocos2d::Vec2(0, body->getMass() * force));
+    body->applyImpulse(cocos2d::Vec2(0, jumpForce * JUMP_INIT_FRACTION));
+}
+
+void Character::stopJump() {
+    jumpForce = 0.0;
 }
 
 void Character::jumpFromForce(double fprime_y) {
@@ -246,6 +254,14 @@ void Character::updateLoop(float delta) {
             }
             updateAnimation(oldState);
         }
+    }
+ 
+    // Apply jump force.
+    if (jumpForce > 0.0) {
+        body->applyForce(cocos2d::Vec2(0.0, jumpForce));
+        jumpForce = jumpForce - (JUMP_DECAY * body->getMass()) * delta;
+    } else {
+        jumpForce = 0.0;
     }
 
     // Update velocity if needed.
