@@ -10,7 +10,7 @@ const bool COLLIDABLE = true;
 MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerA, cocos2d::Vec2 centerB, 
                                    cocos2d::Size imageSize, std::vector<cocos2d::Vec2> points, 
                                    double maxVelocity) 
-        : Platform(fileName, centerA, imageSize, points, NOT_CLIMABLE, COLLIDABLE), 
+        : Platform(fileName, centerA, imageSize, points, NOT_CLIMABLE, COLLIDABLE),
       _centerA(centerA), 
       _centerB(centerB) {
     // Set initial speed.
@@ -21,10 +21,8 @@ MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerA,
 }
 
 // TODO: Make platforms gradually move
-// Few Choices: Spring based
-//    Based on a Sin wave
-//    Based on a control thing with low may force applied.
-void MoveablePlatform::move(float deltaTime, bool debugOn) {
+//    Based on a Sin wave with force applied.
+void MoveablePlatform::move(float deltaTime) {
     auto position = this->getPosition() + _velocities * deltaTime;
     
     // Use get lengthSq because it saves up 2 square root operations.

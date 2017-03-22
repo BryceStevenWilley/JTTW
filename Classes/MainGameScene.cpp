@@ -95,6 +95,13 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
         } else {
             m->leavingClimeable();
         }
+    } else {
+        // Non climbable vertical wall.
+        if (begin) {
+            c->wallHitCallback(body);
+        } else {
+            c->wallLeftCallback(body);
+        }
     }
     if (!begin) {
         c->rebalanceImpulse();
@@ -142,8 +149,6 @@ const int BOULDER_Z = 5;
 const int CHARACTER_Z = 6;
 
 cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool debugOn) {
-    auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-    
     cocos2d::Layer *levelLayer = cocos2d::Layer::create();
     uiLayer = cocos2d::Layer::create();
     uiLayer->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
@@ -645,9 +650,9 @@ void MainGameScene::update(float delta) {
                 attacking[characters[i]] = false;
             }
         }
-        for (int j = 0; j < (int)respawnPoints.size(); j++) {
-            if (characters[i]->getPosition().x > respawnPoints[j].x && respawnPoints[j].x > characters[i]->getRespawnProgress()) {
-                characters[i]->setNewRespawn(respawnPoints[j]);
+        for (auto &spawn : respawnPoints) {
+            if (characters[i]->getPosition().x > spawn.x && spawn.x > characters[i]->getRespawnProgress()) {
+                characters[i]->setNewRespawn(spawn);
             } 
         }
         if (characters[i]->getPosition().y < ideal2Res(-100)) { // TODO: un-hardcode this.
@@ -658,14 +663,14 @@ void MainGameScene::update(float delta) {
         }
     }
     if (done) {
-        for (int i = 0; i < (int)characters.size(); i++) {
-            characters[i]->stop();
+        for (auto &c: characters) {
+            c->stop();
         }
         nextLevelCallback();
     }
     
     for (auto &m : moveables) {
-        m->move(delta, false);
+        m->move(delta);
     }
     
     for (auto entry = attacking.begin(); entry != attacking.end(); entry++) {

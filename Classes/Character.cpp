@@ -30,13 +30,13 @@ Character * Character::createFromName(const std::string name, cocos2d::Vec2 star
 
 Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial mat, cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
         spine::SkeletonAnimation(),
-        body(cocos2d::PhysicsBody::create()),    ///Box(cocos2d::Size(480.0f, 780.0f), mat)),
+        body(cocos2d::PhysicsBody::create()),
         characterName(artFilePrefix), _currentState(MID_AIR), _dimensions(dimensions) {
     
     double width = 480.0f;
     double height = 780.0f;
-    auto bodyShape = cocos2d::PhysicsShapeBox::create(cocos2d::Size(width, height * (2.0/3.0)), mat, cocos2d::Vec2(0.0, height/9.0));
-    auto bottomSemiCircle = cocos2d::PhysicsShapeCircle::create(width/2.0, mat, cocos2d::Vec2(0.0, -height/4.0));
+    auto bodyShape = cocos2d::PhysicsShapeBox::create(cocos2d::Size(width * .95, height * (2.0/3.0)), mat, cocos2d::Vec2(0.0, height/9.0));
+    auto bottomSemiCircle = cocos2d::PhysicsShapeCircle::create(width/2.0, mat, cocos2d::Vec2(0.0, -height * (0.8/4.0)));
     body->addShape(bodyShape);
     body->addShape(bottomSemiCircle);
     body->setCategoryBitmask((int)CollisionCategory::Character);
@@ -47,7 +47,6 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
     body->setVelocityLimit(VEL_LIMIT);
     
     this->initWithJsonFile("characters/" + artFilePrefix + ".json", "characters/" + artFilePrefix + ".atlas", 1.0f);
-    //this->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
     this->setContentSize(cocos2d::Size(/*480.0f*/0.0, 780.0f));
     this->setScaleX(dimensions.width / 780.0f);
     this->setScaleY(dimensions.height / 780.0f);
@@ -116,8 +115,6 @@ void Character::rebalanceImpulse() {
     double totalMomentum = rightMomentum - leftMomentum;
     double targetVelocity = totalMomentum / body->getMass();
     
-    targetVelocity += lastRefVel.x;
-    
     double actualDeltaVel = targetVelocity - body->getVelocity().x;
     
     double actualImpulse = body->getMass() * actualDeltaVel;
@@ -129,6 +126,7 @@ void Character::rebalanceImpulse() {
 void Character::continueMotion() {
     if (_currentState != State::FROZEN &&
             platformsStandingOn != 0 &&
+            wallsHit == 0 && 
             std::abs(rightMomentum - leftMomentum)/body->getMass() > 0.01) {
         rebalanceImpulse();
     }
@@ -149,7 +147,6 @@ void Character::freeze() {
     body->setVelocity(cocos2d::Vec2(0.0, 0.0)); // ????? (how to stop on a ramp?) body->getVelocity().y));
 }
 
-// TODO: break into initJump and stopJump, one for key press and one for key release.
 // While the key is pressed, apply a force (that is decaying) under a jump time
 // amount.
 void Character::initJump(double force) {
@@ -201,12 +198,6 @@ void Character::landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRigh
         _currentState = State::STANDING;
         updateAnimation(oldState);
     }
-    
-    if (plat->getNode()->getTag() == MOVEABLE_TAG) {
-        referenceBody = plat;
-        body->setVelocity(body->getVelocity() + referenceBody->getVelocity());
-        lastRefVel = referenceBody->getVelocity();
-    }
 }
 
 void Character::leftCallback(cocos2d::PhysicsBody *plat) {
@@ -216,15 +207,24 @@ void Character::leftCallback(cocos2d::PhysicsBody *plat) {
         _currentState = State::MID_AIR;
         _rightVector = cocos2d::Vec2(1, 0);
         updateAnimation(oldState);
-        if (plat->getNode()->getTag() == MOVEABLE_TAG) {
-            referenceBody = nullptr;
-            lastRefVel = cocos2d::Vec2::ZERO;
-        }
     } else if (platformsStandingOn < 0) {
         std::cerr << "ERROR: how can " << characterName << " stand on negative platforms?!" << std::endl;
         platformsStandingOn = 0;
     }
 }
+
+void Character::wallHitCallback(cocos2d::PhysicsBody *wall) {
+    wallsHit += 1;
+}
+
+void Character::wallLeftCallback(cocos2d::PhysicsBody *wall) {
+    wallsHit -= 1;
+    if (wallsHit < 0) {
+        std::cerr << "ERROR: can't be in contact with negative walls, " << characterName << std::endl;
+        wallsHit = 0;
+    }
+}
+
 
 bool Character::isMovingLeft() const {
     return body->getVelocity().x < 0.0;
@@ -266,16 +266,9 @@ void Character::updateLoop(float delta) {
     } else {
         jumpForce = 0.0;
     }
+    
+    auto currentRelVel = cocos2d::Vec2((rightMomentum - leftMomentum)/ body->getMass(), body->getVelocity().y);
 
-    // Update velocity if needed.
-    if (referenceBody != nullptr && lastRefVel != referenceBody->getVelocity()) {
-        body->setVelocity(cocos2d::Vec2(body->getVelocity().x - lastRefVel.x + referenceBody->getVelocity().x, 0.0));
-        lastRefVel = referenceBody->getVelocity();
-    }
-    
-    auto currentRelVel = cocos2d::Vec2((rightMomentum - leftMomentum)/ body->getMass(), body->getVelocity().y - lastRefVel.y);
-    
-    //auto currentRelVel = body->getVelocity() - lastRefVel;
     if (_oldVel == currentRelVel) {
         // nothing changed.
         return;

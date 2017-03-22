@@ -78,6 +78,8 @@ public:
     
     void landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRightDir);
     void leftCallback(cocos2d::PhysicsBody *plat);
+    void wallHitCallback(cocos2d::PhysicsBody *wall);
+    void wallLeftCallback(cocos2d::PhysicsBody *wall);
     
     void transferVelocity(Character *reciever);
     
@@ -116,9 +118,8 @@ private:
     cocos2d::Vec2 _oldVel;
     
     int platformsStandingOn = 0;
+    int wallsHit = 0;
     
-    cocos2d::PhysicsBody *referenceBody = nullptr;
-    cocos2d::Vec2 lastRefVel = cocos2d::Vec2::ZERO;
     cocos2d::Size _dimensions;
 
     double _frozenTimer = 0.0;
