@@ -1,13 +1,9 @@
 #include "AppDelegate.h"
 #include "MainMenuScene.hpp"
 #include "SimpleAudioEngine.h"
+#include "Resolution.hpp"
 
 using namespace cocos2d;
-
-static cocos2d::Size designResolutionSize = cocos2d::Size(1024, 768);
-static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
-static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 768);
-static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
 
 AppDelegate::AppDelegate() {
 }
@@ -39,10 +35,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
         /*
          * Screen size / resolution changed here. See https://www.raywenderlich.com/95835/cocos2d-x-tutorial-beginners
          */
-        //glview = GLViewImpl::createWithRect("Bodhi", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
-        //glview = GLViewImpl::createWithFullScreen("Bodhi");
-        glview = GLViewImpl::createWithRect("Bodhi", Rect(0, 0, 1560, 1000), 1.0);
-        //glview = GLViewImpl::createWithRect("Bodhi", Rect(0,0,512, 384), 1.0);
+        glview = GLViewImpl::createWithRect("Bodhi", Rect(0, 0, JTTW::actualResolution.width, JTTW::actualResolution.height), 1.0);
 #else
         glview = GLViewImpl::create("Not WIN/MAC/LINUX");
 #endif
@@ -60,16 +53,16 @@ bool AppDelegate::applicationDidFinishLaunching() {
     //glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
     auto frameSize = glview->getFrameSize();
     // if the frame's height is larger than the height of medium size.
-    if (frameSize.height > mediumResolutionSize.height) {
-        director->setContentScaleFactor(MIN(largeResolutionSize.height/designResolutionSize.height, largeResolutionSize.width/designResolutionSize.width));
+    if (frameSize.height > JTTW::mediumResolution.height) {
+        director->setContentScaleFactor(MIN(JTTW::largeResolution.height/JTTW::designResolution.height, JTTW::largeResolution.width/JTTW::designResolution.width));
     }
     // if the frame's height is larger than the height of small size.
-    else if (frameSize.height > smallResolutionSize.height) {
-        director->setContentScaleFactor(MIN(mediumResolutionSize.height/designResolutionSize.height, mediumResolutionSize.width/designResolutionSize.width));
+    else if (frameSize.height > JTTW::smallResolution.height) {
+        director->setContentScaleFactor(MIN(JTTW::mediumResolution.height/JTTW::designResolution.height, JTTW::mediumResolution.width/JTTW::designResolution.width));
     }
     // if the frame's height is smaller than the height of medium size.
     else {
-        director->setContentScaleFactor(MIN(smallResolutionSize.height/designResolutionSize.height, smallResolutionSize.width/designResolutionSize.width));
+        director->setContentScaleFactor(MIN(JTTW::smallResolution.height/JTTW::designResolution.height, JTTW::smallResolution.width/JTTW::designResolution.width));
     }
 
     register_all_packages();

@@ -22,10 +22,14 @@ using namespace JTTW;
 const int UI_LAYER_Z_IDX = 2;
 const int LVL_LAYER_Z_IDX = 1;
 
+const int GRAVITY = ideal2Res(-750);
+const cocos2d::Vec2 UI_HEAD_START = cocos2d::Vec2(ideal2Res(40.0), ideal2Res(40.0));
+const double UI_HEAD_INC = ideal2Res(70);
+
 cocos2d::Scene* MainGameScene::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::createWithPhysics();
-    scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -498));
+    scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, GRAVITY));
     scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = MainGameScene::create(levelToLoad, scene->getPhysicsWorld());
     if (layer == NULL) {
@@ -91,6 +95,13 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
         } else {
             m->leavingClimeable();
         }
+    } else {
+        // Non climbable vertical wall.
+        if (begin) {
+            c->wallHitCallback(body);
+        } else {
+            c->wallLeftCallback(body);
+        }
     }
     if (!begin) {
         c->rebalanceImpulse();
@@ -138,11 +149,9 @@ const int BOULDER_Z = 5;
 const int CHARACTER_Z = 6;
 
 cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool debugOn) {
-    auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-    
     cocos2d::Layer *levelLayer = cocos2d::Layer::create();
-    cocos2d::Layer *uiLayer = cocos2d::Layer::create();
-    
+    uiLayer = cocos2d::Layer::create();
+    uiLayer->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
     std::ifstream inFile(fileName);
     nlohmann::json lvl;
     
@@ -182,7 +191,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
             double centerBX = vp.metersToPixels((double)pAtt["endX"]);
             double centerBY = vp.metersToPixels((double)pAtt["endY"]);
             cocos2d::Vec2 centerB(centerBX, centerBY);
-            double maximumVelocity = vp.metersToPixels((double)pAtt["velocity"]);
+            double maximumVelocity = ideal2Res(vp.metersToPixels((double)pAtt["velocity"]));
             MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, cocos2d::Size(imageSizeWidth, imageSizeHeight), ps, maximumVelocity);
 
             if (fullImagePath == "assets/blueGround.png") {
@@ -218,8 +227,6 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
     std::vector<std::string> charNames = {"Monkey", "Monk", "Piggy", "Sandy"};
     int characterHeight = vp.metersToPixels(1.7);
     int characterWidth = vp.metersToPixels(1.7);
-    
-    cocos2d::Vec2 uiHeadLocation(40, 40);
     int charPresentCount = 0;
     for (int i = 0; i < 4; i++) {
         if (characterStruct[charNames[i]]["present"]) {
@@ -238,12 +245,11 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
             ss << "characters/" << charNames[i] << "Head.png";
             cocos2d::Sprite *head = cocos2d::Sprite::create(ss.str());
             
-            double headScale = .13 * visibleSize.width / 1024.0;
+            double headScale = .198 * screenScale;
 
             head->setScale(headScale);
-            head->setPosition(uiHeadLocation + (charPresentCount * cocos2d::Vec2(70, 0)));
+            head->setPosition(UI_HEAD_START + (charPresentCount * cocos2d::Vec2(UI_HEAD_INC, 0)));
  
-            
             std::string buttonString;
             switch(charPresentCount) {
                 case 0:
@@ -259,15 +265,13 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
                     buttonString = "v";
                     break;
             }
-            auto label = cocos2d::Label::createWithTTF(buttonString, "fonts/WaitingfortheSunrise.ttf", 40);
+            auto label = cocos2d::Label::createWithTTF(buttonString, "fonts/WaitingfortheSunrise.ttf", 40 * screenScale);
             label->setTextColor(cocos2d::Color4B::WHITE);
             label->enableOutline(cocos2d::Color4B::BLACK, 1);
             label->enableShadow();
             label->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-            label->setPosition(uiHeadLocation + (charPresentCount * cocos2d::Vec2(70, 0)) + cocos2d::Vec2(0, 70));
+            label->setPosition(UI_HEAD_START + (charPresentCount * cocos2d::Vec2(UI_HEAD_INC, 0)) + cocos2d::Vec2(0, UI_HEAD_INC));
             uiLayer->addChild(label, 10);
-            
-            //uiHeadLocation += cocos2d::Vec2(70, 0);
             uiLayer->addChild(head);
             charPresentCount++;
         }
@@ -401,7 +405,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
 
         vines.push_back(v);
         levelLayer->addChild(v, VINE_Z);
-        auto j = cocos2d::PhysicsJointPin::construct(v->getBody(), b, cocos2d::Vec2(0, length/2.0), cocos2d::Vec2::ZERO);
+        auto j = cocos2d::PhysicsJointPin::construct(v->getBody(), b, cocos2d::Vec2(0, ideal2Res(length/2.0)), cocos2d::Vec2::ZERO);
         _w->addJoint(j);
         levelLayer->addChild(n, VINE_Z);
     }
@@ -488,7 +492,7 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     cocos2d::Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     // Creates the camera, or viewpoint for this scene.
-    // 1.7/130.0 means that 1.7 meters in the game world (average human male height) is represented by 180 pixels on screen.
+    // 1.7/130.0 means that 1.7 meters in the game world (average human male height) is represented by 130 pixels on screen.
     vp = Viewpoint(visibleSize, 1.7/130.0);
 
     try {
@@ -506,8 +510,13 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
         std::cout << "Level file corrupted!" << std::endl;
         return false;
     }
- 
+    
+    // Deal with scale stuff.
+    layer->setScale(screenScale);
+    uiLayer->setScale(screenScale);
+    
     vp.setLayer(layer);
+    vp.setScale(screenScale);
 
     this->addChild(layer, LVL_LAYER_Z_IDX);
     
@@ -641,12 +650,12 @@ void MainGameScene::update(float delta) {
                 attacking[characters[i]] = false;
             }
         }
-        for (int j = 0; j < (int)respawnPoints.size(); j++) {
-            if (characters[i]->getPosition().x > respawnPoints[j].x && respawnPoints[j].x > characters[i]->getRespawnProgress()) {
-                characters[i]->setNewRespawn(respawnPoints[j]);
+        for (auto &spawn : respawnPoints) {
+            if (characters[i]->getPosition().x > spawn.x && spawn.x > characters[i]->getRespawnProgress()) {
+                characters[i]->setNewRespawn(spawn);
             } 
         }
-        if (characters[i]->getPosition().y < -100) { // TODO: un-hardcode this.
+        if (characters[i]->getPosition().y < ideal2Res(-100)) { // TODO: un-hardcode this.
             done = false; // don't go to the next level if all characters die at once!
             characters[i]->restartFromRespawn();
         }  else if (characters[i]->getPosition().x < levelEndX) {
@@ -654,14 +663,14 @@ void MainGameScene::update(float delta) {
         }
     }
     if (done) {
-        for (int i = 0; i < (int)characters.size(); i++) {
-            characters[i]->stop();
+        for (auto &c: characters) {
+            c->stop();
         }
         nextLevelCallback();
     }
     
     for (auto &m : moveables) {
-        m->move(delta, false);
+        m->move(delta);
     }
     
     for (auto entry = attacking.begin(); entry != attacking.end(); entry++) {

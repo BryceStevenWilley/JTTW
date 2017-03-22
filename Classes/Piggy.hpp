@@ -16,6 +16,8 @@ namespace JTTW {
  */
 class Piggy : public Character {
 public:
+    static const double JUMP_INIT;
+    
     enum State {
         NORMAL,
         BOULDER_MODE,
@@ -25,7 +27,7 @@ public:
     
     virtual void impulseLeft(float deltaVel) override;
     virtual void impulseRight(float deltaVel) override;
-    virtual void jump() override;
+    virtual void initJump() override;
     virtual void characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) override;
     
 private:

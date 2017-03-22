@@ -1,7 +1,10 @@
 #include "Boulder.hpp"
 #include "Collisions.hpp"
+#include "Resolution.hpp"
 
 using namespace JTTW;
+
+const double BOULDER_VELOCITY_LIMIT = ideal2Res(600);
 
 Boulder::Boulder(double radius, std::string imageName, cocos2d::Vec2 center, double mass, cocos2d::Size imgSize) :
         cocos2d::Sprite() {
@@ -13,7 +16,7 @@ Boulder::Boulder(double radius, std::string imageName, cocos2d::Vec2 center, dou
     body->setContactTestBitmask((int)CollisionCategory::CharacterPlatformAndBoulder);
     body->setGravityEnable(true);
     body->setRotationEnable(true);
-    body->setVelocityLimit(600);
+    body->setVelocityLimit(BOULDER_VELOCITY_LIMIT);
     body->setDynamic(true);
     body->setMass(mass);
     
@@ -31,7 +34,7 @@ Boulder::Boulder(std::vector<cocos2d::Vec2> points, std::string imageName, cocos
     body->setContactTestBitmask((int)CollisionCategory::CharacterPlatformAndBoulder);
     body->setGravityEnable(true);
     body->setRotationEnable(true);
-    body->setVelocityLimit(600);
+    body->setVelocityLimit(BOULDER_VELOCITY_LIMIT);
     body->setDynamic(true);
     body->setMass(mass);
     body->setVelocity(cocos2d::Vec2::ZERO);

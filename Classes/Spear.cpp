@@ -12,8 +12,7 @@ cocos2d::Vec2 SpearRNG::getVelocity(cocos2d::Vec2 spear, cocos2d::Vec2 target) {
 
 cocos2d::Vec2 SpearRNG::getPosition(cocos2d::Vec2 target) {
     // always 500 x back, randomize the y offset.
-    double xOffset = -500;
-    double yOffset = (rand() % 300);
+    double yOffset = (rand() % yOffsetRange);
     return cocos2d::Vec2(target.x + xOffset, target.y + yOffset);
 }
 
@@ -21,7 +20,7 @@ cocos2d::Vec2 SpearRNG::getPosition(cocos2d::Vec2 target) {
 Spear::Spear(cocos2d::Vec2 targetCenter) : cocos2d::Sprite() {
     this->initWithFile("assets/spear.png");
     // Throw a projectile somewhere!
-    auto body = cocos2d::PhysicsBody::createBox(cocos2d::Size(300, 40));
+    auto body = cocos2d::PhysicsBody::createBox(physicsSize);
     body->setDynamic(true);
     
     body->setGravityEnable(true);
@@ -32,7 +31,7 @@ Spear::Spear(cocos2d::Vec2 targetCenter) : cocos2d::Sprite() {
     cocos2d::Vec2 pos = gen.getPosition(targetCenter);
     body->setVelocity(gen.getVelocity(pos, targetCenter));
     this->setPosition(pos);
-    this->setContentSize(cocos2d::Size(300, 50));
+    this->setContentSize(contentSize);
     this->addComponent(body);
     this->setTag(PROJECTILE_TAG);
 

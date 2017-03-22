@@ -118,8 +118,6 @@
 		9FB69E071E46EE88006325A3 /* LevelSelectScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */; };
 		9FB69E081E46EE88006325A3 /* LevelSelectScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */; };
 		9FB69E091E46EE88006325A3 /* LevelSelectScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */; };
-		9FC226FF1E64B2B000AA75D5 /* Boulders in Resources */ = {isa = PBXBuildFile; fileRef = 9FC226FE1E64B2B000AA75D5 /* Boulders */; };
-		9FC227011E64B5CD00AA75D5 /* Boulders in Resources */ = {isa = PBXBuildFile; fileRef = 9FC226FE1E64B2B000AA75D5 /* Boulders */; };
 		9FC227041E64BA1300AA75D5 /* characters in Resources */ = {isa = PBXBuildFile; fileRef = 454B170A1E2F39280035467D /* characters */; };
 		9FC227051E64BA4000AA75D5 /* characters in Resources */ = {isa = PBXBuildFile; fileRef = 454B170A1E2F39280035467D /* characters */; };
 		9FC4C2EF1E39293F00ABD648 /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC4C2ED1E39293F00ABD648 /* Platform.cpp */; };
@@ -146,9 +144,11 @@
 		9FD41C101E2D55920077779E /* testCharacter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C0E1E2D55920077779E /* testCharacter.cpp */; };
 		9FD41C131E2D55C80077779E /* TestDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C111E2D55C80077779E /* TestDelegate.cpp */; };
 		9FD41C151E2D56220077779E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C141E2D56220077779E /* main.cpp */; };
-		9FE1642B1E64BB5600FE4233 /* Boulders in Resources */ = {isa = PBXBuildFile; fileRef = 9FC226FE1E64B2B000AA75D5 /* Boulders */; };
 		9FE1642C1E64BB5600FE4233 /* levelFiles in Resources */ = {isa = PBXBuildFile; fileRef = 9FB69E001E46E93A006325A3 /* levelFiles */; };
 		9FE1642D1E64BB5600FE4233 /* characters in Resources */ = {isa = PBXBuildFile; fileRef = 454B170A1E2F39280035467D /* characters */; };
+		9FF673A41E81F491004BC426 /* Resolution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FF673A21E81F491004BC426 /* Resolution.cpp */; };
+		9FF673A51E81F491004BC426 /* Resolution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FF673A21E81F491004BC426 /* Resolution.cpp */; };
+		9FF673A61E81F491004BC426 /* Resolution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FF673A21E81F491004BC426 /* Resolution.cpp */; };
 		BF171245129291EC00B8313A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB012928DE900B8313A /* OpenGLES.framework */; };
 		BF1712471292920000B8313A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB412928DE900B8313A /* libz.dylib */; };
 		BF1C47F01293687400B63C5D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1C47EA1293683800B63C5D /* QuartzCore.framework */; };
@@ -294,7 +294,6 @@
 		9FB69E001E46E93A006325A3 /* levelFiles */ = {isa = PBXFileReference; lastKnownFileType = folder; path = levelFiles; sourceTree = "<group>"; };
 		9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelSelectScene.cpp; sourceTree = "<group>"; };
 		9FB69E061E46EE88006325A3 /* LevelSelectScene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LevelSelectScene.hpp; sourceTree = "<group>"; };
-		9FC226FE1E64B2B000AA75D5 /* Boulders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Boulders; sourceTree = "<group>"; };
 		9FC4C2ED1E39293F00ABD648 /* Platform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Platform.cpp; sourceTree = "<group>"; };
 		9FC4C2EE1E39293F00ABD648 /* Platform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Platform.hpp; sourceTree = "<group>"; };
 		9FC4C2F61E3B9BF200ABD648 /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
@@ -307,6 +306,8 @@
 		9FD41C111E2D55C80077779E /* TestDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestDelegate.cpp; path = ../Tests/TestDelegate.cpp; sourceTree = SOURCE_ROOT; };
 		9FD41C121E2D55C80077779E /* TestDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestDelegate.h; path = ../Tests/TestDelegate.h; sourceTree = SOURCE_ROOT; };
 		9FD41C141E2D56220077779E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../Tests/main.cpp; sourceTree = SOURCE_ROOT; };
+		9FF673A21E81F491004BC426 /* Resolution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Resolution.cpp; sourceTree = "<group>"; };
+		9FF673A31E81F491004BC426 /* Resolution.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Resolution.hpp; sourceTree = "<group>"; };
 		9FFAAC711E62A74300AF523E /* Trap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Trap.hpp; sourceTree = "<group>"; };
 		BF170DB012928DE900B8313A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BF170DB412928DE900B8313A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -466,7 +467,6 @@
 				9F9A04D11E70ACA30069F934 /* assets */,
 				9F36A4CE1E6D4E650016232D /* Sound */,
 				9F36A4CF1E6D4E650016232D /* Music */,
-				9FC226FE1E64B2B000AA75D5 /* Boulders */,
 				9FB69E001E46E93A006325A3 /* levelFiles */,
 				9FB69DFE1E46E92B006325A3 /* UI */,
 				454B170A1E2F39280035467D /* characters */,
@@ -488,6 +488,8 @@
 				9F98AF8F1E2C99E2009559C7 /* Viewpoint.cpp */,
 				9F98AF901E2C99E2009559C7 /* Viewpoint.hpp */,
 				9F666E561E31CB6100F9BB90 /* AI */,
+				9FF673A21E81F491004BC426 /* Resolution.cpp */,
+				9FF673A31E81F491004BC426 /* Resolution.hpp */,
 			);
 			name = Classes;
 			path = ../Classes;
@@ -764,7 +766,6 @@
 				5087E77E17EB970100C73F5D /* Default.png in Resources */,
 				521A8E6419F0C34300D177D7 /* Default-667h@2x.png in Resources */,
 				50EF629717ECD46A001EB2F8 /* Icon-58.png in Resources */,
-				9FC226FF1E64B2B000AA75D5 /* Boulders in Resources */,
 				9F36A4D31E6D4E650016232D /* Music in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -776,7 +777,6 @@
 				9F9A04D31E70ACA30069F934 /* assets in Resources */,
 				9F36A4D41E6D4E650016232D /* Music in Resources */,
 				9FC227041E64BA1300AA75D5 /* characters in Resources */,
-				9FC227011E64B5CD00AA75D5 /* Boulders in Resources */,
 				9FB69E041E46EAE9006325A3 /* levelFiles in Resources */,
 				9FB69E021E46E944006325A3 /* UI in Resources */,
 				503AE0F817EB97AB00D1A890 /* Icon.icns in Resources */,
@@ -791,7 +791,6 @@
 			files = (
 				9F9A04D41E70ACA30069F934 /* assets in Resources */,
 				9F36A4D21E6D4E650016232D /* Sound in Resources */,
-				9FE1642B1E64BB5600FE4233 /* Boulders in Resources */,
 				9FE1642C1E64BB5600FE4233 /* levelFiles in Resources */,
 				9FE1642D1E64BB5600FE4233 /* characters in Resources */,
 				9FB69E031E46E950006325A3 /* UI in Resources */,
@@ -829,6 +828,7 @@
 				503AE10117EB989F00D1A890 /* main.m in Sources */,
 				9FB69DDB1E459B90006325A3 /* Character.cpp in Sources */,
 				9F666E461E30201C00F9BB90 /* AiAgent.cpp in Sources */,
+				9FF673A41E81F491004BC426 /* Resolution.cpp in Sources */,
 				9F9298E11E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */,
 				9F16FC061E54CCA500D9DBCA /* Monk.cpp in Sources */,
 				9F8E656F1E3DA0060058958F /* MoveablePlatform.cpp in Sources */,
@@ -839,6 +839,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FF673A51E81F491004BC426 /* Resolution.cpp in Sources */,
 				9F36A4CB1E6D0AEF0016232D /* Peg.cpp in Sources */,
 				9F158C0E1E6A071E002D21A6 /* CageTrap.cpp in Sources */,
 				9F8E654D1E3BB3C60058958F /* Platform.cpp in Sources */,
@@ -879,6 +880,7 @@
 				9FB69DE41E46D93D006325A3 /* MainMenuScene.cpp in Sources */,
 				9F9298E31E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */,
 				9FD41C131E2D55C80077779E /* TestDelegate.cpp in Sources */,
+				9FF673A61E81F491004BC426 /* Resolution.cpp in Sources */,
 				9FD41C101E2D55920077779E /* testCharacter.cpp in Sources */,
 				9FC97C891E540E0300EF6C31 /* LevelEnd.cpp in Sources */,
 				9FD41BF31E2D54490077779E /* MainGameScene.cpp in Sources */,

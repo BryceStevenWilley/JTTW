@@ -4,11 +4,13 @@
 #include <iostream>
 #include "cocos2d.h"
 #include "Boulder.hpp"
+#include "Resolution.hpp"
+
 
 #include "json.hpp"
 
 namespace JTTW {
-const double PEG_USABLE_RADIUS = 100;
+const double PEG_USABLE_RADIUS = ideal2Res(100);
 
 class Peg : public cocos2d::Sprite {
 

@@ -3,6 +3,8 @@
 
 using namespace JTTW;
 
+const double PEG_MOVE_AMOUNT = ideal2Res(40);
+
 Peg::Peg(std::string image, cocos2d::Vec2 center, cocos2d::Size imageSize, double rotation, std::vector<Boulder *> bouldersToMakeDynamic): cocos2d::Sprite(),
         _bouldersToMakeDynamic(bouldersToMakeDynamic), _rotation(rotation) {
     auto body = cocos2d::PhysicsBody::createCircle(PEG_USABLE_RADIUS);
@@ -29,7 +31,7 @@ bool Peg::triggerPeg(cocos2d::Vec2 characterCenter) {
             //b->getBody()->setContactTestBitmask((int)CollisionCategory::CharacterPlatformAndBoulder);
             //b->getBody()->setCollisionBitmask((int)CollisionCategory::CharacterPlatformAndBoulder);
         }
-        cocos2d::Vec2 moveDirection(0, 40);
+        cocos2d::Vec2 moveDirection(0, PEG_MOVE_AMOUNT);
         moveDirection.rotateByAngle(cocos2d::Vec2::ZERO, _rotation);
         auto move = cocos2d::MoveBy::create(.3, moveDirection);
         auto fade = cocos2d::FadeOut::create(2.0);

@@ -30,6 +30,11 @@ const int CHARACTER_TAG = 10;
  */
 class Character : public spine::SkeletonAnimation {
 public:
+    const static double JUMP_DECAY;
+    const static double JUMP_INIT_FRACTION;
+    const static double VEL_LIMIT;
+    const static double CROWN_SCALE;
+
     enum State {
         STANDING,
         MID_AIR,
@@ -62,7 +67,8 @@ public:
     void freeze();
     
     // Allows the character to jump.
-    virtual void jump() = 0;
+    virtual void initJump() = 0;
+    virtual void stopJump();
     void jumpFromForce(double fprime_y);
     
     virtual void characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) = 0;
@@ -72,6 +78,8 @@ public:
     
     void landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRightDir);
     void leftCallback(cocos2d::PhysicsBody *plat);
+    void wallHitCallback(cocos2d::PhysicsBody *wall);
+    void wallLeftCallback(cocos2d::PhysicsBody *wall);
     
     void transferVelocity(Character *reciever);
     
@@ -95,7 +103,7 @@ public:
     void continueMotion();
 
 protected:
-    void jump(double force);
+    void initJump(double force);
     State _currentState = State::STANDING;
     
 
@@ -110,14 +118,15 @@ private:
     cocos2d::Vec2 _oldVel;
     
     int platformsStandingOn = 0;
+    int wallsHit = 0;
     
-    cocos2d::PhysicsBody *referenceBody = nullptr;
-    cocos2d::Vec2 lastRefVel = cocos2d::Vec2::ZERO;
     cocos2d::Size _dimensions;
 
     double _frozenTimer = 0.0;
     
     cocos2d::Vec2 _rightVector = cocos2d::Vec2(1, 0);
+    
+    double jumpForce = 0.0;
 };
 }
 

@@ -1,10 +1,12 @@
 #include <iostream>
 #include "AiAgent.hpp"
+#include "Resolution.hpp"
 
 using namespace JTTW;
 
-
-const float IMPULSE_AMOUNT = 280.0;
+const float IMPULSE_AMOUNT = ideal2Res(280.0);
+const float ERROR_UP = ideal2Res(20.0);
+const float ERROR_DOWN = ideal2Res(5.0);
 
 AiAgent::AiAgent(Character *controlledCharacter) :
 _controlledCharacter(controlledCharacter), _currentBehavior(&AiAgent::stationaryBehavior) {}
@@ -60,7 +62,9 @@ void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeybo
             break;
         case KeyCode::KEY_SPACE:
             if (pressed) {
-                _controlledCharacter->jump();
+                _controlledCharacter->initJump();
+            } else { // released
+                _controlledCharacter->stopJump();
             }
             break;
         default:
@@ -120,7 +124,9 @@ void AiAgent::executeControl(float delta) {
     cocos2d::Vec2 fprime = errorPosition * kp + errorVelocity * kv;
     
     _controlledCharacter->applyForceRight(fprime.x);
-    if (errorPosition.y > 20.0) {
-        _controlledCharacter->jump();
+    if (errorPosition.y > ERROR_UP) {
+        _controlledCharacter->initJump();
+    } else if (errorPosition.y < ERROR_DOWN) {
+        _controlledCharacter->stopJump();
     }
 }

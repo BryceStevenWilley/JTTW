@@ -99,6 +99,7 @@ private:
     cocos2d::PhysicsWorld *_w;
     
     cocos2d::Layer *layer;
+    cocos2d::Layer *uiLayer;
 };
 } // JTTW
 

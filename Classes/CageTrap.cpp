@@ -2,7 +2,11 @@
 #include "Collisions.hpp"
 #include "SimpleAudioEngine.h"
 
+#include "Resolution.hpp"
+
 using namespace JTTW;
+
+const double CAGE_VELOCITY_LIMIT = ideal2Res(600);
 
 CageTrap::CageTrap(std::string imageName, cocos2d::Vec2 center, cocos2d::PhysicsMaterial material, 
         cocos2d::Size trapSize, cocos2d::Size imageSize, double wallThickness, double offset) :
@@ -33,7 +37,7 @@ CageTrap::CageTrap(std::string imageName, cocos2d::Vec2 center, cocos2d::Physics
     body->setRotationEnable(true);
     body->setGravityEnable(false);
         
-    body->setVelocityLimit(600);
+    body->setVelocityLimit(CAGE_VELOCITY_LIMIT);
     body->setDynamic(true);
             
     this->addComponent(body);

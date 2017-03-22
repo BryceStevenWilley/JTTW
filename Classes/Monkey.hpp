@@ -8,6 +8,10 @@
 namespace JTTW {
 class Monkey : public Character {
 public:
+    static const double JUMP_INIT;
+    static const double CLIMB_VEL;
+    static const double VINE_CLIMB_INC;
+
     enum State {
         NORMAL,
         CLIMBING,
@@ -18,7 +22,7 @@ public:
     
     virtual void impulseLeft(float deltaVel) override;
     virtual void impulseRight(float deltaVel) override;
-    virtual void jump() override;
+    virtual void initJump() override;
     virtual void characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) override;
     
     void enteringClimeable(cocos2d::Vec2 upDir);

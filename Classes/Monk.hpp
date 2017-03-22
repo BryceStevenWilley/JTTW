@@ -8,9 +8,11 @@
 namespace JTTW {
 class Monk : public Character {
 public:
+    static const double JUMP_INIT;
+
     Monk(cocos2d::Vec2 startPosition, cocos2d::Size dimensions);
     
-    virtual void jump() override;
+    virtual void initJump() override;
     virtual void characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) override;
     
     void addReachiblePeg(Peg *p);

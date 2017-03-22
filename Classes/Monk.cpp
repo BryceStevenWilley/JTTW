@@ -1,13 +1,16 @@
 #include "Monk.hpp"
 #include "SimpleAudioEngine.h"
+#include "Resolution.hpp"
 
 using namespace JTTW;
+
+const double Monk::JUMP_INIT = ideal2Res(500);
 
 Monk::Monk(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
  Character("Monk", cocos2d::PhysicsMaterial(0.8, 0.0, 0.5), startPosition, dimensions) {}
 
-void Monk::jump() {
-    Character::jump(400);
+void Monk::initJump() {
+    Character::initJump(JUMP_INIT);
 }
 
 

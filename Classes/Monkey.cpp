@@ -1,7 +1,12 @@
 #include "Monkey.hpp"
 #include "SimpleAudioEngine.h"
+#include "Resolution.hpp"
 
 using namespace JTTW;
+
+const double Monkey::JUMP_INIT = ideal2Res(600);
+const double Monkey::CLIMB_VEL = ideal2Res(200);
+const double Monkey::VINE_CLIMB_INC = ideal2Res(30);
 
 Monkey::Monkey(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
  Character("Monkey", cocos2d::PhysicsMaterial(.8, 0.0, 1.0), startPosition, dimensions), _state(NORMAL) {}
@@ -32,16 +37,13 @@ void Monkey::impulseRight(float deltaVel) {
     }
 }
 
-void Monkey::jump() {
-    float jumpPower = 500;
+void Monkey::initJump() {
+    float jumpPower = JUMP_INIT;
     if (_state == SWINGING) {
         leavingVine();
-        
-        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/Walking.wav");
+
         this->_currentState = Character::State::STANDING;
-        jumpPower = 90;
         _state = NORMAL;
-        //Character::jump(jumpPower);
         cocos2d::Vec2 vel = body->getVelocity();
         body->applyImpulse(body->getMass() * vel * .7); // Double the current velocity!
         this->_currentState = Character::State::MID_AIR;
@@ -49,14 +51,14 @@ void Monkey::jump() {
         return;
     }
     if (_state == NORMAL) {
-        Character::jump(jumpPower);
+        Character::initJump(jumpPower);
     }
     if (_state == CLIMBING) {
         std::cout << "Currently Climbing" << std::endl;
         leavingClimeable();
         this->_currentState = Character::State::STANDING;
-        jumpPower = 400;
-        Character::jump(jumpPower);
+        jumpPower = jumpPower - ideal2Res(100);
+        Character::initJump(jumpPower);
         this->_currentState = Character::State::MID_AIR;
     }
 }
@@ -64,30 +66,30 @@ void Monkey::jump() {
 void Monkey::characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) {
     if (code == cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW) {
         if (pressed) {
-            climbUpVel += 200;
+            climbUpVel += CLIMB_VEL;
         } else {
-            climbUpVel -= 200;
+            climbUpVel -= CLIMB_VEL;
         }
         if (_state == CLIMBING) {
             updateClimbingVel();
         } else if (_state == SWINGING) {
             if (pressed) {
-                moveAlongVine(30);
+                moveAlongVine(VINE_CLIMB_INC);
             }
         }
     }
     
     if (code == cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW) {
         if (pressed) {
-            climbDownVel += 200;
+            climbDownVel += CLIMB_VEL;
         } else {
-            climbDownVel -= 200;
+            climbDownVel -= CLIMB_VEL;
         }
         if (_state == CLIMBING) {
             updateClimbingVel();
         } else if (_state == SWINGING) {
             if (pressed) {
-                moveAlongVine(-30);
+                moveAlongVine(-VINE_CLIMB_INC);
             }
         }
     }
@@ -135,7 +137,7 @@ void Monkey::leavingClimeable() {
 void Monkey::enteringVine(cocos2d::PhysicsWorld *world, Vine *vine, double offset, cocos2d::Vec2 collisionPoint, bool alreadyOn) {
     leavingVine();
     // create a joint between you and the vine.
-    pinJoint = cocos2d::PhysicsJointPin::construct(this->body, vine->getPhysicsBody(), cocos2d::Vec2::ZERO, cocos2d::Vec2(0, offset));
+    pinJoint = cocos2d::PhysicsJointPin::construct(this->body, vine->getPhysicsBody(), cocos2d::Vec2::ZERO, cocos2d::Vec2(0, ideal2Res(offset)));
     world->addJoint(pinJoint);
     _state = SWINGING;
     
