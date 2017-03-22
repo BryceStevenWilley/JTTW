@@ -1,9 +1,10 @@
 #include "Piggy.hpp"
 #include "Collisions.hpp"
+#include "Resolution.hpp"
 
 using namespace JTTW;
 
-const double Piggy::JUMP_INIT = 450;
+const double Piggy::JUMP_INIT = ideal2Res(500);
 
 Piggy::Piggy(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
  Character("Piggy", cocos2d::PhysicsMaterial(0.8, 0.0, 0.5), startPosition, dimensions) {}

@@ -17,14 +17,9 @@ cocos2d::Vec2 getNewLevelVec(cocos2d::Node *player, cocos2d::Size _screenDims, d
     // So, we know the level location, the width of the screen, and the player location.
     // When level->position.x == 0, then the center of the screen is at width/2.0.
     // width/2.0 = level->position.x + player->getPosition().x;
-    float newLevelX = _screenDims.width/2.0 - (player->getPosition().x * _scale);
-    float newLevelY = _screenDims.height/2.0 - (player->getPosition().y * _scale);
-    
-    std::cout << "Screen width: " << _screenDims.width;
-    std::cout << ", player position.x: " << player->getPosition().x;
-    std::cout << ", Scale: " << _scale;
-    std::cout << ", new level x: " << newLevelX << std::endl;
-    
+    float newLevelX = (_screenDims.width/2.0 - player->getPosition().x) * _scale;
+    float newLevelY = (_screenDims.height/2.0 - player->getPosition().y) * _scale;
+
     return cocos2d::Vec2(newLevelX, newLevelY);
 }
 
@@ -52,7 +47,7 @@ double Viewpoint::pixelsToMeters(int pixels) const {
     return pixels * _metersPerPixel;
 }
 
-void Viewpoint::panToCharacter(Character* player) {
+void Viewpoint::panToCharacter(cocos2d::Node* player) {
     if (_level == nullptr) {
         std::cout << "_level was never set for Viewpoint!" << std::endl;
         std::exit(0);

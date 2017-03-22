@@ -17,7 +17,7 @@ public:
     void setRatio(double mToPixel);
     void setScale(double screenOverIdeal);
     
-    void panToCharacter(Character *player);
+    void panToCharacter(cocos2d::Node *player);
     void followCharacter(Character *player, float delta);
     void followCharacter(cocos2d::Node *body, float delta);
     

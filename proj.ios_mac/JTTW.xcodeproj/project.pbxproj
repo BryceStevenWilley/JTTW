@@ -146,6 +146,9 @@
 		9FD41C151E2D56220077779E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C141E2D56220077779E /* main.cpp */; };
 		9FE1642C1E64BB5600FE4233 /* levelFiles in Resources */ = {isa = PBXBuildFile; fileRef = 9FB69E001E46E93A006325A3 /* levelFiles */; };
 		9FE1642D1E64BB5600FE4233 /* characters in Resources */ = {isa = PBXBuildFile; fileRef = 454B170A1E2F39280035467D /* characters */; };
+		9FF673A41E81F491004BC426 /* Resolution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FF673A21E81F491004BC426 /* Resolution.cpp */; };
+		9FF673A51E81F491004BC426 /* Resolution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FF673A21E81F491004BC426 /* Resolution.cpp */; };
+		9FF673A61E81F491004BC426 /* Resolution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FF673A21E81F491004BC426 /* Resolution.cpp */; };
 		BF171245129291EC00B8313A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB012928DE900B8313A /* OpenGLES.framework */; };
 		BF1712471292920000B8313A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB412928DE900B8313A /* libz.dylib */; };
 		BF1C47F01293687400B63C5D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1C47EA1293683800B63C5D /* QuartzCore.framework */; };
@@ -303,6 +306,8 @@
 		9FD41C111E2D55C80077779E /* TestDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestDelegate.cpp; path = ../Tests/TestDelegate.cpp; sourceTree = SOURCE_ROOT; };
 		9FD41C121E2D55C80077779E /* TestDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestDelegate.h; path = ../Tests/TestDelegate.h; sourceTree = SOURCE_ROOT; };
 		9FD41C141E2D56220077779E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../Tests/main.cpp; sourceTree = SOURCE_ROOT; };
+		9FF673A21E81F491004BC426 /* Resolution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Resolution.cpp; sourceTree = "<group>"; };
+		9FF673A31E81F491004BC426 /* Resolution.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Resolution.hpp; sourceTree = "<group>"; };
 		9FFAAC711E62A74300AF523E /* Trap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Trap.hpp; sourceTree = "<group>"; };
 		BF170DB012928DE900B8313A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BF170DB412928DE900B8313A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -483,6 +488,8 @@
 				9F98AF8F1E2C99E2009559C7 /* Viewpoint.cpp */,
 				9F98AF901E2C99E2009559C7 /* Viewpoint.hpp */,
 				9F666E561E31CB6100F9BB90 /* AI */,
+				9FF673A21E81F491004BC426 /* Resolution.cpp */,
+				9FF673A31E81F491004BC426 /* Resolution.hpp */,
 			);
 			name = Classes;
 			path = ../Classes;
@@ -821,6 +828,7 @@
 				503AE10117EB989F00D1A890 /* main.m in Sources */,
 				9FB69DDB1E459B90006325A3 /* Character.cpp in Sources */,
 				9F666E461E30201C00F9BB90 /* AiAgent.cpp in Sources */,
+				9FF673A41E81F491004BC426 /* Resolution.cpp in Sources */,
 				9F9298E11E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */,
 				9F16FC061E54CCA500D9DBCA /* Monk.cpp in Sources */,
 				9F8E656F1E3DA0060058958F /* MoveablePlatform.cpp in Sources */,
@@ -831,6 +839,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FF673A51E81F491004BC426 /* Resolution.cpp in Sources */,
 				9F36A4CB1E6D0AEF0016232D /* Peg.cpp in Sources */,
 				9F158C0E1E6A071E002D21A6 /* CageTrap.cpp in Sources */,
 				9F8E654D1E3BB3C60058958F /* Platform.cpp in Sources */,
@@ -871,6 +880,7 @@
 				9FB69DE41E46D93D006325A3 /* MainMenuScene.cpp in Sources */,
 				9F9298E31E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */,
 				9FD41C131E2D55C80077779E /* TestDelegate.cpp in Sources */,
+				9FF673A61E81F491004BC426 /* Resolution.cpp in Sources */,
 				9FD41C101E2D55920077779E /* testCharacter.cpp in Sources */,
 				9FC97C891E540E0300EF6C31 /* LevelEnd.cpp in Sources */,
 				9FD41BF31E2D54490077779E /* MainGameScene.cpp in Sources */,

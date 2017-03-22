@@ -9,6 +9,8 @@ namespace JTTW {
 class Monkey : public Character {
 public:
     static const double JUMP_INIT;
+    static const double CLIMB_VEL;
+    static const double VINE_CLIMB_INC;
 
     enum State {
         NORMAL,

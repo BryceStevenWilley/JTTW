@@ -32,6 +32,8 @@ class Character : public spine::SkeletonAnimation {
 public:
     const static double JUMP_DECAY;
     const static double JUMP_INIT_FRACTION;
+    const static double VEL_LIMIT;
+    const static double CROWN_SCALE;
 
     enum State {
         STANDING,

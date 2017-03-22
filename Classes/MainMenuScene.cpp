@@ -8,6 +8,8 @@
 using namespace JTTW;
 
 cocos2d::Label * JTTW::createSunriseLabel(std::string content, int size, float scaleFactor) {
+    // TODO: we'd perfer to scale the label with setScale, but that changes the positions of things on the main menu. Fix.
+    // The current solutions makes things blurry?
     auto label = cocos2d::Label::createWithTTF(content, "fonts/WaitingfortheSunrise.ttf", (int)(size * scaleFactor));
     label->setTextColor(cocos2d::Color4B::WHITE);
     label->enableOutline(cocos2d::Color4B::BLACK, 1);

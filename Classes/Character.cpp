@@ -10,10 +10,13 @@
 
 using namespace JTTW;
 
-const double Character::JUMP_DECAY = 200;
+const double Character::JUMP_DECAY = ideal2Res(200);
+const double Character::VEL_LIMIT = ideal2Res(600);
 const double Character::JUMP_INIT_FRACTION = (7.0 / 12.0);
+const double Character::CROWN_SCALE = screenScale * .3;
 
 Character * Character::createFromName(const std::string name, cocos2d::Vec2 startPosition, cocos2d::Size dimensions) {
+    std::cout << "Jump Decay: " << JUMP_DECAY << std::endl;
     if (name == "Monkey") {
         return (Character *)new Monkey(startPosition, dimensions);
     } else if (name == "Monk") {
@@ -41,7 +44,7 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
     body->setContactTestBitmask((int)CollisionCategory::PlatformBoulderAndProjectile);
     body->setRotationEnable(false);
 
-    body->setVelocityLimit(600);
+    body->setVelocityLimit(VEL_LIMIT);
     
     this->initWithJsonFile("characters/" + artFilePrefix + ".json", "characters/" + artFilePrefix + ".atlas", 1.0f);
     //this->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
@@ -52,13 +55,13 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
     this->setPhysicsBody(body);
 
     followcrown = cocos2d::Sprite::create("characters/Selection Crown.png");
-    followcrown->setScale(.3);
+    followcrown->setScale(CROWN_SCALE);
     followcrown->setPosition(0.0, 940);
     followcrown->setVisible(false);
     this->addChild(followcrown);
     
     alonecrown = cocos2d::Sprite::create("characters/AloneCrown.png");
-    alonecrown->setScale(.3);
+    alonecrown->setScale(CROWN_SCALE);
     alonecrown->setPosition(0.0, 940);
     alonecrown->setVisible(false);
     this->addChild(alonecrown);

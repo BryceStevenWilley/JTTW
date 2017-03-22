@@ -22,10 +22,14 @@ using namespace JTTW;
 const int UI_LAYER_Z_IDX = 2;
 const int LVL_LAYER_Z_IDX = 1;
 
+const int GRAVITY = ideal2Res(-750);
+const cocos2d::Vec2 UI_HEAD_START = cocos2d::Vec2(ideal2Res(40.0), ideal2Res(40.0));
+const double UI_HEAD_INC = ideal2Res(70);
+
 cocos2d::Scene* MainGameScene::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::createWithPhysics();
-    scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, -698));
+    scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, GRAVITY));
     scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = MainGameScene::create(levelToLoad, scene->getPhysicsWorld());
     if (layer == NULL) {
@@ -141,8 +145,8 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
     auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
     
     cocos2d::Layer *levelLayer = cocos2d::Layer::create();
-    cocos2d::Layer *uiLayer = cocos2d::Layer::create();
-    
+    uiLayer = cocos2d::Layer::create();
+    uiLayer->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
     std::ifstream inFile(fileName);
     nlohmann::json lvl;
     
@@ -182,7 +186,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
             double centerBX = vp.metersToPixels((double)pAtt["endX"]);
             double centerBY = vp.metersToPixels((double)pAtt["endY"]);
             cocos2d::Vec2 centerB(centerBX, centerBY);
-            double maximumVelocity = vp.metersToPixels((double)pAtt["velocity"]);
+            double maximumVelocity = ideal2Res(vp.metersToPixels((double)pAtt["velocity"]));
             MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, cocos2d::Size(imageSizeWidth, imageSizeHeight), ps, maximumVelocity);
 
             if (fullImagePath == "assets/blueGround.png") {
@@ -218,8 +222,6 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
     std::vector<std::string> charNames = {"Monkey", "Monk", "Piggy", "Sandy"};
     int characterHeight = vp.metersToPixels(1.7);
     int characterWidth = vp.metersToPixels(1.7);
-    
-    cocos2d::Vec2 uiHeadLocation(40, 40);
     int charPresentCount = 0;
     for (int i = 0; i < 4; i++) {
         if (characterStruct[charNames[i]]["present"]) {
@@ -238,12 +240,11 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
             ss << "characters/" << charNames[i] << "Head.png";
             cocos2d::Sprite *head = cocos2d::Sprite::create(ss.str());
             
-            double headScale = .13 * visibleSize.width / 1024.0;
+            double headScale = .198 * screenScale;
 
             head->setScale(headScale);
-            head->setPosition(uiHeadLocation + (charPresentCount * cocos2d::Vec2(70, 0)));
+            head->setPosition(UI_HEAD_START + (charPresentCount * cocos2d::Vec2(UI_HEAD_INC, 0)));
  
-            
             std::string buttonString;
             switch(charPresentCount) {
                 case 0:
@@ -259,15 +260,13 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
                     buttonString = "v";
                     break;
             }
-            auto label = cocos2d::Label::createWithTTF(buttonString, "fonts/WaitingfortheSunrise.ttf", 40);
+            auto label = cocos2d::Label::createWithTTF(buttonString, "fonts/WaitingfortheSunrise.ttf", 40 * screenScale);
             label->setTextColor(cocos2d::Color4B::WHITE);
             label->enableOutline(cocos2d::Color4B::BLACK, 1);
             label->enableShadow();
             label->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-            label->setPosition(uiHeadLocation + (charPresentCount * cocos2d::Vec2(70, 0)) + cocos2d::Vec2(0, 70));
+            label->setPosition(UI_HEAD_START + (charPresentCount * cocos2d::Vec2(UI_HEAD_INC, 0)) + cocos2d::Vec2(0, UI_HEAD_INC));
             uiLayer->addChild(label, 10);
-            
-            //uiHeadLocation += cocos2d::Vec2(70, 0);
             uiLayer->addChild(head);
             charPresentCount++;
         }
@@ -401,7 +400,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
 
         vines.push_back(v);
         levelLayer->addChild(v, VINE_Z);
-        auto j = cocos2d::PhysicsJointPin::construct(v->getBody(), b, cocos2d::Vec2(0, length/2.0), cocos2d::Vec2::ZERO);
+        auto j = cocos2d::PhysicsJointPin::construct(v->getBody(), b, cocos2d::Vec2(0, ideal2Res(length/2.0)), cocos2d::Vec2::ZERO);
         _w->addJoint(j);
         levelLayer->addChild(n, VINE_Z);
     }
@@ -507,17 +506,12 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
         return false;
     }
     
-    auto debugSprite = cocos2d::Sprite::create("assets/arEast.png");
-    debugSprite->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-    debugSprite->setPosition(cocos2d::Vec2::ZERO);
-    debugSprite->setContentSize(cocos2d::Size(200.0, 200.0));
-    layer->addChild(debugSprite);
-    
     // Deal with scale stuff.
-    auto levelScaleFactor = visibleSize.width / 1560.0;
-    layer->setScale(levelScaleFactor);
+    layer->setScale(screenScale);
+    uiLayer->setScale(screenScale);
+    
     vp.setLayer(layer);
-    vp.setScale(levelScaleFactor);
+    vp.setScale(screenScale);
 
     this->addChild(layer, LVL_LAYER_Z_IDX);
     
@@ -656,7 +650,7 @@ void MainGameScene::update(float delta) {
                 characters[i]->setNewRespawn(respawnPoints[j]);
             } 
         }
-        if (characters[i]->getPosition().y < -100) { // TODO: un-hardcode this.
+        if (characters[i]->getPosition().y < ideal2Res(-100)) { // TODO: un-hardcode this.
             done = false; // don't go to the next level if all characters die at once!
             characters[i]->restartFromRespawn();
         }  else if (characters[i]->getPosition().x < levelEndX) {
