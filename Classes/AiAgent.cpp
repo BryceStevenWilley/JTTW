@@ -25,6 +25,7 @@ void AiAgent::cedeToPlayer(AiAgent *previousPlayer) {
         _controlledCharacter->body->resetForces();
         previousPlayer->_controlledCharacter->transferVelocity(_controlledCharacter);
     }
+    previousPlayer->_controlledCharacter->toggleToAI();
     previousPlayer->setPlayerPosOffset(previousPlayer->_controlledCharacter->getPosition() - this->_controlledCharacter->getPosition());
     previousPlayer->_controlledCharacter->currentCrown->setVisible(false);
     this->_controlledCharacter->currentCrown->setVisible(true);

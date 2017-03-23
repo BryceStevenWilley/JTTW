@@ -10,7 +10,7 @@
 #include "json.hpp"
 #include "Boulder.hpp"
 #include "CageTrap.hpp"
-#include "Spear.hpp"
+#include "ProjectileFactory.hpp"
 #include <iostream>
 #include <fstream>
 #include <algorithm>
@@ -284,6 +284,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
     }
     player = agents[0];
     player->_controlledCharacter->currentCrown->setVisible(true);
+    player->_controlledCharacter->toggleToPlayer();
 
     nlohmann::json boulderJson = lvl["boulders"];
     for (auto& bAtt: boulderJson) {
@@ -436,7 +437,8 @@ cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool deb
             std::cout << "Reading zone" << std::endl;
             attackZones.push_back(Zone(
                     vp.metersToPixels(cocos2d::Vec2((double)zAtt["minX"], (double)zAtt["minY"])),
-                    vp.metersToPixels(cocos2d::Vec2((double)zAtt["maxX"], (double)zAtt["maxY"]))));
+                    vp.metersToPixels(cocos2d::Vec2((double)zAtt["maxX"], (double)zAtt["maxY"])),
+                    createFactoryFromJson(zAtt["projectile"], vp)));
         }
     } else {
         std::cout << "Note: no zones in this level." << std::endl;
@@ -554,13 +556,6 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
                     }
                 }
                 break;
-                
-            case EventKeyboard::KeyCode::KEY_0: {
-                // Throw a projectile somewhere!
-                Spear *sprite = new Spear(player->_controlledCharacter->getPosition());
-                layer->addChild(sprite);
-                break;
-            }
 
             default:
                 // do nothing.
@@ -641,13 +636,13 @@ void MainGameScene::update(float delta) {
         characters[i]->updateLoop(delta);
         for (auto& zone : attackZones) {
             if (zone.containsPoint(characters[i]->getPosition())) {
-                if (attacking[characters[i]] == false) {
+                if (attacking.find(characters[i]) == attacking.end()) {
                     std::cout << "Attacking " << characters[i]->characterName << "!" << std::endl;
-                    attacking[characters[i]] = true;
+                    attacking[characters[i]] = zone.getFactory();
                     attackCountdown[characters[i]] = 1.0;
                 }
             } else {
-                attacking[characters[i]] = false;
+                attacking.erase(characters[i]);
             }
         }
         for (auto &spawn : respawnPoints) {
@@ -674,15 +669,13 @@ void MainGameScene::update(float delta) {
     }
     
     for (auto entry = attacking.begin(); entry != attacking.end(); entry++) {
-        if (entry->second) {
-             if (attackCountdown[entry->first] <= 0) {
-                attackCountdown[entry->first] = 5.0;
-                Spear *sprite = new Spear(entry->first->getPosition());
-                layer->addChild(sprite);
-                break;
-            }
-            attackCountdown[entry->first] = attackCountdown[entry->first] - delta;
+        if (attackCountdown[entry->first] <= 0) {
+            attackCountdown[entry->first] = 5.0;
+            auto sprite = entry->second->generateProjectile(entry->first->getPosition());
+            layer->addChild(sprite);
+            break;
         }
+        attackCountdown[entry->first] = attackCountdown[entry->first] - delta;
     }
     
     // Trigger any traps, but don't trigger them again.

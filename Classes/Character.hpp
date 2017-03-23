@@ -102,11 +102,14 @@ public:
     void updateLoop(float delta);
     void continueMotion();
 
+    // TODO: TODO: BAD DESIGN, WHY DOES CHARACTER HAVE TO KNOW ABOUT AI THINGS TO UPDATE ANIMATION CORRECTLY?
+    void toggleToAI();
+    void toggleToPlayer();
+
 protected:
     void initJump(double force);
     State _currentState = State::STANDING;
     
-
 private:
     void updateAnimation(State oldState);
        
@@ -127,6 +130,8 @@ private:
     cocos2d::Vec2 _rightVector = cocos2d::Vec2(1, 0);
     
     double jumpForce = 0.0;
+    
+    bool aiControl = true;
 };
 }
 

@@ -15,6 +15,7 @@
 #include "json.hpp"
 #include "Peg.hpp"
 #include "SimpleAudioEngine.h"
+#include "ProjectileFactory.hpp"
 
 namespace JTTW {
 
@@ -22,13 +23,16 @@ struct Zone {
 private:
     cocos2d::Vec2 bottomLeft;
     cocos2d::Vec2 topRight;
+    ProjectileFactory *fac;
     
 public:
-    Zone(cocos2d::Vec2 a, cocos2d::Vec2 b): bottomLeft(a), topRight(b) {}
+    Zone(cocos2d::Vec2 a, cocos2d::Vec2 b, ProjectileFactory *f): bottomLeft(a), topRight(b), fac(f) {}
     
     bool containsPoint(cocos2d::Vec2 p) {
         return (p.x >= bottomLeft.x && p.x <= topRight.x && p.y >= bottomLeft.y && p.y <= topRight.y);
     }
+    
+    ProjectileFactory *getFactory() { return fac; }
 };
 
     
@@ -80,7 +84,7 @@ private:
  
     std::map<int, Boulder *> boulders; 
     std::map<int, std::vector<int>> joints = std::map<int, std::vector<int>>();
-    std::map<Character *, bool> attacking = std::map<Character *, bool>();
+    std::map<Character *, ProjectileFactory *> attacking = std::map<Character *, ProjectileFactory *>();
     std::map<Character *, double> attackCountdown = std::map<Character *, double>();
 
     CocosDenshion::SimpleAudioEngine *audio;
