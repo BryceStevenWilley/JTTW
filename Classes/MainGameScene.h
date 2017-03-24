@@ -65,7 +65,8 @@ public:
     bool onContactHandler(cocos2d::PhysicsContact &contact, bool begin);
  
 private:
-    cocos2d::Layer *parseLevelFromJson(std::string fileName, bool debugOn);
+    cocos2d::Layer *parseLevelFromJsonLEGACY(nlohmann::json fileName, bool debugOn);
+    cocos2d::Layer *parseLevelFromJsonV2(nlohmann::json fileName, bool debugOn);
     bool characterCollision(cocos2d::PhysicsContact& contact, bool begin, Character *c, cocos2d::PhysicsBody *body, cocos2d::Node *node, cocos2d::Vec2 normal);
 
     Viewpoint vp = Viewpoint(cocos2d::Size(1.0, 1.0), 1.0);

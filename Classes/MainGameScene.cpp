@@ -148,14 +148,337 @@ const int VINE_Z = 3;
 const int BOULDER_Z = 5;
 const int CHARACTER_Z = 6;
 
-cocos2d::Layer *MainGameScene::parseLevelFromJson(std::string fileName, bool debugOn) {
+cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool debugOn) {
     cocos2d::Layer *levelLayer = cocos2d::Layer::create();
     uiLayer = cocos2d::Layer::create();
     uiLayer->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
-    std::ifstream inFile(fileName);
-    nlohmann::json lvl;
     
-    inFile >> lvl;
+    // draw and add background
+    nlohmann::json backgroundAtts = lvl["bg"];
+    std::string bgPath = backgroundAtts["path"];
+    bgPath = "assets/" + bgPath;
+    auto background = cocos2d::Sprite::create(bgPath);
+    background->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
+    background->setScale(1.4);
+    background->setPosition(0,-300.0);
+    this->addChild(background, -8);
+    
+    nlohmann::json platformAtts = lvl["plats"];
+    for (auto& pAtt: platformAtts) {
+        std::string fullImagePath = pAtt["path"];
+        fullImagePath = "assets/" + fullImagePath;
+        double centerX = vp.metersToPixels((double)pAtt["centerXM"]);
+        double centerY = vp.metersToPixels((double)pAtt["centerYM"]);
+        double imageSizeWidth = vp.metersToPixels((double)pAtt["scaledIGWM"]);
+        double imageSizeHeight = vp.metersToPixels((double)pAtt["scaledIGHM"]);
+        
+        std::vector<cocos2d::Vec2> ps;
+        for (auto& cPoint: pAtt["book"]["collPointList"]) {
+            ps.push_back(cocos2d::Vec2(vp.metersToPixels((double)cPoint["x"]), vp.metersToPixels((double)cPoint["y"])));
+        }
+        if (!pAtt["book"]["boolList"]["Moving"].is_boolean()) {
+            // Something is wrong!
+            std::cout << "Platform " << fullImagePath << " doesn't have a moveable member." << std::endl;
+            throw std::domain_error("No moveable");
+        }
+        
+        if (pAtt["book"]["boolList"]["Moving"]) {
+            cocos2d::Vec2 centerA(centerX, centerY);
+            double centerBX = vp.metersToPixels((double)pAtt["endpoint"]["x"]);
+            double centerBY = vp.metersToPixels((double)pAtt["endpoint"]["y"]);
+            cocos2d::Vec2 centerB(centerBX, centerBY);
+            double maximumVelocity = ideal2Res(vp.metersToPixels((double)pAtt["book"]["doubList"]["Velocity"]));
+            MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, cocos2d::Size(imageSizeWidth, imageSizeHeight), ps, maximumVelocity);
+
+            if (fullImagePath == "assets/blueGround.png") {
+                std::cout << "Found ground!" << std::endl;
+                levelLayer->addChild(p, FLOOR_Z);
+            } else {
+                std::cout << fullImagePath << std::endl;
+                levelLayer->addChild(p, PLATFORM_Z);
+            }
+            platforms.push_back(p);
+            moveables.push_back(p);
+        } else {
+            if (pAtt["book"]["boolList"]["Disappears"]) {
+                DisappearingPlatform *p = new DisappearingPlatform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight),
+                   ps, pAtt["book"]["boolList"]["Climbable"], pAtt["book"]["boolList"]["Collidable"]);
+                levelLayer->addChild(p, PLATFORM_Z);
+                trapsToTrigger.push_back(p);
+            } else {
+                Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), ps, pAtt["book"]["boolList"]["Climbable"], pAtt["book"]["boolList"]["Collidable"]);
+        
+                if (p->getTag() == CLIMBEABLE_TAG) {
+                    levelLayer->addChild(p, CLIMBABLE_Z);
+                } else if (fullImagePath == "assets/blueGround.png") {
+                    levelLayer->addChild(p, FLOOR_Z);
+                } else {
+                    levelLayer->addChild(p, PLATFORM_Z);
+                }
+                platforms.push_back(p);
+            }
+        }
+    }
+    nlohmann::json characterStruct = lvl["characters"];
+    std::vector<std::string> charNames = {"Monkey", "Monk", "Piggy", "Sandy"};
+    int characterHeight = vp.metersToPixels(1.7);
+    int characterWidth = vp.metersToPixels(1.7);
+    int charPresentCount = 0;
+    for (int i = 0; i < 4; i++) {
+        if (characterStruct[charNames[i]]["book"]["boolList"]["Present"]) {
+            double startX = vp.metersToPixels((double)characterStruct[charNames[i]]["centerXM"]);
+            double startY = vp.metersToPixels((double)characterStruct[charNames[i]]["centerYM"]);
+
+            Character *c = Character::createFromName(charNames[i], cocos2d::Vec2(startX, startY), cocos2d::Size(characterWidth, characterHeight));
+            characters.push_back(c);
+            levelLayer->addChild(c, CHARACTER_Z);
+            AiAgent *agent = new AiAgent(c);
+            agent->setPlayerPosOffset(c->getPosition() - characters[0]->getPosition());
+            agents.push_back(agent);
+            
+            // Set the ui head.
+            std::stringstream ss;
+            ss << "characters/" << charNames[i] << "Head.png";
+            cocos2d::Sprite *head = cocos2d::Sprite::create(ss.str());
+            
+            double headScale = .198 * screenScale;
+
+            head->setScale(headScale);
+            head->setPosition(UI_HEAD_START + (charPresentCount * cocos2d::Vec2(UI_HEAD_INC, 0)));
+ 
+            std::string buttonString;
+            switch(charPresentCount) {
+                case 0:
+                    buttonString = "z";
+                    break;
+                case 1:
+                    buttonString = "x";
+                    break;
+                case 2:
+                    buttonString = "c";
+                    break;
+                case 3:
+                    buttonString = "v";
+                    break;
+            }
+            auto label = cocos2d::Label::createWithTTF(buttonString, "fonts/WaitingfortheSunrise.ttf", 40 * screenScale);
+            label->setTextColor(cocos2d::Color4B::WHITE);
+            label->enableOutline(cocos2d::Color4B::BLACK, 1);
+            label->enableShadow();
+            label->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+            label->setPosition(UI_HEAD_START + (charPresentCount * cocos2d::Vec2(UI_HEAD_INC, 0)) + cocos2d::Vec2(0, UI_HEAD_INC));
+            uiLayer->addChild(label, 10);
+            uiLayer->addChild(head);
+            charPresentCount++;
+        }
+    }
+    
+    if (agents.size() == 0) {
+        // Handle Error!
+        std::cout << "You cant have a level with no characters!" << std::endl;
+        throw std::domain_error("No characters");
+    }
+    player = agents[0];
+    player->_controlledCharacter->currentCrown->setVisible(true);
+    player->_controlledCharacter->toggleToPlayer();
+
+    nlohmann::json boulderJson = lvl["boulders"];
+    for (auto& bAtt: boulderJson) {
+        cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)bAtt["centerXM"], (double)bAtt["centerYM"]));
+        std::stringstream ss;
+        std::string temp = bAtt["path"];
+        ss << "assets/" << temp;
+        std::string imageName = ss.str();
+        double mass = bAtt["book"]["doubList"]["mass"];
+        bool type = bAtt["book"]["boolList"]["Polygon collision"];
+        cocos2d::Size imgSize = cocos2d::Size(vp.metersToPixels((double)bAtt["scaledIGWM"]), vp.metersToPixels((double)bAtt["scaledIGHM"])); // TODOTDOUSTODU?? ????? ?? ?
+        Boulder *b;
+        if (type) {
+            b = new Boulder(
+                    vp.metersToPixels((double)bAtt["book"]["doubList"]["Radius"]),
+                    imageName,
+                    center,
+                    mass,
+                    imgSize);
+        } else { // if (type == "POLYGON") {
+            std::vector<cocos2d::Vec2> points;
+            for (auto& point: bAtt["collPointsList"]) {
+                points.push_back(vp.metersToPixels(cocos2d::Vec2((double)point["x"], (double)point["y"])));
+            }
+            b = new Boulder(points, imageName, center, mass, imgSize);
+        }
+        /*else {
+            std::cout << "Boulder type should be either CIRCLE or POLYGON, not " << type << std::endl;
+            throw std::invalid_argument("Boulder type should be circle or polygon");
+        } */
+        boulders[(int)bAtt["ticket"]] = b;
+        levelLayer->addChild(b, BOULDER_Z);
+    }
+    
+    nlohmann::json boulderJoints = lvl["boulderJoints"];
+    for (auto&jAtt : boulderJoints) {
+        int id1 = jAtt["id1"];
+        int id2 = jAtt["id2"];
+        Boulder *b1 = boulders[id1];
+        Boulder *b2 = boulders[id2];
+        //b1->getBody()->setCollisionBitmask((int)CollisionCategory::CharacterAndPlatform);
+        //b2->getBody()->setCollisionBitmask((int)CollisionCategory::CharacterAndPlatform);
+        //b1->getBody()->setContactTestBitmask((int)CollisionCategory::CharacterAndPlatform);
+        //b2->getBody()->setContactTestBitmask((int)CollisionCategory::CharacterAndPlatform);
+        b1->getBody()->setDynamic(false);
+        b2->getBody()->setDynamic(false);
+        
+        cocos2d::Vec2 offset1 = vp.metersToPixels(cocos2d::Vec2((double)jAtt["anchor1x"], (double)jAtt["anchor1y"]));
+        cocos2d::Vec2 offset2 = vp.metersToPixels(cocos2d::Vec2((double)jAtt["anchor2x"], (double)jAtt["anchor2y"]));
+        
+        joints[(int)jAtt["jointID"]] = {id1, id2};
+        
+        //auto pin = cocos2d::PhysicsJointPin::construct(b1->getBody(), b2->getBody(), offset1, offset2);
+        //auto gear = cocos2d::PhysicsJointGear::construct(b1->getBody(), b2->getBody(), 0, 1.0);
+        //_w->addJoint(pin);
+        //_w->addJoint(gear);
+    }
+    
+    nlohmann::json inputpegs = lvl["goldenPegs"];
+    for (auto& gAtt: inputpegs) {
+        if (gAtt.is_null() || gAtt["scaledIGWM"].is_null()) { // TODODOTODO??? ? ? ? ?
+            std::cout << "WTF IS HAPPENING?" << std::endl;
+            continue;
+        }
+        if (!gAtt["path"].is_string()) {
+            throw std::domain_error("Golden peg doesn't have an image name!");
+        }
+        std::string imageName = gAtt["path"];
+        imageName = "assets/" + imageName;
+        cocos2d::Size imageSize = cocos2d::Size(vp.metersToPixels((double)gAtt["scaledIGWM"]), vp.metersToPixels((double)gAtt["scaledIGHM"]));
+        cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)gAtt["centerXM"], (double)gAtt["centerYM"]));
+        double rotation = 180 * (double)gAtt["book"]["doubList"]["Rotation (rad)"] / 3.1415926;
+        std::vector<Boulder *> bouldersToRelease = std::vector<Boulder *>();
+        for (auto i: gAtt["book"]["intList"]) {//joints[(int)gAtt["jointID"]]) {
+            bouldersToRelease.push_back(boulders[i]);
+        }
+        auto peg = new Peg(imageName, center, imageSize, rotation, bouldersToRelease);
+        pegs.push_back(peg);
+        levelLayer->addChild(peg);
+        
+        // TODO: MOVE THIS ELSEWHERE.
+        Monkey *m = (Monkey *)characters[0];
+        m->body->setDynamic(false);
+        m->body->setGravityEnable(false);
+        m->body->setRotationEnable(false);
+        m->freeze();
+        m->findSlot("Body")->a = 0.0;
+        m->findSlot("L Arm")->a = 0.0;
+        m->findSlot("L Calf")->a = 0.0;
+        m->findSlot("L Foot")->a = 0.0;
+        m->findSlot("L Thigh")->a = 0.0;
+        m->findSlot("R Calf")->a = 0.0;
+        m->findSlot("R Foot")->a = 0.0;
+        m->findSlot("R Thigh")->a = 0.0;
+        m->findSlot("R Arm")->a = 0.0;
+    }
+    
+    nlohmann::json in_vines = lvl["vines"];
+    for (auto& vAtt: in_vines) {
+        double width = vp.metersToPixels((double)vAtt["scaledIGWM"]);
+        double length = vp.metersToPixels((double)vAtt["scaledIGHM"]);
+        double startingAngVel = vAtt["book"]["doubList"]["Velocity"];
+        cocos2d::Vec2 center = cocos2d::Vec2(vp.metersToPixels((double)vAtt["centerXM"]),
+                  vp.metersToPixels((double)vAtt["centerYM"]));
+        std::string imageName = vAtt["path"];
+        imageName = "assets/" + imageName;
+        Vine *v = new Vine(imageName, center, width, length, startingAngVel);
+        
+        cocos2d::PhysicsBody *b = cocos2d::PhysicsBody::createBox(cocos2d::Size(3, 3));
+        b->setRotationEnable(false);
+        b->setDynamic(false);
+        b->setCollisionBitmask((int)CollisionCategory::None);
+
+        cocos2d::Sprite *n = cocos2d::Sprite::create();
+        n->setPosition(center);
+        n->addComponent(b);
+
+        vines.push_back(v);
+        levelLayer->addChild(v, VINE_Z);
+        auto j = cocos2d::PhysicsJointPin::construct(v->getBody(), b, cocos2d::Vec2(0, ideal2Res(length/2.0)), cocos2d::Vec2::ZERO);
+        _w->addJoint(j);
+        levelLayer->addChild(n, VINE_Z);
+    }
+    
+    nlohmann::json in_traps = lvl["traps"];
+    for (auto& tAtt: in_traps) {
+        // TODO: Read in density and inner and outer box.
+        double wallWidth = vp.metersToPixels((double)tAtt["wallThickness"]);
+        double trapWidth = vp.metersToPixels((double)tAtt["trapWidth"]);
+        double trapHeight = vp.metersToPixels((double)tAtt["trapHeight"]);
+        double offset = vp.metersToPixels((double)tAtt["offset"]);
+        cocos2d::Size imgSize(vp.metersToPixels((double)tAtt["imageWidth"]), vp.metersToPixels((double)tAtt["imageHeight"]));
+        cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)tAtt["centerX"], (double)tAtt["centerY"]));
+        
+        std::string imageName = tAtt["imageName"];
+        if (imageName == "cage1.png") {
+            cocos2d::PhysicsMaterial material = cocos2d::PhysicsMaterial(tAtt["density"], tAtt["bounciness"], tAtt["friction"]);
+            imageName = "assets/" + imageName;
+            CageTrap *rS = new CageTrap(imageName, center, material, cocos2d::Size(trapWidth, trapHeight), imgSize, wallWidth, offset);
+            trapsToTrigger.push_back(rS);
+            levelLayer->addChild(rS, 10);
+        }
+    }
+    
+    if (lvl["attackZones"].is_array()) {
+        nlohmann::json zones = lvl["attackZones"];
+        for (auto& zAtt : zones) {
+            std::cout << "Reading zone" << std::endl;
+            attackZones.push_back(Zone(
+                    vp.metersToPixels(cocos2d::Vec2((double)zAtt["minX"], (double)zAtt["minY"])),
+                    vp.metersToPixels(cocos2d::Vec2((double)zAtt["maxX"], (double)zAtt["maxY"])),
+                    createFactoryFromJson(zAtt["projectile"], vp)));
+        }
+    } else {
+        std::cout << "Note: no zones in this level." << std::endl;
+    }
+    
+    if (lvl["tutorials"].is_array()) {
+        nlohmann::json in_tutorials = lvl["tutorials"];
+        for (auto &tAtt : in_tutorials) {
+            std::string tipString = tAtt["tipString"];
+            int fontSize = tAtt["fontSize"];
+            cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)tAtt["centerX"], (double)tAtt["centerY"]));
+            auto label = cocos2d::Label::createWithTTF(tipString, "fonts/WaitingfortheSunrise.ttf", fontSize);
+            label->setTextColor(cocos2d::Color4B::WHITE);
+            label->enableOutline(cocos2d::Color4B::BLACK, 1);
+            label->enableShadow();
+            label->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+            label->setPosition(center);
+            levelLayer->addChild(label, 10);
+        }
+    }
+
+    levelEndX = vp.metersToPixels((double)lvl["eol"]["x"]);
+    _nextLevel = lvl["nextLevelName"];
+    nlohmann::json respawns = lvl["respawnPoints"];
+    for (auto& rps: respawns) {
+        double x = vp.metersToPixels((double)rps["x"]);
+        double y = vp.metersToPixels((double)rps["y"]);
+        respawnPoints.push_back(cocos2d::Vec2(x, y));
+    }
+    
+    // Set the ui layer here.
+    this->addChild(uiLayer, UI_LAYER_Z_IDX);
+    
+    if (lvl["levelName"].is_string()) {
+        std::string levelName = lvl["levelName"];
+    
+        // Audio!
+        audio->playBackgroundMusic((std::string("Music/") + levelName + std::string(".mp3")).c_str());
+    }
+    return levelLayer;
+}
+
+cocos2d::Layer *MainGameScene::parseLevelFromJsonLEGACY(nlohmann::json lvl, bool debugOn) {
+    cocos2d::Layer *levelLayer = cocos2d::Layer::create();
+    uiLayer = cocos2d::Layer::create();
+    uiLayer->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
 
     // draw and add background
     nlohmann::json backgroundAtts = lvl["background"];
@@ -497,16 +820,23 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     // 1.7/130.0 means that 1.7 meters in the game world (average human male height) is represented by 130 pixels on screen.
     vp = Viewpoint(visibleSize, 1.7/130.0);
 
-    try {
-        layer = parseLevelFromJson(levelToLoad, debugOn);
-    }
+    //try {
+        std::ifstream inFile(levelToLoad);
+        nlohmann::json lvl;
+        inFile >> lvl;
+        if (lvl["VERSION"].is_null()) {
+            layer = parseLevelFromJsonLEGACY(lvl, debugOn);
+        } else if (lvl["VERSION"].is_number() && (int)lvl["VERSION"] == 2) {
+            layer = parseLevelFromJsonV2(lvl, debugOn);
+        }
+    /*}
     catch (std::domain_error ex) {
         std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
        return false;
     } catch (std::invalid_argument ex) {
         std::cout<< "Json was mal-formed, or expected members were not found, " << ex.what() << std::endl;
         return false;
-    }
+    } */
  
     if (layer == nullptr) {
         std::cout << "Level file corrupted!" << std::endl;
@@ -556,6 +886,31 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
                     }
                 }
                 break;
+
+            case EventKeyboard::KeyCode::KEY_0: {
+                // Set the cinematic look.
+                auto sprite = cocos2d::Sprite::create("assets/BlackBar.png");
+                auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+                auto origin = cocos2d::Director::getInstance()->getVisibleOrigin();
+                sprite->setContentSize(cocos2d::Size(visibleSize.width, visibleSize.height / 12.0));
+                sprite->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+                sprite->setPosition(cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (25.0/24.0)));
+                
+                auto sprite2 = cocos2d::Sprite::create("assets/BlackBar.png");
+                sprite2->setContentSize(cocos2d::Size(visibleSize.width, visibleSize.height / 12.0));
+                sprite2->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+                sprite2->setPosition(cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (-1.0/24.0)));
+                
+                auto upMoveDown = cocos2d::MoveTo::create(2.0, cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (23.0/24.0)));
+                auto downMoveUp = cocos2d::MoveTo::create(2.0, cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/24.0)));
+                
+                uiLayer->addChild(sprite, 10);
+                uiLayer->addChild(sprite2, 10);
+                
+                sprite->runAction(upMoveDown);
+                sprite2->runAction(downMoveUp);
+                break;
+            }
 
             default:
                 // do nothing.
