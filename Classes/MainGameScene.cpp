@@ -58,13 +58,10 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
                  offset = distFromCenter;
              } else {
                  // IDK what's happening?
-                 std::cout << "WEIRDNESS HERE!" << std::endl;
-                 std::cout << "distFromRotCenter: " << distFromRotCenter << std::endl;
-                 std::cout << "distFromCenter: " << distFromCenter << std::endl;
-                 std::cout << "halfLength: " << halfLength << std::endl;
                  offset = -(halfLength - 5);
              }
              m->enteringVine(this->getScene()->getPhysicsWorld(), v, offset, m->getPosition() + cocos2d::Vec2(0.0, m->getContentSize().height), false);
+             return true;
         } else {
             //m->leavingClimeable();
             return true; // don't rebalance impulse!
@@ -380,8 +377,8 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
     
     nlohmann::json in_vines = lvl["vines"];
     for (auto& vAtt: in_vines) {
-        double width = vp.metersToPixels((double)vAtt["scaledIGWM"]);
-        double length = vp.metersToPixels((double)vAtt["scaledIGHM"]);
+        double width = vp.metersToPixels((double)vAtt["book"]["doubList"]["Width"]);
+        double length = vp.metersToPixels((double)vAtt["book"]["doubList"]["Length"]);
         double startingAngVel = vAtt["book"]["doubList"]["Velocity"];
         cocos2d::Vec2 center = cocos2d::Vec2(vp.metersToPixels((double)vAtt["centerXM"]),
                   vp.metersToPixels((double)vAtt["centerYM"]));

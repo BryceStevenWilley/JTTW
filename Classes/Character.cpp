@@ -11,7 +11,7 @@
 using namespace JTTW;
 
 const double Character::JUMP_DECAY = ideal2Res(200);
-const double Character::VEL_LIMIT = ideal2Res(400);
+const double Character::VEL_LIMIT = ideal2Res(600);
 const double Character::JUMP_INIT_FRACTION = (7.0 / 12.0);
 const double Character::CROWN_SCALE = screenScale * .3;
 
@@ -126,7 +126,7 @@ void Character::rebalanceImpulse() {
 
 void Character::continueMotion() {
     if (_currentState != State::FROZEN &&
-            platformsStandingOn != 0 &&
+            //platformsStandingOn != 0 &&
             wallsHit == 0 && 
             std::abs(rightMomentum - leftMomentum)/body->getMass() > 0.01) {
         rebalanceImpulse();
@@ -216,10 +216,12 @@ void Character::leftCallback(cocos2d::PhysicsBody *plat) {
 
 void Character::wallHitCallback(cocos2d::PhysicsBody *wall) {
     wallsHit += 1;
+    std::cout << "Walls: " << wallsHit << std::endl;
 }
 
 void Character::wallLeftCallback(cocos2d::PhysicsBody *wall) {
     wallsHit -= 1;
+    std::cout << "Walls: " << wallsHit << std::endl;
     if (wallsHit < 0) {
         std::cerr << "ERROR: can't be in contact with negative walls, " << characterName << std::endl;
         wallsHit = 0;

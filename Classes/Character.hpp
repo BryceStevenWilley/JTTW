@@ -100,7 +100,7 @@ public:
     double getRespawnProgress() const;
     
     void updateLoop(float delta);
-    void continueMotion();
+    virtual void continueMotion();
 
     // TODO: TODO: BAD DESIGN, WHY DOES CHARACTER HAVE TO KNOW ABOUT AI THINGS TO UPDATE ANIMATION CORRECTLY?
     void toggleToAI();
@@ -109,20 +109,21 @@ public:
 protected:
     void initJump(double force);
     State _currentState = State::STANDING;
+        
+    double leftMomentum = 0.0;
+    double rightMomentum = 0.0;
+    int wallsHit = 0;
+    
     
 private:
     void updateAnimation(State oldState);
        
     cocos2d::Vec2 _respawnPosition;
-    
-    double leftMomentum = 0.0;
-    double rightMomentum = 0.0;
-    
+
     cocos2d::Vec2 _oldVel;
     
     int platformsStandingOn = 0;
-    int wallsHit = 0;
-    
+
     cocos2d::Size _dimensions;
 
     double _frozenTimer = 0.0;

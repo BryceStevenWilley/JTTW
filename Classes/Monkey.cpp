@@ -131,6 +131,15 @@ void Monkey::leavingClimeable() {
     body->setGravityEnable(true);
 }
 
+void Monkey::continueMotion() {
+    if (_currentState != Character::State::FROZEN &&
+            _state != SWINGING &&
+            wallsHit == 0 && 
+            std::abs(rightMomentum - leftMomentum)/body->getMass() > 0.01) {
+        rebalanceImpulse();
+    }
+}
+
 /**
  * 'alreadyOn' is only to change the animation.
  */

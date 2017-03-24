@@ -25,6 +25,8 @@ public:
     virtual void initJump() override;
     virtual void characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) override;
     
+    virtual void continueMotion() override;
+    
     void enteringClimeable(cocos2d::Vec2 upDir);
     void leavingClimeable();
     void enteringVine(cocos2d::PhysicsWorld *world, Vine *vine, double offset, cocos2d::Vec2 collisionPoint, bool alreadyOn);
