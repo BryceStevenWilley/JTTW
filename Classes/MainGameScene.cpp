@@ -286,11 +286,11 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
         std::string temp = bAtt["path"];
         ss << "assets/" << temp;
         std::string imageName = ss.str();
-        double mass = bAtt["book"]["doubList"]["mass"];
+        double mass = bAtt["book"]["doubList"]["Mass"];
         bool type = bAtt["book"]["boolList"]["Polygon collision"];
         cocos2d::Size imgSize = cocos2d::Size(vp.metersToPixels((double)bAtt["scaledIGWM"]), vp.metersToPixels((double)bAtt["scaledIGHM"])); // TODOTDOUSTODU?? ????? ?? ?
         Boulder *b;
-        if (type) {
+        if (!type) {
             b = new Boulder(
                     vp.metersToPixels((double)bAtt["book"]["doubList"]["Radius"]),
                     imageName,
@@ -299,7 +299,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
                     imgSize);
         } else { // if (type == "POLYGON") {
             std::vector<cocos2d::Vec2> points;
-            for (auto& point: bAtt["collPointsList"]) {
+            for (auto& point: bAtt["book"]["collPointList"]) {
                 points.push_back(vp.metersToPixels(cocos2d::Vec2((double)point["x"], (double)point["y"])));
             }
             b = new Boulder(points, imageName, center, mass, imgSize);
@@ -336,7 +336,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
         //_w->addJoint(gear);
     }
     
-    nlohmann::json inputpegs = lvl["goldenPegs"];
+    nlohmann::json inputpegs = lvl["pegs"];
     for (auto& gAtt: inputpegs) {
         if (gAtt.is_null() || gAtt["scaledIGWM"].is_null()) { // TODODOTODO??? ? ? ? ?
             std::cout << "WTF IS HAPPENING?" << std::endl;
@@ -405,42 +405,40 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
     nlohmann::json in_traps = lvl["traps"];
     for (auto& tAtt: in_traps) {
         // TODO: Read in density and inner and outer box.
-        double wallWidth = vp.metersToPixels((double)tAtt["wallThickness"]);
-        double trapWidth = vp.metersToPixels((double)tAtt["trapWidth"]);
-        double trapHeight = vp.metersToPixels((double)tAtt["trapHeight"]);
-        double offset = vp.metersToPixels((double)tAtt["offset"]);
-        cocos2d::Size imgSize(vp.metersToPixels((double)tAtt["imageWidth"]), vp.metersToPixels((double)tAtt["imageHeight"]));
-        cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)tAtt["centerX"], (double)tAtt["centerY"]));
+        double wallWidth = vp.metersToPixels((double)tAtt["book"]["doubList"]["wallThickness"]);
+        double trapWidth = vp.metersToPixels((double)tAtt["book"]["doubList"]["trapWidth"]);
+        double trapHeight = vp.metersToPixels((double)tAtt["book"]["doubList"]["trapHeight"]);
+        double offset = vp.metersToPixels((double)tAtt["book"]["doubList"]["offset"]);
+        cocos2d::Size imgSize(vp.metersToPixels((double)tAtt["scaledIGWM"]), vp.metersToPixels((double)tAtt["scaledIGHM"]));
+        cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)tAtt["centerXM"], (double)tAtt["centerYM"]));
         
-        std::string imageName = tAtt["imageName"];
-        if (imageName == "cage1.png") {
-            cocos2d::PhysicsMaterial material = cocos2d::PhysicsMaterial(tAtt["density"], tAtt["bounciness"], tAtt["friction"]);
-            imageName = "assets/" + imageName;
-            CageTrap *rS = new CageTrap(imageName, center, material, cocos2d::Size(trapWidth, trapHeight), imgSize, wallWidth, offset);
-            trapsToTrigger.push_back(rS);
-            levelLayer->addChild(rS, 10);
-        }
+        std::string imageName = tAtt["path"];
+        cocos2d::PhysicsMaterial material = cocos2d::PhysicsMaterial(tAtt["book"]["doubList"]["density"], tAtt["book"]["doubList"]["bounciness"], tAtt["book"]["doubList"]["friction"]);
+        imageName = "assets/" + imageName;
+        CageTrap *rS = new CageTrap(imageName, center, material, cocos2d::Size(trapWidth, trapHeight), imgSize, wallWidth, offset);
+        trapsToTrigger.push_back(rS);
+        levelLayer->addChild(rS, 10);
     }
     
-    if (lvl["attackZones"].is_array()) {
+    if (lvl["attackZones"].is_object()) {
         nlohmann::json zones = lvl["attackZones"];
         for (auto& zAtt : zones) {
             std::cout << "Reading zone" << std::endl;
             attackZones.push_back(Zone(
-                    vp.metersToPixels(cocos2d::Vec2((double)zAtt["minX"], (double)zAtt["minY"])),
-                    vp.metersToPixels(cocos2d::Vec2((double)zAtt["maxX"], (double)zAtt["maxY"])),
-                    createFactoryFromJson(zAtt["projectile"], vp)));
+                    vp.metersToPixels(cocos2d::Vec2((double)zAtt["book"]["doubList"]["xmin"], (double)zAtt["book"]["doubList"]["ymin"])),
+                    vp.metersToPixels(cocos2d::Vec2((double)zAtt["book"]["doubList"]["xmax"], (double)zAtt["book"]["doubList"]["ymax"])),
+                    createFactoryFromJson(zAtt, vp)));
         }
     } else {
         std::cout << "Note: no zones in this level." << std::endl;
     }
     
-    if (lvl["tutorials"].is_array()) {
-        nlohmann::json in_tutorials = lvl["tutorials"];
+    if (lvl["textTips"].is_object()) {
+        nlohmann::json in_tutorials = lvl["textTips"];
         for (auto &tAtt : in_tutorials) {
-            std::string tipString = tAtt["tipString"];
-            int fontSize = tAtt["fontSize"];
-            cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)tAtt["centerX"], (double)tAtt["centerY"]));
+            std::string tipString = tAtt["book"]["strList"]["text"];
+            int fontSize = tAtt["book"]["intList"]["fontSize"];
+            cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)tAtt["centerXM"], (double)tAtt["centerYM"]));
             auto label = cocos2d::Label::createWithTTF(tipString, "fonts/WaitingfortheSunrise.ttf", fontSize);
             label->setTextColor(cocos2d::Color4B::WHITE);
             label->enableOutline(cocos2d::Color4B::BLACK, 1);
@@ -451,7 +449,8 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
         }
     }
 
-    levelEndX = vp.metersToPixels((double)lvl["eol"]["x"]);
+    // TODO: add EOL direction!!!
+    levelEndX = vp.metersToPixels((double)lvl["eolPoint"]["x"]);
     _nextLevel = lvl["nextLevelName"];
     nlohmann::json respawns = lvl["respawnPoints"];
     for (auto& rps: respawns) {

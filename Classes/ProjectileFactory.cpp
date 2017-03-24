@@ -45,7 +45,6 @@ cocos2d::Sprite *RelativeProjectileFactory::generateProjectile(cocos2d::Vec2 tar
     return sprite;
 }
 
-
 AbsoluteProjectileFactory::AbsoluteProjectileFactory(std::string assetName, cocos2d::Size assetSize, std::string sound, cocos2d::Vec2 maxVel, cocos2d::Vec2 minVel, cocos2d::Vec2 position) :
         ProjectileFactory(maxVel, minVel, assetName, assetSize, sound),
         _position(position) {}
@@ -58,38 +57,38 @@ cocos2d::Sprite *AbsoluteProjectileFactory::generateProjectile(cocos2d::Vec2 tar
 }
 
 ProjectileFactory *JTTW::createFactoryFromJson(nlohmann::json projInfo, Viewpoint vp) {
-    double xVelMax = projInfo["xVelMax"];
-    double yVelMax = projInfo["yVelMax"];
-    double xVelMin = projInfo["xVelMin"];
-    double yVelMin = projInfo["yVelMin"];
+    double xVelMax = projInfo["book"]["doubList"]["xVelMax"];
+    double yVelMax = projInfo["book"]["doubList"]["yVelMax"];
+    double xVelMin = projInfo["book"]["doubList"]["xVelMin"];
+    double yVelMin = projInfo["book"]["doubList"]["yVelMin"];
     // TODO: use the meters to pixels thing when needed.
     auto maxVel = cocos2d::Vec2(xVelMax, yVelMax);
     auto minVel = cocos2d::Vec2(xVelMin, yVelMin);
              
-    double imageWidth = projInfo["imageWidth"];
-    double imageHeight = projInfo["imageHeight"];
+    double imageWidth = vp.metersToPixels((double)projInfo["scaledIGWM"]);
+    double imageHeight = vp.metersToPixels((double)projInfo["scaledIGHM"]);
     auto assetSize = cocos2d::Size(imageWidth, imageHeight);
             
-    std::string imageName = projInfo["imageName"];
+    std::string imageName = projInfo["path"];
     imageName = "assets/" + imageName;
-    std::string soundName = projInfo["soundName"];
+    std::string soundName = projInfo["book"]["strList"]["soundName"];
     soundName = "Sound/" + soundName;
     
-    if (projInfo["FireType"].is_string()) {
-        std::string type = projInfo["FireType"];
+    if (projInfo["book"]["strList"]["FireType"].is_string()) {
+        std::string type = projInfo["book"]["strList"]["FireType"];
         std::transform(type.begin(), type.end(), type.begin(), ::toupper);
         if (type == "RELATIVE") {
-            double xOffsetMax = projInfo["xOffsetMax"];
-            double yOffsetMax = projInfo["yOffsetMax"];
-            double xOffsetMin = projInfo["xOffsetMin"];
-            double yOffsetMin = projInfo["yOffsetMin"];
+            double xOffsetMax = projInfo["book"]["doubList"]["xOffsetMax"];
+            double yOffsetMax = projInfo["book"]["doubList"]["yOffsetMax"];
+            double xOffsetMin = projInfo["book"]["doubList"]["xOffsetMin"];
+            double yOffsetMin = projInfo["book"]["doubList"]["yOffsetMin"];
             auto maxOffset = cocos2d::Vec2(xOffsetMax, yOffsetMax);
             auto minOffset = cocos2d::Vec2(xOffsetMin, yOffsetMin);
    
             return new RelativeProjectileFactory(imageName, assetSize, soundName, maxVel, minVel, maxOffset, minOffset);
         } else if (type == "ABSOLUTE") {
-            double positionX = projInfo["xPosition"];
-            double positionY = projInfo["yPosition"];
+            double positionX = projInfo["centerXM"];
+            double positionY = projInfo["centerYM"];
             auto position = vp.metersToPixels(cocos2d::Vec2(positionX, positionY));
             
             return new AbsoluteProjectileFactory(imageName, assetSize, soundName, maxVel, minVel, position);
