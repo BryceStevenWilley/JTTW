@@ -53,6 +53,9 @@
 		521A8EAA19F11F5000D177D7 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 521A8EA819F11F5000D177D7 /* fonts */; };
 		52B47A471A53D09C004E4C60 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52B47A461A53D09B004E4C60 /* Security.framework */; };
 		8262943E1AAF051F00CB7CF7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8262943D1AAF051F00CB7CF7 /* Security.framework */; };
+		9F06DB8F1E834F2300B1080A /* ProjectileFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F06DB8D1E834F2300B1080A /* ProjectileFactory.cpp */; };
+		9F06DB901E834F2300B1080A /* ProjectileFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F06DB8D1E834F2300B1080A /* ProjectileFactory.cpp */; };
+		9F06DB911E834F2300B1080A /* ProjectileFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F06DB8D1E834F2300B1080A /* ProjectileFactory.cpp */; };
 		9F158C0D1E6A06FE002D21A6 /* CageTrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F158C0A1E6A06FE002D21A6 /* CageTrap.cpp */; };
 		9F158C0E1E6A071E002D21A6 /* CageTrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F158C0A1E6A06FE002D21A6 /* CageTrap.cpp */; };
 		9F15D9181E5FD4D300F77DF6 /* Boulder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F15D9161E5FD4D300F77DF6 /* Boulder.cpp */; };
@@ -82,9 +85,6 @@
 		9F36A4D31E6D4E650016232D /* Music in Resources */ = {isa = PBXBuildFile; fileRef = 9F36A4CF1E6D4E650016232D /* Music */; };
 		9F36A4D41E6D4E650016232D /* Music in Resources */ = {isa = PBXBuildFile; fileRef = 9F36A4CF1E6D4E650016232D /* Music */; };
 		9F36A4D51E6D4E650016232D /* Music in Resources */ = {isa = PBXBuildFile; fileRef = 9F36A4CF1E6D4E650016232D /* Music */; };
-		9F36A4D81E6D56F70016232D /* Spear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F36A4D61E6D56F70016232D /* Spear.cpp */; };
-		9F36A4D91E6D56F70016232D /* Spear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F36A4D61E6D56F70016232D /* Spear.cpp */; };
-		9F36A4DA1E6D56F70016232D /* Spear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F36A4D61E6D56F70016232D /* Spear.cpp */; };
 		9F666E461E30201C00F9BB90 /* AiAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F666E451E30201C00F9BB90 /* AiAgent.cpp */; };
 		9F666E471E30201C00F9BB90 /* AiAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F666E451E30201C00F9BB90 /* AiAgent.cpp */; };
 		9F666E481E30201C00F9BB90 /* AiAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F666E451E30201C00F9BB90 /* AiAgent.cpp */; };
@@ -255,6 +255,8 @@
 		521A8EA819F11F5000D177D7 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		52B47A461A53D09B004E4C60 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.1.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		8262943D1AAF051F00CB7CF7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		9F06DB8D1E834F2300B1080A /* ProjectileFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProjectileFactory.cpp; sourceTree = "<group>"; };
+		9F06DB8E1E834F2300B1080A /* ProjectileFactory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ProjectileFactory.hpp; sourceTree = "<group>"; };
 		9F158C0A1E6A06FE002D21A6 /* CageTrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CageTrap.cpp; sourceTree = "<group>"; };
 		9F158C0B1E6A06FE002D21A6 /* CageTrap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CageTrap.hpp; sourceTree = "<group>"; };
 		9F158C0C1E6A06FE002D21A6 /* DisappearingPlatform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DisappearingPlatform.hpp; sourceTree = "<group>"; };
@@ -275,8 +277,6 @@
 		9F36A4C91E6D0AEF0016232D /* Peg.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Peg.hpp; sourceTree = "<group>"; };
 		9F36A4CE1E6D4E650016232D /* Sound */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sound; sourceTree = "<group>"; };
 		9F36A4CF1E6D4E650016232D /* Music */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Music; sourceTree = "<group>"; };
-		9F36A4D61E6D56F70016232D /* Spear.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Spear.cpp; sourceTree = "<group>"; };
-		9F36A4D71E6D56F70016232D /* Spear.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Spear.hpp; sourceTree = "<group>"; };
 		9F666E451E30201C00F9BB90 /* AiAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AiAgent.cpp; sourceTree = "<group>"; };
 		9F666E571E31D89500F9BB90 /* AiAgentBehaviors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AiAgentBehaviors.cpp; sourceTree = "<group>"; };
 		9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoveablePlatform.cpp; sourceTree = "<group>"; };
@@ -588,8 +588,8 @@
 				9FFAAC711E62A74300AF523E /* Trap.hpp */,
 				9F36A4C81E6D0AEF0016232D /* Peg.cpp */,
 				9F36A4C91E6D0AEF0016232D /* Peg.hpp */,
-				9F36A4D61E6D56F70016232D /* Spear.cpp */,
-				9F36A4D71E6D56F70016232D /* Spear.hpp */,
+				9F06DB8D1E834F2300B1080A /* ProjectileFactory.cpp */,
+				9F06DB8E1E834F2300B1080A /* ProjectileFactory.hpp */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
@@ -810,7 +810,7 @@
 				9F16FC001E54CC5F00D9DBCA /* Monkey.cpp in Sources */,
 				9F15D9181E5FD4D300F77DF6 /* Boulder.cpp in Sources */,
 				46880B8819C43A87006E1F66 /* AppDelegate.cpp in Sources */,
-				9F36A4D81E6D56F70016232D /* Spear.cpp in Sources */,
+				9F06DB8F1E834F2300B1080A /* ProjectileFactory.cpp in Sources */,
 				46880B8A19C43A87006E1F66 /* MainGameScene.cpp in Sources */,
 				9FB69E071E46EE88006325A3 /* LevelSelectScene.cpp in Sources */,
 				9F98AF911E2C99E2009559C7 /* Viewpoint.cpp in Sources */,
@@ -849,6 +849,7 @@
 				9F8E65701E3DA0060058958F /* MoveablePlatform.cpp in Sources */,
 				9FB69E081E46EE88006325A3 /* LevelSelectScene.cpp in Sources */,
 				9FC97C881E540E0300EF6C31 /* LevelEnd.cpp in Sources */,
+				9F06DB901E834F2300B1080A /* ProjectileFactory.cpp in Sources */,
 				9F666E471E30201C00F9BB90 /* AiAgent.cpp in Sources */,
 				9F98AF921E2C99E2009559C7 /* Viewpoint.cpp in Sources */,
 				9FB69DDC1E459B90006325A3 /* Character.cpp in Sources */,
@@ -860,7 +861,6 @@
 				9F16FC071E54CCA500D9DBCA /* Monk.cpp in Sources */,
 				9F192EB81E5B634A001FE88A /* Vine.cpp in Sources */,
 				9FB69DE31E46D93D006325A3 /* MainMenuScene.cpp in Sources */,
-				9F36A4D91E6D56F70016232D /* Spear.cpp in Sources */,
 				9F9298E21E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -880,6 +880,7 @@
 				9FB69DE41E46D93D006325A3 /* MainMenuScene.cpp in Sources */,
 				9F9298E31E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */,
 				9FD41C131E2D55C80077779E /* TestDelegate.cpp in Sources */,
+				9F06DB911E834F2300B1080A /* ProjectileFactory.cpp in Sources */,
 				9FF673A61E81F491004BC426 /* Resolution.cpp in Sources */,
 				9FD41C101E2D55920077779E /* testCharacter.cpp in Sources */,
 				9FC97C891E540E0300EF6C31 /* LevelEnd.cpp in Sources */,
@@ -888,7 +889,6 @@
 				9F16FC0D1E54CCC200D9DBCA /* Sandy.cpp in Sources */,
 				9F16FC121E54CCDB00D9DBCA /* Piggy.cpp in Sources */,
 				9F666E5A1E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */,
-				9F36A4DA1E6D56F70016232D /* Spear.cpp in Sources */,
 				9F8E65711E3DA0060058958F /* MoveablePlatform.cpp in Sources */,
 				9FB69DDD1E459B90006325A3 /* Character.cpp in Sources */,
 				9F16FC081E54CCA500D9DBCA /* Monk.cpp in Sources */,

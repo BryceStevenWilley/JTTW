@@ -59,7 +59,7 @@ void LevelSelect::findLevelFiles(bool includeDev) {
     
         cocos2d::Sprite *img;
         try {
-            std::string levelName = lvl["levelName"];
+            std::string levelName = allLevelPaths[i]; //lvl["levelName"];
             allLevelNames.push_back(levelName);
             std::stringstream ss;
             ss << "levelFiles/previews/" << levelName << "Preview.png";

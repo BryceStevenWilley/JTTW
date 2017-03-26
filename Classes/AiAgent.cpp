@@ -7,6 +7,7 @@ using namespace JTTW;
 const float IMPULSE_AMOUNT = ideal2Res(280.0);
 const float ERROR_UP = ideal2Res(20.0);
 const float ERROR_DOWN = ideal2Res(5.0);
+const float MAX_HORI_VEL = ideal2Res(400);
 
 AiAgent::AiAgent(Character *controlledCharacter) :
 _controlledCharacter(controlledCharacter), _currentBehavior(&AiAgent::stationaryBehavior) {}
@@ -25,6 +26,7 @@ void AiAgent::cedeToPlayer(AiAgent *previousPlayer) {
         _controlledCharacter->body->resetForces();
         previousPlayer->_controlledCharacter->transferVelocity(_controlledCharacter);
     }
+    previousPlayer->_controlledCharacter->toggleToAI();
     previousPlayer->setPlayerPosOffset(previousPlayer->_controlledCharacter->getPosition() - this->_controlledCharacter->getPosition());
     previousPlayer->_controlledCharacter->currentCrown->setVisible(false);
     this->_controlledCharacter->currentCrown->setVisible(true);
@@ -124,6 +126,13 @@ void AiAgent::executeControl(float delta) {
     cocos2d::Vec2 fprime = errorPosition * kp + errorVelocity * kv;
     
     _controlledCharacter->applyForceRight(fprime.x);
+    if (std::abs(_controlledCharacter->body->getVelocity().x) > MAX_HORI_VEL) {
+        int sign = 1;
+        if (_controlledCharacter->body->getVelocity().x < 0) {
+            sign = -1;
+        }
+        _controlledCharacter->body->setVelocity(cocos2d::Vec2(MAX_HORI_VEL * sign, _controlledCharacter->body->getVelocity().y));
+    }
     if (errorPosition.y > ERROR_UP) {
         _controlledCharacter->initJump();
     } else if (errorPosition.y < ERROR_DOWN) {

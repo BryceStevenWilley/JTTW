@@ -109,6 +109,7 @@ void Character::applyForceRight(double fprime_x) {
     // Project the force onto the right direction vector to avoid 
     // bumping into objects as much as possible.
     body->applyForce(F_x.project(_rightVector));
+    // TODO: update the animation properly!
 }
 
 void Character::rebalanceImpulse() {
@@ -125,7 +126,7 @@ void Character::rebalanceImpulse() {
 
 void Character::continueMotion() {
     if (_currentState != State::FROZEN &&
-            platformsStandingOn != 0 &&
+            //platformsStandingOn != 0 &&
             wallsHit == 0 && 
             std::abs(rightMomentum - leftMomentum)/body->getMass() > 0.01) {
         rebalanceImpulse();
@@ -215,10 +216,12 @@ void Character::leftCallback(cocos2d::PhysicsBody *plat) {
 
 void Character::wallHitCallback(cocos2d::PhysicsBody *wall) {
     wallsHit += 1;
+    std::cout << "Walls: " << wallsHit << std::endl;
 }
 
 void Character::wallLeftCallback(cocos2d::PhysicsBody *wall) {
     wallsHit -= 1;
+    std::cout << "Walls: " << wallsHit << std::endl;
     if (wallsHit < 0) {
         std::cerr << "ERROR: can't be in contact with negative walls, " << characterName << std::endl;
         wallsHit = 0;
@@ -267,8 +270,20 @@ void Character::updateLoop(float delta) {
         jumpForce = 0.0;
     }
     
-    auto currentRelVel = cocos2d::Vec2((rightMomentum - leftMomentum)/ body->getMass(), body->getVelocity().y);
-
+    cocos2d::Vec2 currentRelVel;
+    if (aiControl) {
+        auto bodyX = body->getVelocity().x;
+        if (bodyX < ideal2Res(20) && bodyX > -ideal2Res(20)) {
+            bodyX = 0.0;
+        } else {
+            bodyX = bodyX / std::abs(bodyX) * 100;
+        }
+        currentRelVel = cocos2d::Vec2(bodyX, body->getVelocity().y);
+        // TODO: WILL SCREW UP WHEN
+        // STANDING ON MOVING PLATFORMS, PUT REAL REL VEL STUFF BACK IN!!!!!!
+    } else { // player control
+        currentRelVel = cocos2d::Vec2((rightMomentum - leftMomentum)/ body->getMass(), body->getVelocity().y);
+    }
     if (_oldVel == currentRelVel) {
         // nothing changed.
         return;
@@ -334,5 +349,13 @@ void Character::setNewRespawn(cocos2d::Vec2 newRespawn) {
 
 double Character::getRespawnProgress() const {
     return _respawnPosition.x;
+}
+
+void Character::toggleToAI() {
+    aiControl = true;
+}
+
+void Character::toggleToPlayer() {
+    aiControl = false;
 }
 
