@@ -308,6 +308,9 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
             std::cout << "Boulder type should be either CIRCLE or POLYGON, not " << type << std::endl;
             throw std::invalid_argument("Boulder type should be circle or polygon");
         } */
+        if (bAtt["book"]["boolList"]["StartFixed"]) {
+            b->getBody()->setDynamic(false);
+        }
         boulders[(int)bAtt["ticket"]] = b;
         levelLayer->addChild(b, BOULDER_Z);
     }
