@@ -105,6 +105,9 @@ public:
     // TODO: TODO: BAD DESIGN, WHY DOES CHARACTER HAVE TO KNOW ABOUT AI THINGS TO UPDATE ANIMATION CORRECTLY?
     void toggleToAI();
     void toggleToPlayer();
+    
+    void setToRespawn();
+    bool _respawnNextCycle = false;
 
 protected:
     void initJump(double force);

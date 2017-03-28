@@ -28,10 +28,9 @@ bool Peg::triggerPeg(cocos2d::Vec2 characterCenter) {
         // make all of the boulders dynamic.
         for (auto &b : _bouldersToMakeDynamic) {
             b->getBody()->setDynamic(true);
-            //b->getBody()->setContactTestBitmask((int)CollisionCategory::CharacterPlatformAndBoulder);
-            //b->getBody()->setCollisionBitmask((int)CollisionCategory::CharacterPlatformAndBoulder);
         }
         cocos2d::Vec2 moveDirection(0, PEG_MOVE_AMOUNT);
+        moveDirection.rotate(cocos2d::Vec2::ANCHOR_MIDDLE, 3.1415926 * this->getRotation() / 180.0);
         moveDirection.rotateByAngle(cocos2d::Vec2::ZERO, _rotation);
         auto move = cocos2d::MoveBy::create(.3, moveDirection);
         auto fade = cocos2d::FadeOut::create(2.0);

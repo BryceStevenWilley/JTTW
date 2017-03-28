@@ -40,7 +40,7 @@ class MainGameScene : public cocos2d::Layer {
 public:
     static cocos2d::Scene* createScene(std::string levelToLoad);
     virtual bool init(std::string levelToLoad, cocos2d::PhysicsWorld *w);
-    void menuCloseCallback(cocos2d::Ref* pSender);
+    void menuCloseCallback();
     void nextLevelCallback();
     void switchToCharacter(int charIndex);
     
@@ -62,10 +62,15 @@ public:
     
     bool onContactBegin(cocos2d::PhysicsContact &contact);
     bool onContactEnd(cocos2d::PhysicsContact &contact);
+    bool onContactPostSolve(cocos2d::PhysicsContact &contact);
     bool onContactHandler(cocos2d::PhysicsContact &contact, bool begin);
  
+ 
+    //////////////// Pause scene stuff ////////////////////
+    void pauseScene();
+    void resumeScene();
+ 
 private:
-    cocos2d::Layer *parseLevelFromJsonLEGACY(nlohmann::json fileName, bool debugOn);
     cocos2d::Layer *parseLevelFromJsonV2(nlohmann::json fileName, bool debugOn);
     bool characterCollision(cocos2d::PhysicsContact& contact, bool begin, Character *c, cocos2d::PhysicsBody *body, cocos2d::Node *node, cocos2d::Vec2 normal);
 
@@ -95,7 +100,8 @@ private:
     bool nextLevelStarting = false;
     bool afterFirstClick = false;
 
-    double levelEndX;
+    cocos2d::Vec2 levelEnd;
+    int levelEndDir = 4;
     
     std::string _nextLevel;
 
@@ -105,6 +111,18 @@ private:
     
     cocos2d::Layer *layer;
     cocos2d::Layer *uiLayer;
+    
+    ////////////// Pause Scene Stuff /////////////
+    cocos2d::EventListenerKeyboard *pauseListener;
+    
+    std::vector<cocos2d::MenuItem *> options;
+    std::vector<cocos2d::MenuItem *>::iterator currentOption;
+    cocos2d::Menu *m;
+    
+    cocos2d::Sprite *curtain;
+    
+    const cocos2d::Color3B SELECTED = cocos2d::Color3B(206.0, 208.0, 103.0);
+    const cocos2d::Color3B UNSELECTED = cocos2d::Color3B(255.0, 255.0, 255.0);
 };
 } // JTTW
 

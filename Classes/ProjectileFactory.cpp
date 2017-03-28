@@ -4,12 +4,13 @@
 
 using namespace JTTW;
 
-ProjectileFactory::ProjectileFactory(cocos2d::Vec2 maxVel, cocos2d::Vec2 minVel, std::string assetName, cocos2d::Size assetSize, std::string soundName) :
+ProjectileFactory::ProjectileFactory(cocos2d::Vec2 maxVel, cocos2d::Vec2 minVel, std::string assetName, cocos2d::Size assetSize, std::string soundName, bool dynamic) :
         xVelGen(minVel.x, maxVel.x),
         yVelGen(minVel.y, maxVel.y),
         _assetName(assetName),
         _soundName(soundName),
-        _assetSize(assetSize) {
+        _assetSize(assetSize),
+        _dynamic(dynamic) {
     rng.seed(std::random_device{}());
 }
 
@@ -23,6 +24,7 @@ cocos2d::Sprite *ProjectileFactory::getEmptyProjectile() {
     body->setTag((int)CollisionCategory::Projectile);
     body->setCollisionBitmask((int)CollisionCategory::None);
     body->setContactTestBitmask((int)CollisionCategory::Character);
+    body->setDynamic(_dynamic);
     
     sprite->setContentSize(_assetSize);
     sprite->addComponent(body);
@@ -33,8 +35,8 @@ cocos2d::Sprite *ProjectileFactory::getEmptyProjectile() {
     return sprite;
 }
 
-RelativeProjectileFactory::RelativeProjectileFactory(std::string assetName, cocos2d::Size assetSize, std::string soundName, cocos2d::Vec2 maxVel, cocos2d::Vec2 minVel, cocos2d::Vec2 maxOffset, cocos2d::Vec2 minOffset) :
-        ProjectileFactory(maxVel, minVel, assetName, assetSize, soundName),
+RelativeProjectileFactory::RelativeProjectileFactory(std::string assetName, cocos2d::Size assetSize, std::string soundName, cocos2d::Vec2 maxVel, cocos2d::Vec2 minVel, cocos2d::Vec2 maxOffset, cocos2d::Vec2 minOffset, bool dynamic) :
+        ProjectileFactory(maxVel, minVel, assetName, assetSize, soundName, dynamic),
         xOffsetGen(minOffset.x, maxOffset.x),
         yOffsetGen(minOffset.y, maxOffset.y) {}
 
@@ -45,8 +47,8 @@ cocos2d::Sprite *RelativeProjectileFactory::generateProjectile(cocos2d::Vec2 tar
     return sprite;
 }
 
-AbsoluteProjectileFactory::AbsoluteProjectileFactory(std::string assetName, cocos2d::Size assetSize, std::string sound, cocos2d::Vec2 maxVel, cocos2d::Vec2 minVel, cocos2d::Vec2 position) :
-        ProjectileFactory(maxVel, minVel, assetName, assetSize, sound),
+AbsoluteProjectileFactory::AbsoluteProjectileFactory(std::string assetName, cocos2d::Size assetSize, std::string sound, cocos2d::Vec2 maxVel, cocos2d::Vec2 minVel, cocos2d::Vec2 position, bool dynamic) :
+        ProjectileFactory(maxVel, minVel, assetName, assetSize, sound, dynamic),
         _position(position) {}
 
 cocos2d::Sprite *AbsoluteProjectileFactory::generateProjectile(cocos2d::Vec2 targetCenter) {
@@ -74,6 +76,8 @@ ProjectileFactory *JTTW::createFactoryFromJson(nlohmann::json projInfo, Viewpoin
     std::string soundName = projInfo["book"]["strList"]["soundName"];
     soundName = "Sound/" + soundName;
     
+    bool dynamic = projInfo["book"]["boolList"]["dynamic"];
+    
     if (projInfo["book"]["strList"]["FireType"].is_string()) {
         std::string type = projInfo["book"]["strList"]["FireType"];
         std::transform(type.begin(), type.end(), type.begin(), ::toupper);
@@ -85,13 +89,13 @@ ProjectileFactory *JTTW::createFactoryFromJson(nlohmann::json projInfo, Viewpoin
             auto maxOffset = cocos2d::Vec2(xOffsetMax, yOffsetMax);
             auto minOffset = cocos2d::Vec2(xOffsetMin, yOffsetMin);
    
-            return new RelativeProjectileFactory(imageName, assetSize, soundName, maxVel, minVel, maxOffset, minOffset);
+            return new RelativeProjectileFactory(imageName, assetSize, soundName, maxVel, minVel, maxOffset, minOffset, dynamic);
         } else if (type == "ABSOLUTE") {
             double positionX = projInfo["centerXM"];
             double positionY = projInfo["centerYM"];
             auto position = vp.metersToPixels(cocos2d::Vec2(positionX, positionY));
             
-            return new AbsoluteProjectileFactory(imageName, assetSize, soundName, maxVel, minVel, position);
+            return new AbsoluteProjectileFactory(imageName, assetSize, soundName, maxVel, minVel, position, dynamic);
         } else {
             std::cout << "FireType should be either RELATIVE or ABSOLUTE, not " << type << std::endl;
             throw std::invalid_argument("Projectile type should be relative or absolute.");

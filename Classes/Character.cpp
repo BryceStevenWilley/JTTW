@@ -339,8 +339,12 @@ void Character::updateAnimation(State oldState) {
 void Character::restartFromRespawn() {
     std::cout << "Restarting " << characterName << " at " << _respawnPosition.x << ", " << _respawnPosition.y << std::endl;
     body->setVelocity(cocos2d::Vec2(0, 0));
+    body->resetForces();
     this->setPosition(_respawnPosition);
-    this->setPosition(_respawnPosition);
+}
+
+void Character::setToRespawn() {
+    _respawnNextCycle = true;
 }
 
 void Character::setNewRespawn(cocos2d::Vec2 newRespawn) {

@@ -59,16 +59,16 @@ void LevelSelect::findLevelFiles(bool includeDev) {
     
         cocos2d::Sprite *img;
         try {
-            std::string levelName = allLevelPaths[i]; //lvl["levelName"];
+            std::string levelName = lvl["levelName"];
             allLevelNames.push_back(levelName);
             std::stringstream ss;
             ss << "levelFiles/previews/" << levelName << "Preview.png";
             std::string imgPath = ss.str();
-
+            orderedLevels[lvl["levelNumber"]] = levelName;
             img = cocos2d::Sprite::create(imgPath);
             if (img == NULL) {
                 std::cout << "couldn't find image file for " << imgPath << std::endl;
-                img = cocos2d::Sprite::create("assets/bgSunny.png");
+                img = cocos2d::Sprite::create("assets/lock.png");
             }
         } catch (std::domain_error ex) {
             std::cout << "Failed to parse " << allLevelPaths[i] << std::endl;
@@ -79,6 +79,7 @@ void LevelSelect::findLevelFiles(bool includeDev) {
         img->setVisible(false);
         img->setContentSize(visibleSize * (4.5 / 10.0));
         allLevelThumbnails.push_back(img);
+       
         this->addChild(img);
     }
 }

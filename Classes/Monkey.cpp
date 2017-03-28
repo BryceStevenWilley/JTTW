@@ -134,6 +134,7 @@ void Monkey::leavingClimeable() {
 void Monkey::continueMotion() {
     if (_currentState != Character::State::FROZEN &&
             _state != SWINGING &&
+            _state != CLIMBING &&
             wallsHit == 0 && 
             std::abs(rightMomentum - leftMomentum)/body->getMass() > 0.01) {
         rebalanceImpulse();

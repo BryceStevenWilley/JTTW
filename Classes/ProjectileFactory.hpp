@@ -10,7 +10,7 @@ namespace JTTW {
 
 class ProjectileFactory {
 public:
-    ProjectileFactory(cocos2d::Vec2 maxVel, cocos2d::Vec2 minVel, std::string assetName, cocos2d::Size assetSize, std::string soundName);
+    ProjectileFactory(cocos2d::Vec2 maxVel, cocos2d::Vec2 minVel, std::string assetName, cocos2d::Size assetSize, std::string soundName, bool dynamic);
     virtual cocos2d::Sprite *generateProjectile(cocos2d::Vec2 targetCenter) = 0;
     
 protected:
@@ -24,11 +24,12 @@ private:
     std::string _assetName;
     std::string _soundName;
     cocos2d::Size _assetSize;
+    bool _dynamic;
 };
 
 class RelativeProjectileFactory : public ProjectileFactory {
 public:
-    RelativeProjectileFactory(std::string assetName, cocos2d::Size assetSize, std::string soundName, cocos2d::Vec2 maxVel, cocos2d::Vec2 minVel, cocos2d::Vec2 maxOffset, cocos2d::Vec2 minOffset);
+    RelativeProjectileFactory(std::string assetName, cocos2d::Size assetSize, std::string soundName, cocos2d::Vec2 maxVel, cocos2d::Vec2 minVel, cocos2d::Vec2 maxOffset, cocos2d::Vec2 minOffset, bool dynamic);
     
     cocos2d::Sprite *generateProjectile(cocos2d::Vec2 targetCenter);
 
@@ -39,7 +40,7 @@ private:
 
 class AbsoluteProjectileFactory : public ProjectileFactory {
 public:
-    AbsoluteProjectileFactory(std::string assetName, cocos2d::Size assetSize, std::string sound, cocos2d::Vec2 maxVel, cocos2d::Vec2 minVel, cocos2d::Vec2 position);
+    AbsoluteProjectileFactory(std::string assetName, cocos2d::Size assetSize, std::string sound, cocos2d::Vec2 maxVel, cocos2d::Vec2 minVel, cocos2d::Vec2 position, bool dynamic);
     
     cocos2d::Sprite *generateProjectile(cocos2d::Vec2 targetCenter);
     

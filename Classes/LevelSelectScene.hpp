@@ -23,6 +23,7 @@ private:
     cocos2d::Label *devMode;
     std::map<int, std::string> tagToFileName;
     std::vector<std::string> allLevelPaths;
+    std::map<int, std::string> orderedLevels;
     std::vector<std::string> allLevelNames;
     std::vector<cocos2d::Sprite *> allLevelThumbnails;
     unsigned int currentLevel;
