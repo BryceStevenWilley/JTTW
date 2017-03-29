@@ -9,8 +9,11 @@ Platform::Platform() : cocos2d::Sprite() {
 
 
 Platform::Platform(std::string &fileName, cocos2d::Vec2 center, 
-                   cocos2d::Size imageSize, std::vector<cocos2d::Vec2> points, 
-                   bool climeable, bool collidable) 
+                   cocos2d::Size imageSize,
+                   std::vector<cocos2d::Vec2> points,
+                   std::vector<double> frictions,
+                   bool climeable,
+                   bool collidable)
         : cocos2d::Sprite() {
     if (!this->initWithFile(fileName)) {
         throw std::invalid_argument(fileName);
@@ -20,7 +23,18 @@ Platform::Platform(std::string &fileName, cocos2d::Vec2 center,
     this->setContentSize(imageSize);
     
     if (collidable) {
-        body = cocos2d::PhysicsBody::createPolygon(points.data(), (int)points.size(), DEFAULT_MATERIAL);
+        int pointCount = (int) points.size();
+        body = cocos2d::PhysicsBody::createPolygon(points.data(), pointCount, DEFAULT_MATERIAL);
+                
+        // Manually set friction.
+        if (!frictions.empty()) {
+            for (int i = 0; i < points.size(); i++) {
+                auto segment = cocos2d::PhysicsShapeEdgeSegment::create(points[i % pointCount], points[(i + 1) % pointCount]);
+                segment->setFriction(frictions[i]);
+                body->addShape(segment);
+            }
+        }
+        
         body->setDynamic(false);
         body->setGravityEnable(false);
         body->setTag((int)CollisionCategory::Platform);

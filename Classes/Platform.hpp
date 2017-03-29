@@ -12,7 +12,7 @@ class Platform: public cocos2d::Sprite {
 public:
     Platform();
 
-    Platform(std::string &fileName, cocos2d::Vec2 center, cocos2d::Size imageSize, std::vector<cocos2d::Vec2> points, bool climeable, bool collidable);
+    Platform(std::string &fileName, cocos2d::Vec2 center, cocos2d::Size imageSize, std::vector<cocos2d::Vec2> points, std::vector<double> frictions, bool climeable, bool collidable);
 
 protected:
     cocos2d::PhysicsBody *body;

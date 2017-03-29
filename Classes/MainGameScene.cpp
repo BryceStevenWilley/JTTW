@@ -30,7 +30,7 @@ cocos2d::Scene* MainGameScene::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::createWithPhysics();
     scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, GRAVITY));
-    //scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
+    scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = MainGameScene::create(levelToLoad, scene->getPhysicsWorld());
     if (layer == NULL) {
         return NULL;
@@ -153,8 +153,6 @@ const int CHARACTER_Z = 6;
 
 cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool debugOn) {
     cocos2d::Layer *levelLayer = cocos2d::Layer::create();
-    uiLayer = cocos2d::Layer::create();
-    uiLayer->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
     
     // draw and add background
     nlohmann::json backgroundAtts = lvl["bg"];
@@ -187,6 +185,12 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
         for (auto& cPoint: pAtt["book"]["collPointList"]) {
             ps.push_back(cocos2d::Vec2(vp.metersToPixels((double)cPoint["x"]), vp.metersToPixels((double)cPoint["y"])));
         }
+        
+        std::vector<double> frictions;
+        for (auto& f : pAtt["book"]["edgeFrictionList"]) {
+            frictions.push_back(f);
+        }
+        
         if (!pAtt["book"]["boolList"]["Moving"].is_boolean()) {
             // Something is wrong!
             std::cout << "Platform " << fullImagePath << " doesn't have a moveable member." << std::endl;
@@ -199,7 +203,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
             double centerBY = vp.metersToPixels((double)pAtt["endpoint"]["y"]);
             cocos2d::Vec2 centerB(centerBX, centerBY);
             double maximumVelocity = ideal2Res(vp.metersToPixels((double)pAtt["book"]["doubList"]["Velocity"]));
-            MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, cocos2d::Size(imageSizeWidth, imageSizeHeight), ps, maximumVelocity);
+            MoveablePlatform *p = new MoveablePlatform(fullImagePath, centerA, centerB, cocos2d::Size(imageSizeWidth, imageSizeHeight), ps, frictions, maximumVelocity);
 
             std::cout << fullImagePath << std::endl;
             levelLayer->addChild(p, z);
@@ -212,7 +216,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
                 levelLayer->addChild(p, z);
                 trapsToTrigger.push_back(p);
             } else {
-                Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), ps, pAtt["book"]["boolList"]["Climbable"], pAtt["book"]["boolList"]["Collidable"]);
+                Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), ps, frictions, pAtt["book"]["boolList"]["Climbable"], pAtt["book"]["boolList"]["Collidable"]);
         
                 levelLayer->addChild(p, z);
                 platforms.push_back(p);
@@ -474,6 +478,11 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     // 1.7/130.0 means that 1.7 meters in the game world (average human male height) is represented by 130 pixels on screen.
     vp = Viewpoint(visibleSize, 1.7/130.0);
 
+    uiLayer = cocos2d::Layer::create();
+    uiLayer->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
+    
+
+
     //try {
         std::ifstream inFile(levelToLoad);
         nlohmann::json lvl;
@@ -482,6 +491,34 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
             std::cout << "We no longer support this old file format." << std::endl;
         } else if (lvl["VERSION"].is_number() && (int)lvl["VERSION"] == 2) {
             layer = parseLevelFromJsonV2(lvl, debugOn);
+            // EXPERIMENTAL STUFF
+            cocos2d::PhysicsShape *sh = cocos2d::PhysicsShapeEdgeSegment::create(cocos2d::Vec2(0,0), cocos2d::Vec2(0, 400));
+            sh->setFriction(1.0);
+            
+            auto *sh3 = cocos2d::PhysicsShapeEdgeSegment::create(cocos2d::Vec2(-200, -100), cocos2d::Vec2(-200, 200));
+            sh3->setFriction(0.0);
+            
+            cocos2d::PhysicsShape *sh2 = cocos2d::PhysicsShapeBox::create(cocos2d::Size(400, 200));
+            sh2->setFriction(1.0);
+            
+            cocos2d::PhysicsBody *b = cocos2d::PhysicsBody::create();
+            b->addShape(sh);
+            b->addShape(sh2);
+            b->addShape(sh3);
+            b->setDynamic(false);
+            b->setGravityEnable(false);
+            b->setTag((int)CollisionCategory::Platform);
+            b->setContactTestBitmask((int)CollisionCategory::CharacterAndBoulder);
+            b->setCollisionBitmask((int)CollisionCategory::CharacterAndBoulder);
+
+            cocos2d::Sprite * s = cocos2d::Sprite::create("assets/BlackBar.png");
+            s->setContentSize(cocos2d::Size(400, 200));
+            s->addComponent(b);
+            
+            s->setPosition(cocos2d::Vec2(0, 600));
+            
+            
+            layer->addChild(s);
         }
     /*}
     catch (std::domain_error ex) {

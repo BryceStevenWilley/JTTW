@@ -8,9 +8,11 @@ const bool NOT_CLIMABLE = false;
 const bool COLLIDABLE = true;
 
 MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerA, cocos2d::Vec2 centerB, 
-                                   cocos2d::Size imageSize, std::vector<cocos2d::Vec2> points, 
+                                   cocos2d::Size imageSize,
+                                   std::vector<cocos2d::Vec2> points,
+                                   std::vector<double> frictions,
                                    double maxVelocity) 
-        : Platform(fileName, centerA, imageSize, points, NOT_CLIMABLE, COLLIDABLE),
+        : Platform(fileName, centerA, imageSize, points, frictions, NOT_CLIMABLE, COLLIDABLE),
       _centerA(centerA), 
       _centerB(centerB) {
     // Set initial speed.
