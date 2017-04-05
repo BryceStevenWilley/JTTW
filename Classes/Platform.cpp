@@ -3,18 +3,20 @@
 
 using namespace JTTW;
 
-Platform::Platform() : cocos2d::Sprite() {
+Platform::Platform() {
     this->init();
 }
 
+double Platform::getYRange() {
+    return _yRange;
+}
 
 Platform::Platform(std::string &fileName, cocos2d::Vec2 center, 
                    cocos2d::Size imageSize,
                    std::vector<cocos2d::Vec2> points,
                    std::vector<double> frictions,
                    bool climeable,
-                   bool collidable)
-        : cocos2d::Sprite() {
+                   bool collidable) {
     if (!this->initWithFile(fileName)) {
         throw std::invalid_argument(fileName);
     }
@@ -46,5 +48,17 @@ Platform::Platform(std::string &fileName, cocos2d::Vec2 center,
 
     if (climeable) {
         this->setTag(CLIMBEABLE_TAG);
+        // Calculate y range.
+        double maxHeight = -1 * std::numeric_limits<double>::infinity();
+        double minHeight = std::numeric_limits<double>::infinity();
+        for (auto &p : points) {
+            if (p.y < minHeight) {
+                minHeight = p.y;
+            }
+            if (p.y > maxHeight) {
+                maxHeight = p.y;
+            }
+        }
+        _yRange = maxHeight - minHeight;
     }
 }

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Character.hpp"
+#include "Platform.hpp"
 #include "Vine.hpp"
 
 namespace JTTW {
@@ -27,16 +28,23 @@ public:
     
     virtual void continueMotion() override;
     
-    void enteringClimeable(cocos2d::Vec2 upDir);
+    //void enteringClimeable(cocos2d::Vec2 upDir);
+    void enteringClimeable(cocos2d::PhysicsWorld *world, SceneObject *p, cocos2d::Vec2 offset, cocos2d::Vec2 upDir, bool alreadyOn);
     void leavingClimeable();
-    void enteringVine(cocos2d::PhysicsWorld *world, Vine *vine, double offset, cocos2d::Vec2 collisionPoint, bool alreadyOn);
+    
+    
+    void enteringVine(cocos2d::PhysicsWorld *world, SceneObject *vine, double offset, bool alreadyOn);
     void leavingVine();
     
     virtual void restartFromRespawn() override;
     
+    void setBoulderBury();
+    void setBoulderUnbury();
+    
 private:
     void updateClimbingVel();
     void moveAlongVine(float deltaP);
+    void moveAlongClimbable(cocos2d::Vec2 up);
 
     State _state;
     
@@ -45,8 +53,8 @@ private:
     
     cocos2d::PhysicsJoint* pinJoint = nullptr;
     cocos2d::PhysicsJoint* gearJoint = nullptr;
-    Vine *currentVine = nullptr;
-    double currentVineOffset = 0.0;
+    SceneObject *currentAttached = nullptr;
+    cocos2d::Vec2 currentAttachedOffset = cocos2d::Vec2::ZERO;
     cocos2d::PhysicsWorld *currentWorld;
     
     cocos2d::Vec2 _upDir;

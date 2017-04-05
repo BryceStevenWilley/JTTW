@@ -41,7 +41,7 @@ bool MainMenu::init() {
     background->setScale(visibleSize.width / bgSize.width, visibleSize.height / bgSize.height);
     this->addChild(background, -8);
     
-    // Set the Font on the screen. (TODO: make it fly in?)
+    // Set the Font on the screen.
     auto titleImage = cocos2d::Sprite::create("UI/MenuTitle.png");
     titleImage->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
     cocos2d::Size titleSize = cocos2d::Size(visibleSize.width / 2.0, visibleSize.height / 3.0);
@@ -110,6 +110,7 @@ bool MainMenu::init() {
                 break;
             
             case cocos2d::EventKeyboard::KeyCode::KEY_ENTER:
+            case cocos2d::EventKeyboard::KeyCode::KEY_SPACE:
                 (*currentOption)->activate();
                 break;
                 
@@ -171,7 +172,7 @@ spine::SkeletonAnimation *MainMenu::addCharacterAni(std::string name, cocos2d::V
     spine::SkeletonAnimation *c = spine::SkeletonAnimation::createWithJsonFile("characters/" + name + ".json", "characters/" + name + ".atlas", 1.0f);
     c->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
     c->setPosition(startPosition);
-    c->setTimeScale(0.5);
+    c->setTimeScale(0.7 * std::abs(startPosition.x - endPosition.x) / (middleX));
     c->setAnimation(0, "walk", true);
     if (startPosition.x > middleX) {
          c->setScale(charScale);

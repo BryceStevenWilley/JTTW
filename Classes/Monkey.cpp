@@ -1,15 +1,18 @@
 #include "Monkey.hpp"
 #include "SimpleAudioEngine.h"
 #include "Resolution.hpp"
+#include "Platform.hpp"
+#include "Collisions.hpp"
 
 using namespace JTTW;
 
 const double Monkey::JUMP_INIT = ideal2Res(600);
 const double Monkey::CLIMB_VEL = ideal2Res(200);
 const double Monkey::VINE_CLIMB_INC = ideal2Res(30);
+const cocos2d::PhysicsMaterial MONKEY_MATERIAL = cocos2d::PhysicsMaterial(0.8, 0.0, 1.0);
 
 Monkey::Monkey(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
- Character("Monkey", cocos2d::PhysicsMaterial(.8, 0.0, 1.0), startPosition, dimensions), _state(NORMAL) {}
+ Character("Monkey", MONKEY_MATERIAL, startPosition, dimensions), _state(NORMAL) {}
 
 void Monkey::impulseLeft(float deltaVel) {
     if (_state == NORMAL || _state == SWINGING) {
@@ -45,7 +48,12 @@ void Monkey::initJump() {
         this->_currentState = Character::State::STANDING;
         _state = NORMAL;
         cocos2d::Vec2 vel = body->getVelocity();
-        body->applyImpulse(body->getMass() * vel * .7); // Double the current velocity!
+        body->applyImpulse(body->getMass() * vel * .85); // Double the current velocity!
+        if (vel.x < 0) {
+            body->applyImpulse(body->getMass() * cocos2d::Vec2(ideal2Res(-100), ideal2Res(200)));
+        } else {
+            body->applyImpulse(body->getMass() * cocos2d::Vec2(ideal2Res(100), ideal2Res(200)));
+        }
         this->_currentState = Character::State::MID_AIR;
         this->setAnimation(0, "JumpForwardFromSwing", false);
         return;
@@ -71,7 +79,9 @@ void Monkey::characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed
             climbUpVel -= CLIMB_VEL;
         }
         if (_state == CLIMBING) {
-            updateClimbingVel();
+            if (pressed) {
+                moveAlongClimbable(VINE_CLIMB_INC * _upDir);
+            }
         } else if (_state == SWINGING) {
             if (pressed) {
                 moveAlongVine(VINE_CLIMB_INC);
@@ -86,7 +96,9 @@ void Monkey::characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed
             climbDownVel -= CLIMB_VEL;
         }
         if (_state == CLIMBING) {
-            updateClimbingVel();
+            if (pressed) {
+                moveAlongClimbable(-VINE_CLIMB_INC * _upDir);
+            }
         } else if (_state == SWINGING) {
             if (pressed) {
                 moveAlongVine(-VINE_CLIMB_INC);
@@ -104,25 +116,60 @@ void Monkey::updateClimbingVel() {
         this->setTimeScale(1.0);
         this->setAnimation(0, "ClimbIdle", true);
     }
-    body->setVelocity(cocos2d::Vec2(0, sum).project(_upDir));
 }
 
-void Monkey::enteringClimeable(cocos2d::Vec2 upDir) {
+void Monkey::enteringClimeable(cocos2d::PhysicsWorld *world, SceneObject *p, cocos2d::Vec2 offset, cocos2d::Vec2 upDir, bool alreadyOn) {//, Platform *platform) {
+    leavingClimeable();
+    pinJoint = cocos2d::PhysicsJointPin::construct(this->body, p->getPhysicsBody(), cocos2d::Vec2::ZERO, offset);
+    world->addJoint(pinJoint);
+    currentAttached = p;
+    currentAttachedOffset = offset;
+    
+    if (!alreadyOn) {
+        this->setTimeScale(2.0);
+        this->setAnimation(0, "ClimbIdle", true);
+    } else {
+        this->setTimeScale(2.0);
+        //this->setTimeScale(1.0);
+        this->setAnimation(0, "Climb", true);
+        this->addAnimation(0, "ClimbIdle", true);
+    }
+    
     if (_state == NORMAL) {
         std::cout << "Now climbing" << std::endl;
         // Stick to where you are.
-        body->setGravityEnable(false);
+        //body->setGravityEnable(false);
         //Character::stop();
-        body->setVelocity(cocos2d::Vec2::ZERO);
+        //body->setVelocity(cocos2d::Vec2::ZERO);
         _state = CLIMBING;
-        _upDir = upDir;
-        this->setAnimation(0, "ClimbIdle", true);
-        updateClimbingVel(); // Because we're still tracking kepresses even off of the trees.
+        if (upDir.y < 0) {
+            _upDir = -upDir;
+        } else {
+            _upDir = upDir;
+        }
+        //this->setAnimation(0, "ClimbIdle", true);
+        //updateClimbingVel(); // Because we're still tracking keypresses even off of the trees.
+    }
+    currentWorld = world;
+}
+
+void Monkey::moveAlongClimbable(cocos2d::Vec2 up) {
+    std::cout << "Current Attached offset: " << currentAttachedOffset.x << ", " << currentAttachedOffset.y << std::endl;
+    std::cout << "Current Attached range: " << currentAttached->getYRange() << std::endl;
+    std::cout << "Up: " << up.x << ", " << up.y << std::endl;
+    if ((currentAttachedOffset + up).y > -currentAttached->getYRange() / 2.0 &&
+        (currentAttachedOffset + up).y < currentAttached->getYRange() / 2.0) {
+        enteringClimeable(currentWorld, currentAttached, currentAttachedOffset + up, _upDir, true);
     }
 }
 
 void Monkey::leavingClimeable() {
     std::cout << "Leaving climbing" << std::endl;
+    if (pinJoint != nullptr) {
+        pinJoint->removeFormWorld();
+        pinJoint = nullptr;
+    }
+    
     if (_state == CLIMBING) {
         this->setTimeScale(1.0);
         this->setAnimation(0, "JumpForwardFromClimb", false);
@@ -144,10 +191,11 @@ void Monkey::continueMotion() {
 /**
  * 'alreadyOn' is only to change the animation.
  */
-void Monkey::enteringVine(cocos2d::PhysicsWorld *world, Vine *vine, double offset, cocos2d::Vec2 collisionPoint, bool alreadyOn) {
+void Monkey::enteringVine(cocos2d::PhysicsWorld *world, SceneObject *obj, double offset, bool alreadyOn) {
     leavingVine();
     // create a joint between you and the vine.
-    pinJoint = cocos2d::PhysicsJointPin::construct(this->body, vine->getPhysicsBody(), cocos2d::Vec2::ZERO, cocos2d::Vec2(0, ideal2Res(offset)));
+    cocos2d::Vec2 offsetVec = cocos2d::Vec2(0, ideal2Res(offset));
+    pinJoint = cocos2d::PhysicsJointPin::construct(this->body, obj->getPhysicsBody(), cocos2d::Vec2::ZERO, offsetVec);
     world->addJoint(pinJoint);
     _state = SWINGING;
     
@@ -167,39 +215,40 @@ void Monkey::enteringVine(cocos2d::PhysicsWorld *world, Vine *vine, double offse
     body->setRotationOffset(0.0);
     double gearPhase = 0.0;
     double gearRatio = 1.0;
-    gearJoint = cocos2d::PhysicsJointGear::construct(body, vine->getPhysicsBody(), gearPhase, gearRatio);
+    gearJoint = cocos2d::PhysicsJointGear::construct(body, obj->getPhysicsBody(), gearPhase, gearRatio);
     world->addJoint(gearJoint);
 
     // set these params so you can climb later.
-    currentVine = vine;
-    currentVineOffset = offset;
+    currentAttached = obj;
+    currentAttachedOffset = offsetVec;
     currentWorld = world;
 }
 
 void Monkey::leavingVine() {
-        if (pinJoint != nullptr) {
-            pinJoint->removeFormWorld();
-            pinJoint = nullptr;
-        }
-        
-        if (gearJoint != nullptr) {
-            gearJoint->removeFormWorld();
-            gearJoint = nullptr;
-        }
+    if (pinJoint != nullptr) {
+        pinJoint->removeFormWorld();
+        pinJoint = nullptr;
+    }
 
-        currentVine = nullptr;
-        currentVineOffset = 0.0;
+    if (gearJoint != nullptr) {
+        gearJoint->removeFormWorld();
+        gearJoint = nullptr;
+    }
+
+    currentAttached = nullptr;
+    currentAttachedOffset = cocos2d::Vec2::ZERO;
     
-        _state = NORMAL;
-        this->_currentState = Character::State::MID_AIR;
-        body->setRotationEnable(false);
-        body->setAngularVelocity(0.0);
-        this->setRotation(0.0);
+    _state = NORMAL;
+    this->_currentState = Character::State::MID_AIR;
+    body->setRotationEnable(false);
+    body->setAngularVelocity(0.0);
+    this->setRotation(0.0);
 }
 
 void Monkey::moveAlongVine(float deltaP) {
-    if (currentVineOffset + deltaP > -currentVine->getLength() / 2.0 && currentVineOffset + deltaP < currentVine->getLength() / 2.0) {
-        enteringVine(currentWorld, currentVine, currentVineOffset + deltaP, cocos2d::Vec2::ZERO, true);
+    if ((currentAttachedOffset + cocos2d::Vec2(0, deltaP)).y > -currentAttached->getYRange() / 2.0 &&
+        (currentAttachedOffset + cocos2d::Vec2(0, deltaP)).y < currentAttached->getYRange() / 2.0) {
+        enteringVine(currentWorld, currentAttached, (currentAttachedOffset + cocos2d::Vec2(0, deltaP)).y, true);
     }
 }
 
@@ -210,4 +259,59 @@ void Monkey::restartFromRespawn() {
     leavingClimeable();
     Character::restartFromRespawn();
     leavingClimeable();
+}
+
+  
+void Monkey::setBoulderBury() {
+    body->setDynamic(false);
+    body->setGravityEnable(false);
+    body->setRotationEnable(false);
+    freeze();
+    findSlot("Body")->a = 0.0;
+    findSlot("L Arm")->a = 0.0;
+    findSlot("L Calf")->a = 0.0;
+    findSlot("L Foot")->a = 0.0;
+    findSlot("L Thigh")->a = 0.0;
+    findSlot("R Calf")->a = 0.0;
+    findSlot("R Foot")->a = 0.0;
+    findSlot("R Thigh")->a = 0.0;
+    findSlot("R Arm")->a = 0.0;
+}
+
+void Monkey::setBoulderUnbury() {
+    body->setDynamic(true);
+    body->setGravityEnable(true);
+    body->setRotationEnable(false);
+    setRotation(0.0);
+    findSlot("Body")->a = 255.0;
+    findSlot("L Arm")->a = 255.0;
+    findSlot("L Calf")->a = 255.0;
+    findSlot("L Foot")->a = 255.0;
+    findSlot("L Thigh")->a = 255.0;
+    findSlot("R Calf")->a = 255.0;
+    findSlot("R Foot")->a = 255.0;
+    findSlot("R Thigh")->a = 255.0;
+    findSlot("R Arm")->a = 255.0;
+    update(0);
+    auto newBody = cocos2d::PhysicsBody::create();
+    double width = 480.0f;
+    double height = 780.0f;
+    auto bodyShape = cocos2d::PhysicsShapeBox::create(cocos2d::Size(width * .95, height * (2.0/3.0)), MONKEY_MATERIAL, cocos2d::Vec2(0.0, height/9.0));
+    auto bottomSemiCircle = cocos2d::PhysicsShapeCircle::create(width/2.0, MONKEY_MATERIAL, cocos2d::Vec2(0.0, -height * (0.8/4.0)));
+    newBody->addShape(bodyShape);
+    newBody->addShape(bottomSemiCircle);
+    newBody->setCategoryBitmask((int)CollisionCategory::Character);
+    newBody->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
+    newBody->setContactTestBitmask((int)CollisionCategory::PlatformBoulderAndProjectile);
+    newBody->setRotationEnable(false);
+    newBody->setVelocityLimit(600);
+    
+    removeComponent(body);
+    body->removeFromWorld();
+    
+    addComponent(newBody);
+    
+    body = newBody;
+
+    setSlotsToSetupPose();
 }

@@ -16,27 +16,14 @@
 #include "Peg.hpp"
 #include "SimpleAudioEngine.h"
 #include "ProjectileFactory.hpp"
+#include "Zone.hpp"
 
 namespace JTTW {
 
-struct Zone {
-private:
-    cocos2d::Vec2 bottomLeft;
-    cocos2d::Vec2 topRight;
-    ProjectileFactory *fac;
-    
-public:
-    Zone(cocos2d::Vec2 a, cocos2d::Vec2 b, ProjectileFactory *f): bottomLeft(a), topRight(b), fac(f) {}
-    
-    bool containsPoint(cocos2d::Vec2 p) {
-        return (p.x >= bottomLeft.x && p.x <= topRight.x && p.y >= bottomLeft.y && p.y <= topRight.y);
-    }
-    
-    ProjectileFactory *getFactory() { return fac; }
-};
-
+class Cutscene;
     
 class MainGameScene : public cocos2d::Layer {
+friend class Cutscene;
 public:
     static cocos2d::Scene* createScene(std::string levelToLoad);
     virtual bool init(std::string levelToLoad, cocos2d::PhysicsWorld *w);
@@ -73,6 +60,10 @@ public:
 private:
     cocos2d::Layer *parseLevelFromJsonV2(nlohmann::json fileName, bool debugOn);
     bool characterCollision(cocos2d::PhysicsContact& contact, bool begin, Character *c, cocos2d::PhysicsBody *body, cocos2d::Node *node, cocos2d::Vec2 normal);
+    void KeypressedCallback(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event);
+    void PausedKeyCallback(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event);
+    void KeyreleasedCallback(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event);
+    void PausedKeyReleasedCallback(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event);
 
     Viewpoint vp = Viewpoint(cocos2d::Size(1.0, 1.0), 1.0);
     std::vector<Character *> characters = std::vector<Character *>();
@@ -87,18 +78,21 @@ private:
     std::vector<cocos2d::Vec2> respawnPoints = std::vector<cocos2d::Vec2>();
     std::vector<Peg *> pegs = std::vector<Peg *>();
     std::vector<Zone> attackZones = std::vector<Zone>();
+    std::vector<Cutscene *> cutscenes = std::vector<Cutscene *>();
  
     std::map<int, Boulder *> boulders; 
     std::map<int, std::vector<int>> joints = std::map<int, std::vector<int>>();
-    std::map<Character *, ProjectileFactory *> attacking = std::map<Character *, ProjectileFactory *>();
+    std::map<Character *, std::vector<ProjectileFactory *>> attacking = std::map<Character *, std::vector<ProjectileFactory *>>();
     std::map<Character *, double> attackCountdown = std::map<Character *, double>();
+    std::map<cocos2d::Sprite *, double> deleteTimer = std::map<cocos2d::Sprite *, double>();
 
     CocosDenshion::SimpleAudioEngine *audio;
 
     bool debugOn = true; // currently, will just turn on collision boxes.
 
     bool nextLevelStarting = false;
-    bool afterFirstClick = false;
+    std::map<cocos2d::EventKeyboard::KeyCode, bool> haveReleased = std::map<cocos2d::EventKeyboard::KeyCode, bool>();
+    std::map<cocos2d::EventKeyboard::KeyCode, bool> stillPressed = std::map<cocos2d::EventKeyboard::KeyCode, bool>();
 
     cocos2d::Vec2 levelEnd;
     int levelEndDir = 4;
@@ -111,6 +105,14 @@ private:
     
     cocos2d::Layer *layer;
     cocos2d::Layer *uiLayer;
+    cocos2d::Sprite *background;
+    cocos2d::Sprite *blackBarUp;
+    cocos2d::Sprite *blackBarDown;
+    
+    cocos2d::Vec2 upStart;
+    cocos2d::Vec2 upVisible;
+    cocos2d::Vec2 downStart;
+    cocos2d::Vec2 downVisible;
     
     ////////////// Pause Scene Stuff /////////////
     cocos2d::EventListenerKeyboard *pauseListener;
