@@ -105,7 +105,7 @@ bool LevelSelect::init() {
     this->addChild(titleLabel);
 
     auto instructions = createSunriseLabel("<Enter>=Select\n<Esc>=Exit", 60, fontScaleFactor);
-    instructions->setPosition(origin.x + visibleSize.width / 8.0, origin.y + visibleSize.height / 13.0);
+    instructions->setPosition(origin.x + visibleSize.width / 8.0, origin.y + visibleSize.height * (2.0/ 13.0));
     this->addChild(instructions);
 
     // Create menu items for each of the level files that we have.
@@ -164,6 +164,7 @@ bool LevelSelect::init() {
                 break;
             
             case cocos2d::EventKeyboard::KeyCode::KEY_ENTER:
+            case cocos2d::EventKeyboard::KeyCode::KEY_SPACE:
                 this->menuCallback(allLevelPaths[currentLevel]);
                 break;
                 

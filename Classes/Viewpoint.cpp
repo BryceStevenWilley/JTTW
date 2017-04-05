@@ -13,12 +13,40 @@ using namespace JTTW;
 Viewpoint::Viewpoint(cocos2d::Size dims, double metersPerPixel) :
 _screenDims(dims), _metersPerPixel(metersPerPixel), _level(nullptr) {}
 
-cocos2d::Vec2 getNewLevelVec(cocos2d::Node *player, cocos2d::Size _screenDims, double _scale) {
+cocos2d::Vec2 Viewpoint::getNewLevelVec(cocos2d::Node *player, cocos2d::Size _screenDims, double _scale) {
     // So, we know the level location, the width of the screen, and the player location.
     // When level->position.x == 0, then the center of the screen is at width/2.0.
     // width/2.0 = level->position.x + player->getPosition().x;
-    float newLevelX = (_screenDims.width/2.0 - player->getPosition().x) * _scale;
-    float newLevelY = (_screenDims.height/2.0 - player->getPosition().y) * _scale;
+    cocos2d::Vec2 centerPoint = player->getPosition();
+    
+    // Make sure that level view doesn't go out of limits.
+    float xmin = centerPoint.x - _screenDims.width / 2.0;
+    float xmax = centerPoint.x + _screenDims.width / 2.0;
+    float ymin = centerPoint.y - _screenDims.height / 2.0;
+    float ymax = centerPoint.y + _screenDims.height / 2.0;
+    
+    if (xmax > maxCornerLimit.x) {
+        // Shift left.
+        centerPoint.x = maxCornerLimit.x - _screenDims.width / 2.0;
+    }
+    
+    if (xmin < minCornerLimit.x) {
+        // Shift right.
+        centerPoint.x = minCornerLimit.x + _screenDims.width / 2.0;
+    }
+    
+    if (ymax > maxCornerLimit.y) {
+        // Shift down.
+        centerPoint.y = maxCornerLimit.y - _screenDims.height / 2.0;
+    }
+    
+    if (ymin < minCornerLimit.y) {
+        // Shift up.
+        centerPoint.y = minCornerLimit.y + _screenDims.height / 2.0;
+    }
+    
+    float newLevelX = (_screenDims.width/2.0 - centerPoint.x) * _scale;
+    float newLevelY = (_screenDims.height/2.0 - centerPoint.y) * _scale;
 
     return cocos2d::Vec2(newLevelX, newLevelY);
 }
@@ -33,6 +61,13 @@ void Viewpoint::setRatio(double mToPixel) {
 
 void Viewpoint::setScale(double screenOverIdeal) {
     _scale = screenOverIdeal;
+}
+
+void Viewpoint::setLimits(cocos2d::Vec2 min, cocos2d::Vec2 max) {
+    minCornerLimit = min;
+    maxCornerLimit = max;
+    
+    std::cout << "New max and min camera limits: " << min.x << ", " << min.y << " to " <<  max.x << ", " << max.y <<std::endl;
 }
 
 int Viewpoint::metersToPixels(double meters) const {
@@ -69,7 +104,9 @@ void Viewpoint::followCharacter(Character *player, float delta) {
         std::exit(0);
     }
     if (_isPanning == false) {
-        _level->setPosition(getNewLevelVec(player, _screenDims, _scale));
+        cocos2d::Vec2 newPos = getNewLevelVec(player, _screenDims, _scale);
+        _level->setPosition(newPos);
+       // background->setPosition(newPos);
     } else {
         _level->runAction(cocos2d::MoveBy::create(delta, cocos2d::Vec2(-player->body->getVelocity().x * delta, -player->body->getVelocity().y * delta)));
     }
@@ -81,7 +118,9 @@ void Viewpoint::followCharacter(cocos2d::Node *body, float delta) {
         std::exit(0);
     }
     if (_isPanning == false) {
-        _level->setPosition(getNewLevelVec(body, _screenDims, _scale));
+        cocos2d::Vec2 newPos = getNewLevelVec(body, _screenDims, _scale);
+        _level->setPosition(newPos);
+       // background->setPosition(newPos);
     } else {
         //_level->runAction(cocos2d::MoveBy::create(delta, cocos2d::Vec2(-body->getVelocity().x * delta, -body->getVelocity().y * delta)));
     }

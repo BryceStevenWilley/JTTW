@@ -36,7 +36,7 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
     double width = 480.0f;
     double height = 780.0f;
     auto bodyShape = cocos2d::PhysicsShapeBox::create(cocos2d::Size(width * .95, height * (2.0/3.0)), mat, cocos2d::Vec2(0.0, height/9.0));
-    auto bottomSemiCircle = cocos2d::PhysicsShapeCircle::create(width/2.0, mat, cocos2d::Vec2(0.0, -height * (0.8/4.0)));
+    auto bottomSemiCircle = cocos2d::PhysicsShapeCircle::create(width * (.975/2.0), mat, cocos2d::Vec2(0.0, -height * (0.8/4.0)));
     body->addShape(bodyShape);
     body->addShape(bottomSemiCircle);
     body->setCategoryBitmask((int)CollisionCategory::Character);
@@ -337,7 +337,7 @@ void Character::updateAnimation(State oldState) {
 }
 
 void Character::restartFromRespawn() {
-    std::cout << "Restarting " << characterName << " at " << _respawnPosition.x << ", " << _respawnPosition.y << std::endl;
+    //std::cout << "Restarting " << characterName << " at " << _respawnPosition.x << ", " << _respawnPosition.y << std::endl;
     body->setVelocity(cocos2d::Vec2(0, 0));
     body->resetForces();
     this->setPosition(_respawnPosition);

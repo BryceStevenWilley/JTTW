@@ -15,6 +15,7 @@
 #include <fstream>
 #include <algorithm>
 #include <string>
+#include "Cutscene.hpp"
 
 using namespace cocos2d;
 using namespace JTTW;
@@ -30,7 +31,7 @@ cocos2d::Scene* MainGameScene::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::createWithPhysics();
     scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, GRAVITY));
-    scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
+   // scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = MainGameScene::create(levelToLoad, scene->getPhysicsWorld());
     if (layer == NULL) {
         return NULL;
@@ -45,9 +46,7 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
         Vine *v = (Vine *)node;
         Monkey *m = (Monkey *)c;
         if (begin) {
-             std::cout << "Collided with a vine" << std::endl;
-             cocos2d::Vec2 nodePoint = m->convertToNodeSpace(contact.getContactData()->points[0]);
-             cocos2d::Vec2 collisionPosition = m->getPosition(); // + nodePoint;
+             cocos2d::Vec2 collisionPosition = m->getPosition();
              float distFromCenter = collisionPosition.distance(v->getPosition());
              float distFromRotCenter = collisionPosition.distance(v->getRotationCenter());
              float halfLength = v->getRotationCenter().distance(v->getPosition());
@@ -60,7 +59,7 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
                  // IDK what's happening?
                  offset = -(halfLength - 5);
              }
-             m->enteringVine(this->getScene()->getPhysicsWorld(), v, offset, m->getPosition() + cocos2d::Vec2(0.0, m->getContentSize().height), false);
+             m->enteringVine(this->getScene()->getPhysicsWorld(), v, offset, false);
              return true;
         } else {
             //m->leavingClimeable();
@@ -70,7 +69,9 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
     if (node->getTag() == PROJECTILE_TAG) {
         if (begin) {
             c->setToRespawn();
-            return false;
+            node->removeFromParent();
+            deleteTimer.erase(deleteTimer.find((cocos2d::Sprite *)node));
+            return true;
         }
     }
     if (node->getTag() == PEG_TAG && c->characterName == "Monk") {
@@ -91,8 +92,11 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
     } else if (node->getTag() == CLIMBEABLE_TAG && c->characterName == "Monkey") {
         // TODO: hacky, fix
         Monkey *m = (Monkey *)c;
+        Platform *p = (Platform *)node;
         if (begin) {
-            m->enteringClimeable(normal.getPerp());
+            cocos2d::Vec2 collisionPosition = m->getPosition();
+            
+            m->enteringClimeable(this->getScene()->getPhysicsWorld(), p, (collisionPosition - p->getPosition()) / 1.5, normal.getPerp(), false);
         } else {
             m->leavingClimeable();
         }
@@ -114,6 +118,10 @@ bool MainGameScene::onContactHandler(cocos2d::PhysicsContact& contact, bool begi
     auto nodeA = contact.getShapeA()->getBody()->getNode();
     auto nodeB = contact.getShapeB()->getBody()->getNode();
     auto normal = contact.getContactData()->normal;
+    if (nodeA == NULL || nodeB == NULL) {
+        return false;
+    }
+    
     if (nodeA->getTag() == CHARACTER_TAG) {
         Character *c = (Character *)nodeA;
         // If A is the character, then for landing on a flat platform, the normal is 0, -1.
@@ -154,15 +162,45 @@ const int CHARACTER_Z = 6;
 cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool debugOn) {
     cocos2d::Layer *levelLayer = cocos2d::Layer::create();
     
+    // Read in vp limits early.
+    double xmin, xmax, ymin, ymax;
+    if (lvl["viewportZone"].is_object()) {
+        nlohmann::json doubs = lvl["viewportZone"]["book"]["doubList"];
+        xmin = doubs["xmin"];
+        xmax = doubs["xmax"];
+        ymin = doubs["ymin"];
+        ymax = doubs["ymax"];
+        xmin = vp.metersToPixels(xmin);
+        xmax = vp.metersToPixels(xmax);
+        ymin = vp.metersToPixels(ymin);
+        ymax = vp.metersToPixels(ymax);
+    } else {
+        // Just set the limits to be Huge.
+        xmin = -1 * std::numeric_limits<double>::infinity();
+        xmax = std::numeric_limits<double>::infinity();
+        ymin = -1 * std::numeric_limits<double>::infinity();
+        ymax = std::numeric_limits<double>::infinity();
+    }
+    
+    vp.setLimits(cocos2d::Vec2(xmin, ymin), cocos2d::Vec2(xmax, ymax));
+    
     // draw and add background
     nlohmann::json backgroundAtts = lvl["bg"];
     std::string bgPath = backgroundAtts["path"];
     bgPath = "assets/" + bgPath;
-    auto background = cocos2d::Sprite::create(bgPath);
+    background = cocos2d::Sprite::create(bgPath);
     background->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
-    background->setScale(1.4);
-    background->setPosition(0,-300.0);
-    this->addChild(background, -8);
+    if (xmax != std::numeric_limits<double>::infinity()) {
+        background->setContentSize(cocos2d::Size((xmax - xmin) + 200, (ymax - ymin) + 200));
+        background->setPosition(xmin, ymin);
+        levelLayer->addChild(background, -8);
+    } else {
+        background->setScale(1.4);
+        background->setPosition(0,-300.0);
+        this->addChild(background, -8);
+    }
+
+    vp.background = background;
     
     nlohmann::json platformAtts = lvl["plats"];
     for (auto& pAtt: platformAtts) {
@@ -228,6 +266,13 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
     int characterHeight = vp.metersToPixels(1.7);
     int characterWidth = vp.metersToPixels(1.7);
     int charPresentCount = 0;
+    int totalPresentCount = 0;
+    for (int i = 0; i < 4; i++) {
+        if (characterStruct[charNames[i]]["book"]["boolList"]["Present"]) {
+            totalPresentCount++;
+        }
+    }
+    
     for (int i = 0; i < 4; i++) {
         if (characterStruct[charNames[i]]["book"]["boolList"]["Present"]) {
             double startX = vp.metersToPixels((double)characterStruct[charNames[i]]["centerXM"]);
@@ -240,40 +285,42 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
             agent->setPlayerPosOffset(c->getPosition() - characters[0]->getPosition());
             agents.push_back(agent);
             
-            // Set the ui head.
-            std::stringstream ss;
-            ss << "characters/" << charNames[i] << "Head.png";
-            cocos2d::Sprite *head = cocos2d::Sprite::create(ss.str());
+            if (totalPresentCount > 1) {
+                // Set the ui head.
+                std::stringstream ss;
+                ss << "characters/" << charNames[i] << "Head.png";
+                cocos2d::Sprite *head = cocos2d::Sprite::create(ss.str());
             
-            double headScale = .198 * screenScale;
+                double headScale = .198 * screenScale;
 
-            head->setScale(headScale);
-            head->setPosition(UI_HEAD_START + (charPresentCount * cocos2d::Vec2(UI_HEAD_INC, 0)));
+                head->setScale(headScale);
+                head->setPosition(UI_HEAD_START + (charPresentCount * cocos2d::Vec2(UI_HEAD_INC, 0)));
  
-            std::string buttonString;
-            switch(charPresentCount) {
-                case 0:
-                    buttonString = "z";
-                    break;
-                case 1:
-                    buttonString = "x";
-                    break;
-                case 2:
-                    buttonString = "c";
-                    break;
-                case 3:
-                    buttonString = "v";
-                    break;
+                std::string buttonString;
+                switch(charPresentCount) {
+                    case 0:
+                        buttonString = "z";
+                        break;
+                    case 1:
+                        buttonString = "x";
+                        break;
+                   case 2:
+                        buttonString = "c";
+                        break;
+                    case 3:
+                        buttonString = "v";
+                        break;
+                }
+                auto label = cocos2d::Label::createWithTTF(buttonString, "fonts/WaitingfortheSunrise.ttf", 40 * screenScale);
+                label->setTextColor(cocos2d::Color4B::WHITE);
+                label->enableOutline(cocos2d::Color4B::BLACK, 1);
+                label->enableShadow();
+                label->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+                label->setPosition(UI_HEAD_START + (charPresentCount * cocos2d::Vec2(UI_HEAD_INC, 0)) + cocos2d::Vec2(0, UI_HEAD_INC));
+                uiLayer->addChild(label, 10);
+                uiLayer->addChild(head);
+                charPresentCount++;
             }
-            auto label = cocos2d::Label::createWithTTF(buttonString, "fonts/WaitingfortheSunrise.ttf", 40 * screenScale);
-            label->setTextColor(cocos2d::Color4B::WHITE);
-            label->enableOutline(cocos2d::Color4B::BLACK, 1);
-            label->enableShadow();
-            label->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-            label->setPosition(UI_HEAD_START + (charPresentCount * cocos2d::Vec2(UI_HEAD_INC, 0)) + cocos2d::Vec2(0, UI_HEAD_INC));
-            uiLayer->addChild(label, 10);
-            uiLayer->addChild(head);
-            charPresentCount++;
         }
     }
     
@@ -322,7 +369,14 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
         levelLayer->addChild(b, BOULDER_Z);
     }
     
+    
     nlohmann::json inputpegs = lvl["pegs"];
+    
+    if (inputpegs.is_object() && inputpegs.size() != 0) {
+        Monkey *m = (Monkey *)characters[0];
+        m->setBoulderBury();
+    }
+    
     for (auto& gAtt: inputpegs) {
         if (gAtt.is_null() || gAtt["scaledIGWM"].is_null()) {
             std::cout << "WTF IS HAPPENING?" << std::endl;
@@ -343,22 +397,6 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
         auto peg = new Peg(imageName, center, imageSize, rotation, bouldersToRelease);
         pegs.push_back(peg);
         levelLayer->addChild(peg);
-        
-        // TODO: MOVE THIS ELSEWHERE.
-        Monkey *m = (Monkey *)characters[0];
-        m->body->setDynamic(false);
-        m->body->setGravityEnable(false);
-        m->body->setRotationEnable(false);
-        m->freeze();
-        m->findSlot("Body")->a = 0.0;
-        m->findSlot("L Arm")->a = 0.0;
-        m->findSlot("L Calf")->a = 0.0;
-        m->findSlot("L Foot")->a = 0.0;
-        m->findSlot("L Thigh")->a = 0.0;
-        m->findSlot("R Calf")->a = 0.0;
-        m->findSlot("R Foot")->a = 0.0;
-        m->findSlot("R Thigh")->a = 0.0;
-        m->findSlot("R Arm")->a = 0.0;
     }
     
     nlohmann::json in_vines = lvl["vines"];
@@ -390,7 +428,6 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
     
     nlohmann::json in_traps = lvl["traps"];
     for (auto& tAtt: in_traps) {
-        // TODO: Read in density and inner and outer box.
         double wallWidth = vp.metersToPixels((double)tAtt["book"]["doubList"]["wallThickness"]);
         double trapWidth = vp.metersToPixels((double)tAtt["book"]["doubList"]["trapWidth"]);
         double trapHeight = vp.metersToPixels((double)tAtt["book"]["doubList"]["trapHeight"]);
@@ -424,6 +461,12 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
         for (auto &tAtt : in_tutorials) {
             std::string tipString = tAtt["book"]["strList"]["text"];
             int fontSize = tAtt["book"]["intList"]["fontSize"];
+            int z;
+            if (tAtt["book"]["intList"]["Z-order"].is_number_integer()) {
+                z = tAtt["book"]["intList"]["Z-order"];
+            } else {
+                z = 10;
+            }
             cocos2d::Vec2 center = vp.metersToPixels(cocos2d::Vec2((double)tAtt["centerXM"], (double)tAtt["centerYM"]));
             auto label = cocos2d::Label::createWithTTF(tipString, "fonts/WaitingfortheSunrise.ttf", fontSize);
             label->setTextColor(cocos2d::Color4B::WHITE);
@@ -431,7 +474,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
             label->enableShadow();
             label->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
             label->setPosition(center);
-            levelLayer->addChild(label, 10);
+            levelLayer->addChild(label, z);
         }
     }
 
@@ -459,6 +502,12 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
         // Audio!
         audio->playBackgroundMusic((std::string("Music/") + levelName + std::string(".mp3")).c_str());
     }
+    
+    if (lvl["levelFileName"] == "dragon") {
+        Zone cutSceneZone = Zone(vp.metersToPixels(cocos2d::Vec2(28, 3)), vp.metersToPixels(cocos2d::Vec2(40, 20)), nullptr);
+        cutscenes.push_back(new Cutscene(1, vp, cutSceneZone));
+    }
+    
     return levelLayer;
 }
 
@@ -481,8 +530,6 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     uiLayer = cocos2d::Layer::create();
     uiLayer->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
     
-
-
     //try {
         std::ifstream inFile(levelToLoad);
         nlohmann::json lvl;
@@ -491,34 +538,6 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
             std::cout << "We no longer support this old file format." << std::endl;
         } else if (lvl["VERSION"].is_number() && (int)lvl["VERSION"] == 2) {
             layer = parseLevelFromJsonV2(lvl, debugOn);
-            // EXPERIMENTAL STUFF
-            cocos2d::PhysicsShape *sh = cocos2d::PhysicsShapeEdgeSegment::create(cocos2d::Vec2(0,0), cocos2d::Vec2(0, 400));
-            sh->setFriction(1.0);
-            
-            auto *sh3 = cocos2d::PhysicsShapeEdgeSegment::create(cocos2d::Vec2(-200, -100), cocos2d::Vec2(-200, 200));
-            sh3->setFriction(0.0);
-            
-            cocos2d::PhysicsShape *sh2 = cocos2d::PhysicsShapeBox::create(cocos2d::Size(400, 200));
-            sh2->setFriction(1.0);
-            
-            cocos2d::PhysicsBody *b = cocos2d::PhysicsBody::create();
-            b->addShape(sh);
-            b->addShape(sh2);
-            b->addShape(sh3);
-            b->setDynamic(false);
-            b->setGravityEnable(false);
-            b->setTag((int)CollisionCategory::Platform);
-            b->setContactTestBitmask((int)CollisionCategory::CharacterAndBoulder);
-            b->setCollisionBitmask((int)CollisionCategory::CharacterAndBoulder);
-
-            cocos2d::Sprite * s = cocos2d::Sprite::create("assets/BlackBar.png");
-            s->setContentSize(cocos2d::Size(400, 200));
-            s->addComponent(b);
-            
-            s->setPosition(cocos2d::Vec2(0, 600));
-            
-            
-            layer->addChild(s);
         }
     /*}
     catch (std::domain_error ex) {
@@ -545,78 +564,8 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     
     eventListener = cocos2d::EventListenerKeyboard::create();
     eventListener->retain();
-    eventListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) mutable {
-        afterFirstClick = true;
-        switch(keyCode) {
-            case EventKeyboard::KeyCode::KEY_Z:
-                switchToCharacter(0);
-                break;
-            case EventKeyboard::KeyCode::KEY_X:
-                switchToCharacter(1);
-                break;
-            case EventKeyboard::KeyCode::KEY_C:
-                switchToCharacter(2);
-                break;
-            case EventKeyboard::KeyCode::KEY_V:
-                switchToCharacter(3);
-                break;
-            case EventKeyboard::KeyCode::KEY_ESCAPE:
-                if (!m->isVisible()) {
-                    this->pauseScene();
-                }
-                break;
-            case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-            case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-            case EventKeyboard::KeyCode::KEY_UP_ARROW:
-            case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-            case EventKeyboard::KeyCode::KEY_SPACE:
-            case EventKeyboard::KeyCode::KEY_A:
-            case EventKeyboard::KeyCode::KEY_O:
-            case EventKeyboard::KeyCode::KEY_S:
-                player->plan(characters, keyCode, true);
-                for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
-                    if ((*xAgent) != player) {
-                        (*xAgent)->changeBehavior(player->_controlledCharacter, keyCode);
-                    }
-                }
-                break;
-
-            case EventKeyboard::KeyCode::KEY_0: {
-                // Set the cinematic look.
-                auto sprite = cocos2d::Sprite::create("assets/BlackBar.png");
-                auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-                auto origin = cocos2d::Director::getInstance()->getVisibleOrigin();
-                sprite->setContentSize(cocos2d::Size(visibleSize.width, visibleSize.height / 12.0));
-                sprite->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-                sprite->setPosition(cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (25.0/24.0)));
-                
-                auto sprite2 = cocos2d::Sprite::create("assets/BlackBar.png");
-                sprite2->setContentSize(cocos2d::Size(visibleSize.width, visibleSize.height / 12.0));
-                sprite2->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
-                sprite2->setPosition(cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (-1.0/24.0)));
-                
-                auto upMoveDown = cocos2d::MoveTo::create(2.0, cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (23.0/24.0)));
-                auto downMoveUp = cocos2d::MoveTo::create(2.0, cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/24.0)));
-                
-                uiLayer->addChild(sprite, 10);
-                uiLayer->addChild(sprite2, 10);
-                
-                sprite->runAction(upMoveDown);
-                sprite2->runAction(downMoveUp);
-                break;
-            }
-
-            default:
-                // do nothing.
-                break;
-        }
-    };
-    
-    eventListener->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event* event) mutable {
-            if (afterFirstClick) {
-                player->plan(characters, keyCode, false);
-            }
-    };
+    eventListener->onKeyPressed = CC_CALLBACK_2(MainGameScene::KeypressedCallback, this);
+    eventListener->onKeyReleased = CC_CALLBACK_2(MainGameScene::KeyreleasedCallback, this);
 
     this->_eventDispatcher->addEventListenerWithFixedPriority(eventListener, 1);
     
@@ -652,40 +601,8 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     
     pauseListener = cocos2d::EventListenerKeyboard::create();
     pauseListener->retain();
-    pauseListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
-        switch(keyCode) {
-            case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
-                (*currentOption)->setColor(UNSELECTED);
-                (*currentOption)->unselected();
-                if (currentOption == options.begin()) {
-                    currentOption = options.end();
-                }
-                currentOption--;
-                (*currentOption)->setColor(SELECTED);
-                (*currentOption)->selected();
-                break;
-            
-            case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-                (*currentOption)->setColor(UNSELECTED);
-                (*currentOption)->unselected();
-                currentOption++;
-                if (currentOption == options.end()) {
-                    currentOption = options.begin();
-                }
-                (*currentOption)->setColor(SELECTED);
-                (*currentOption)->selected();
-                break;
-            
-            case cocos2d::EventKeyboard::KeyCode::KEY_ENTER:
-                (*currentOption)->activate();
-                break;
-                
-            default:
-                // do nothing.
-                break;
-        }
-
-    };
+    pauseListener->onKeyPressed = CC_CALLBACK_2(MainGameScene::PausedKeyCallback, this);
+    pauseListener->onKeyReleased = CC_CALLBACK_2(MainGameScene::PausedKeyReleasedCallback, this);
     
     curtain = cocos2d::Sprite::create("assets/BlackBar.png");
     curtain->setContentSize(cocos2d::Size(visibleSize.width, visibleSize.height));
@@ -696,8 +613,141 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     curtain->setVisible(false);
     uiLayer->addChild(curtain, 10);
 
+    ///////////////////////// CUT Scene stuff ////////////////
+    // Set the cinematic look.
+    upStart = cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (25.0/24.0));
+    downStart = cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (-1.0/24.0));
+    
+    blackBarUp = cocos2d::Sprite::create("assets/BlackBar.png");
+    blackBarUp->setContentSize(cocos2d::Size(visibleSize.width, visibleSize.height / 12.0));
+    blackBarUp->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+    blackBarUp->setPosition(upStart);
+    blackBarUp->retain();
+    
+    blackBarDown = cocos2d::Sprite::create("assets/BlackBar.png");
+    blackBarDown->setContentSize(cocos2d::Size(visibleSize.width, visibleSize.height / 12.0));
+    blackBarDown->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
+    blackBarDown->setPosition(downStart);
+    blackBarDown->retain();
+    
+    for (auto &cutscene : cutscenes) {
+        cutscene->initFromScene(this);
+    }
+    
+    upVisible = cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (23.0/24.0));
+    downVisible = cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/24.0));
+
+    uiLayer->addChild(blackBarUp, 10);
+    uiLayer->addChild(blackBarDown, 10);
+    
     this->scheduleUpdate();
     return true;
+}
+
+void MainGameScene::KeypressedCallback(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
+    haveReleased[keyCode] = true;
+    stillPressed[keyCode] = true;
+    switch(keyCode) {
+        case EventKeyboard::KeyCode::KEY_Z:
+            switchToCharacter(0);
+            break;
+        case EventKeyboard::KeyCode::KEY_X:
+            switchToCharacter(1);
+            break;
+        case EventKeyboard::KeyCode::KEY_C:
+            switchToCharacter(2);
+            break;
+        case EventKeyboard::KeyCode::KEY_V:
+            switchToCharacter(3);
+            break;
+        case EventKeyboard::KeyCode::KEY_ESCAPE:
+            if (!m->isVisible()) {
+                this->pauseScene();
+            }
+            break;
+        case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+        case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+        case EventKeyboard::KeyCode::KEY_UP_ARROW:
+        case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+        case EventKeyboard::KeyCode::KEY_SPACE:
+        case EventKeyboard::KeyCode::KEY_A:
+        case EventKeyboard::KeyCode::KEY_O:
+        case EventKeyboard::KeyCode::KEY_S:
+            player->plan(characters, keyCode, true);
+            for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
+                if ((*xAgent) != player) {
+                    (*xAgent)->changeBehavior(player->_controlledCharacter, keyCode);
+                }
+            }
+            break;
+
+        case EventKeyboard::KeyCode::KEY_0:
+            blackBarUp->runAction(cocos2d::MoveTo::create(1.0, upVisible));
+            blackBarDown->runAction(cocos2d::MoveTo::create(1.0, downVisible));
+            break;
+            
+        case EventKeyboard::KeyCode::KEY_2:
+            blackBarUp->runAction(cocos2d::MoveTo::create(1.0, upStart));
+            blackBarDown->runAction(cocos2d::MoveTo::create(1.0, downStart));
+            break;
+            
+        case EventKeyboard::KeyCode::KEY_9:
+            std::cout << "Starting key logging. (NOT REALLY, FIX)" << std::endl;
+            // TODO: start key logging.
+            break;
+
+        default:
+            // do nothing.
+            break;
+    }
+}
+
+void MainGameScene::KeyreleasedCallback(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
+    if (haveReleased[keyCode]) {
+        player->plan(characters, keyCode, false);
+    } else {
+        haveReleased[keyCode] = true;
+    }
+    stillPressed[keyCode] = false;
+}
+
+void MainGameScene::PausedKeyCallback(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
+    haveReleased[keyCode] = true;
+    switch(keyCode) {
+        case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
+            (*currentOption)->setColor(UNSELECTED);
+            (*currentOption)->unselected();
+            if (currentOption == options.begin()) {
+                currentOption = options.end();
+            }
+            currentOption--;
+            (*currentOption)->setColor(SELECTED);
+            (*currentOption)->selected();
+            break;
+        
+        case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+            (*currentOption)->setColor(UNSELECTED);
+            (*currentOption)->unselected();
+            currentOption++;
+            if (currentOption == options.end()) {
+                currentOption = options.begin();
+            }
+            (*currentOption)->setColor(SELECTED);
+            (*currentOption)->selected();
+            break;
+        
+        case cocos2d::EventKeyboard::KeyCode::KEY_ENTER:
+            (*currentOption)->activate();
+            break;
+            
+        default:
+            // do nothing.
+            break;
+    }
+}
+
+void MainGameScene::PausedKeyReleasedCallback(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
+    haveReleased[keyCode] = true;
 }
 
 void MainGameScene::switchToCharacter(int charIndex) {
@@ -745,6 +795,22 @@ void MainGameScene::nextLevelCallback() {
 }
 
 void MainGameScene::update(float delta) {
+    std::vector<cocos2d::Sprite *> timersToRemove;
+    for (auto x = deleteTimer.begin(); x != deleteTimer.end(); x++) {
+        deleteTimer[x->first] -= delta;
+        if (deleteTimer[x->first] <= 0.0) {
+            if (x->first->getParent() != NULL) {
+                x->first->removeFromParent();
+                timersToRemove.push_back(x->first);
+            }
+        }
+    }
+    
+    for (auto &r: timersToRemove) {
+        deleteTimer.erase(deleteTimer.find(r));
+    }
+    
+
     for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
         if ((*xAgent) != player) {
             (*xAgent)->plan(player->_controlledCharacter, characters);
@@ -759,20 +825,32 @@ void MainGameScene::update(float delta) {
         characters[i]->updateLoop(delta);
         if (characters[i]->_respawnNextCycle) {
             // TODO: have characters fall down when hit.
-            characters[i]->restartFromRespawn();
+            auto doNow = cocos2d::CallFunc::create([this, i]() {
+                audio->playEffect("Sound/player_death.wav");
+                characters[i]->setAnimation(0, "fall forwards", false);
+            });
+            auto wait = cocos2d::MoveBy::create(1.0, cocos2d::Vec2::ZERO);
+            auto todo = cocos2d::CallFunc::create([this, i]() {
+                characters[i]->restartFromRespawn();
+            });
+            auto seq = cocos2d::Sequence::create(doNow, wait, todo, nullptr);
+            characters[i]->runAction(seq);
             done = false;
             characters[i]->_respawnNextCycle = false;
             continue;
         }
         for (auto& zone : attackZones) {
             if (zone.containsPoint(characters[i]->getPosition())) {
-                if (attacking.find(characters[i]) == attacking.end()) {
+                if (attacking.find(characters[i]) == attacking.end() || std::find(attacking[characters[i]].begin(), attacking[characters[i]].end(), zone.getFactory()) == attacking[characters[i]].end()) {
                     std::cout << "Attacking " << characters[i]->characterName << "!" << std::endl;
-                    attacking[characters[i]] = zone.getFactory();
-                    attackCountdown[characters[i]] = 1.0;
+                    attacking[characters[i]].push_back(zone.getFactory());
+                    attackCountdown[characters[i]] = -1;
                 }
             } else {
-                attacking.erase(characters[i]);
+                auto x = std::find(attacking[characters[i]].begin(), attacking[characters[i]].end(), zone.getFactory());
+                if (x != attacking[characters[i]].end()) {
+                    attacking[characters[i]].erase(x);
+                }
             }
         }
         for (auto &spawn : respawnPoints) {
@@ -808,9 +886,11 @@ void MainGameScene::update(float delta) {
     for (auto entry = attacking.begin(); entry != attacking.end(); entry++) {
         if (attackCountdown[entry->first] <= 0) {
             attackCountdown[entry->first] = 5.0;
-            auto sprite = entry->second->generateProjectile(entry->first->getPosition());
-            layer->addChild(sprite);
-            break;
+            for (auto attackingZone = entry->second.begin(); attackingZone != entry->second.end(); attackingZone++) {
+                auto sprite = (*attackingZone)->generateProjectile(entry->first->getPosition());
+                layer->addChild(sprite, 8);
+                deleteTimer[sprite] = 4.5;
+            }
         }
         attackCountdown[entry->first] = attackCountdown[entry->first] - delta;
     }
@@ -844,6 +924,18 @@ void MainGameScene::update(float delta) {
         trapsToTrigger.erase(std::remove(trapsToTrigger.begin(), trapsToTrigger.end(), *trap), trapsToTrigger.end());
     }
     
+    std::vector<Cutscene *> removeThese;
+    for (auto &cut : cutscenes) {
+        if (cut->trigger()) {
+            // remove the trap from the array.
+            removeThese.push_back(cut);
+        }
+    }
+    
+    for (auto cuts = removeThese.begin(); cuts != removeThese.end(); cuts++) {
+        cutscenes.erase(std::remove(cutscenes.begin(), cutscenes.end(), *cuts), cutscenes.end());
+    }
+    
     if (pegs.size() != 0) {
         bool allTriggered = true;
         for (auto &p: pegs) {
@@ -859,42 +951,14 @@ void MainGameScene::update(float delta) {
             
             Monkey *m = (Monkey *)characters[0];
             layer->removeChild(m);
-            m->body->setDynamic(true);
-            m->body->setGravityEnable(true);
-            m->body->setRotationEnable(false);
-            m->setRotation(0.0);
-            m->findSlot("Body")->a = 255.0;
-            m->findSlot("L Arm")->a = 255.0;
-            m->findSlot("L Calf")->a = 255.0;
-            m->findSlot("L Foot")->a = 255.0;
-            m->findSlot("L Thigh")->a = 255.0;
-            m->findSlot("R Calf")->a = 255.0;
-            m->findSlot("R Foot")->a = 255.0;
-            m->findSlot("R Thigh")->a = 255.0;
-            m->findSlot("R Arm")->a = 255.0;
-            m->update(0);
-            m->removeComponent(m->body);
-            m->body->removeFromWorld();
-            m->body = cocos2d::PhysicsBody::create();
-            auto bodyShape = cocos2d::PhysicsShapeBox::create(cocos2d::Size(480.0f, 780.0f), cocos2d::PhysicsMaterial(1.0, 0.0, 0.0));
-            m->body->addShape(bodyShape);
-            m->body->setCategoryBitmask((int)CollisionCategory::Character);
-            m->body->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
-            m->body->setContactTestBitmask((int)CollisionCategory::PlatformBoulderAndProjectile);
-            m->body->setRotationEnable(false);
-
-            m->body->setVelocityLimit(600);
-    
-            m->addComponent(m->body);
-
-            m->setSlotsToSetupPose();
+            m->setBoulderUnbury();
             layer->addChild(m, CHARACTER_Z);
+            layer->draw();
         }
     }
 
     vp.followCharacter(player->_controlledCharacter, delta);
 }
-
 
 ////////// Pause menu stuff. ///////////////////
 void MainGameScene::pauseScene() {
@@ -904,20 +968,27 @@ void MainGameScene::pauseScene() {
     curtain->setVisible(true);
     m->setVisible(true);
     Director::getInstance()->getRunningScene()->getPhysicsWorld()->setSpeed(0);
-    //this->_eventDispatcher->removeEventListener(eventListener);
+    this->_eventDispatcher->removeEventListener(eventListener);
+    haveReleased.clear();
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(pauseListener, this);
 }
-
 
 void MainGameScene::resumeScene() {
     for (auto &c : characters) {
         c->setTimeScale(1.0);
     }
+    for (auto &r: haveReleased) {
+        if (stillPressed[r.first] && r.second == true ) {
+            std::cout << "Correcting key " << (int)r.first << std::endl;
+            KeyreleasedCallback(r.first, nullptr);
+        }
+    }
     curtain->setVisible(false);
     m->setVisible(false);
     Director::getInstance()->getRunningScene()->getPhysicsWorld()->setSpeed(1);
     this->_eventDispatcher->removeEventListener(pauseListener);
-    //this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListener, this);
+    haveReleased.clear();
+    this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListener, this);
 }
 
 

@@ -22,8 +22,6 @@ MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerA,
     // NOTE: body properties are set in the parent class, Platform.
 }
 
-// TODO: Make platforms gradually move
-//    Based on a Sin wave with force applied.
 void MoveablePlatform::move(float deltaTime) {
     auto position = this->getPosition() + _velocities * deltaTime;
     
