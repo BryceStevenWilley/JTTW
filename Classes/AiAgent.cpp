@@ -50,6 +50,7 @@ void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeybo
     switch(code) {
         case KeyCode::KEY_LEFT_ARROW:
             if (pressed) {
+                std::cout << "Going left: " << _controlledCharacter->characterName;
                 _controlledCharacter->impulseLeft(IMPULSE_AMOUNT);
             } else { // released
                 _controlledCharacter->impulseLeft(-IMPULSE_AMOUNT);

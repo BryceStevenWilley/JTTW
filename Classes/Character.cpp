@@ -43,6 +43,7 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
     body->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
     body->setContactTestBitmask((int)CollisionCategory::PlatformBoulderAndProjectile);
     body->setRotationEnable(false);
+    body->setDynamic(true);
 
     body->setVelocityLimit(VEL_LIMIT);
     

@@ -26,7 +26,7 @@ cmake_policy(SET CMP0017 NEW)
 
 cmake_minimum_required(VERSION 3.1)
 
-set(APP_NAME MyGame)
+set(APP_NAME Bodhi)
 project (${APP_NAME})
 
 set(COCOS2D_ROOT ${CMAKE_SOURCE_DIR}/cocos2d)
@@ -151,7 +151,11 @@ set(GAME_SRC
   Classes/Viewpoint.cpp
   Classes/Vine.cpp
   Classes/Peg.cpp
-  Classes/Spear.cpp
+  Classes/CageTrap.cpp
+  Classes/ProjectileFactory.cpp
+  Classes/Resolution.cpp
+  Classes/Zone.cpp
+  Classes/Cutscene.cpp
   ${PLATFORM_SPECIFIC_SRC}
 )
 
