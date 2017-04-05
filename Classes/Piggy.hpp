@@ -30,8 +30,14 @@ public:
     virtual void initJump() override;
     virtual void characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) override;
     
+    void addHeldCharacter(Character *c);
+    void removeHeldCharacter(Character *c);
+    void launchHeldCharacters();
+    
 private:
     State _state = NORMAL;
+    
+    std::vector<Character *> _heldCharacters = std::vector<Character *>();
 };
 }
 #endif /* Piggy_hpp */

@@ -4,6 +4,7 @@
 #include "DisappearingPlatform.hpp"
 #include "Collisions.hpp"
 #include "Monkey.hpp"
+#include "Piggy.hpp"
 #include "Monk.hpp"
 #include "LevelEnd.hpp"
 #include "cocos2d.h"
@@ -31,7 +32,7 @@ cocos2d::Scene* MainGameScene::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::createWithPhysics();
     scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, GRAVITY));
-   // scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
+    scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = MainGameScene::create(levelToLoad, scene->getPhysicsWorld());
     if (layer == NULL) {
         return NULL;
@@ -75,13 +76,53 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
         }
     }
     if (node->getTag() == PEG_TAG && c->characterName == "Monk") {
-        std::cout << "Hit Peg!" << std::endl;
         if (begin) {
             // Add peg to Monk's peg hitting thing.
             Monk *m = (Monk *)c;
             m->addReachiblePeg((Peg *)node);
             return false;
         }
+    }
+    if (node->getTag() == CHARACTER_TAG) {
+        // Characters colliding: anyone and Monkey?
+        Character *c2 = (Character *)node;
+        if ((c->characterName == "Monkey" || c2->characterName == "Monkey") && begin) {
+            Monkey *m;
+            Character *other;
+            if (c->characterName == "Monkey") {
+                m = (Monkey *) c;
+                other = c2;
+            }
+            if (c2->characterName == "Monkey") {
+                m = (Monkey *) c2;
+                other = c;
+            }
+            if (m->getMonkeyState() == Monkey::SWINGING && !m->hasHangingCharacter()) {
+                m->setHangingCharacter(other);
+                other->enteringHanging(this->getScene()->getPhysicsWorld(), m, other->getPosition() - m->getPosition(), false);
+                return true;
+            }
+        }
+        if (c->characterName == "Piggy" || c2->characterName == "Piggy") {
+            Piggy *p;
+            Character *other;
+            if (c->characterName == "Piggy") {
+                p = (Piggy *) c;
+                other = c2;
+            }
+            if (c2->characterName == "Piggy") {
+                p = (Piggy *) c2;
+                other = c;
+            }
+            std::cout << "Pig doing stuff with " << other->characterName << std::endl;
+            if (begin) {
+                p->addHeldCharacter(other);
+            } else {
+                p->removeHeldCharacter(other);
+            }
+            return true;
+        }
+        return false;
     }
     if (normal.dot(cocos2d::Vec2(0, -1)) > std::cos(M_PI / 4.0)) {
         if (begin) {
@@ -990,5 +1031,3 @@ void MainGameScene::resumeScene() {
     haveReleased.clear();
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListener, this);
 }
-
-

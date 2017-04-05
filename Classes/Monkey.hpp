@@ -34,12 +34,16 @@ public:
     
     
     void enteringVine(cocos2d::PhysicsWorld *world, SceneObject *vine, double offset, bool alreadyOn);
-    void leavingVine();
+    void leavingVine(bool reattaching);
     
     virtual void restartFromRespawn() override;
     
     void setBoulderBury();
     void setBoulderUnbury();
+    Monkey::State getMonkeyState();
+    
+    void setHangingCharacter(Character *c);
+    bool hasHangingCharacter();
     
 private:
     void updateClimbingVel();
@@ -58,6 +62,8 @@ private:
     cocos2d::PhysicsWorld *currentWorld;
     
     cocos2d::Vec2 _upDir;
+    
+    Character *_hangingCharacter = nullptr;
 };
 }
 
