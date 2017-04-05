@@ -43,7 +43,7 @@ void Monkey::impulseRight(float deltaVel) {
 void Monkey::initJump() {
     float jumpPower = JUMP_INIT;
     if (_state == SWINGING) {
-        leavingVine();
+        leavingVine(false);
 
         this->_currentState = Character::State::STANDING;
         _state = NORMAL;
@@ -192,7 +192,7 @@ void Monkey::continueMotion() {
  * 'alreadyOn' is only to change the animation.
  */
 void Monkey::enteringVine(cocos2d::PhysicsWorld *world, SceneObject *obj, double offset, bool alreadyOn) {
-    leavingVine();
+    leavingVine(true);
     // create a joint between you and the vine.
     cocos2d::Vec2 offsetVec = cocos2d::Vec2(0, ideal2Res(offset));
     pinJoint = cocos2d::PhysicsJointPin::construct(this->body, obj->getPhysicsBody(), cocos2d::Vec2::ZERO, offsetVec);
@@ -224,7 +224,7 @@ void Monkey::enteringVine(cocos2d::PhysicsWorld *world, SceneObject *obj, double
     currentWorld = world;
 }
 
-void Monkey::leavingVine() {
+void Monkey::leavingVine(bool reattaching) {
     if (pinJoint != nullptr) {
         pinJoint->removeFormWorld();
         pinJoint = nullptr;
@@ -233,6 +233,11 @@ void Monkey::leavingVine() {
     if (gearJoint != nullptr) {
         gearJoint->removeFormWorld();
         gearJoint = nullptr;
+    }
+    
+    if (_hangingCharacter != nullptr && !reattaching) {
+        _hangingCharacter->leavingHanging();
+        _hangingCharacter = nullptr;
     }
 
     currentAttached = nullptr;
@@ -246,15 +251,22 @@ void Monkey::leavingVine() {
 }
 
 void Monkey::moveAlongVine(float deltaP) {
-    if ((currentAttachedOffset + cocos2d::Vec2(0, deltaP)).y > -currentAttached->getYRange() / 2.0 &&
+    double minDown = -currentAttached->getYRange() * (1.0 / 2.0) - ideal2Res(50);
+    if ((currentAttachedOffset + cocos2d::Vec2(0, deltaP)).y > minDown &&
         (currentAttachedOffset + cocos2d::Vec2(0, deltaP)).y < currentAttached->getYRange() / 2.0) {
         enteringVine(currentWorld, currentAttached, (currentAttachedOffset + cocos2d::Vec2(0, deltaP)).y, true);
+    } else if ((currentAttachedOffset + cocos2d::Vec2(0, deltaP)).y < minDown) {
+        // TODO: add tail down animation here.
     }
+}
+
+Monkey::State Monkey::getMonkeyState() {
+    return _state;
 }
 
 void Monkey::restartFromRespawn() {
     if (_state == SWINGING) {
-        leavingVine();
+        leavingVine(false);
     } else
     leavingClimeable();
     Character::restartFromRespawn();
@@ -314,4 +326,12 @@ void Monkey::setBoulderUnbury() {
     body = newBody;
 
     setSlotsToSetupPose();
+}
+
+void Monkey::setHangingCharacter(Character *c) {
+    _hangingCharacter = c;
+}
+
+bool Monkey::hasHangingCharacter() {
+    return _hangingCharacter != nullptr;
 }
