@@ -487,7 +487,6 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
     if (lvl["attackZones"].is_object()) {
         nlohmann::json zones = lvl["attackZones"];
         for (auto& zAtt : zones) {
-            std::cout << "Reading zone" << std::endl;
             attackZones.push_back(Zone(
                     vp.metersToPixels(cocos2d::Vec2((double)zAtt["book"]["doubList"]["xmin"], (double)zAtt["book"]["doubList"]["ymin"])),
                     vp.metersToPixels(cocos2d::Vec2((double)zAtt["book"]["doubList"]["xmax"], (double)zAtt["book"]["doubList"]["ymax"])),
