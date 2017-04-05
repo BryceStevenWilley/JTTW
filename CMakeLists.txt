@@ -131,6 +131,7 @@ endif( WIN32 )
 set(SPINE_SRC ${COCOS2D_ROOT}/cocos/editor-support/spine/)
 
 set(GAME_SRC
+  Classes/Resolution.cpp
   Classes/AppDelegate.cpp
   Classes/MainGameScene.cpp
   Classes/AiAgentBehaviors.cpp
@@ -153,7 +154,6 @@ set(GAME_SRC
   Classes/Peg.cpp
   Classes/CageTrap.cpp
   Classes/ProjectileFactory.cpp
-  Classes/Resolution.cpp
   Classes/Zone.cpp
   Classes/Cutscene.cpp
   ${PLATFORM_SPECIFIC_SRC}

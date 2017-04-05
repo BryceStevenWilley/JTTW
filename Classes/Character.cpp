@@ -83,6 +83,7 @@ void Character::impulseLeft(float deltaVel) {
     double impulse = body->getMass() * deltaVel;
     leftMomentum += impulse;
     if (_currentState != State::FROZEN) {
+
         rebalanceImpulse();
     }
 }
