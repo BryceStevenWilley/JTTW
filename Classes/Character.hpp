@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <spine/spine-cocos2dx.h>
+#include "SceneObject.hpp"
 #include "cocos2d.h"
 
 namespace JTTW {
@@ -39,6 +40,7 @@ public:
         STANDING,
         MID_AIR,
         FROZEN,
+        HANGING
     };
     
     static Character *createFromName(const std::string name, cocos2d::Vec2 startPosition, cocos2d::Size dimensions);
@@ -106,8 +108,13 @@ public:
     void toggleToAI();
     void toggleToPlayer();
     
+    void enteringHanging(cocos2d::PhysicsWorld *world, Character *m, cocos2d::Vec2 offsetVec, bool alreadyOn);
+    void leavingHanging();
+    
     void setToRespawn();
     bool _respawnNextCycle = false;
+
+
 
 protected:
     void initJump(double force);
@@ -116,7 +123,6 @@ protected:
     double leftMomentum = 0.0;
     double rightMomentum = 0.0;
     int wallsHit = 0;
-    
     
 private:
     void updateAnimation(State oldState);
@@ -136,6 +142,12 @@ private:
     double jumpForce = 0.0;
     
     bool aiControl = true;
+    
+    cocos2d::PhysicsJoint* pinJoint = nullptr;
+    cocos2d::PhysicsJoint* gearJoint = nullptr;
+    Character *currentAttached = nullptr;
+    cocos2d::Vec2 currentAttachedOffset = cocos2d::Vec2::ZERO;
+    cocos2d::PhysicsWorld *currentWorld;
 };
 }
 

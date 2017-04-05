@@ -1,6 +1,7 @@
 #include <iostream>
 #include "AiAgent.hpp"
 #include "Resolution.hpp"
+#include "Monkey.hpp"
 
 using namespace JTTW;
 
@@ -94,6 +95,11 @@ void AiAgent::plan(Character *player, std::vector<Character *> otherCharacters) 
         return;
     }
     (this->*_currentBehavior)(player, otherCharacters);
+    if (_controlledCharacter->getCurrentState() == Character::HANGING) {
+        _no_control = true;
+    } else {
+        _no_control = false;
+    }
 }
 
 void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode code) {
@@ -120,6 +126,10 @@ void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode 
  * (set by the current behavior).
  */
 void AiAgent::executeControl(float delta) {
+    if (_controlledCharacter->getCurrentState() == Character::HANGING || (_controlledCharacter->characterName == "Monkey" && ((Monkey *)_controlledCharacter)->getMonkeyState() == Monkey::SWINGING)) {
+        std::cout << "Not controlling! : " << _controlledCharacter->characterName << std::endl;
+        return;
+    }
     // Do the control stuff.
     cocos2d::Vec2 errorPosition = desiredPosition - _controlledCharacter->getPosition();
     cocos2d::Vec2 errorVelocity = desiredVel - _controlledCharacter->body->getVelocity();

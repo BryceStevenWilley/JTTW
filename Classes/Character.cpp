@@ -1,8 +1,8 @@
 #include "Character.hpp"
 #include "Collisions.hpp"
 #include "MoveablePlatform.hpp"
-#include "Monkey.hpp"
 #include "Monk.hpp"
+#include "Monkey.hpp"
 #include "Piggy.hpp"
 #include "Sandy.hpp"
 #include <iostream>
@@ -41,7 +41,7 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
     body->addShape(bottomSemiCircle);
     body->setCategoryBitmask((int)CollisionCategory::Character);
     body->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
-    body->setContactTestBitmask((int)CollisionCategory::PlatformBoulderAndProjectile);
+    body->setContactTestBitmask((int)CollisionCategory::ALL);
     body->setRotationEnable(false);
     body->setDynamic(true);
 
@@ -82,8 +82,7 @@ cocos2d::Size Character::getSize() {
 void Character::impulseLeft(float deltaVel) {
     double impulse = body->getMass() * deltaVel;
     leftMomentum += impulse;
-    if (_currentState != State::FROZEN) {
-
+    if (_currentState != State::FROZEN || _currentState != State::HANGING) {
         rebalanceImpulse();
     }
 }
@@ -91,7 +90,7 @@ void Character::impulseLeft(float deltaVel) {
 void Character::impulseRight(float deltaVel) {
     double impulse = body->getMass() * deltaVel;
     rightMomentum += impulse;
-    if (_currentState != State::FROZEN) {
+    if (_currentState != State::FROZEN || _currentState != State::HANGING) {
         rebalanceImpulse();
     }
 }
@@ -128,6 +127,7 @@ void Character::rebalanceImpulse() {
 
 void Character::continueMotion() {
     if (_currentState != State::FROZEN &&
+            _currentState != State::HANGING &&
             //platformsStandingOn != 0 &&
             wallsHit == 0 && 
             std::abs(rightMomentum - leftMomentum)/body->getMass() > 0.01) {
@@ -155,6 +155,10 @@ void Character::freeze() {
 void Character::initJump(double force) {
     if (_currentState == State::MID_AIR || _currentState == State::FROZEN) {
         // Can't jump while you're in the air, dummy!
+        return;
+    }
+    if (_currentState == State::HANGING) {
+        leavingHanging();
         return;
     }
     
@@ -196,7 +200,7 @@ void Character::landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRigh
     // TODO: check if we don't need to do this for plats > 2
     _rightVector = newRightDir;
     
-    if (_currentState != State::FROZEN) {
+    if (_currentState != State::FROZEN && _currentState != State::HANGING) {
         State oldState = _currentState;
         _currentState = State::STANDING;
         updateAnimation(oldState);
@@ -205,7 +209,7 @@ void Character::landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRigh
 
 void Character::leftCallback(cocos2d::PhysicsBody *plat) {
     platformsStandingOn -= 1;
-    if (platformsStandingOn == 0) {
+    if (platformsStandingOn == 0 && _currentState != HANGING) {
         State oldState = _currentState;
         _currentState = State::MID_AIR;
         _rightVector = cocos2d::Vec2(1, 0);
@@ -339,7 +343,6 @@ void Character::updateAnimation(State oldState) {
 }
 
 void Character::restartFromRespawn() {
-    //std::cout << "Restarting " << characterName << " at " << _respawnPosition.x << ", " << _respawnPosition.y << std::endl;
     body->setVelocity(cocos2d::Vec2(0, 0));
     body->resetForces();
     this->setPosition(_respawnPosition);
@@ -363,5 +366,65 @@ void Character::toggleToAI() {
 
 void Character::toggleToPlayer() {
     aiControl = false;
+}
+
+/**
+ * 'alreadyOn' is only to change the animation.
+ */
+void Character::enteringHanging(cocos2d::PhysicsWorld *world, Character *m, cocos2d::Vec2 offsetVec, bool alreadyOn) {
+    leavingHanging();
+    offsetVec.set(0.0, offsetVec.y * .8);
+    // create a joint between you and the vine.
+    pinJoint = cocos2d::PhysicsJointPin::construct(this->body, m->body, cocos2d::Vec2::ZERO, offsetVec);
+    world->addJoint(pinJoint);
+    _currentState = HANGING;
+    
+    if (!alreadyOn) {
+        this->setTimeScale(2.0);
+        this->setAnimation(0, "JumpToSwing", false);
+        this->addAnimation(0, "Swing", true);
+    } else {
+        this->setTimeScale(2.0);
+        this->setTimeScale(1.0);
+        this->setAnimation(0, "Climb", false);
+        this->addAnimation(0, "Swing", true);
+    }
+    
+    // set the character to rotate with the vine.
+    body->setRotationEnable(true);
+    body->setRotationOffset(0.0);
+    double gearPhase = 0.0;
+    double gearRatio = 1.0;
+    gearJoint = cocos2d::PhysicsJointGear::construct(body, m->body, gearPhase, gearRatio);
+    world->addJoint(gearJoint);
+
+    // set these params so you can climb later.
+    currentAttached = m;
+    currentAttachedOffset = offsetVec;
+    currentWorld = world;
+}
+
+void Character::leavingHanging() {
+    if (pinJoint != nullptr) {
+        pinJoint->removeFormWorld();
+        pinJoint = nullptr;
+    }
+
+    if (gearJoint != nullptr) {
+        gearJoint->removeFormWorld();
+        gearJoint = nullptr;
+    }
+
+    if (currentAttached != nullptr) {
+        ((Monkey *)currentAttached)->setHangingCharacter(nullptr);
+    }
+
+    currentAttached = nullptr;
+    currentAttachedOffset = cocos2d::Vec2::ZERO;
+
+    this->_currentState = Character::State::MID_AIR;
+    body->setRotationEnable(false);
+    body->setAngularVelocity(0.0);
+    this->setRotation(0.0);
 }
 
