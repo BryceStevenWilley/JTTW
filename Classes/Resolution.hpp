@@ -1,15 +1,8 @@
-//
-//  Resolution.hpp
-//  JTTW
-//
-//  Created by Bryce Willey on 3/21/17.
-//
-//
-
 #ifndef Resolution_hpp
 #define Resolution_hpp
 
 #include <iostream>
+#include "cocos2d.h"
 
 namespace JTTW {
     static const cocos2d::Size tinyResolution = cocos2d::Size(480, 270);
