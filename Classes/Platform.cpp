@@ -33,6 +33,7 @@ Platform::Platform(std::string &fileName, cocos2d::Vec2 center,
             for (int i = 0; i < points.size(); i++) {
                 auto segment = cocos2d::PhysicsShapeEdgeSegment::create(points[i % pointCount], points[(i + 1) % pointCount]);
                 segment->setFriction(frictions[i]);
+                //segment->setSensor(true);
                 body->addShape(segment);
             }
         }

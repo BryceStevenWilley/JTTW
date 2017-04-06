@@ -85,6 +85,9 @@
 		9F36A4D31E6D4E650016232D /* Music in Resources */ = {isa = PBXBuildFile; fileRef = 9F36A4CF1E6D4E650016232D /* Music */; };
 		9F36A4D41E6D4E650016232D /* Music in Resources */ = {isa = PBXBuildFile; fileRef = 9F36A4CF1E6D4E650016232D /* Music */; };
 		9F36A4D51E6D4E650016232D /* Music in Resources */ = {isa = PBXBuildFile; fileRef = 9F36A4CF1E6D4E650016232D /* Music */; };
+		9F4E120C1E9582E100DE9D31 /* SquishThings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F4E120A1E9582E100DE9D31 /* SquishThings.cpp */; };
+		9F4E120D1E9582E100DE9D31 /* SquishThings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F4E120A1E9582E100DE9D31 /* SquishThings.cpp */; };
+		9F4E120E1E9582E100DE9D31 /* SquishThings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F4E120A1E9582E100DE9D31 /* SquishThings.cpp */; };
 		9F666E461E30201C00F9BB90 /* AiAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F666E451E30201C00F9BB90 /* AiAgent.cpp */; };
 		9F666E471E30201C00F9BB90 /* AiAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F666E451E30201C00F9BB90 /* AiAgent.cpp */; };
 		9F666E481E30201C00F9BB90 /* AiAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F666E451E30201C00F9BB90 /* AiAgent.cpp */; };
@@ -284,6 +287,8 @@
 		9F36A4C91E6D0AEF0016232D /* Peg.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Peg.hpp; sourceTree = "<group>"; };
 		9F36A4CE1E6D4E650016232D /* Sound */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sound; sourceTree = "<group>"; };
 		9F36A4CF1E6D4E650016232D /* Music */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Music; sourceTree = "<group>"; };
+		9F4E120A1E9582E100DE9D31 /* SquishThings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SquishThings.cpp; sourceTree = "<group>"; };
+		9F4E120B1E9582E100DE9D31 /* SquishThings.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SquishThings.hpp; sourceTree = "<group>"; };
 		9F666E451E30201C00F9BB90 /* AiAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AiAgent.cpp; sourceTree = "<group>"; };
 		9F666E571E31D89500F9BB90 /* AiAgentBehaviors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AiAgentBehaviors.cpp; sourceTree = "<group>"; };
 		9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoveablePlatform.cpp; sourceTree = "<group>"; };
@@ -606,6 +611,8 @@
 				9F06DB8D1E834F2300B1080A /* ProjectileFactory.cpp */,
 				9F06DB8E1E834F2300B1080A /* ProjectileFactory.hpp */,
 				9F1606721E8D8BCA0087D973 /* SceneObject.hpp */,
+				9F4E120A1E9582E100DE9D31 /* SquishThings.cpp */,
+				9F4E120B1E9582E100DE9D31 /* SquishThings.hpp */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
@@ -834,6 +841,7 @@
 				9F98AF911E2C99E2009559C7 /* Viewpoint.cpp in Sources */,
 				9F158C0D1E6A06FE002D21A6 /* CageTrap.cpp in Sources */,
 				9FB69DE21E46D93D006325A3 /* MainMenuScene.cpp in Sources */,
+				9F4E120C1E9582E100DE9D31 /* SquishThings.cpp in Sources */,
 				503AE10017EB989F00D1A890 /* AppController.mm in Sources */,
 				9FC4C2EF1E39293F00ABD648 /* Platform.cpp in Sources */,
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,
@@ -870,6 +878,7 @@
 				9FC97C881E540E0300EF6C31 /* LevelEnd.cpp in Sources */,
 				9F06DB901E834F2300B1080A /* ProjectileFactory.cpp in Sources */,
 				9F666E471E30201C00F9BB90 /* AiAgent.cpp in Sources */,
+				9F4E120D1E9582E100DE9D31 /* SquishThings.cpp in Sources */,
 				9F98AF921E2C99E2009559C7 /* Viewpoint.cpp in Sources */,
 				9FB69DDC1E459B90006325A3 /* Character.cpp in Sources */,
 				9F16FC111E54CCDB00D9DBCA /* Piggy.cpp in Sources */,
@@ -891,6 +900,7 @@
 			files = (
 				9F16FC021E54CC5F00D9DBCA /* Monkey.cpp in Sources */,
 				9F15D91A1E5FD4D300F77DF6 /* Boulder.cpp in Sources */,
+				9F4E120E1E9582E100DE9D31 /* SquishThings.cpp in Sources */,
 				9FB69DD51E459AA4006325A3 /* Platform.cpp in Sources */,
 				9F36A4CC1E6D0AEF0016232D /* Peg.cpp in Sources */,
 				9FD41BEF1E2D54490077779E /* AppDelegate.cpp in Sources */,
