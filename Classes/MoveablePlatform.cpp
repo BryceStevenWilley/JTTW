@@ -4,36 +4,26 @@
 
 using namespace JTTW;
 
-const bool NOT_CLIMABLE = false;
-const bool COLLIDABLE = true;
-
 MoveablePlatform::MoveablePlatform(std::string &fileName, cocos2d::Vec2 centerA, cocos2d::Vec2 centerB, 
                                    cocos2d::Size imageSize,
                                    std::vector<cocos2d::Vec2> points,
                                    std::vector<double> frictions,
                                    double maxVelocity) 
-        : Platform(fileName, centerA, imageSize, points, frictions, NOT_CLIMABLE, COLLIDABLE),
-      _centerA(centerA), 
-      _centerB(centerB) {
+        : Moveable(fileName, centerA, centerB, imageSize, points, frictions, std::vector<bool>(), maxVelocity), _maxVelocity(maxVelocity) {
     // Set initial speed.
-    _velocities = maxVelocity * (centerB - centerA)/(centerB - centerA).getLength();
-    body->setVelocity(_velocities);
     this->setTag(MOVEABLE_TAG);
-    // NOTE: body properties are set in the parent class, Platform.
+    // NOTE: body properties are set in the parent class, Moveable.
 }
 
 void MoveablePlatform::move(float deltaTime) {
-    auto position = this->getPosition() + _velocities * deltaTime;
-    
     // Use get lengthSq because it saves up 2 square root operations.
-    if (currentState == TOWARDS_B && (position - _centerA).getLengthSq() > (_centerB - _centerA).getLengthSq()) {
+    if (currentState == TOWARDS_B && goneFarToB(deltaTime)) {
         // We've gone too far towards B, so let's turn around again.
-        _velocities = - _velocities;
+        setVelocityTowardsA(_maxVelocity);
         currentState = TOWARDS_A;
-    } else if (currentState == TOWARDS_A && (position - _centerB).getLengthSq() > (_centerA - _centerB).getLengthSq()) {
+    } else if (currentState == TOWARDS_A && goneFarToA(deltaTime)) {
         // We've gone too far towards A, so let's turn around again.
-        _velocities = - _velocities;
+        setVelocityTowardsB(_maxVelocity);
         currentState = TOWARDS_B;
     }
-    body->setVelocity(_velocities);
 }

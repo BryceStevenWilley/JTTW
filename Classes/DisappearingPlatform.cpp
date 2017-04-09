@@ -6,7 +6,7 @@ using namespace JTTW;
 DisappearingPlatform::DisappearingPlatform(std::string &fileName, cocos2d::Vec2 center,
                                            cocos2d::Size imageSize, std::vector<cocos2d::Vec2> points,
                                            bool climeable, bool collidable) 
-        :  Platform(fileName, center, imageSize, points, std::vector<double>(), climeable, collidable) {
+        :  Platform(fileName, center, imageSize, points, std::vector<double>(), std::vector<bool>(), climeable, collidable) {
     _maxX = center.x + imageSize.width / 2.0;
     _minX = center.x - imageSize.width / 2.0;
     _maxY = center.y + imageSize.height / 2.0 + 30;

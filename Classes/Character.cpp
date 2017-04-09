@@ -36,7 +36,7 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
     double width = 480.0f;
     double height = 780.0f;
     auto bodyShape = cocos2d::PhysicsShapeBox::create(cocos2d::Size(width * .95, height * (2.0/3.0)), mat, cocos2d::Vec2(0.0, height/9.0));
-    auto bottomSemiCircle = cocos2d::PhysicsShapeCircle::create(width * (.975/2.0), mat, cocos2d::Vec2(0.0, -height * (0.8/4.0)));
+    auto bottomSemiCircle = cocos2d::PhysicsShapeCircle::create(width * (.97/2.0), mat, cocos2d::Vec2(0.0, -height * (0.8/4.0)));
     body->addShape(bodyShape);
     body->addShape(bottomSemiCircle);
     body->setCategoryBitmask((int)CollisionCategory::Character);
@@ -426,5 +426,10 @@ void Character::leavingHanging() {
     body->setRotationEnable(false);
     body->setAngularVelocity(0.0);
     this->setRotation(0.0);
+}
+
+void Character::callHey() {
+    // TODO: do animation for Hey!
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/hey.wav");
 }
 

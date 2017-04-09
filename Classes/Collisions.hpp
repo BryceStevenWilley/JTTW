@@ -8,6 +8,8 @@ const int MOVEABLE_TAG = 12;
 const int VINE_TAG = 13;
 const int PROJECTILE_TAG = 14;
 const int PEG_TAG = 15;
+const int INSTANT_DEATH_TAG = 16;
+const int SINKABLE_TAG = 17;
 
 enum class CollisionCategory {
     None = 0,
