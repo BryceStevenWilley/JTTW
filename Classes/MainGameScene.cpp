@@ -17,12 +17,15 @@
 #include <algorithm>
 #include <string>
 #include "Cutscene.hpp"
+#include "SquishObject.hpp"
 
 using namespace cocos2d;
 using namespace JTTW;
 
 const int UI_LAYER_Z_IDX = 2;
 const int LVL_LAYER_Z_IDX = 1;
+
+const double MASS_TO_SINK_CLOUD = 3000;
 
 const int GRAVITY = ideal2Res(-750);
 const cocos2d::Vec2 UI_HEAD_START = cocos2d::Vec2(ideal2Res(40.0), ideal2Res(40.0));
@@ -67,11 +70,14 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
             return true; // don't rebalance impulse!
         }
     }
-    if (node->getTag() == PROJECTILE_TAG) {
+    if (node->getTag() == PROJECTILE_TAG || node->getTag() == INSTANT_DEATH_TAG) {
         if (begin) {
+            std::cout << "Instant death for " << c->characterName << std::endl;
             c->setToRespawn();
-            node->removeFromParent();
-            deleteTimer.erase(deleteTimer.find((cocos2d::Sprite *)node));
+            if (node->getTag() == PROJECTILE_TAG) {
+                node->removeFromParent();
+                deleteTimer.erase(deleteTimer.find((cocos2d::Sprite *)node));
+            }
             return true;
         }
     }
@@ -127,6 +133,13 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
     if (normal.dot(cocos2d::Vec2(0, -1)) > std::cos(M_PI / 4.0)) {
         if (begin) {
             c->landedCallback(body, normal.getPerp());
+            
+            if (node->getTag() == SINKABLE_TAG) {
+                std::cout << c->characterName << "'s mass is " << c->getMass() << std::endl;
+                if (c->getMass() > MASS_TO_SINK_CLOUD) {
+                    
+                }
+            }
         } else { // onContactEnd
             c->leftCallback(body);
         }
@@ -270,13 +283,26 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
             frictions.push_back(f);
         }
         
-        if (!pAtt["book"]["boolList"]["Moving"].is_boolean()) {
-            // Something is wrong!
-            std::cout << "Platform " << fullImagePath << " doesn't have a moveable member." << std::endl;
-            throw std::domain_error("No moveable");
+        std::vector<bool> deathEdges;
+        for (auto &d : pAtt["book"]["deadlyEdgeList"]) {
+            deathEdges.push_back(d);
         }
         
-        if (pAtt["book"]["boolList"]["Moving"]) {
+        std::string typeText;
+        
+        if (pAtt["book"]["boolList"]["Moving"].is_boolean()) {
+            if (pAtt["book"]["boolList"]["Moving"]) {
+                typeText = "MOVING";
+            } else {
+                typeText = "STATIC";
+            }
+        }
+        
+        if(pAtt["book"]["strList"]["interactable.Platform$Type"].is_string()) {
+            typeText = pAtt["book"]["strList"]["interactable.Platform$Type"];
+        }
+        
+        if (typeText == "MOVING") {
             cocos2d::Vec2 centerA(centerX, centerY);
             double centerBX = vp.metersToPixels((double)pAtt["endpoint"]["x"]);
             double centerBY = vp.metersToPixels((double)pAtt["endpoint"]["y"]);
@@ -288,18 +314,36 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
             levelLayer->addChild(p, z);
             platforms.push_back(p);
             moveables.push_back(p);
-        } else {
+        } else if (typeText == "STATIC") {
             if (pAtt["book"]["boolList"]["Disappears"]) {
                 DisappearingPlatform *p = new DisappearingPlatform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight),
                    ps, pAtt["book"]["boolList"]["Climbable"], pAtt["book"]["boolList"]["Collidable"]);
                 levelLayer->addChild(p, z);
                 trapsToTrigger.push_back(p);
             } else {
-                Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), ps, frictions, pAtt["book"]["boolList"]["Climbable"], pAtt["book"]["boolList"]["Collidable"]);
-        
+                Platform *p = new Platform(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), ps, frictions, deathEdges, pAtt["book"]["boolList"]["Climbable"], pAtt["book"]["boolList"]["Collidable"]);
                 levelLayer->addChild(p, z);
+                if (p->getDeathBody() != nullptr) {
+                    std::cout << "Adding a death body" << std::endl;
+                    levelLayer->addChild(p->getDeathBody(), z);
+                }
                 platforms.push_back(p);
             }
+        } else { // typeText == "HITTING"
+            cocos2d::Vec2 centerA(centerX, centerY);
+            double centerBX = vp.metersToPixels((double)pAtt["endpoint"]["x"]);
+            double centerBY = vp.metersToPixels((double)pAtt["endpoint"]["y"]);
+            cocos2d::Vec2 centerB(centerBX, centerBY);
+            double velocity = ideal2Res(vp.metersToPixels((double)pAtt["book"]["doubList"]["Velocity"]));
+            double quickVelocity = ideal2Res(vp.metersToPixels((double)pAtt["book"]["doubList"]["Quick Velocity"]));
+            double pauseTime = pAtt["book"]["doubList"]["Pause time"];
+            SquishObject *q = new SquishObject(fullImagePath, centerB, centerA, cocos2d::Size(imageSizeWidth, imageSizeHeight), ps, frictions, deathEdges, velocity, quickVelocity, pauseTime);
+            levelLayer->addChild(q, z);
+            if (q->getDeathBody() != nullptr) {
+                std::cout << "Adding a death body" << std::endl;
+                levelLayer->addChild(q->getDeathBody(), z);
+            }
+            moveables.push_back(q);
         }
     }
     nlohmann::json characterStruct = lvl["characters"];
@@ -713,6 +757,7 @@ void MainGameScene::KeypressedCallback(cocos2d::EventKeyboard::KeyCode keyCode, 
         case EventKeyboard::KeyCode::KEY_A:
         case EventKeyboard::KeyCode::KEY_O:
         case EventKeyboard::KeyCode::KEY_S:
+        case EventKeyboard::KeyCode::KEY_Q:
             player->plan(characters, keyCode, true);
             for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
                 if ((*xAgent) != player) {

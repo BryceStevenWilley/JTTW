@@ -54,7 +54,6 @@ protected:
     double k;
 
 private:
-
     // The possible behaivors of the AI. All of these methods are implemented in AiAgentBehaivors.cpp.
     void followBehavior(Character *player, std::vector<Character *> otherCharacters);
     void stationaryBehavior(Character *player, std::vector<Character *> otherCharacters);
@@ -63,7 +62,5 @@ private:
 };
     
 };
-
-
 
 #endif /* AiAgent_hpp */

@@ -73,6 +73,8 @@ public:
     virtual void stopJump();
     void jumpFromForce(double fprime_y);
     
+    void callHey();
+    
     virtual void characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) = 0;
     
     bool isMovingLeft() const;

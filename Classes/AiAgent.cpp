@@ -71,6 +71,12 @@ void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeybo
                 _controlledCharacter->stopJump();
             }
             break;
+        case KeyCode::KEY_Q:
+            if (pressed) {
+                // Do animation of character calling for everyone else.
+                _controlledCharacter->callHey();
+            }
+            break;
         default:
             // Try the charecter's special controls.
             _controlledCharacter->characterSpecial(code, pressed);
@@ -118,6 +124,9 @@ void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode 
             _controlledCharacter->currentCrown = _controlledCharacter->alonecrown;
             _controlledCharacter->currentCrown->setVisible(wasOn);
         }
+    } else if (code == cocos2d::EventKeyboard::KeyCode::KEY_Q) {
+        // Random variations on the default offset of 100.
+        _playerPosOffset = cocos2d::Vec2(ideal2Res(-100), 0) + cocos2d::Vec2(ideal2Res((rand() % 120)) - ideal2Res(60), 0);
     }
 }
 

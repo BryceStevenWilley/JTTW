@@ -56,6 +56,9 @@
 		9F06DB8F1E834F2300B1080A /* ProjectileFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F06DB8D1E834F2300B1080A /* ProjectileFactory.cpp */; };
 		9F06DB901E834F2300B1080A /* ProjectileFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F06DB8D1E834F2300B1080A /* ProjectileFactory.cpp */; };
 		9F06DB911E834F2300B1080A /* ProjectileFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F06DB8D1E834F2300B1080A /* ProjectileFactory.cpp */; };
+		9F1020FB1E98003F001374D3 /* SinkObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F1020F91E98003F001374D3 /* SinkObject.cpp */; };
+		9F1020FC1E98003F001374D3 /* SinkObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F1020F91E98003F001374D3 /* SinkObject.cpp */; };
+		9F1020FD1E98003F001374D3 /* SinkObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F1020F91E98003F001374D3 /* SinkObject.cpp */; };
 		9F158C0D1E6A06FE002D21A6 /* CageTrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F158C0A1E6A06FE002D21A6 /* CageTrap.cpp */; };
 		9F158C0E1E6A071E002D21A6 /* CageTrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F158C0A1E6A06FE002D21A6 /* CageTrap.cpp */; };
 		9F15D9181E5FD4D300F77DF6 /* Boulder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F15D9161E5FD4D300F77DF6 /* Boulder.cpp */; };
@@ -85,9 +88,9 @@
 		9F36A4D31E6D4E650016232D /* Music in Resources */ = {isa = PBXBuildFile; fileRef = 9F36A4CF1E6D4E650016232D /* Music */; };
 		9F36A4D41E6D4E650016232D /* Music in Resources */ = {isa = PBXBuildFile; fileRef = 9F36A4CF1E6D4E650016232D /* Music */; };
 		9F36A4D51E6D4E650016232D /* Music in Resources */ = {isa = PBXBuildFile; fileRef = 9F36A4CF1E6D4E650016232D /* Music */; };
-		9F4E120C1E9582E100DE9D31 /* SquishThings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F4E120A1E9582E100DE9D31 /* SquishThings.cpp */; };
-		9F4E120D1E9582E100DE9D31 /* SquishThings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F4E120A1E9582E100DE9D31 /* SquishThings.cpp */; };
-		9F4E120E1E9582E100DE9D31 /* SquishThings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F4E120A1E9582E100DE9D31 /* SquishThings.cpp */; };
+		9F4E120C1E9582E100DE9D31 /* SquishObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F4E120A1E9582E100DE9D31 /* SquishObject.cpp */; };
+		9F4E120D1E9582E100DE9D31 /* SquishObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F4E120A1E9582E100DE9D31 /* SquishObject.cpp */; };
+		9F4E120E1E9582E100DE9D31 /* SquishObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F4E120A1E9582E100DE9D31 /* SquishObject.cpp */; };
 		9F666E461E30201C00F9BB90 /* AiAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F666E451E30201C00F9BB90 /* AiAgent.cpp */; };
 		9F666E471E30201C00F9BB90 /* AiAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F666E451E30201C00F9BB90 /* AiAgent.cpp */; };
 		9F666E481E30201C00F9BB90 /* AiAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F666E451E30201C00F9BB90 /* AiAgent.cpp */; };
@@ -266,6 +269,9 @@
 		8262943D1AAF051F00CB7CF7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		9F06DB8D1E834F2300B1080A /* ProjectileFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProjectileFactory.cpp; sourceTree = "<group>"; };
 		9F06DB8E1E834F2300B1080A /* ProjectileFactory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ProjectileFactory.hpp; sourceTree = "<group>"; };
+		9F1020F41E97C582001374D3 /* Moveable.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Moveable.hpp; sourceTree = "<group>"; };
+		9F1020F91E98003F001374D3 /* SinkObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SinkObject.cpp; sourceTree = "<group>"; };
+		9F1020FA1E98003F001374D3 /* SinkObject.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SinkObject.hpp; sourceTree = "<group>"; };
 		9F158C0A1E6A06FE002D21A6 /* CageTrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CageTrap.cpp; sourceTree = "<group>"; };
 		9F158C0B1E6A06FE002D21A6 /* CageTrap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CageTrap.hpp; sourceTree = "<group>"; };
 		9F158C0C1E6A06FE002D21A6 /* DisappearingPlatform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DisappearingPlatform.hpp; sourceTree = "<group>"; };
@@ -287,8 +293,8 @@
 		9F36A4C91E6D0AEF0016232D /* Peg.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Peg.hpp; sourceTree = "<group>"; };
 		9F36A4CE1E6D4E650016232D /* Sound */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sound; sourceTree = "<group>"; };
 		9F36A4CF1E6D4E650016232D /* Music */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Music; sourceTree = "<group>"; };
-		9F4E120A1E9582E100DE9D31 /* SquishThings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SquishThings.cpp; sourceTree = "<group>"; };
-		9F4E120B1E9582E100DE9D31 /* SquishThings.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SquishThings.hpp; sourceTree = "<group>"; };
+		9F4E120A1E9582E100DE9D31 /* SquishObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SquishObject.cpp; sourceTree = "<group>"; };
+		9F4E120B1E9582E100DE9D31 /* SquishObject.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SquishObject.hpp; sourceTree = "<group>"; };
 		9F666E451E30201C00F9BB90 /* AiAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AiAgent.cpp; sourceTree = "<group>"; };
 		9F666E571E31D89500F9BB90 /* AiAgentBehaviors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AiAgentBehaviors.cpp; sourceTree = "<group>"; };
 		9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoveablePlatform.cpp; sourceTree = "<group>"; };
@@ -611,8 +617,11 @@
 				9F06DB8D1E834F2300B1080A /* ProjectileFactory.cpp */,
 				9F06DB8E1E834F2300B1080A /* ProjectileFactory.hpp */,
 				9F1606721E8D8BCA0087D973 /* SceneObject.hpp */,
-				9F4E120A1E9582E100DE9D31 /* SquishThings.cpp */,
-				9F4E120B1E9582E100DE9D31 /* SquishThings.hpp */,
+				9F4E120A1E9582E100DE9D31 /* SquishObject.cpp */,
+				9F4E120B1E9582E100DE9D31 /* SquishObject.hpp */,
+				9F1020F41E97C582001374D3 /* Moveable.hpp */,
+				9F1020F91E98003F001374D3 /* SinkObject.cpp */,
+				9F1020FA1E98003F001374D3 /* SinkObject.hpp */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
@@ -707,7 +716,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 0830;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "JTTW" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -841,12 +850,13 @@
 				9F98AF911E2C99E2009559C7 /* Viewpoint.cpp in Sources */,
 				9F158C0D1E6A06FE002D21A6 /* CageTrap.cpp in Sources */,
 				9FB69DE21E46D93D006325A3 /* MainMenuScene.cpp in Sources */,
-				9F4E120C1E9582E100DE9D31 /* SquishThings.cpp in Sources */,
+				9F4E120C1E9582E100DE9D31 /* SquishObject.cpp in Sources */,
 				503AE10017EB989F00D1A890 /* AppController.mm in Sources */,
 				9FC4C2EF1E39293F00ABD648 /* Platform.cpp in Sources */,
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,
 				9FC97C871E540E0300EF6C31 /* LevelEnd.cpp in Sources */,
 				9F666E581E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */,
+				9F1020FB1E98003F001374D3 /* SinkObject.cpp in Sources */,
 				9F192EB71E5B634A001FE88A /* Vine.cpp in Sources */,
 				9F16FC0B1E54CCC200D9DBCA /* Sandy.cpp in Sources */,
 				9F16FC101E54CCDB00D9DBCA /* Piggy.cpp in Sources */,
@@ -874,11 +884,12 @@
 				9F16FC0C1E54CCC200D9DBCA /* Sandy.cpp in Sources */,
 				9F8E65701E3DA0060058958F /* MoveablePlatform.cpp in Sources */,
 				9FB69E081E46EE88006325A3 /* LevelSelectScene.cpp in Sources */,
+				9F1020FC1E98003F001374D3 /* SinkObject.cpp in Sources */,
 				9F9EDA6D1E92404E00C264FF /* Zone.cpp in Sources */,
 				9FC97C881E540E0300EF6C31 /* LevelEnd.cpp in Sources */,
 				9F06DB901E834F2300B1080A /* ProjectileFactory.cpp in Sources */,
 				9F666E471E30201C00F9BB90 /* AiAgent.cpp in Sources */,
-				9F4E120D1E9582E100DE9D31 /* SquishThings.cpp in Sources */,
+				9F4E120D1E9582E100DE9D31 /* SquishObject.cpp in Sources */,
 				9F98AF921E2C99E2009559C7 /* Viewpoint.cpp in Sources */,
 				9FB69DDC1E459B90006325A3 /* Character.cpp in Sources */,
 				9F16FC111E54CCDB00D9DBCA /* Piggy.cpp in Sources */,
@@ -900,7 +911,7 @@
 			files = (
 				9F16FC021E54CC5F00D9DBCA /* Monkey.cpp in Sources */,
 				9F15D91A1E5FD4D300F77DF6 /* Boulder.cpp in Sources */,
-				9F4E120E1E9582E100DE9D31 /* SquishThings.cpp in Sources */,
+				9F4E120E1E9582E100DE9D31 /* SquishObject.cpp in Sources */,
 				9FB69DD51E459AA4006325A3 /* Platform.cpp in Sources */,
 				9F36A4CC1E6D0AEF0016232D /* Peg.cpp in Sources */,
 				9FD41BEF1E2D54490077779E /* AppDelegate.cpp in Sources */,
@@ -913,6 +924,7 @@
 				9FD41C131E2D55C80077779E /* TestDelegate.cpp in Sources */,
 				9F06DB911E834F2300B1080A /* ProjectileFactory.cpp in Sources */,
 				9FF673A61E81F491004BC426 /* Resolution.cpp in Sources */,
+				9F1020FD1E98003F001374D3 /* SinkObject.cpp in Sources */,
 				9FD41C101E2D55920077779E /* testCharacter.cpp in Sources */,
 				9FC97C891E540E0300EF6C31 /* LevelEnd.cpp in Sources */,
 				9FD41BF31E2D54490077779E /* MainGameScene.cpp in Sources */,
