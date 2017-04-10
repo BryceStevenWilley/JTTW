@@ -19,7 +19,7 @@ void Monkey::impulseLeft(float deltaVel) {
         Character::impulseLeft(deltaVel);
     } else { // _state == CLIMBING
         if (this->getScaleX() > 0 && deltaVel > 0) { // Facing right
-            leavingClimeable();
+            leavingClimeable(false);
             Character::impulseLeft(deltaVel);
         } else {
             Character::impulseLeftButNoRebalance(deltaVel);
@@ -32,7 +32,7 @@ void Monkey::impulseRight(float deltaVel) {
         Character::impulseRight(deltaVel);
     } else { // _state == CLIMBING
         if (this->getScaleX() < 0 && deltaVel > 0) { // Facing right
-            leavingClimeable();
+            leavingClimeable(false);
             Character::impulseRight(deltaVel);
         } else {
             Character::impulseRightButNoRebalance(deltaVel);
@@ -63,7 +63,7 @@ void Monkey::initJump() {
     }
     if (_state == CLIMBING) {
         std::cout << "Currently Climbing" << std::endl;
-        leavingClimeable();
+        leavingClimeable(false);
         this->_currentState = Character::State::STANDING;
         jumpPower = jumpPower - ideal2Res(100);
         Character::initJump(jumpPower);
@@ -119,18 +119,26 @@ void Monkey::updateClimbingVel() {
 }
 
 void Monkey::enteringClimeable(cocos2d::PhysicsWorld *world, SceneObject *p, cocos2d::Vec2 offset, cocos2d::Vec2 upDir, bool alreadyOn) {//, Platform *platform) {
-    leavingClimeable();
+    if (!alreadyOn && pinJoint != nullptr) {
+        std::cout << "Something's weird, ignore this call." << std::endl;
+        return;
+    }
+    leavingClimeable(true);
+    if (!alreadyOn) {
+        climbingCount += 1;
+    }
     pinJoint = cocos2d::PhysicsJointPin::construct(this->body, p->getPhysicsBody(), cocos2d::Vec2::ZERO, offset);
     world->addJoint(pinJoint);
     currentAttached = p;
     currentAttachedOffset = offset;
+    
+    body->setGravityEnable(false);
     
     if (!alreadyOn) {
         this->setTimeScale(2.0);
         this->setAnimation(0, "ClimbIdle", true);
     } else {
         this->setTimeScale(2.0);
-        //this->setTimeScale(1.0);
         this->setAnimation(0, "Climb", true);
         this->addAnimation(0, "ClimbIdle", true);
     }
@@ -163,28 +171,38 @@ void Monkey::moveAlongClimbable(cocos2d::Vec2 up) {
     }
 }
 
-void Monkey::leavingClimeable() {
-    std::cout << "Leaving climbing" << std::endl;
+void Monkey::leavingClimeable(bool goingToReattach) {
     if (pinJoint != nullptr) {
         pinJoint->removeFormWorld();
         pinJoint = nullptr;
     }
     
-    if (_state == CLIMBING) {
+    if (!goingToReattach) {
+        climbingCount -= 1;
+        _state = NORMAL;
+        body->setGravityEnable(true);
         this->setTimeScale(1.0);
         this->setAnimation(0, "JumpForwardFromClimb", false);
     }
-    _state = NORMAL;
-    body->setGravityEnable(true);
 }
 
 void Monkey::continueMotion() {
     if (_currentState != Character::State::FROZEN &&
+            _currentState != Character::State::QUICKSANDED &&
             _state != SWINGING &&
             _state != CLIMBING &&
             wallsHit == 0 && 
             std::abs(rightMomentum - leftMomentum)/body->getMass() > 0.01) {
         rebalanceImpulse();
+    } else if (_currentState == Character::State::QUICKSANDED) {
+        double totalMomentum = rightMomentum - leftMomentum;
+        if (totalMomentum == 0.0) {
+            body->setVelocity(cocos2d::Vec2(0.0, Character::_q->_recoverVel));
+        } else {
+            double targetVelocity = totalMomentum / body->getMass() / 3.0;
+
+            body->setVelocity(cocos2d::Vec2(targetVelocity, -_q->_sinkVel));
+        }
     }
 }
 
@@ -268,9 +286,9 @@ void Monkey::restartFromRespawn() {
     if (_state == SWINGING) {
         leavingVine(false);
     } else
-    leavingClimeable();
+    leavingClimeable(true);
     Character::restartFromRespawn();
-    leavingClimeable();
+    leavingClimeable(true);
 }
 
   
@@ -334,4 +352,8 @@ void Monkey::setHangingCharacter(Character *c) {
 
 bool Monkey::hasHangingCharacter() {
     return _hangingCharacter != nullptr;
+}
+
+bool Monkey::shouldBeControlled() {
+    return  Character::shouldBeControlled() && _state != Monkey::SWINGING;
 }

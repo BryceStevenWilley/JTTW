@@ -37,8 +37,14 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
     double height = 780.0f;
     auto bodyShape = cocos2d::PhysicsShapeBox::create(cocos2d::Size(width * .95, height * (2.0/3.0)), mat, cocos2d::Vec2(0.0, height/9.0));
     auto bottomSemiCircle = cocos2d::PhysicsShapeCircle::create(width * (.97/2.0), mat, cocos2d::Vec2(0.0, -height * (0.8/4.0)));
+    //auto bottomSensor = cocos2d::PhysicsShapeBox::create(cocos2d::Size(width * .4, height * .4), mat, cocos2d::Vec2(0.0, -height * (1.0 /2.0)));
+    //bottomSensor->setSensor(true);
+    //bottomSensor->setCategoryBitmask((int)CollisionCategory::Character);
+   // bottomSensor->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
+    //bottomSensor->setContactTestBitmask((int)CollisionCategory::ALL);
     body->addShape(bodyShape);
     body->addShape(bottomSemiCircle);
+    //body->addShape(bottomSensor);
     body->setCategoryBitmask((int)CollisionCategory::Character);
     body->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
     body->setContactTestBitmask((int)CollisionCategory::ALL);
@@ -82,16 +88,35 @@ cocos2d::Size Character::getSize() {
 void Character::impulseLeft(float deltaVel) {
     double impulse = body->getMass() * deltaVel;
     leftMomentum += impulse;
-    if (_currentState != State::FROZEN || _currentState != State::HANGING) {
+    if (_currentState != State::FROZEN || _currentState != State::HANGING || _currentState != State::QUICKSANDED) {
         rebalanceImpulse();
+    } else if (_currentState == State::QUICKSANDED) {
+        double totalMomentum = rightMomentum - leftMomentum;
+        if (totalMomentum == 0.0) {
+            body->setVelocity(cocos2d::Vec2(0.0, _q->_recoverVel));
+        } else {
+            double targetVelocity = totalMomentum / body->getMass() / 3.0;
+
+            body->setVelocity(cocos2d::Vec2(targetVelocity, -_q->_sinkVel));
+        }
     }
 }
 
 void Character::impulseRight(float deltaVel) {
     double impulse = body->getMass() * deltaVel;
     rightMomentum += impulse;
-    if (_currentState != State::FROZEN || _currentState != State::HANGING) {
+    if (_currentState != State::FROZEN || _currentState != State::HANGING || _currentState != State::QUICKSANDED) {
         rebalanceImpulse();
+    }  else if (_currentState == State::QUICKSANDED) {
+    
+        double totalMomentum = rightMomentum - leftMomentum;
+        if (totalMomentum == 0.0) {
+            body->setVelocity(cocos2d::Vec2(0.0, _q->_recoverVel));
+        } else {
+            double targetVelocity = totalMomentum / body->getMass() / 3.0;
+
+            body->setVelocity(cocos2d::Vec2(targetVelocity, -_q->_sinkVel));
+        }
     }
 }
 
@@ -107,9 +132,18 @@ void Character::impulseRightButNoRebalance(float deltaVel) {
 
 void Character::applyForceRight(double fprime_x) {
     cocos2d::Vec2 F_x = cocos2d::Vec2(fprime_x * body->getMass(), 0);
+
     // Project the force onto the right direction vector to avoid 
     // bumping into objects as much as possible.
-    body->applyForce(F_x.project(_rightVector));
+    if (_currentState != State::QUICKSANDED) {
+        body->applyForce(F_x.project(_rightVector));
+    } else {
+        if (fprime_x < 1.0) {
+           body->setVelocity(cocos2d::Vec2(0.0, _q->_recoverVel));
+        } else {
+           body->setVelocity(cocos2d::Vec2(fprime_x * body->getMass() / 3.0, -_q->_sinkVel));
+        }
+    }
     // TODO: update the animation properly!
 }
 
@@ -128,10 +162,21 @@ void Character::rebalanceImpulse() {
 void Character::continueMotion() {
     if (_currentState != State::FROZEN &&
             _currentState != State::HANGING &&
+            _currentState != State::QUICKSANDED &&
             //platformsStandingOn != 0 &&
             wallsHit == 0 && 
             std::abs(rightMomentum - leftMomentum)/body->getMass() > 0.01) {
         rebalanceImpulse();
+    } else if (_currentState == State::QUICKSANDED) {
+    
+        double totalMomentum = rightMomentum - leftMomentum;
+        if (totalMomentum == 0.0) {
+            body->setVelocity(cocos2d::Vec2(0.0, _q->_recoverVel));
+        } else {
+            double targetVelocity = totalMomentum / body->getMass() / 3.0;
+
+            body->setVelocity(cocos2d::Vec2(targetVelocity, -_q->_sinkVel));
+        }
     }
 }
 
@@ -153,7 +198,7 @@ void Character::freeze() {
 // While the key is pressed, apply a force (that is decaying) under a jump time
 // amount.
 void Character::initJump(double force) {
-    if (_currentState == State::MID_AIR || _currentState == State::FROZEN) {
+    if (_currentState == State::MID_AIR || _currentState == State::FROZEN || _currentState == State::QUICKSANDED) {
         // Can't jump while you're in the air, dummy!
         return;
     }
@@ -173,7 +218,7 @@ void Character::stopJump() {
 }
 
 void Character::jumpFromForce(double fprime_y) {
-    if (_currentState == State::MID_AIR || _currentState == State::FROZEN) {
+    if (_currentState == State::MID_AIR || _currentState == State::FROZEN || _currentState == State::QUICKSANDED) {
         // Can't jump while you're in the air, dummy!
         return;
     }
@@ -200,7 +245,7 @@ void Character::landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRigh
     // TODO: check if we don't need to do this for plats > 2
     _rightVector = newRightDir;
     
-    if (_currentState != State::FROZEN && _currentState != State::HANGING) {
+    if (_currentState != State::FROZEN && _currentState != State::HANGING && _currentState != State::QUICKSANDED) {
         State oldState = _currentState;
         _currentState = State::STANDING;
         updateAnimation(oldState);
@@ -209,6 +254,7 @@ void Character::landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRigh
 
 void Character::leftCallback(cocos2d::PhysicsBody *plat) {
     platformsStandingOn -= 1;
+
     if (platformsStandingOn == 0 && _currentState != HANGING) {
         State oldState = _currentState;
         _currentState = State::MID_AIR;
@@ -222,12 +268,10 @@ void Character::leftCallback(cocos2d::PhysicsBody *plat) {
 
 void Character::wallHitCallback(cocos2d::PhysicsBody *wall) {
     wallsHit += 1;
-    std::cout << "Walls: " << wallsHit << std::endl;
 }
 
 void Character::wallLeftCallback(cocos2d::PhysicsBody *wall) {
     wallsHit -= 1;
-    std::cout << "Walls: " << wallsHit << std::endl;
     if (wallsHit < 0) {
         std::cerr << "ERROR: can't be in contact with negative walls, " << characterName << std::endl;
         wallsHit = 0;
@@ -255,7 +299,6 @@ void Character::updateLoop(float delta) {
     // Kinda unrelated stuff regarding frozen.
     if (_currentState == State::FROZEN) {
         _frozenTimer -= delta;
-        std::cout << "timer is " << _frozenTimer  << std::endl;
         if (_frozenTimer <= 0.0) {
             std::cout << "Un-freezing" << std::endl;
             State oldState = _currentState;
@@ -432,4 +475,27 @@ void Character::callHey() {
     // TODO: do animation for Hey!
     CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/hey.wav");
 }
+
+void Character::landedInQuicksand(Quicksand *q) {
+    //this->body->setDynamic(false);
+    this->body->setGravityEnable(false);
+    this->body->setCollisionBitmask((int)CollisionCategory::None);
+    this->body->setContactTestBitmask((int)CollisionCategory::None);
+    _q = q;
+    _currentState = QUICKSANDED;
+}
+
+void Character::leftQuicksand() {
+    this->body->setGravityEnable(true);
+    body->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
+    body->setContactTestBitmask((int)CollisionCategory::ALL);
+    _q = nullptr;
+    _currentState = STANDING;
+    body->setVelocity(cocos2d::Vec2::ZERO);
+}
+
+bool Character::shouldBeControlled() {
+    return !(getCurrentState() == Character::HANGING);
+}
+
 

@@ -49,7 +49,7 @@ public:
     
     bool onContactBegin(cocos2d::PhysicsContact &contact);
     bool onContactEnd(cocos2d::PhysicsContact &contact);
-    bool onContactPostSolve(cocos2d::PhysicsContact &contact);
+    void onContactPostSolve(cocos2d::PhysicsContact &contact, const cocos2d::PhysicsContactPostSolve &solve);
     bool onContactHandler(cocos2d::PhysicsContact &contact, bool begin);
  
  

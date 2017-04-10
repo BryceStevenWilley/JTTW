@@ -123,7 +123,7 @@ cocos2d::PhysicsBody *Platform::bodyFromTriangulation(std::vector<cocos2d::Vec2>
     // Final shape to add polygons too.
     if (points.size() == 0) {
         std::cerr << "Why are there no points in this platform?" << std::endl;
-        exit(1);
+        throw new std::exception();
     }
     
     auto toBuild = cocos2d::PhysicsBody::create();

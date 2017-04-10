@@ -21,7 +21,7 @@ public:
     };
     
     SinkObject(std::string &fileName, cocos2d::Vec2 centerHit, cocos2d::Vec2 centerHold, cocos2d::Size imageSize, std::vector<cocos2d::Vec2> points, std::vector<double> frictions,
-        std::vector<bool> deadlySides, double velocity, double pauseTime);
+        std::vector<bool> deadlySides, double velocity);
     
     virtual void move(float deltaTime);
     
@@ -31,11 +31,11 @@ public:
 private:
     State _currentState = State::PEAK;
     
+    int countOn = 0;
+    
     double _vel;
 };
 
 }
-
-
 
 #endif /* SinkObject_hpp */

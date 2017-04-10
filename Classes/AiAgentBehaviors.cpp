@@ -26,3 +26,12 @@ void AiAgent::stationaryBehavior(Character *player, std::vector<Character *> oth
     desiredVel = cocos2d::Vec2::ZERO;
     desiredPosition = _controlledCharacter->getPosition();
 }
+
+/**
+ * Will go to the absolute world point, goToPoint, which is set when the player presses 'Q' and
+ * companions are not following.
+ */
+void AiAgent::goToPointBehavior(Character *player, std::vector<Character *> otherCharacters) {
+    desiredVel = cocos2d::Vec2::ZERO;
+    desiredPosition = goToPoint;
+}

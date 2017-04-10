@@ -130,6 +130,9 @@
 		9FB69E071E46EE88006325A3 /* LevelSelectScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */; };
 		9FB69E081E46EE88006325A3 /* LevelSelectScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */; };
 		9FB69E091E46EE88006325A3 /* LevelSelectScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */; };
+		9FBDAC6A1E9BB840000CE85F /* Quicksand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FBDAC681E9BB840000CE85F /* Quicksand.cpp */; };
+		9FBDAC6B1E9BB840000CE85F /* Quicksand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FBDAC681E9BB840000CE85F /* Quicksand.cpp */; };
+		9FBDAC6C1E9BB840000CE85F /* Quicksand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FBDAC681E9BB840000CE85F /* Quicksand.cpp */; };
 		9FC227041E64BA1300AA75D5 /* characters in Resources */ = {isa = PBXBuildFile; fileRef = 454B170A1E2F39280035467D /* characters */; };
 		9FC227051E64BA4000AA75D5 /* characters in Resources */ = {isa = PBXBuildFile; fileRef = 454B170A1E2F39280035467D /* characters */; };
 		9FC4C2EF1E39293F00ABD648 /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC4C2ED1E39293F00ABD648 /* Platform.cpp */; };
@@ -316,6 +319,8 @@
 		9FB69E001E46E93A006325A3 /* levelFiles */ = {isa = PBXFileReference; lastKnownFileType = folder; path = levelFiles; sourceTree = "<group>"; };
 		9FB69E051E46EE88006325A3 /* LevelSelectScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelSelectScene.cpp; sourceTree = "<group>"; };
 		9FB69E061E46EE88006325A3 /* LevelSelectScene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LevelSelectScene.hpp; sourceTree = "<group>"; };
+		9FBDAC681E9BB840000CE85F /* Quicksand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Quicksand.cpp; sourceTree = "<group>"; };
+		9FBDAC691E9BB840000CE85F /* Quicksand.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Quicksand.hpp; sourceTree = "<group>"; };
 		9FC4C2ED1E39293F00ABD648 /* Platform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Platform.cpp; sourceTree = "<group>"; };
 		9FC4C2EE1E39293F00ABD648 /* Platform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Platform.hpp; sourceTree = "<group>"; };
 		9FC4C2F61E3B9BF200ABD648 /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
@@ -622,6 +627,8 @@
 				9F1020F41E97C582001374D3 /* Moveable.hpp */,
 				9F1020F91E98003F001374D3 /* SinkObject.cpp */,
 				9F1020FA1E98003F001374D3 /* SinkObject.hpp */,
+				9FBDAC681E9BB840000CE85F /* Quicksand.cpp */,
+				9FBDAC691E9BB840000CE85F /* Quicksand.hpp */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
@@ -862,6 +869,7 @@
 				9F16FC101E54CCDB00D9DBCA /* Piggy.cpp in Sources */,
 				9F36A4CA1E6D0AEF0016232D /* Peg.cpp in Sources */,
 				503AE10117EB989F00D1A890 /* main.m in Sources */,
+				9FBDAC6A1E9BB840000CE85F /* Quicksand.cpp in Sources */,
 				9FB69DDB1E459B90006325A3 /* Character.cpp in Sources */,
 				9F666E461E30201C00F9BB90 /* AiAgent.cpp in Sources */,
 				9FF673A41E81F491004BC426 /* Resolution.cpp in Sources */,
@@ -892,6 +900,7 @@
 				9F4E120D1E9582E100DE9D31 /* SquishObject.cpp in Sources */,
 				9F98AF921E2C99E2009559C7 /* Viewpoint.cpp in Sources */,
 				9FB69DDC1E459B90006325A3 /* Character.cpp in Sources */,
+				9FBDAC6B1E9BB840000CE85F /* Quicksand.cpp in Sources */,
 				9F16FC111E54CCDB00D9DBCA /* Piggy.cpp in Sources */,
 				9F15D9191E5FD4D300F77DF6 /* Boulder.cpp in Sources */,
 				503AE10517EB98FF00D1A890 /* main.cpp in Sources */,
@@ -917,6 +926,7 @@
 				9FD41BEF1E2D54490077779E /* AppDelegate.cpp in Sources */,
 				9FD41BF01E2D54490077779E /* Viewpoint.cpp in Sources */,
 				9FB69E091E46EE88006325A3 /* LevelSelectScene.cpp in Sources */,
+				9FBDAC6C1E9BB840000CE85F /* Quicksand.cpp in Sources */,
 				9F9EDA6E1E92404E00C264FF /* Zone.cpp in Sources */,
 				9FD41C151E2D56220077779E /* main.cpp in Sources */,
 				9FB69DE41E46D93D006325A3 /* MainMenuScene.cpp in Sources */,

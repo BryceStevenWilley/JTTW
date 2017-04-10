@@ -16,7 +16,6 @@ cocos2d::Scene* LevelSelect::createScene() {
     auto scene = cocos2d::Scene::create();
     auto layer = LevelSelect::create();
     scene->addChild(layer);
-    
     return scene;
 }
 
@@ -50,38 +49,43 @@ void LevelSelect::findLevelFiles(bool includeDev) {
     for (int i = 0; i < (int)toReturn.size(); i++) {
         std::stringstream ss1;
         ss1 << "levelFiles/" << toReturn[i];
-        allLevelPaths.push_back(ss1.str());
+        LevelInfoStruct info;
+        info.path = ss1.str();
+        info.fileName = toReturn[i];
+        allLevels.push_back(info);
     }
-    for (int i = 0; i < (int)allLevelPaths.size(); i++) {
-        std::ifstream inFile(allLevelPaths[i]);
+    for (size_t i = 0; i < allLevels.size(); i++) {
+        std::ifstream inFile(allLevels[i].path);
         nlohmann::json lvl;
         inFile >> lvl;
     
         cocos2d::Sprite *img;
         try {
             std::string levelName = lvl["levelName"];
-            allLevelNames.push_back(levelName);
+            allLevels[i].title = levelName;
             std::stringstream ss;
-            ss << "levelFiles/previews/" << levelName << "Preview.png";
+            ss << "levelFiles/previews/" << allLevels[i].title << "Preview.png";
             std::string imgPath = ss.str();
-            orderedLevels[lvl["levelNumber"]] = levelName;
+            allLevels[i].order = lvl["levelNumber"];
             img = cocos2d::Sprite::create(imgPath);
             if (img == NULL) {
                 std::cout << "couldn't find image file for " << imgPath << std::endl;
                 img = cocos2d::Sprite::create("assets/lock.png");
             }
         } catch (std::domain_error ex) {
-            std::cout << "Failed to parse " << allLevelPaths[i] << std::endl;
-            allLevelNames.push_back(allLevelPaths[i]);
+            std::cout << "Failed to parse " << allLevels[i].path << std::endl;
+            allLevels[i].title = allLevels[i].path;
             img = cocos2d::Sprite::create();
         }
         img->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/2.0));
         img->setVisible(false);
         img->setContentSize(visibleSize * (4.5 / 10.0));
-        allLevelThumbnails.push_back(img);
+        allLevels[i].thumbnail = img;
        
         this->addChild(img);
     }
+    
+    std::sort(allLevels.begin(), allLevels.end());
 }
 
 // Sets up the selection menu by looking through the level folder and displaying
@@ -110,13 +114,13 @@ bool LevelSelect::init() {
 
     // Create menu items for each of the level files that we have.
     findLevelFiles(false);
-    if (allLevelPaths.size() == 0) {
+    if (allLevels.size() == 0) {
         std::cout << "Can't find any level files!" << std::endl;
         return false;
     }
 
     currentLevel = 0;
-    allLevelThumbnails[currentLevel]->setVisible(true);
+    allLevels[currentLevel].thumbnail->setVisible(true);
     
     auto border = cocos2d::Sprite::create("levelFiles/previews/Border.png");
     border->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/2.0));
@@ -124,7 +128,7 @@ bool LevelSelect::init() {
     border->setScaleX(border->getScaleX() * .92);
     this->addChild(border, 10);
     
-    levelName = createSunriseLabel(allLevelNames[currentLevel], 60, fontScaleFactor);
+    levelName = createSunriseLabel(allLevels[currentLevel].title, 60, fontScaleFactor);
     levelName->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/7.0));
     this->addChild(levelName);
     
@@ -144,28 +148,28 @@ bool LevelSelect::init() {
     keyListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) {
         switch(keyCode) {
             case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-                allLevelThumbnails[currentLevel]->setVisible(false);
+                allLevels[currentLevel].thumbnail->setVisible(false);
                 if (currentLevel == 0) {
-                    currentLevel = (int)allLevelNames.size();
+                    currentLevel = (int)allLevels.size();
                 }
                 currentLevel--;
-                levelName->setString(allLevelNames[currentLevel]);
-                allLevelThumbnails[currentLevel]->setVisible(true);
+                levelName->setString(allLevels[currentLevel].title);
+                allLevels[currentLevel].thumbnail->setVisible(true);
                 break;
             
             case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-                allLevelThumbnails[currentLevel]->setVisible(false);
+                allLevels[currentLevel].thumbnail->setVisible(false);
                 currentLevel++;
-                if (currentLevel == allLevelNames.size()) {
+                if (currentLevel == allLevels.size()) {
                     currentLevel = 0;
                 }
-                levelName->setString(allLevelNames[currentLevel]);
-                allLevelThumbnails[currentLevel]->setVisible(true);
+                levelName->setString(allLevels[currentLevel].title);
+                allLevels[currentLevel].thumbnail->setVisible(true);
                 break;
             
             case cocos2d::EventKeyboard::KeyCode::KEY_ENTER:
             case cocos2d::EventKeyboard::KeyCode::KEY_SPACE:
-                this->menuCallback(allLevelPaths[currentLevel]);
+                this->menuCallback(allLevels[currentLevel].path);
                 break;
                 
             case cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE: {
@@ -176,19 +180,17 @@ bool LevelSelect::init() {
             }
             
             case cocos2d::EventKeyboard::KeyCode::KEY_9:
-                for (int i = 0; i < (int)allLevelThumbnails.size(); i++) {
-                    this->removeChild(allLevelThumbnails[i]);
+                for (size_t i = 0; i < allLevels.size(); i++) {
+                    this->removeChild(allLevels[i].thumbnail);
                 }
             
                 // Activates debug mode!
-                allLevelNames.clear();
-                allLevelPaths.clear();
-                allLevelThumbnails.clear();
+                allLevels.clear();
                 
                 findLevelFiles(true);
                 currentLevel = 0;
-                levelName->setString(allLevelNames[currentLevel]);
-                allLevelThumbnails[currentLevel]->setVisible(true);
+                levelName->setString(allLevels[currentLevel].title);
+                allLevels[currentLevel].thumbnail->setVisible(true);
                 devMode->setVisible(true);
                 break;
                 
@@ -204,16 +206,20 @@ bool LevelSelect::init() {
 
 // Go to whatever level was selected.
 void LevelSelect::menuCallback(std::string newLevel) {
-    cocos2d::Scene *startScene;
-    CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
-    startScene = MainGameScene::createScene(newLevel);
-    //CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
-    if (startScene == NULL) {
-        titleLabel->setString("Something went wrong!\n Choose a different level!");
-        //titleLabel->setBMFontSize(40);
-        return;
-    }
-    this->_eventDispatcher->removeEventListener(keyListener);
-    auto fade = cocos2d::TransitionFade::create(1.5, startScene);
-    cocos2d::Director::getInstance()->replaceScene(fade);
+    titleLabel->setString("Loading...");
+    
+    auto loadLevel = cocos2d::CallFunc::create([this, newLevel]() {
+        cocos2d::Scene *startScene = nullptr;
+        startScene = MainGameScene::createScene(newLevel);
+        if (startScene == nullptr) {
+           titleLabel->setString("Something went wrong!\n Choose a different level!");
+           return;
+        }
+        //CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+        this->_eventDispatcher->removeEventListener(keyListener);
+        auto fade = cocos2d::TransitionFade::create(1.5, startScene);
+        cocos2d::Director::getInstance()->replaceScene(fade);
+    });
+
+    this->runAction(cocos2d::Sequence::create(cocos2d::FadeIn::create(.2), loadLevel, NULL));
 }

@@ -22,7 +22,7 @@ void AiAgent::cedeToPlayer(AiAgent *previousPlayer) {
     if (_currentBehavior == &AiAgent::stationaryBehavior) {
         // Need to transfer velocity.
         previousPlayer->_controlledCharacter->transferVelocity(_controlledCharacter);
-    } else if (_currentBehavior == &AiAgent::followBehavior) {
+    } else if (_currentBehavior == &AiAgent::followBehavior || _currentBehavior == &AiAgent::goToPointBehavior) {
         // Need to transfer velocity, and reset the control forces that were previously acting there.
         _controlledCharacter->body->resetForces();
         previousPlayer->_controlledCharacter->transferVelocity(_controlledCharacter);
@@ -42,16 +42,14 @@ void AiAgent::adjustOffset(Character *player) {
 }
 
 void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeyboard::KeyCode code, bool pressed) {
-    if (pressed) {
-        changeBehavior(_controlledCharacter, code);
-    }
+    changeBehavior(_controlledCharacter, code, pressed);
+    
     // All code to control goes here.
     using KeyCode = cocos2d::EventKeyboard::KeyCode;
     
     switch(code) {
         case KeyCode::KEY_LEFT_ARROW:
             if (pressed) {
-                std::cout << "Going left: " << _controlledCharacter->characterName;
                 _controlledCharacter->impulseLeft(IMPULSE_AMOUNT);
             } else { // released
                 _controlledCharacter->impulseLeft(-IMPULSE_AMOUNT);
@@ -100,33 +98,40 @@ void AiAgent::plan(Character *player, std::vector<Character *> otherCharacters) 
         std::cout << "ERROR: calling wrong function for ai controlled character" << std::endl;
         return;
     }
-    (this->*_currentBehavior)(player, otherCharacters);
-    if (_controlledCharacter->getCurrentState() == Character::HANGING) {
-        _no_control = true;
+    double dist = player->getPosition().distance(_controlledCharacter->getPosition());
+    if (dist < ideal2Res(850)) {
+         (this->*_currentBehavior)(player, otherCharacters);
     } else {
-        _no_control = false;
+        this->stationaryBehavior(player, otherCharacters);
     }
 }
 
-void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode code) {
-    if (code == cocos2d::EventKeyboard::KeyCode::KEY_A) { // 'A' is becoming a toggle.
-        if (_currentBehavior == &AiAgent::stationaryBehavior) {
+void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode code, bool pressed) {
+    if (pressed && code == cocos2d::EventKeyboard::KeyCode::KEY_A) { // 'A' is becoming a toggle.
+        if (_currentBehavior == &AiAgent::stationaryBehavior || _currentBehavior == &AiAgent::goToPointBehavior) {
             _currentBehavior = &AiAgent::followBehavior;
             _playerPosOffset = _controlledCharacter->getPosition() - player->getPosition();
             bool wasOn = _controlledCharacter->currentCrown->isVisible();
             _controlledCharacter->currentCrown->setVisible(false);
             _controlledCharacter->currentCrown = _controlledCharacter->followcrown;
             _controlledCharacter->currentCrown->setVisible(wasOn);
-        } else if (_currentBehavior == &AiAgent::followBehavior) {
+        } else if (pressed && _currentBehavior == &AiAgent::followBehavior) {
             _currentBehavior = &AiAgent::stationaryBehavior;
               bool wasOn = _controlledCharacter->currentCrown->isVisible();
             _controlledCharacter->currentCrown->setVisible(false);
             _controlledCharacter->currentCrown = _controlledCharacter->alonecrown;
             _controlledCharacter->currentCrown->setVisible(wasOn);
         }
-    } else if (code == cocos2d::EventKeyboard::KeyCode::KEY_Q) {
+    } else if (pressed && code == cocos2d::EventKeyboard::KeyCode::KEY_Q) {
         // Random variations on the default offset of 100.
         _playerPosOffset = cocos2d::Vec2(ideal2Res(-100), 0) + cocos2d::Vec2(ideal2Res((rand() % 120)) - ideal2Res(60), 0);
+        if (_currentBehavior == &AiAgent::stationaryBehavior || _currentBehavior == &AiAgent::goToPointBehavior) {
+            goToPoint = player->getPosition() + _playerPosOffset;
+            _currentBehavior = &AiAgent::goToPointBehavior;
+        }
+    } else {
+        // Try their specials.
+        _controlledCharacter->characterSpecial(code, pressed);
     }
 }
 
@@ -135,8 +140,7 @@ void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode 
  * (set by the current behavior).
  */
 void AiAgent::executeControl(float delta) {
-    if (_controlledCharacter->getCurrentState() == Character::HANGING || (_controlledCharacter->characterName == "Monkey" && ((Monkey *)_controlledCharacter)->getMonkeyState() == Monkey::SWINGING)) {
-        std::cout << "Not controlling! : " << _controlledCharacter->characterName << std::endl;
+    if (!_controlledCharacter->shouldBeControlled()) {
         return;
     }
     // Do the control stuff.
@@ -146,6 +150,8 @@ void AiAgent::executeControl(float delta) {
     cocos2d::Vec2 fprime = errorPosition * kp + errorVelocity * kv;
     
     _controlledCharacter->applyForceRight(fprime.x);
+    
+    // Cap the character at the maximum horizontal velocity (negative or positive).
     if (std::abs(_controlledCharacter->body->getVelocity().x) > MAX_HORI_VEL) {
         int sign = 1;
         if (_controlledCharacter->body->getVelocity().x < 0) {

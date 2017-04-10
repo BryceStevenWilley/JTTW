@@ -34,6 +34,8 @@ public:
     void removeHeldCharacter(Character *c);
     void launchHeldCharacters();
     
+    virtual bool shouldBeControlled() override;
+    
 private:
     State _state = NORMAL;
     
