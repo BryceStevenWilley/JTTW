@@ -6,7 +6,7 @@ using namespace JTTW;
 const double Sandy::JUMP_INIT = ideal2Res(530);
 
 Sandy::Sandy(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
- Character("Sandy", cocos2d::PhysicsMaterial(0.8, 0.0, 1.0), startPosition, dimensions) {}
+ Character("Sandy", cocos2d::PhysicsMaterial(1.0, 0.0, 1.0), startPosition, dimensions) {}
 
 
 void Sandy::initJump() {

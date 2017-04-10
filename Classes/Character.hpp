@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <spine/spine-cocos2dx.h>
 #include "SceneObject.hpp"
+#include "Quicksand.hpp"
 #include "cocos2d.h"
 
 namespace JTTW {
@@ -40,7 +41,8 @@ public:
         STANDING,
         MID_AIR,
         FROZEN,
-        HANGING
+        HANGING,
+        QUICKSANDED
     };
     
     static Character *createFromName(const std::string name, cocos2d::Vec2 startPosition, cocos2d::Size dimensions);
@@ -85,6 +87,9 @@ public:
     void wallHitCallback(cocos2d::PhysicsBody *wall);
     void wallLeftCallback(cocos2d::PhysicsBody *wall);
     
+    void landedInQuicksand(Quicksand *q);
+    void leftQuicksand();
+    
     void transferVelocity(Character *reciever);
     
     bool justJumped() const;
@@ -110,13 +115,13 @@ public:
     void toggleToAI();
     void toggleToPlayer();
     
+    virtual bool shouldBeControlled();
+    
     void enteringHanging(cocos2d::PhysicsWorld *world, Character *m, cocos2d::Vec2 offsetVec, bool alreadyOn);
     void leavingHanging();
     
     void setToRespawn();
     bool _respawnNextCycle = false;
-
-
 
 protected:
     void initJump(double force);
@@ -125,6 +130,8 @@ protected:
     double leftMomentum = 0.0;
     double rightMomentum = 0.0;
     int wallsHit = 0;
+    
+    Quicksand *_q = nullptr;
     
 private:
     void updateAnimation(State oldState);

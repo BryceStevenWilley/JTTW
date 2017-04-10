@@ -19,9 +19,6 @@ SquishObject::SquishObject(std::string &fileName, cocos2d::Vec2 centerHit, cocos
 }
     
 void SquishObject::move(float deltaTime) {
-    std::cout << "This: " << this << std::endl;
-    std::cout << "This position x: " << this->getPositionX() << std::endl;
-    std::cout << "Current State: " << _currentState << std::endl;
     if (_currentState == PREP && goneFarToB(deltaTime)) {
         setVelocityTowardsA(0.0);
         _currentState = HOLD;

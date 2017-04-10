@@ -37,13 +37,17 @@ public:
     
     void setVelocityTowardsA(double vel) {
         _velocities = vel * (_centerA - _centerB)/(_centerA - _centerB).getLength();
-        deathBody->setVelocity(_velocities);
+        if (deathBody != nullptr) {
+            deathBody->setVelocity(_velocities);
+        }
         body->setVelocity(_velocities);
     }
     
     void setVelocityTowardsB(double vel) {
         _velocities = vel * (_centerB - _centerA)/(_centerB - _centerA).getLength();
-        deathBody->setVelocity(_velocities);
+        if (deathBody != nullptr) {
+            deathBody->setVelocity(_velocities);
+        }
         body->setVelocity(_velocities);
     }
 

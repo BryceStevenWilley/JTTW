@@ -18,6 +18,8 @@
 #include <string>
 #include "Cutscene.hpp"
 #include "SquishObject.hpp"
+#include "SinkObject.hpp"
+#include "Quicksand.hpp"
 
 using namespace cocos2d;
 using namespace JTTW;
@@ -25,7 +27,7 @@ using namespace JTTW;
 const int UI_LAYER_Z_IDX = 2;
 const int LVL_LAYER_Z_IDX = 1;
 
-const double MASS_TO_SINK_CLOUD = 3000;
+const double MASS_TO_SINK_CLOUD = 10000;
 
 const int GRAVITY = ideal2Res(-750);
 const cocos2d::Vec2 UI_HEAD_START = cocos2d::Vec2(ideal2Res(40.0), ideal2Res(40.0));
@@ -35,7 +37,7 @@ cocos2d::Scene* MainGameScene::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::createWithPhysics();
     scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, GRAVITY));
-    scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
+    //scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = MainGameScene::create(levelToLoad, scene->getPhysicsWorld());
     if (layer == NULL) {
         return NULL;
@@ -89,6 +91,15 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
             return false;
         }
     }
+
+    if (node->getTag() == QUICKSAND_TAG) {
+        if (begin) {
+            c->landedInQuicksand((Quicksand *)node);
+        } else {
+            c->leftQuicksand();
+        }
+    }
+
     if (node->getTag() == CHARACTER_TAG) {
         // Characters colliding: anyone and Monkey?
         Character *c2 = (Character *)node;
@@ -120,7 +131,6 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
                 p = (Piggy *) c2;
                 other = c;
             }
-            std::cout << "Pig doing stuff with " << other->characterName << std::endl;
             if (begin) {
                 p->addHeldCharacter(other);
             } else {
@@ -130,29 +140,36 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
         }
         return false;
     }
-    if (normal.dot(cocos2d::Vec2(0, -1)) > std::cos(M_PI / 4.0)) {
+    if (normal.dot(cocos2d::Vec2(0, -1)) > std::cos(M_PI * (1.2/ 4.0))) {
         if (begin) {
             c->landedCallback(body, normal.getPerp());
             
             if (node->getTag() == SINKABLE_TAG) {
+                SinkObject *sink = (SinkObject *) node;
                 std::cout << c->characterName << "'s mass is " << c->getMass() << std::endl;
                 if (c->getMass() > MASS_TO_SINK_CLOUD) {
-                    
+                    sink->landedCallback();
                 }
             }
+            return true;
         } else { // onContactEnd
             c->leftCallback(body);
+            if (node->getTag() == SINKABLE_TAG && c->getMass() > MASS_TO_SINK_CLOUD) {
+                ((SinkObject *)node)->removeCallback();
+            }
+            return true;
         }
     } else if (node->getTag() == CLIMBEABLE_TAG && c->characterName == "Monkey") {
         // TODO: hacky, fix
         Monkey *m = (Monkey *)c;
         Platform *p = (Platform *)node;
         if (begin) {
+            std::cout << "Monkey hit tree" << std::endl;
             cocos2d::Vec2 collisionPosition = m->getPosition();
-            
             m->enteringClimeable(this->getScene()->getPhysicsWorld(), p, (collisionPosition - p->getPosition()) / 1.5, normal.getPerp(), false);
         } else {
-            m->leavingClimeable();
+            std::cout << "Monkey is jumping off of the tree!" << std::endl;
+            m->leavingClimeable(false);
         }
     } else {
         // Non climbable vertical wall.
@@ -203,9 +220,24 @@ bool MainGameScene::onContactEnd(cocos2d::PhysicsContact& contact) {
     return onContactHandler(contact, false);
 }
 
-bool MainGameScene::onContactPostSolve(cocos2d::PhysicsContact& contact) {
-    // Set monkey to kinematic?
+bool characterPostSolve(cocos2d::PhysicsContact& contact, Character *c, cocos2d::PhysicsBody *body, Node *node, cocos2d::Vec2 normal) {
     return true;
+}
+
+void MainGameScene::onContactPostSolve(cocos2d::PhysicsContact& contact, const cocos2d::PhysicsContactPostSolve &solve) {
+    auto nodeA = contact.getShapeA()->getBody()->getNode();
+    auto nodeB = contact.getShapeB()->getBody()->getNode();
+    auto normal = contact.getContactData()->normal;
+    
+    if (nodeA->getTag() == CHARACTER_TAG) {
+        //Character *c = (Character *)nodeA;
+        //characterPostSolve(contact, c, contact.getShapeB()->getBody(), nodeB, normal);
+    }
+    
+    if (nodeB->getTag() == CHARACTER_TAG) {
+        //Character *c = (Character *)nodeB;
+        //characterPostSolve(contact, c, contact.getShapeA()->getBody(), nodeA, -normal);
+    }
 }
 
 const int PLATFORM_Z = 4;
@@ -300,6 +332,21 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
         
         if(pAtt["book"]["strList"]["interactable.Platform$Type"].is_string()) {
             typeText = pAtt["book"]["strList"]["interactable.Platform$Type"];
+        }
+        
+        if (pAtt["book"]["boolList"]["Sinkable"].is_boolean() && pAtt["book"]["boolList"]["Sinkable"]) {
+            std::cout <<" Sinkable!" << std::endl;
+            cocos2d::Vec2 centerA(centerX, centerY);
+            double centerBX = vp.metersToPixels((double)pAtt["endpoint"]["x"]);
+            double centerBY = vp.metersToPixels((double)pAtt["endpoint"]["y"]);
+            cocos2d::Vec2 centerB(centerBX, centerBY);
+            double maximumVelocity = ideal2Res(vp.metersToPixels((double)pAtt["book"]["doubList"]["Velocity"]));
+            SinkObject *p = new SinkObject(fullImagePath, centerB, centerA, cocos2d::Size(imageSizeWidth, imageSizeHeight), ps, frictions, deathEdges, maximumVelocity);
+
+            levelLayer->addChild(p, z);
+            platforms.push_back(p);
+            moveables.push_back(p);
+            continue;
         }
         
         if (typeText == "MOVING") {
@@ -561,6 +608,38 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
             levelLayer->addChild(label, z);
         }
     }
+    
+    if (lvl["quicksand"].is_object()) {
+        nlohmann::json in_quicksand = lvl["quicksand"];
+        for (auto &qAtt: in_quicksand) {
+            std::string fullImagePath = qAtt["path"];
+            fullImagePath = "assets/" + fullImagePath;
+            double centerX = vp.metersToPixels((double)qAtt["centerXM"]);
+            double centerY = vp.metersToPixels((double)qAtt["centerYM"]);
+            double imageSizeWidth = vp.metersToPixels((double)qAtt["scaledIGWM"]);
+            double imageSizeHeight = vp.metersToPixels((double)qAtt["scaledIGHM"]);
+        
+            int z;
+            if (qAtt["book"]["doubList"]["Z-order"].is_number()) {
+                z = (int)qAtt["book"]["doubList"]["Z-order"];
+            } else {
+                std::cout << "Using default z-order for " << fullImagePath << qAtt["ticket"] << std::endl;
+                z = PLATFORM_Z;
+            }
+        
+            std::vector<cocos2d::Vec2> ps;
+            for (auto& cPoint: qAtt["book"]["collPointList"]) {
+                ps.push_back(cocos2d::Vec2(vp.metersToPixels((double)cPoint["x"]), vp.metersToPixels((double)cPoint["y"])));
+            }
+        
+            double sinkVel = vp.metersToPixels((double)qAtt["book"]["doubList"]["sinkVel"]);
+            double recoverVel = vp.metersToPixels((double)qAtt["book"]["doubList"]["recoveryVel"]);
+
+            Quicksand *qq = new Quicksand(fullImagePath, cocos2d::Vec2(centerX, centerY), cocos2d::Size(imageSizeWidth, imageSizeHeight), ps, sinkVel, recoverVel);
+            
+            levelLayer->addChild(qq, z);
+        }
+    }
 
     levelEnd.x = vp.metersToPixels((double)lvl["eolPoint"]["x"]);
     levelEnd.y = vp.metersToPixels((double)lvl["eolPoint"]["y"]);
@@ -584,6 +663,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
         std::string levelName = lvl["levelName"];
     
         // Audio!
+        audio->stopBackgroundMusic();
         audio->playBackgroundMusic((std::string("Music/") + levelName + std::string(".mp3")).c_str());
     }
     
@@ -656,7 +736,7 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     auto contactListener = cocos2d::EventListenerPhysicsContact::create();
     contactListener->onContactBegin = CC_CALLBACK_1(MainGameScene::onContactBegin, this);
     contactListener->onContactSeparate = CC_CALLBACK_1(MainGameScene::onContactEnd, this);
-    contactListener->onContactPostSolve = CC_CALLBACK_1(MainGameScene::onContactPostSolve, this);
+    contactListener->onContactPostSolve = CC_CALLBACK_2(MainGameScene::onContactPostSolve, this);
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
     
     //// Setup pause menu.
@@ -755,25 +835,16 @@ void MainGameScene::KeypressedCallback(cocos2d::EventKeyboard::KeyCode keyCode, 
         case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
         case EventKeyboard::KeyCode::KEY_SPACE:
         case EventKeyboard::KeyCode::KEY_A:
+        case EventKeyboard::KeyCode::KEY_D:
         case EventKeyboard::KeyCode::KEY_O:
         case EventKeyboard::KeyCode::KEY_S:
         case EventKeyboard::KeyCode::KEY_Q:
             player->plan(characters, keyCode, true);
             for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
                 if ((*xAgent) != player) {
-                    (*xAgent)->changeBehavior(player->_controlledCharacter, keyCode);
+                    (*xAgent)->changeBehavior(player->_controlledCharacter, keyCode, true);
                 }
             }
-            break;
-
-        case EventKeyboard::KeyCode::KEY_0:
-            blackBarUp->runAction(cocos2d::MoveTo::create(1.0, upVisible));
-            blackBarDown->runAction(cocos2d::MoveTo::create(1.0, downVisible));
-            break;
-            
-        case EventKeyboard::KeyCode::KEY_2:
-            blackBarUp->runAction(cocos2d::MoveTo::create(1.0, upStart));
-            blackBarDown->runAction(cocos2d::MoveTo::create(1.0, downStart));
             break;
             
         case EventKeyboard::KeyCode::KEY_9:
@@ -790,6 +861,11 @@ void MainGameScene::KeypressedCallback(cocos2d::EventKeyboard::KeyCode keyCode, 
 void MainGameScene::KeyreleasedCallback(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
     if (haveReleased[keyCode]) {
         player->plan(characters, keyCode, false);
+        for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
+            if ((*xAgent) != player) {
+                (*xAgent)->changeBehavior(player->_controlledCharacter, keyCode, false);
+            }
+        }
     } else {
         haveReleased[keyCode] = true;
     }
@@ -1064,7 +1140,6 @@ void MainGameScene::resumeScene() {
     }
     for (auto &r: haveReleased) {
         if (stillPressed[r.first] && r.second == true ) {
-            std::cout << "Correcting key " << (int)r.first << std::endl;
             KeyreleasedCallback(r.first, nullptr);
         }
     }

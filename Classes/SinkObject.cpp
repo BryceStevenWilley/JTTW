@@ -8,9 +8,8 @@ SinkObject::SinkObject(std::string &fileName, cocos2d::Vec2 centerA, cocos2d::Ve
         std::vector<cocos2d::Vec2> points,
         std::vector<double> frictions,
         std::vector<bool> deadlySides,
-        double velocity,
-        double pauseTime) :
-        Moveable(fileName, centerA, centerB, imageSize, points, frictions, deadlySides, velocity), _vel(velocity)
+        double velocity) :
+        Moveable(fileName, centerB, centerA, imageSize, points, frictions, deadlySides, 0.0), _vel(velocity)
 {
    this->setTag(SINKABLE_TAG);
    _currentState = PEAK;
@@ -31,12 +30,19 @@ void SinkObject::move(float deltaTime) {
 }
 
 void SinkObject::landedCallback() {
+    countOn += 1; 
     _currentState = SINKING;
     setVelocityTowardsB(_vel);
 }
 
 void SinkObject::removeCallback() {
-    _currentState = FLOATING;
-    setVelocityTowardsA(_vel);
+    countOn -= 1;
+    if (countOn == 0) {
+        _currentState = FLOATING;
+        setVelocityTowardsA(_vel);
+    } else if (countOn < 0) {
+        std::cerr << "Sink object has negative people on it?" << std::endl;
+        countOn = 0;
+    }
 }
 

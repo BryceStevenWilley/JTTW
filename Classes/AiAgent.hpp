@@ -29,7 +29,7 @@ public:
     void adjustOffset(Character *player);
     void plan(std::vector<Character *> otherCharactrs, cocos2d::EventKeyboard::KeyCode code, bool pressed);
     void plan(Character *player, std::vector<Character *> otherCharacters);
-    void changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode code);
+    void changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode code, bool pressed);
     void executeControl(float delta);
     void setMap(); // TODO: when the map API is created, pass the object that holds the map to this.
     
@@ -57,8 +57,9 @@ private:
     // The possible behaivors of the AI. All of these methods are implemented in AiAgentBehaivors.cpp.
     void followBehavior(Character *player, std::vector<Character *> otherCharacters);
     void stationaryBehavior(Character *player, std::vector<Character *> otherCharacters);
+    void goToPointBehavior(Character *player, std::vector<Character *> otherCharacters);
     
-    bool _no_control = false;
+    cocos2d::Vec2 goToPoint;
 };
     
 };

@@ -10,6 +10,7 @@ const int PROJECTILE_TAG = 14;
 const int PEG_TAG = 15;
 const int INSTANT_DEATH_TAG = 16;
 const int SINKABLE_TAG = 17;
+const int QUICKSAND_TAG = 18;
 
 enum class CollisionCategory {
     None = 0,

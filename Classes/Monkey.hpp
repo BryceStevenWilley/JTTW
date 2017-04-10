@@ -30,7 +30,7 @@ public:
     
     //void enteringClimeable(cocos2d::Vec2 upDir);
     void enteringClimeable(cocos2d::PhysicsWorld *world, SceneObject *p, cocos2d::Vec2 offset, cocos2d::Vec2 upDir, bool alreadyOn);
-    void leavingClimeable();
+    void leavingClimeable(bool goingToReattach);
     
     
     void enteringVine(cocos2d::PhysicsWorld *world, SceneObject *vine, double offset, bool alreadyOn);
@@ -44,6 +44,8 @@ public:
     
     void setHangingCharacter(Character *c);
     bool hasHangingCharacter();
+    
+    virtual bool shouldBeControlled() override;
     
 private:
     void updateClimbingVel();
@@ -64,6 +66,8 @@ private:
     cocos2d::Vec2 _upDir;
     
     Character *_hangingCharacter = nullptr;
+    
+    int climbingCount = 0;
 };
 }
 
