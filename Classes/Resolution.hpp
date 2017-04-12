@@ -18,7 +18,7 @@ namespace JTTW {
     static const cocos2d::Size idealResolution = lardiumResolution;
     
     // The resolution being run on.
-    static const cocos2d::Size actualResolution = lardiumResolution;
+    static const cocos2d::Size actualResolution = mediumResolution;
     
     static const double screenScale = actualResolution.width / idealResolution.width;
     

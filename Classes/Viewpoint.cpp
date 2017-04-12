@@ -19,30 +19,32 @@ cocos2d::Vec2 Viewpoint::getNewLevelVec(cocos2d::Node *player, cocos2d::Size _sc
     // width/2.0 = level->position.x + player->getPosition().x;
     cocos2d::Vec2 centerPoint = player->getPosition();
     
+    cocos2d::Size scaledDims = _screenDims * (1.0 / _scale);
+    
     // Make sure that level view doesn't go out of limits.
-    float xmin = centerPoint.x - _screenDims.width / 2.0;
-    float xmax = centerPoint.x + _screenDims.width / 2.0;
-    float ymin = centerPoint.y - _screenDims.height / 2.0;
-    float ymax = centerPoint.y + _screenDims.height / 2.0;
+    float xmin = centerPoint.x - scaledDims.width / 2.0;
+    float xmax = centerPoint.x + scaledDims.width / 2.0;
+    float ymin = centerPoint.y - scaledDims.height / 2.0;
+    float ymax = centerPoint.y + scaledDims.height / 2.0;
     
     if (xmax > maxCornerLimit.x) {
         // Shift left.
-        centerPoint.x = maxCornerLimit.x - _screenDims.width / 2.0;
+        centerPoint.x = maxCornerLimit.x - scaledDims.width / 2.0;
     }
     
     if (xmin < minCornerLimit.x) {
         // Shift right.
-        centerPoint.x = minCornerLimit.x + _screenDims.width / 2.0;
+        centerPoint.x = minCornerLimit.x + scaledDims.width / 2.0;
     }
     
     if (ymax > maxCornerLimit.y) {
         // Shift down.
-        centerPoint.y = maxCornerLimit.y - _screenDims.height / 2.0;
+        centerPoint.y = maxCornerLimit.y - scaledDims.height / 2.0;
     }
     
     if (ymin < minCornerLimit.y) {
         // Shift up.
-        centerPoint.y = minCornerLimit.y + _screenDims.height / 2.0;
+        centerPoint.y = minCornerLimit.y + scaledDims.height / 2.0;
     }
     
     float newLevelX = (_screenDims.width/2.0 - centerPoint.x) * _scale;

@@ -183,7 +183,6 @@ spine::SkeletonAnimation *MainMenu::addCharacterAni(std::string name, cocos2d::V
     this->addChild(c);
     
     // Animate walking.
-        
     auto makeIdle = cocos2d::CallFunc::create([c]() {
         c->setAnimation(0, "idle", true);
     });

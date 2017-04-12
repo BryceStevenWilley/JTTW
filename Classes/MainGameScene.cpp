@@ -31,7 +31,7 @@ const double MASS_TO_SINK_CLOUD = 10000;
 
 const int GRAVITY = ideal2Res(-750);
 const cocos2d::Vec2 UI_HEAD_START = cocos2d::Vec2(ideal2Res(40.0), ideal2Res(40.0));
-const double UI_HEAD_INC = ideal2Res(70);
+const double UI_HEAD_INC = 70;
 
 cocos2d::Scene* MainGameScene::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
@@ -691,6 +691,8 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     
     // aka window dimensions
     auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+    std::cout << "VisibleSize: " << visibleSize.width << ", " << visibleSize.height << std::endl;
+    std::cout << "Resolution Size: " << actualResolution.width << ", " << actualResolution.height << std::endl;
     cocos2d::Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     // Creates the camera, or viewpoint for this scene.
@@ -775,7 +777,7 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     pauseListener->onKeyReleased = CC_CALLBACK_2(MainGameScene::PausedKeyReleasedCallback, this);
     
     curtain = cocos2d::Sprite::create("assets/BlackBar.png");
-    curtain->setContentSize(cocos2d::Size(visibleSize.width, visibleSize.height));
+    curtain->setContentSize(cocos2d::Size(visibleSize.width, visibleSize.height) * 1.0 / screenScale);
     curtain->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_LEFT);
     curtain->setPosition(origin);
     curtain->setCascadeOpacityEnabled(true);
@@ -785,11 +787,11 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
 
     ///////////////////////// CUT Scene stuff ////////////////
     // Set the cinematic look.
-    upStart = cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (25.0/24.0));
-    downStart = cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (-1.0/24.0));
+    upStart = cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (25.0/24.0)) * 1.0 / screenScale;
+    downStart = cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (-1.0/24.0)) * 1.0 / screenScale;
     
     blackBarUp = cocos2d::Sprite::create("assets/BlackBar.png");
-    blackBarUp->setContentSize(cocos2d::Size(visibleSize.width, visibleSize.height / 12.0));
+    blackBarUp->setContentSize(cocos2d::Size(visibleSize.width, visibleSize.height / 12.0) * 1.0 / screenScale);
     blackBarUp->setAnchorPoint(cocos2d::Vec2::ANCHOR_MIDDLE);
     blackBarUp->setPosition(upStart);
     blackBarUp->retain();
@@ -804,8 +806,8 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
         cutscene->initFromScene(this);
     }
     
-    upVisible = cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (23.0/24.0));
-    downVisible = cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/24.0));
+    upVisible = cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (23.0/24.0)) * 1.0 / screenScale;
+    downVisible = cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/24.0)) * 1.0 / screenScale;
 
     uiLayer->addChild(blackBarUp, 10);
     uiLayer->addChild(blackBarDown, 10);
@@ -915,6 +917,7 @@ void MainGameScene::PausedKeyCallback(cocos2d::EventKeyboard::KeyCode keyCode, c
             break;
         
         case cocos2d::EventKeyboard::KeyCode::KEY_ENTER:
+        case cocos2d::EventKeyboard::KeyCode::KEY_SPACE:
             (*currentOption)->activate();
             break;
             

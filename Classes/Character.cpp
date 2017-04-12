@@ -15,15 +15,15 @@ const double Character::VEL_LIMIT = ideal2Res(600);
 const double Character::JUMP_INIT_FRACTION = (7.0 / 12.0);
 const double Character::CROWN_SCALE = screenScale * .3;
 const std::array<cocos2d::Vec2, 9> Character::COL_POINTS = {
-    cocos2d::Vec2(ideal2Res(-228), ideal2Res(260 + 86.666)),
-    cocos2d::Vec2(ideal2Res(228), ideal2Res(260 + 86.666)),
-    cocos2d::Vec2(ideal2Res(228), ideal2Res(- 260 + 86.666)),
-    cocos2d::Vec2(ideal2Res(197.45379), ideal2Res(-260 + 86.666 - 114)),
-    cocos2d::Vec2(ideal2Res(114), ideal2Res(-260 + 86.666 - 197.45379)),
-    cocos2d::Vec2(ideal2Res(0.0), ideal2Res(-260 + 86.666 - 228)),
-    cocos2d::Vec2(ideal2Res(-114), ideal2Res(-260 + 86.666 - 197.45379)),
-    cocos2d::Vec2(ideal2Res(-197.45379), ideal2Res(-260 + 86.666 - 114)),
-    cocos2d::Vec2(ideal2Res(-228), ideal2Res(-260 + 86.666))
+    cocos2d::Vec2(-228, 260 + 86.666),
+    cocos2d::Vec2(228, 260 + 86.666),
+    cocos2d::Vec2(228, - 260 + 86.666),
+    cocos2d::Vec2(197.45379, -260 + 86.666 - 114),
+    cocos2d::Vec2(114, -260 + 86.666 - 197.45379),
+    cocos2d::Vec2(0.0, -260 + 86.666 - 228),
+    cocos2d::Vec2(-114, -260 + 86.666 - 197.45379),
+    cocos2d::Vec2(-197.45379, -260 + 86.666 - 114),
+    cocos2d::Vec2(-228, -260 + 86.666)
 };
 
 Character * Character::createFromName(const std::string name, cocos2d::Vec2 startPosition, cocos2d::Size dimensions) {

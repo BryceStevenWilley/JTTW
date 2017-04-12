@@ -24,12 +24,12 @@ bool LevelEnd::init(std::string &nextLevelToLoad) {
     auto textLabel = createSunriseLabel("Your journey continues...", 100, fontScaleFactor);
     if (_nextLevelToLoad == "") {
         // The journey is over!
-        textLabel = createSunriseLabel("The journey is over.", 50, fontScaleFactor);
+        textLabel = createSunriseLabel("Searching means having a goal. But finding means being free. \n Mei Tan \n Melinda Crane \n Bryce Willey ", 50, fontScaleFactor);
     }
     textLabel->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (3.0 / 4.0));
     this->addChild(textLabel);
     
-    auto smallLabel = createSunriseLabel("(click or press any key to continue)", 40, fontScaleFactor);
+    auto smallLabel = createSunriseLabel("Press any key to continue", 40, fontScaleFactor);
     smallLabel->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/4.0));
     this->addChild(smallLabel);
     
