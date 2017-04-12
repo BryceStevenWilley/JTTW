@@ -90,6 +90,8 @@ private:
 
     bool debugOn = true; // currently, will just turn on collision boxes.
 
+    std::string _currentLevelName;
+
     bool nextLevelStarting = false;
     std::map<cocos2d::EventKeyboard::KeyCode, bool> haveReleased = std::map<cocos2d::EventKeyboard::KeyCode, bool>();
     std::map<cocos2d::EventKeyboard::KeyCode, bool> stillPressed = std::map<cocos2d::EventKeyboard::KeyCode, bool>();

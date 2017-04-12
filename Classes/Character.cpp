@@ -14,6 +14,17 @@ const double Character::JUMP_DECAY = ideal2Res(200);
 const double Character::VEL_LIMIT = ideal2Res(600);
 const double Character::JUMP_INIT_FRACTION = (7.0 / 12.0);
 const double Character::CROWN_SCALE = screenScale * .3;
+const std::array<cocos2d::Vec2, 9> Character::COL_POINTS = {
+    cocos2d::Vec2(ideal2Res(-228), ideal2Res(260 + 86.666)),
+    cocos2d::Vec2(ideal2Res(228), ideal2Res(260 + 86.666)),
+    cocos2d::Vec2(ideal2Res(228), ideal2Res(- 260 + 86.666)),
+    cocos2d::Vec2(ideal2Res(197.45379), ideal2Res(-260 + 86.666 - 114)),
+    cocos2d::Vec2(ideal2Res(114), ideal2Res(-260 + 86.666 - 197.45379)),
+    cocos2d::Vec2(ideal2Res(0.0), ideal2Res(-260 + 86.666 - 228)),
+    cocos2d::Vec2(ideal2Res(-114), ideal2Res(-260 + 86.666 - 197.45379)),
+    cocos2d::Vec2(ideal2Res(-197.45379), ideal2Res(-260 + 86.666 - 114)),
+    cocos2d::Vec2(ideal2Res(-228), ideal2Res(-260 + 86.666))
+};
 
 Character * Character::createFromName(const std::string name, cocos2d::Vec2 startPosition, cocos2d::Size dimensions) {
     std::cout << "Jump Decay: " << JUMP_DECAY << std::endl;
@@ -33,18 +44,19 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
         body(cocos2d::PhysicsBody::create()),
         characterName(artFilePrefix), _currentState(MID_AIR), _dimensions(dimensions), _impulseScale(impulseScale) {
     
+    // PREVIOUS WORKING BUT BUGGY BODY COLLISION.
+    /*
     double width = 480.0f;
     double height = 780.0f;
     auto bodyShape = cocos2d::PhysicsShapeBox::create(cocos2d::Size(width * .95, height * (2.0/3.0)), mat, cocos2d::Vec2(0.0, height/9.0));
     auto bottomSemiCircle = cocos2d::PhysicsShapeCircle::create(width * (.97/2.0), mat, cocos2d::Vec2(0.0, -height * (0.8/4.0)));
-    //auto bottomSensor = cocos2d::PhysicsShapeBox::create(cocos2d::Size(width * .4, height * .4), mat, cocos2d::Vec2(0.0, -height * (1.0 /2.0)));
-    //bottomSensor->setSensor(true);
-    //bottomSensor->setCategoryBitmask((int)CollisionCategory::Character);
-   // bottomSensor->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
-    //bottomSensor->setContactTestBitmask((int)CollisionCategory::ALL);
     body->addShape(bodyShape);
     body->addShape(bottomSemiCircle);
-    //body->addShape(bottomSensor);
+    */
+    
+    auto bodyShape = cocos2d::PhysicsShapePolygon::create(COL_POINTS.data(), COL_POINTS.size(), mat);
+    body->addShape(bodyShape);
+    
     body->setCategoryBitmask((int)CollisionCategory::Character);
     body->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
     body->setContactTestBitmask((int)CollisionCategory::ALL);

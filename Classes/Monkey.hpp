@@ -29,8 +29,7 @@ public:
     virtual void continueMotion() override;
     
     void enteringClimeable(cocos2d::PhysicsWorld *world, SceneObject *p, cocos2d::Vec2 offset, cocos2d::Vec2 upDir, bool alreadyOn);
-    void leavingClimeable(bool goingToReattach);
-    
+    void leavingClimeable(bool goingToReattach, bool ignoreCount);
     
     void enteringVine(cocos2d::PhysicsWorld *world, SceneObject *vine, double offset, bool alreadyOn);
     void leavingVine(bool reattaching);

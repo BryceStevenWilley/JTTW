@@ -34,4 +34,10 @@ void AiAgent::stationaryBehavior(Character *player, std::vector<Character *> oth
 void AiAgent::goToPointBehavior(Character *player, std::vector<Character *> otherCharacters) {
     desiredVel = cocos2d::Vec2::ZERO;
     desiredPosition = goToPoint;
+    
+    if (_controlledCharacter->getPosition() == desiredPosition) {
+        // If you've reached the desired point, then stay there and switch to stationary behavior.
+        std::cout << _controlledCharacter->characterName << " reached goto and is switching to stationary behavior." << std::endl;
+        _currentBehavior = &AiAgent::stationaryBehavior;
+    }
 }

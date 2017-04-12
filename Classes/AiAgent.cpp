@@ -13,28 +13,20 @@ const float MAX_HORI_VEL = ideal2Res(400);
 AiAgent::AiAgent(Character *controlledCharacter) :
 _controlledCharacter(controlledCharacter), _currentBehavior(&AiAgent::stationaryBehavior) {}
 
-void AiAgent::setMap() {
-
-}
-
-void AiAgent::cedeToPlayer(AiAgent *previousPlayer) {
+void AiAgent::switchUserToHereFrom(AiAgent *previousUser) {
     // clean up any movements from the AI.
     if (_currentBehavior == &AiAgent::stationaryBehavior) {
         // Need to transfer velocity.
-        previousPlayer->_controlledCharacter->transferVelocity(_controlledCharacter);
+        previousUser->_controlledCharacter->transferVelocity(_controlledCharacter);
     } else if (_currentBehavior == &AiAgent::followBehavior || _currentBehavior == &AiAgent::goToPointBehavior) {
         // Need to transfer velocity, and reset the control forces that were previously acting there.
         _controlledCharacter->body->resetForces();
-        previousPlayer->_controlledCharacter->transferVelocity(_controlledCharacter);
+        previousUser->_controlledCharacter->transferVelocity(_controlledCharacter);
     }
-    previousPlayer->_controlledCharacter->toggleToAI();
-    previousPlayer->setPlayerPosOffset(previousPlayer->_controlledCharacter->getPosition() - this->_controlledCharacter->getPosition());
-    previousPlayer->_controlledCharacter->currentCrown->setVisible(false);
+    previousUser->_controlledCharacter->toggleToAI();
+    previousUser->setPlayerPosOffset(previousUser->_controlledCharacter->getPosition() - this->_controlledCharacter->getPosition());
+    previousUser->_controlledCharacter->currentCrown->setVisible(false);
     this->_controlledCharacter->currentCrown->setVisible(true);
-}
-
-void AiAgent::retakeFromPlayer(AiAgent *nextPlayer) {
-   
 }
 
 void AiAgent::adjustOffset(Character *player) {
@@ -69,7 +61,7 @@ void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeybo
                 _controlledCharacter->stopJump();
             }
             break;
-        case KeyCode::KEY_Q:
+        case KeyCode::KEY_S:
             if (pressed) {
                 // Do animation of character calling for everyone else.
                 _controlledCharacter->callHey();
@@ -121,7 +113,7 @@ void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode 
             _controlledCharacter->currentCrown = _controlledCharacter->alonecrown;
             _controlledCharacter->currentCrown->setVisible(wasOn);
         }
-    } else if (pressed && code == cocos2d::EventKeyboard::KeyCode::KEY_Q) {
+    } else if (pressed && code == cocos2d::EventKeyboard::KeyCode::KEY_S) {
         // Random variations on the default offset of 100.
         _playerPosOffset = cocos2d::Vec2(ideal2Res(-100), 0) + cocos2d::Vec2(ideal2Res((rand() % 120)) - ideal2Res(60), 0);
         if (_currentBehavior == &AiAgent::stationaryBehavior || _currentBehavior == &AiAgent::goToPointBehavior) {

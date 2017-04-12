@@ -155,18 +155,16 @@ cocos2d::PhysicsBody *Platform::bodyFromTriangulation(std::vector<cocos2d::Vec2>
         
         int i = 0;
         do {
-            // TODO: actual triangulation here.
             cocos2d::Vec2 array[] = {current->next->vertex, current->vertex, current->prev->vertex};
-            auto tri = cocos2d::PhysicsShapePolygon::create(array, 3);
             bool skip = false;
             for (auto &p : points) {
                 if (PointInTriangle(p, array)) {
-                    std::cout << p.x << ", " << p.y << " is contained in " << array[0].x << ", " << array[0].y << " : " << array[1].x << ", " << array[1].y << " : " << array[2].x << ", " << array[2].y << std::endl;
                     skip = true;
                     break;
                 }
             }
             if (!skip) {
+                auto tri = cocos2d::PhysicsShapePolygon::create(array, 3);
                 toBuild->addShape(tri);
                 // Remove 
                 current->prev->next = current->next;

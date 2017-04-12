@@ -170,7 +170,7 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
             m->enteringClimeable(this->getScene()->getPhysicsWorld(), p, (collisionPosition - p->getPosition()) / 1.5, normal.getPerp(), false);
         } else {
             std::cout << "Monkey is jumping off of the tree!" << std::endl;
-            m->leavingClimeable(false);
+            m->leavingClimeable(false, false);
         }
     } else {
         // Non climbable vertical wall.
@@ -542,6 +542,9 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
         std::string imageName = vAtt["path"];
         imageName = "assets/" + imageName;
         Vine *v = new Vine(imageName, center, width, length, startingAngVel);
+        if (((double)vAtt["book"]["doubList"]["Arc Length (deg)"]) == 0.0) {
+            v->getBody()->setRotationEnable(false);
+        }
         
         cocos2d::PhysicsBody *b = cocos2d::PhysicsBody::createBox(cocos2d::Size(3, 3));
         b->setRotationEnable(false);
@@ -680,6 +683,8 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     if ( !Layer::init() ) {
         return false;
     }
+    
+    _currentLevelName = levelToLoad;
     
     _w = w;
     audio = CocosDenshion::SimpleAudioEngine::getInstance();
@@ -848,6 +853,17 @@ void MainGameScene::KeypressedCallback(cocos2d::EventKeyboard::KeyCode keyCode, 
             }
             break;
             
+        case EventKeyboard::KeyCode::KEY_R: {
+            auto startScene = MainGameScene::createScene(_currentLevelName);
+            if (m->isVisible()) {
+                this->_eventDispatcher->removeEventListener(pauseListener);
+            } else {
+                this->_eventDispatcher->removeEventListener(eventListener);
+            }
+            cocos2d::Director::getInstance()->replaceScene(startScene);
+            break;
+        }
+
         case EventKeyboard::KeyCode::KEY_9:
             std::cout << "Starting key logging. (NOT REALLY, FIX)" << std::endl;
             // TODO: start key logging.
@@ -918,9 +934,9 @@ void MainGameScene::switchToCharacter(int charIndex) {
     }
     auto nextPlayer = agents[charIndex];
     if (nextPlayer == player) {
-        return; // don't do shit!
+        return; // don't do anything.
     }
-    nextPlayer->cedeToPlayer(player);
+    nextPlayer->switchUserToHereFrom(player);
     player = nextPlayer;
     vp.panToCharacter(player->_controlledCharacter);
     

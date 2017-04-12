@@ -36,6 +36,7 @@ public:
     const static double JUMP_INIT_FRACTION;
     const static double VEL_LIMIT;
     const static double CROWN_SCALE;
+    const static std::array<cocos2d::Vec2, 9> COL_POINTS;
      
     const double _impulseScale;
 

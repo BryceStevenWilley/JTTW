@@ -24,14 +24,13 @@ public:
     
     AiAgent(Character *controlledCharacter);
     
-    void cedeToPlayer(AiAgent *previousPlayer);
-    void retakeFromPlayer(AiAgent *nextPlayer);
+    void switchUserToHereFrom(AiAgent *previousPlayer);
+    void retakeFromUser(AiAgent *nextPlayer);
     void adjustOffset(Character *player);
     void plan(std::vector<Character *> otherCharactrs, cocos2d::EventKeyboard::KeyCode code, bool pressed);
     void plan(Character *player, std::vector<Character *> otherCharacters);
     void changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode code, bool pressed);
     void executeControl(float delta);
-    void setMap(); // TODO: when the map API is created, pass the object that holds the map to this.
     
     cocos2d::Vec2 getPlayerPosOffset() const;
     void setPlayerPosOffset(cocos2d::Vec2 playerPosOffset);

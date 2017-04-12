@@ -19,7 +19,7 @@ void Monkey::impulseLeft(float deltaVel) {
         Character::impulseLeft(deltaVel);
     } else { // _state == CLIMBING
         if (this->getScaleX() > 0 && deltaVel > 0) { // Facing right
-            leavingClimeable(false);
+            leavingClimeable(false, true);
             Character::impulseLeft(deltaVel);
         } else {
             Character::impulseLeftButNoRebalance(deltaVel);
@@ -32,7 +32,7 @@ void Monkey::impulseRight(float deltaVel) {
         Character::impulseRight(deltaVel);
     } else { // _state == CLIMBING
         if (this->getScaleX() < 0 && deltaVel > 0) { // Facing right
-            leavingClimeable(false);
+            leavingClimeable(false, true);
             Character::impulseRight(deltaVel);
         } else {
             Character::impulseRightButNoRebalance(deltaVel);
@@ -63,7 +63,7 @@ void Monkey::initJump() {
     }
     if (_state == CLIMBING) {
         std::cout << "Currently Climbing" << std::endl;
-        leavingClimeable(false);
+        leavingClimeable(false, true);
         this->_currentState = Character::State::STANDING;
         jumpPower = jumpPower - ideal2Res(100);
         Character::initJump(jumpPower);
@@ -119,14 +119,18 @@ void Monkey::updateClimbingVel() {
 }
 
 void Monkey::enteringClimeable(cocos2d::PhysicsWorld *world, SceneObject *p, cocos2d::Vec2 offset, cocos2d::Vec2 upDir, bool alreadyOn) {//, Platform *platform) {
+    if (!alreadyOn) {
+        climbingCount += 1;
+    }
     if (!alreadyOn && pinJoint != nullptr) {
         std::cout << "Something's weird, ignore this call." << std::endl;
         return;
     }
-    leavingClimeable(true);
-    if (!alreadyOn) {
-        climbingCount += 1;
+    if (pinJoint != nullptr) {
+        pinJoint->removeFormWorld();
+        pinJoint = nullptr;
     }
+
     pinJoint = cocos2d::PhysicsJointPin::construct(this->body, p->getPhysicsBody(), cocos2d::Vec2::ZERO, offset);
     world->addJoint(pinJoint);
     currentAttached = p;
@@ -162,23 +166,27 @@ void Monkey::enteringClimeable(cocos2d::PhysicsWorld *world, SceneObject *p, coc
 }
 
 void Monkey::moveAlongClimbable(cocos2d::Vec2 up) {
-    std::cout << "Current Attached offset: " << currentAttachedOffset.x << ", " << currentAttachedOffset.y << std::endl;
-    std::cout << "Current Attached range: " << currentAttached->getYRange() << std::endl;
-    std::cout << "Up: " << up.x << ", " << up.y << std::endl;
     if ((currentAttachedOffset + up).y > -currentAttached->getYRange() / 2.0 &&
         (currentAttachedOffset + up).y < currentAttached->getYRange() / 2.0) {
         enteringClimeable(currentWorld, currentAttached, currentAttachedOffset + up, _upDir, true);
     }
 }
 
-void Monkey::leavingClimeable(bool goingToReattach) {
+void Monkey::leavingClimeable(bool goingToReattach, bool ignoreCount) {
+    if (ignoreCount) {
+        climbingCount = 0;
+    } else {
+        climbingCount -= 1;
+        if (climbingCount > 0) {
+            std::cout << "Monkey's not going to jump quite yet." << std::endl;
+            return;
+        }
+    }
     if (pinJoint != nullptr) {
         pinJoint->removeFormWorld();
         pinJoint = nullptr;
     }
-    
     if (!goingToReattach) {
-        climbingCount -= 1;
         _state = NORMAL;
         body->setGravityEnable(true);
         this->setTimeScale(1.0);
@@ -286,9 +294,9 @@ void Monkey::restartFromRespawn() {
     if (_state == SWINGING) {
         leavingVine(false);
     } else
-    leavingClimeable(true);
+    leavingClimeable(true, true);
     Character::restartFromRespawn();
-    leavingClimeable(true);
+    leavingClimeable(true, true);
 }
 
   
