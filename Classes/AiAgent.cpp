@@ -81,7 +81,6 @@ void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeybo
             break;
     }
     return;
-
 }
 
 cocos2d::Vec2 AiAgent::getPlayerPosOffset() const {

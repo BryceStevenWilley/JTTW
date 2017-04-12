@@ -12,7 +12,7 @@ public:
     static const double JUMP_INIT;
     static const double CLIMB_VEL;
     static const double VINE_CLIMB_INC;
-
+    
     enum State {
         NORMAL,
         CLIMBING,
@@ -28,7 +28,6 @@ public:
     
     virtual void continueMotion() override;
     
-    //void enteringClimeable(cocos2d::Vec2 upDir);
     void enteringClimeable(cocos2d::PhysicsWorld *world, SceneObject *p, cocos2d::Vec2 offset, cocos2d::Vec2 upDir, bool alreadyOn);
     void leavingClimeable(bool goingToReattach);
     

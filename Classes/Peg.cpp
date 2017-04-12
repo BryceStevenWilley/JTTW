@@ -22,9 +22,10 @@ Peg::Peg(std::string image, cocos2d::Vec2 center, cocos2d::Size imageSize, doubl
     this->addComponent(body);
 }
 
-bool Peg::triggerPeg(cocos2d::Vec2 characterCenter) {
+bool Peg::triggerPeg() {
     if (!_triggered) { // && this->getPosition().getDistance(characterCenter) < PEG_USABLE_RADIUS) {
         std::cout << "Triggering peg!" << std::endl;
+        _triggered = true;
         // make all of the boulders dynamic.
         for (auto &b : _bouldersToMakeDynamic) {
             b->getBody()->setDynamic(true);
@@ -35,16 +36,23 @@ bool Peg::triggerPeg(cocos2d::Vec2 characterCenter) {
         auto move = cocos2d::MoveBy::create(.3, moveDirection);
         auto fade = cocos2d::FadeOut::create(2.0);
         auto remove = cocos2d::CallFunc::create([this]() {
-            _triggered = true;
+            this->removeFromParent();
         });
         auto seq = cocos2d::Sequence::create(move, fade, remove, nullptr);
         this->runAction(seq);
         return true;
     }
-    std::cout << "Not triggered!: _triggered = " << _triggered << std::endl;
     return false;
+}
+
+void Peg::setToTrigger() {
+    _toTrigger = true;
 }
 
 bool Peg::isTriggered() const {
     return _triggered;
+}
+
+bool Peg::isSetToTrigger() const {
+    return _toTrigger;
 }

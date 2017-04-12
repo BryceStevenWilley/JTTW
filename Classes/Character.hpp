@@ -1,5 +1,5 @@
-#ifndef PCharacter_hpp
-#define PCharacter_hpp
+#ifndef Character_hpp
+#define Character_hpp
 
 #include <stdio.h>
 #include <spine/spine-cocos2dx.h>
@@ -36,6 +36,8 @@ public:
     const static double JUMP_INIT_FRACTION;
     const static double VEL_LIMIT;
     const static double CROWN_SCALE;
+     
+    const double _impulseScale;
 
     enum State {
         STANDING,
@@ -47,7 +49,7 @@ public:
     
     static Character *createFromName(const std::string name, cocos2d::Vec2 startPosition, cocos2d::Size dimensions);
     
-    Character(const std::string artFileName, cocos2d::PhysicsMaterial mat, cocos2d::Vec2 startPosition, cocos2d::Size dimensions);
+    Character(const std::string artFileName, cocos2d::PhysicsMaterial mat, cocos2d::Vec2 startPosition, cocos2d::Size dimensions, double impulseScale);
 
     cocos2d::PhysicsBody *body;
     
@@ -159,5 +161,4 @@ private:
     cocos2d::PhysicsWorld *currentWorld;
 };
 }
-
-#endif /* PCharacter_hpp */
+#endif /* Character_hpp */

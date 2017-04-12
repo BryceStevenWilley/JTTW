@@ -12,7 +12,7 @@ const double Monkey::VINE_CLIMB_INC = ideal2Res(30);
 const cocos2d::PhysicsMaterial MONKEY_MATERIAL = cocos2d::PhysicsMaterial(0.8, 0.0, 1.0);
 
 Monkey::Monkey(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
- Character("Monkey", MONKEY_MATERIAL, startPosition, dimensions), _state(NORMAL) {}
+        Character("Monkey", MONKEY_MATERIAL, startPosition, dimensions, 1.0), _state(NORMAL) {}
 
 void Monkey::impulseLeft(float deltaVel) {
     if (_state == NORMAL || _state == SWINGING) {
@@ -327,7 +327,7 @@ void Monkey::setBoulderUnbury() {
     double width = 480.0f;
     double height = 780.0f;
     auto bodyShape = cocos2d::PhysicsShapeBox::create(cocos2d::Size(width * .95, height * (2.0/3.0)), MONKEY_MATERIAL, cocos2d::Vec2(0.0, height/9.0));
-    auto bottomSemiCircle = cocos2d::PhysicsShapeCircle::create(width/2.0, MONKEY_MATERIAL, cocos2d::Vec2(0.0, -height * (0.8/4.0)));
+    auto bottomSemiCircle = cocos2d::PhysicsShapeCircle::create(width * (.97/2.0), MONKEY_MATERIAL, cocos2d::Vec2(0.0, -height * (0.8/4.0)));
     newBody->addShape(bodyShape);
     newBody->addShape(bottomSemiCircle);
     newBody->setCategoryBitmask((int)CollisionCategory::Character);

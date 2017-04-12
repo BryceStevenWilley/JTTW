@@ -49,7 +49,7 @@ protected:
     
     // Control parameters.
     double kp = 16.0;
-    double kv = 8.0;
+    double kv = 20.0;
     double b;
     double k;
 

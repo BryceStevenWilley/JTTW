@@ -37,7 +37,7 @@ cocos2d::Scene* MainGameScene::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::createWithPhysics();
     scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, GRAVITY));
-    //scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
+    scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = MainGameScene::create(levelToLoad, scene->getPhysicsWorld());
     if (layer == NULL) {
         return NULL;
@@ -86,8 +86,9 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
     if (node->getTag() == PEG_TAG && c->characterName == "Monk") {
         if (begin) {
             // Add peg to Monk's peg hitting thing.
-            Monk *m = (Monk *)c;
-            m->addReachiblePeg((Peg *)node);
+            Peg *peg = (Peg *)node;
+            peg->setToTrigger();
+            std::cout << "Set peg " << peg << " to trigger" << std::endl;
             return false;
         }
     }
@@ -1100,9 +1101,13 @@ void MainGameScene::update(float delta) {
     if (pegs.size() != 0) {
         bool allTriggered = true;
         for (auto &p: pegs) {
+            std::cout << "Peg " << p << " is set to trigger: " << p->isSetToTrigger() << std::endl;
             if (!p->isTriggered()) {
                 allTriggered = false;
-                break;
+            }
+            if (p->isSetToTrigger()) {
+                p->triggerPeg();
+                continue;
             }
         }
         

@@ -28,10 +28,10 @@ Character * Character::createFromName(const std::string name, cocos2d::Vec2 star
     }
 }
 
-Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial mat, cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
+Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial mat, cocos2d::Vec2 startPosition, cocos2d::Size dimensions, double impulseScale) :
         spine::SkeletonAnimation(),
         body(cocos2d::PhysicsBody::create()),
-        characterName(artFilePrefix), _currentState(MID_AIR), _dimensions(dimensions) {
+        characterName(artFilePrefix), _currentState(MID_AIR), _dimensions(dimensions), _impulseScale(impulseScale) {
     
     double width = 480.0f;
     double height = 780.0f;
@@ -86,6 +86,7 @@ cocos2d::Size Character::getSize() {
 }
 
 void Character::impulseLeft(float deltaVel) {
+    deltaVel *= _impulseScale;
     double impulse = body->getMass() * deltaVel;
     leftMomentum += impulse;
     if (_currentState != State::FROZEN || _currentState != State::HANGING || _currentState != State::QUICKSANDED) {
@@ -96,13 +97,13 @@ void Character::impulseLeft(float deltaVel) {
             body->setVelocity(cocos2d::Vec2(0.0, _q->_recoverVel));
         } else {
             double targetVelocity = totalMomentum / body->getMass() / 3.0;
-
             body->setVelocity(cocos2d::Vec2(targetVelocity, -_q->_sinkVel));
         }
     }
 }
 
 void Character::impulseRight(float deltaVel) {
+    deltaVel *= _impulseScale;
     double impulse = body->getMass() * deltaVel;
     rightMomentum += impulse;
     if (_currentState != State::FROZEN || _currentState != State::HANGING || _currentState != State::QUICKSANDED) {
@@ -242,6 +243,7 @@ bool Character::justJumped() const {
 void Character::landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRightDir) {
     platformsStandingOn += 1;
     
+    std::cout << characterName << " landed, on " << platformsStandingOn << " platforms." << std::endl;
     // TODO: check if we don't need to do this for plats > 2
     _rightVector = newRightDir;
     
@@ -277,7 +279,6 @@ void Character::wallLeftCallback(cocos2d::PhysicsBody *wall) {
         wallsHit = 0;
     }
 }
-
 
 bool Character::isMovingLeft() const {
     return body->getVelocity().x < 0.0;
@@ -479,8 +480,8 @@ void Character::callHey() {
 void Character::landedInQuicksand(Quicksand *q) {
     //this->body->setDynamic(false);
     this->body->setGravityEnable(false);
-    this->body->setCollisionBitmask((int)CollisionCategory::None);
-    this->body->setContactTestBitmask((int)CollisionCategory::None);
+    //this->body->setCollisionBitmask((int)CollisionCategory::None);
+    //this->body->setContactTestBitmask((int)CollisionCategory::None);
     _q = q;
     _currentState = QUICKSANDED;
 }

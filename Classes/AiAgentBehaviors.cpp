@@ -14,7 +14,7 @@ using namespace JTTW;
  */
 void AiAgent::followBehavior(Character *player, std::vector<Character *> otherCharacters) {
     // Set the desired velocity and position, as taken from input from the player character.
-    desiredVel = player->body->getVelocity();
+    desiredVel = player->body->getVelocity() * _controlledCharacter->_impulseScale * player->_impulseScale;
     desiredPosition = player->getPosition() + _playerPosOffset;
 }
 
