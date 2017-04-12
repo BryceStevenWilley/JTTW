@@ -6,7 +6,6 @@
 #include "Boulder.hpp"
 #include "Resolution.hpp"
 
-
 #include "json.hpp"
 
 namespace JTTW {

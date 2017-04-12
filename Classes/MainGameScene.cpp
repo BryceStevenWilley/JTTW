@@ -452,6 +452,14 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
                 label->setPosition(UI_HEAD_START + (charPresentCount * cocos2d::Vec2(UI_HEAD_INC, 0)) + cocos2d::Vec2(0, UI_HEAD_INC));
                 uiLayer->addChild(label, 10);
                 uiLayer->addChild(head);
+                
+                auto heyLookOverHere = cocos2d::Sequence::create(
+                        cocos2d::ScaleBy::create(1.6, 1.0), // Wait for 2 second.
+                        cocos2d::ScaleBy::create(.7, 2.5),
+                        cocos2d::ScaleBy::create(.6, 1.0), // Wait for another second.
+                        cocos2d::ScaleBy::create(.7, 1.0/2.5),
+                        NULL);
+                head->runAction(heyLookOverHere);
                 charPresentCount++;
             }
         }

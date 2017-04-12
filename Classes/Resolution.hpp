@@ -18,11 +18,14 @@ namespace JTTW {
     static const cocos2d::Size idealResolution = lardiumResolution;
     
     // The resolution being run on.
-    static const cocos2d::Size actualResolution = mediumResolution;
+    static const cocos2d::Size actualResolution = lardiumResolution;
     
     static const double screenScale = actualResolution.width / idealResolution.width;
     
-    double ideal2Res(double ideal);
+    // NOTE: all resolutions are the same aspect ratio (16:9)
+    inline double ideal2Res(double ideal) {
+        return ideal * screenScale;
+    }
 };
 
 #endif /* Resolution_hpp */

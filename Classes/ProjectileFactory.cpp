@@ -1,6 +1,7 @@
 #include "ProjectileFactory.hpp"
 #include "SimpleAudioEngine.h"
 #include "Collisions.hpp"
+#include "Resolution.hpp"
 
 using namespace JTTW;
 
@@ -77,10 +78,10 @@ cocos2d::Sprite *AbsoluteProjectileFactory::generateProjectile(cocos2d::Vec2 tar
 }
 
 ProjectileFactory *JTTW::createFactoryFromJson(nlohmann::json projInfo, Viewpoint vp) {
-    double xVelMax = projInfo["book"]["doubList"]["xVelMax"];
-    double yVelMax = projInfo["book"]["doubList"]["yVelMax"];
-    double xVelMin = projInfo["book"]["doubList"]["xVelMin"];
-    double yVelMin = projInfo["book"]["doubList"]["yVelMin"];
+    double xVelMax = ideal2Res(projInfo["book"]["doubList"]["xVelMax"]);
+    double yVelMax = ideal2Res(projInfo["book"]["doubList"]["yVelMax"]);
+    double xVelMin = ideal2Res(projInfo["book"]["doubList"]["xVelMin"]);
+    double yVelMin = ideal2Res(projInfo["book"]["doubList"]["yVelMin"]);
     // TODO: use the meters to pixels thing when needed.
     auto maxVel = cocos2d::Vec2(xVelMax, yVelMax);
     auto minVel = cocos2d::Vec2(xVelMin, yVelMin);
