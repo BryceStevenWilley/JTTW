@@ -75,7 +75,7 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
     if (node->getTag() == PROJECTILE_TAG || node->getTag() == INSTANT_DEATH_TAG) {
         if (begin) {
             std::cout << "Instant death for " << c->characterName << std::endl;
-            c->setToRespawn();
+            c->setToRespawn(Character::CauseOfDeath::PROJECTILE);
             if (node->getTag() == PROJECTILE_TAG) {
                 node->removeFromParent();
                 deleteTimer.erase(deleteTimer.find((cocos2d::Sprite *)node));
@@ -454,10 +454,10 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
                 uiLayer->addChild(head);
                 
                 auto heyLookOverHere = cocos2d::Sequence::create(
-                        cocos2d::ScaleBy::create(1.6, 1.0), // Wait for 2 second.
-                        cocos2d::ScaleBy::create(.7, 2.5),
+                        cocos2d::ScaleBy::create(2.5, 1.0), // Wait for 2 second.
+                        cocos2d::ScaleBy::create(.7, 2.7),
                         cocos2d::ScaleBy::create(.6, 1.0), // Wait for another second.
-                        cocos2d::ScaleBy::create(.7, 1.0/2.5),
+                        cocos2d::ScaleBy::create(.7, 1.0/2.7),
                         NULL);
                 head->runAction(heyLookOverHere);
                 charPresentCount++;
@@ -1012,20 +1012,16 @@ void MainGameScene::update(float delta) {
     bool done = true;
     for (int i = 0; i < (int)characters.size(); i++) {
         characters[i]->updateLoop(delta);
-        if (characters[i]->_respawnNextCycle) {
-            // TODO: have characters fall down when hit.
-            auto doNow = cocos2d::CallFunc::create([this, i]() {
-                audio->playEffect("Sound/player_death.wav");
-                characters[i]->setAnimation(0, "fall forwards", false);
-            });
+        if (characters[i]->_respawnNextCycle != Character::CauseOfDeath::NOT_DEAD) {
+            characters[i]->die(characters[i]->_respawnNextCycle);
             auto wait = cocos2d::MoveBy::create(1.0, cocos2d::Vec2::ZERO);
             auto todo = cocos2d::CallFunc::create([this, i]() {
                 characters[i]->restartFromRespawn();
             });
-            auto seq = cocos2d::Sequence::create(doNow, wait, todo, nullptr);
+            auto seq = cocos2d::Sequence::create(wait, todo, nullptr);
             characters[i]->runAction(seq);
             done = false;
-            characters[i]->_respawnNextCycle = false;
+            characters[i]->_respawnNextCycle = Character::CauseOfDeath::NOT_DEAD;
             continue;
         }
         for (auto& zone : attackZones) {
@@ -1049,7 +1045,7 @@ void MainGameScene::update(float delta) {
         }
         if (characters[i]->getPosition().y < ideal2Res(-100)) { // TODO: un-hardcode this.
             done = false; // don't go to the next level if all characters die at once!
-            characters[i]->restartFromRespawn();
+            characters[i]->setToRespawn(Character::CauseOfDeath::FALL);
         }  else {
             // Quadrant stuff.
             cocos2d::Vec2 pos = characters[i]->getPosition();
@@ -1096,6 +1092,7 @@ void MainGameScene::update(float delta) {
                         break;
                     
                     case FALL:
+                        character->freeze();
                         character->setAnimation(0, "fall forwards", false);
                         break;
                     

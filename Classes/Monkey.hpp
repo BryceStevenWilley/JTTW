@@ -35,6 +35,7 @@ public:
     void leavingVine(bool reattaching);
     
     virtual void restartFromRespawn() override;
+    virtual void die(Character::CauseOfDeath cause) override;
     
     void setBoulderBury();
     void setBoulderUnbury();

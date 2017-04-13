@@ -45,7 +45,16 @@ public:
         MID_AIR,
         FROZEN,
         HANGING,
+        DEAD,
         QUICKSANDED
+    };
+    
+    enum CauseOfDeath {
+        CRUSHED,
+        PROJECTILE,
+        FALL,
+        CUTSCENE,
+        NOT_DEAD // Cutscene respawn, etc, not actually dead for _set to respawn, etc.
     };
     
     static Character *createFromName(const std::string name, cocos2d::Vec2 startPosition, cocos2d::Size dimensions);
@@ -79,6 +88,8 @@ public:
     void jumpFromForce(double fprime_y);
     
     void callHey();
+    
+    virtual void die(CauseOfDeath cause);
     
     virtual void characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) = 0;
     
@@ -123,8 +134,8 @@ public:
     void enteringHanging(cocos2d::PhysicsWorld *world, Character *m, cocos2d::Vec2 offsetVec, bool alreadyOn);
     void leavingHanging();
     
-    void setToRespawn();
-    bool _respawnNextCycle = false;
+    void setToRespawn(CauseOfDeath cause);
+    CauseOfDeath _respawnNextCycle = NOT_DEAD;
 
 protected:
     void initJump(double force);

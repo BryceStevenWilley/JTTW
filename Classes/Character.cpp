@@ -101,7 +101,10 @@ void Character::impulseLeft(float deltaVel) {
     deltaVel *= _impulseScale;
     double impulse = body->getMass() * deltaVel;
     leftMomentum += impulse;
-    if (_currentState != State::FROZEN || _currentState != State::HANGING || _currentState != State::QUICKSANDED) {
+    if (_currentState != State::FROZEN &&
+        _currentState != State::HANGING &&
+        _currentState != State::DEAD &&
+        _currentState != State::QUICKSANDED) {
         rebalanceImpulse();
     } else if (_currentState == State::QUICKSANDED) {
         double totalMomentum = rightMomentum - leftMomentum;
@@ -118,10 +121,12 @@ void Character::impulseRight(float deltaVel) {
     deltaVel *= _impulseScale;
     double impulse = body->getMass() * deltaVel;
     rightMomentum += impulse;
-    if (_currentState != State::FROZEN || _currentState != State::HANGING || _currentState != State::QUICKSANDED) {
+    if (_currentState != State::FROZEN &&
+        _currentState != State::HANGING &&
+        _currentState != State::DEAD &&
+        _currentState != State::QUICKSANDED) {
         rebalanceImpulse();
     }  else if (_currentState == State::QUICKSANDED) {
-    
         double totalMomentum = rightMomentum - leftMomentum;
         if (totalMomentum == 0.0) {
             body->setVelocity(cocos2d::Vec2(0.0, _q->_recoverVel));
@@ -148,9 +153,11 @@ void Character::applyForceRight(double fprime_x) {
 
     // Project the force onto the right direction vector to avoid 
     // bumping into objects as much as possible.
-    if (_currentState != State::QUICKSANDED) {
+    if (_currentState != State::QUICKSANDED &&
+        _currentState != State::FROZEN &&
+        _currentState != State::DEAD) {
         body->applyForce(F_x.project(_rightVector));
-    } else {
+    } else if (_currentState == State::QUICKSANDED){
         if (fprime_x < 1.0) {
            body->setVelocity(cocos2d::Vec2(0.0, _q->_recoverVel));
         } else {
@@ -176,12 +183,12 @@ void Character::continueMotion() {
     if (_currentState != State::FROZEN &&
             _currentState != State::HANGING &&
             _currentState != State::QUICKSANDED &&
+            _currentState != State::DEAD &&
             //platformsStandingOn != 0 &&
             wallsHit == 0 && 
             std::abs(rightMomentum - leftMomentum)/body->getMass() > 0.01) {
         rebalanceImpulse();
     } else if (_currentState == State::QUICKSANDED) {
-    
         double totalMomentum = rightMomentum - leftMomentum;
         if (totalMomentum == 0.0) {
             body->setVelocity(cocos2d::Vec2(0.0, _q->_recoverVel));
@@ -200,12 +207,30 @@ void Character::stop() {
     body->applyImpulse(finalVec);
 }
 
+void Character::die(CauseOfDeath cause) {
+    State oldState = _currentState;
+    _currentState = DEAD;
+    if (cause == CUTSCENE) {
+        return; // don't play sound.
+    }
+    // TODO: separate this sound effect to the multiple ways of dying.
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/player_death.wav");
+    if (cause == PROJECTILE) {
+        
+    } else if (cause == FALL) {
+    
+    } else if (cause == CRUSHED) {
+    
+    }
+    updateAnimation(oldState);
+}
+
 void Character::freeze() {
     State oldState = _currentState;
     _currentState = State::FROZEN;
     updateAnimation(oldState);
     _frozenTimer = 3.0; // seconds
-    body->setVelocity(cocos2d::Vec2(0.0, 0.0)); // ????? (how to stop on a ramp?) body->getVelocity().y));
+    body->setVelocity(cocos2d::Vec2(0.0, 0.0));
 }
 
 // While the key is pressed, apply a force (that is decaying) under a jump time
@@ -231,7 +256,10 @@ void Character::stopJump() {
 }
 
 void Character::jumpFromForce(double fprime_y) {
-    if (_currentState == State::MID_AIR || _currentState == State::FROZEN || _currentState == State::QUICKSANDED) {
+    if (_currentState == State::MID_AIR ||
+        _currentState == State::FROZEN ||
+        _currentState == State::DEAD ||
+        _currentState == State::QUICKSANDED) {
         // Can't jump while you're in the air, dummy!
         return;
     }
@@ -259,7 +287,10 @@ void Character::landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRigh
     // TODO: check if we don't need to do this for plats > 2
     _rightVector = newRightDir;
     
-    if (_currentState != State::FROZEN && _currentState != State::HANGING && _currentState != State::QUICKSANDED) {
+    if (_currentState != State::FROZEN &&
+        _currentState != State::DEAD &&
+        _currentState != State::HANGING &&
+        _currentState != State::QUICKSANDED) {
         State oldState = _currentState;
         _currentState = State::STANDING;
         updateAnimation(oldState);
@@ -333,6 +364,11 @@ void Character::updateLoop(float delta) {
     }
     
     cocos2d::Vec2 currentRelVel;
+    
+    if (_currentState == State::FROZEN ||
+        _currentState == State::DEAD) {
+        return; // don't change facing direction.
+    }
     if (aiControl) {
         auto bodyX = body->getVelocity().x;
         if (bodyX < ideal2Res(20) && bodyX > -ideal2Res(20)) {
@@ -360,7 +396,7 @@ void Character::updateLoop(float delta) {
             this->setAnimation(0, "walk", true);
         }
     }
-    
+
     //  Left vs. Right
     if (_oldVel.x <= 0.0 && currentRelVel.x > 0.0) {
       // Set to go right.
@@ -374,7 +410,7 @@ void Character::updateLoop(float delta) {
 }
 
 void Character::updateAnimation(State oldState) {
-   if ((oldState == State::MID_AIR || oldState == State::FROZEN) && _currentState == State::STANDING) {
+    if ((oldState == State::MID_AIR || oldState == State::FROZEN || oldState == State::DEAD) && _currentState == State::STANDING) {
         this->setTimeScale(1.0);
         if (body->getVelocity().x > 10.0 || body->getVelocity().x < -10.0) {
             // TODO: Set walk or run depending on the speed (interpolate?)
@@ -383,29 +419,39 @@ void Character::updateAnimation(State oldState) {
         } else { // x == 0.0
             this->setAnimation(0, "idle", true);
         }
-   }
-   if (oldState == State::STANDING && _currentState == State::MID_AIR) {
+    }
+    if (oldState == State::STANDING && _currentState == State::MID_AIR) {
         // If the character is in mid air traveling upwards (right after jumping)
         // then set the jump animation and slow it down so it lasts the whole time.
         this->setAnimation(0, "jump", false);
         this->setTimeScale(0.9);
-   }
+    } else if ((oldState == State::FROZEN || oldState == State::DEAD) && _currentState == State::MID_AIR) {
+        this->setAnimation(0, "idle", true);
+        this->setTimeScale(1.0);
+    }
 
-   if (_currentState == State::FROZEN) {
-       // TODO: wait for Mei's new animation.
-   }
+    if (_currentState == State::FROZEN) {
+       this->setAnimation(0, "Freeze", false);
+    }
+   
+    if (_currentState == State::DEAD) {
+       this->setAnimation(0, "fall forwards", false);
+    }
 
-   // TODO: haven't covered from frozen to mid air. (what it do?)
+    // TODO: haven't covered from frozen to mid air. (what it do?)
 }
 
 void Character::restartFromRespawn() {
     body->setVelocity(cocos2d::Vec2(0, 0));
     body->resetForces();
     this->setPosition(_respawnPosition);
+    State oldState = _currentState;
+    _currentState = MID_AIR;
+    updateAnimation(oldState);
 }
 
-void Character::setToRespawn() {
-    _respawnNextCycle = true;
+void Character::setToRespawn(CauseOfDeath cause) {
+    _respawnNextCycle = cause;
 }
 
 void Character::setNewRespawn(cocos2d::Vec2 newRespawn) {
@@ -485,15 +531,14 @@ void Character::leavingHanging() {
 }
 
 void Character::callHey() {
-    // TODO: do animation for Hey!
+    this->setAnimation(0, "Wave", false);
+    this->addAnimation(0, "idle", true);
     CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/hey.wav");
 }
 
 void Character::landedInQuicksand(Quicksand *q) {
     //this->body->setDynamic(false);
     this->body->setGravityEnable(false);
-    //this->body->setCollisionBitmask((int)CollisionCategory::None);
-    //this->body->setContactTestBitmask((int)CollisionCategory::None);
     _q = q;
     _currentState = QUICKSANDED;
 }

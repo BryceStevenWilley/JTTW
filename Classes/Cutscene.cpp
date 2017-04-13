@@ -66,7 +66,7 @@ void Cutscene::runScene(bool goToStartBlackout) {
             for (auto entry = _characters.begin(); entry != _characters.end(); entry++) {
                 entry->second->setNewRespawn(charactersEnd[entry->first]);
                 entry->second->setPosition(charactersEnd[entry->first]);
-                entry->second->setToRespawn();
+                entry->second->setToRespawn(Character::CauseOfDeath::CUTSCENE);
             }
             for (auto agent : _scene->agents) {
                 agent->adjustOffset(_scene->player->_controlledCharacter);

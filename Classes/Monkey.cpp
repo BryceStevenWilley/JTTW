@@ -118,7 +118,10 @@ void Monkey::updateClimbingVel() {
     }
 }
 
-void Monkey::enteringClimeable(cocos2d::PhysicsWorld *world, SceneObject *p, cocos2d::Vec2 offset, cocos2d::Vec2 upDir, bool alreadyOn) {//, Platform *platform) {
+void Monkey::enteringClimeable(cocos2d::PhysicsWorld *world, SceneObject *p, cocos2d::Vec2 offset, cocos2d::Vec2 upDir, bool alreadyOn) {
+   if (_currentState == Character::State::DEAD) {
+        return; // don't grab the vine if you are dead.
+    }
     if (!alreadyOn) {
         climbingCount += 1;
     }
@@ -197,6 +200,7 @@ void Monkey::leavingClimeable(bool goingToReattach, bool ignoreCount) {
 void Monkey::continueMotion() {
     if (_currentState != Character::State::FROZEN &&
             _currentState != Character::State::QUICKSANDED &&
+            _currentState != Character::State::DEAD &&
             _state != SWINGING &&
             _state != CLIMBING &&
             wallsHit == 0 && 
@@ -218,6 +222,9 @@ void Monkey::continueMotion() {
  * 'alreadyOn' is only to change the animation.
  */
 void Monkey::enteringVine(cocos2d::PhysicsWorld *world, SceneObject *obj, double offset, bool alreadyOn) {
+    if (_currentState == Character::State::DEAD) {
+        return; // don't grab the vine if you are dead.
+    }
     leavingVine(true);
     // create a joint between you and the vine.
     cocos2d::Vec2 offsetVec = cocos2d::Vec2(0, ideal2Res(offset));
@@ -297,6 +304,12 @@ void Monkey::restartFromRespawn() {
     leavingClimeable(true, true);
     Character::restartFromRespawn();
     leavingClimeable(true, true);
+}
+
+void Monkey::die(Character::CauseOfDeath cause) {
+    leavingVine(false);
+    leavingClimeable(true, true);
+    Character::die(cause);
 }
 
   
