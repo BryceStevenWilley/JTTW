@@ -10,13 +10,13 @@ const double Piggy::JUMP_INIT = ideal2Res(580);
 Piggy::Piggy(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
  Character("Piggy", cocos2d::PhysicsMaterial(0.8, 0.0, .8), startPosition, dimensions, 0.8) {}
 
-void Piggy::impulseLeft(float deltaVel) {
+void Piggy::impulseLeft(double deltaVel) {
     if (_state != BOULDER_MODE) {
         Character::impulseLeft(deltaVel);
     }
 }
 
-void Piggy::impulseRight(float deltaVel) {
+void Piggy::impulseRight(double deltaVel) {
     if (_state != BOULDER_MODE) {
         Character::impulseRight(deltaVel);
     }

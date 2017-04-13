@@ -72,6 +72,9 @@ Character::Character(const std::string artFilePrefix, cocos2d::PhysicsMaterial m
     this->setAnimation(0, "idle", true);
     this->setPhysicsBody(body);
 
+    _mass = body->getMass();
+    std::cout << "_mass: " << _mass << ", body mass: " << body->getMass() << std::endl;
+
     followcrown = cocos2d::Sprite::create("characters/Selection Crown.png");
     followcrown->setScale(CROWN_SCALE);
     followcrown->setPosition(0.0, 940);
@@ -97,9 +100,9 @@ cocos2d::Size Character::getSize() {
     return _dimensions;
 }
 
-void Character::impulseLeft(float deltaVel) {
+void Character::impulseLeft(double deltaVel) {
     deltaVel *= _impulseScale;
-    double impulse = body->getMass() * deltaVel;
+    double impulse = getMass() * deltaVel;
     leftMomentum += impulse;
     if (_currentState != State::FROZEN &&
         _currentState != State::HANGING &&
@@ -111,15 +114,15 @@ void Character::impulseLeft(float deltaVel) {
         if (totalMomentum == 0.0) {
             body->setVelocity(cocos2d::Vec2(0.0, _q->_recoverVel));
         } else {
-            double targetVelocity = totalMomentum / body->getMass() / 3.0;
+            double targetVelocity = totalMomentum / getMass() / 3.0;
             body->setVelocity(cocos2d::Vec2(targetVelocity, -_q->_sinkVel));
         }
     }
 }
 
-void Character::impulseRight(float deltaVel) {
+void Character::impulseRight(double deltaVel) {
     deltaVel *= _impulseScale;
-    double impulse = body->getMass() * deltaVel;
+    double impulse = getMass() * deltaVel;
     rightMomentum += impulse;
     if (_currentState != State::FROZEN &&
         _currentState != State::HANGING &&
@@ -131,25 +134,27 @@ void Character::impulseRight(float deltaVel) {
         if (totalMomentum == 0.0) {
             body->setVelocity(cocos2d::Vec2(0.0, _q->_recoverVel));
         } else {
-            double targetVelocity = totalMomentum / body->getMass() / 3.0;
+            double targetVelocity = totalMomentum / getMass() / 3.0;
 
             body->setVelocity(cocos2d::Vec2(targetVelocity, -_q->_sinkVel));
         }
     }
 }
 
-void Character::impulseLeftButNoRebalance(float deltaVel) {
-    double impulse = body->getMass() * deltaVel;
+void Character::impulseLeftButNoRebalance(double deltaVel) {
+    deltaVel *= _impulseScale;
+    double impulse = getMass() * deltaVel;
     leftMomentum += impulse;
 }
 
-void Character::impulseRightButNoRebalance(float deltaVel) {
-    double impulse = body->getMass() * deltaVel;
+void Character::impulseRightButNoRebalance(double deltaVel) {
+    deltaVel *= _impulseScale;
+    double impulse = getMass() * deltaVel;
     rightMomentum += impulse;
 }
 
 void Character::applyForceRight(double fprime_x) {
-    cocos2d::Vec2 F_x = cocos2d::Vec2(fprime_x * body->getMass(), 0);
+    cocos2d::Vec2 F_x = cocos2d::Vec2(fprime_x * getMass(), 0);
 
     // Project the force onto the right direction vector to avoid 
     // bumping into objects as much as possible.
@@ -161,7 +166,7 @@ void Character::applyForceRight(double fprime_x) {
         if (fprime_x < 1.0) {
            body->setVelocity(cocos2d::Vec2(0.0, _q->_recoverVel));
         } else {
-           body->setVelocity(cocos2d::Vec2(fprime_x * body->getMass() / 3.0, -_q->_sinkVel));
+           body->setVelocity(cocos2d::Vec2(fprime_x * getMass() / 3.0, -_q->_sinkVel));
         }
     }
     // TODO: update the animation properly!
@@ -169,11 +174,11 @@ void Character::applyForceRight(double fprime_x) {
 
 void Character::rebalanceImpulse() {
     double totalMomentum = rightMomentum - leftMomentum;
-    double targetVelocity = totalMomentum / body->getMass();
+    double targetVelocity = totalMomentum / getMass();
     
     double actualDeltaVel = targetVelocity - body->getVelocity().x;
     
-    double actualImpulse = body->getMass() * actualDeltaVel;
+    double actualImpulse = getMass() * actualDeltaVel;
     
     auto finalVec = cocos2d::Vec2(actualImpulse, 0);
     body->applyImpulse(finalVec.project(_rightVector));
@@ -186,14 +191,14 @@ void Character::continueMotion() {
             _currentState != State::DEAD &&
             //platformsStandingOn != 0 &&
             wallsHit == 0 && 
-            std::abs(rightMomentum - leftMomentum)/body->getMass() > 0.01) {
+            std::abs(rightMomentum - leftMomentum)/getMass() > 0.01) {
         rebalanceImpulse();
     } else if (_currentState == State::QUICKSANDED) {
         double totalMomentum = rightMomentum - leftMomentum;
         if (totalMomentum == 0.0) {
             body->setVelocity(cocos2d::Vec2(0.0, _q->_recoverVel));
         } else {
-            double targetVelocity = totalMomentum / body->getMass() / 3.0;
+            double targetVelocity = totalMomentum / getMass() / 3.0;
 
             body->setVelocity(cocos2d::Vec2(targetVelocity, -_q->_sinkVel));
         }
@@ -203,7 +208,7 @@ void Character::continueMotion() {
 void Character::stop() {
     leftMomentum = 0.0;
     rightMomentum = 0.0;
-    auto finalVec = body->getMass() * -(body->getVelocity().project(_rightVector));
+    auto finalVec = getMass() * -(body->getVelocity().project(_rightVector));
     body->applyImpulse(finalVec);
 }
 
@@ -245,7 +250,7 @@ void Character::initJump(double force) {
         return;
     }
     
-    jumpForce = force * body->getMass();
+    jumpForce = force * getMass();
     
     CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/Jump.wav");
     body->applyImpulse(cocos2d::Vec2(0, jumpForce * JUMP_INIT_FRACTION));
@@ -264,13 +269,13 @@ void Character::jumpFromForce(double fprime_y) {
         return;
     }
 
-    body->applyForce(cocos2d::Vec2(0.0, fprime_y * body->getMass()));
+    body->applyForce(cocos2d::Vec2(0.0, fprime_y * getMass()));
 }
 
 void Character::transferVelocity(Character *reciever) {
     std::cout << characterName << " velocity x: " << body->getVelocity().x << ", giving to " << reciever->characterName << std::endl;
     double totalMomentum = rightMomentum - leftMomentum;
-    double targetVelocity = totalMomentum / body->getMass();
+    double targetVelocity = totalMomentum / getMass();
     
     reciever->impulseRight(targetVelocity);
     this->stop();
@@ -332,7 +337,7 @@ bool Character::isMovingRight() const {
 }
 
 float Character::getMass() const {
-    return body->getMass();
+    return _mass;
 }
 
 const Character::State Character::getCurrentState() const {
@@ -358,7 +363,7 @@ void Character::updateLoop(float delta) {
     // Apply jump force.
     if (jumpForce > 0.0) {
         body->applyForce(cocos2d::Vec2(0.0, jumpForce));
-        jumpForce = jumpForce - (JUMP_DECAY * body->getMass()) * delta;
+        jumpForce = jumpForce - (JUMP_DECAY * getMass()) * delta;
     } else {
         jumpForce = 0.0;
     }
@@ -380,7 +385,7 @@ void Character::updateLoop(float delta) {
         // TODO: WILL SCREW UP WHEN
         // STANDING ON MOVING PLATFORMS, PUT REAL REL VEL STUFF BACK IN!!!!!!
     } else { // player control
-        currentRelVel = cocos2d::Vec2((rightMomentum - leftMomentum)/ body->getMass(), body->getVelocity().y);
+        currentRelVel = cocos2d::Vec2((rightMomentum - leftMomentum)/ getMass(), body->getVelocity().y);
     }
     if (_oldVel == currentRelVel) {
         // nothing changed.
@@ -554,6 +559,10 @@ void Character::leftQuicksand() {
 
 bool Character::shouldBeControlled() {
     return !(getCurrentState() == Character::HANGING);
+}
+
+void Character::updateMass() {
+    _mass = body->getMass();
 }
 
 

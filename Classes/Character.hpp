@@ -65,13 +65,13 @@ public:
     
     // Applies an impulse going to the left of the character.
     //     deltaVel - the amount that the velocity going to the left should change.
-    virtual void impulseLeft(float deltaVel);
-    virtual void impulseLeftButNoRebalance(float deltaVel);
+    virtual void impulseLeft(double deltaVel);
+    virtual void impulseLeftButNoRebalance(double deltaVel);
     
     // Applies an impulse going to the right of the character.
     //     deltaVel - the amount that the velocity going to the right should change.
-    virtual void impulseRight(float deltaVel);
-    virtual void impulseRightButNoRebalance(float deltaVel);
+    virtual void impulseRight(double deltaVel);
+    virtual void impulseRightButNoRebalance(double deltaVel);
     
     void applyForceRight(double fprimex);
     
@@ -137,6 +137,8 @@ public:
     void setToRespawn(CauseOfDeath cause);
     CauseOfDeath _respawnNextCycle = NOT_DEAD;
 
+    void updateMass(); // Cocos is a god-awful piece of software.
+
 protected:
     void initJump(double force);
     State _currentState = State::STANDING;
@@ -144,6 +146,10 @@ protected:
     double leftMomentum = 0.0;
     double rightMomentum = 0.0;
     int wallsHit = 0;
+    
+    // I know, there's a getMass() in the body, but due to https://github.com/BryceStevenWilley/JTTW/issues/99, I'm saving it.
+    double _mass;
+    
     
     Quicksand *_q = nullptr;
     

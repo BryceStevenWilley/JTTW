@@ -14,7 +14,7 @@ const cocos2d::PhysicsMaterial MONKEY_MATERIAL = cocos2d::PhysicsMaterial(0.8, 0
 Monkey::Monkey(cocos2d::Vec2 startPosition, cocos2d::Size dimensions) :
         Character("Monkey", MONKEY_MATERIAL, startPosition, dimensions, 1.0), _state(NORMAL) {}
 
-void Monkey::impulseLeft(float deltaVel) {
+void Monkey::impulseLeft(double deltaVel) {
     if (_state == NORMAL || _state == SWINGING) {
         Character::impulseLeft(deltaVel);
     } else { // _state == CLIMBING
@@ -27,7 +27,7 @@ void Monkey::impulseLeft(float deltaVel) {
     }
 }
 
-void Monkey::impulseRight(float deltaVel) {
+void Monkey::impulseRight(double deltaVel) {
     if (_state == NORMAL || _state == SWINGING) {
         Character::impulseRight(deltaVel);
     } else { // _state == CLIMBING
@@ -48,11 +48,11 @@ void Monkey::initJump() {
         this->_currentState = Character::State::STANDING;
         _state = NORMAL;
         cocos2d::Vec2 vel = body->getVelocity();
-        body->applyImpulse(body->getMass() * vel * .85); // Double the current velocity!
+        body->applyImpulse(getMass() * vel * .85); // Double the current velocity!
         if (vel.x < 0) {
-            body->applyImpulse(body->getMass() * cocos2d::Vec2(ideal2Res(-100), ideal2Res(200)));
+            body->applyImpulse(getMass() * cocos2d::Vec2(ideal2Res(-100), ideal2Res(200)));
         } else {
-            body->applyImpulse(body->getMass() * cocos2d::Vec2(ideal2Res(100), ideal2Res(200)));
+            body->applyImpulse(getMass() * cocos2d::Vec2(ideal2Res(100), ideal2Res(200)));
         }
         this->_currentState = Character::State::MID_AIR;
         this->setAnimation(0, "JumpForwardFromSwing", false);
@@ -204,14 +204,14 @@ void Monkey::continueMotion() {
             _state != SWINGING &&
             _state != CLIMBING &&
             wallsHit == 0 && 
-            std::abs(rightMomentum - leftMomentum)/body->getMass() > 0.01) {
+            std::abs(rightMomentum - leftMomentum)/getMass() > 0.01) {
         rebalanceImpulse();
     } else if (_currentState == Character::State::QUICKSANDED) {
         double totalMomentum = rightMomentum - leftMomentum;
         if (totalMomentum == 0.0) {
             body->setVelocity(cocos2d::Vec2(0.0, Character::_q->_recoverVel));
         } else {
-            double targetVelocity = totalMomentum / body->getMass() / 3.0;
+            double targetVelocity = totalMomentum / getMass() / 3.0;
 
             body->setVelocity(cocos2d::Vec2(targetVelocity, -_q->_sinkVel));
         }

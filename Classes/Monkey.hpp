@@ -21,8 +21,8 @@ public:
 
     Monkey(cocos2d::Vec2 startPosition, cocos2d::Size dimensions);
     
-    virtual void impulseLeft(float deltaVel) override;
-    virtual void impulseRight(float deltaVel) override;
+    virtual void impulseLeft(double deltaVel) override;
+    virtual void impulseRight(double deltaVel) override;
     virtual void initJump() override;
     virtual void characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) override;
     

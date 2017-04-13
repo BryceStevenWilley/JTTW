@@ -755,7 +755,7 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     contactListener->onContactPostSolve = CC_CALLBACK_2(MainGameScene::onContactPostSolve, this);
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
     
-    //// Setup pause menu.
+    ///////////////////// Setup pause menu. ///////////////////
     auto continueNode = createSunriseLabel("Continue", 100, JTTW::screenScale);
     auto exitNode = createSunriseLabel("Exit to Main Menu", 100, JTTW::screenScale);
     
@@ -819,12 +819,18 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
 
     uiLayer->addChild(blackBarUp, 10);
     uiLayer->addChild(blackBarDown, 10);
-    
+
     this->scheduleUpdate();
     return true;
 }
 
 void MainGameScene::KeypressedCallback(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
+    if (firstTouch) {
+        for(auto &c : characters) {
+            c->updateMass();
+        }
+        firstTouch = false;
+    }
     haveReleased[keyCode] = true;
     stillPressed[keyCode] = true;
     switch(keyCode) {

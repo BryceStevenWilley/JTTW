@@ -86,6 +86,8 @@ private:
     std::map<Character *, double> attackCountdown = std::map<Character *, double>();
     std::map<cocos2d::Sprite *, double> deleteTimer = std::map<cocos2d::Sprite *, double>();
 
+    bool firstTouch = true;
+
     CocosDenshion::SimpleAudioEngine *audio;
 
     bool debugOn = true; // currently, will just turn on collision boxes.
