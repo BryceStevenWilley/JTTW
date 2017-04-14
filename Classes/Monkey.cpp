@@ -40,12 +40,30 @@ void Monkey::impulseRight(double deltaVel) {
     }
 }
 
+void Monkey::continueMotion() {
+    if ((getCurrentState() == Character::State::STANDING ||
+         getCurrentState() == Character::State::MID_AIR) &&
+         _state != SWINGING &&
+         _state != CLIMBING &&
+         wallsHit == 0 &&
+         std::abs(rightMomentum - leftMomentum)/getMass() > 0.01) {
+        rebalanceImpulse();
+    } else if (getCurrentState() == Character::State::QUICKSANDED) {
+        double totalMomentum = rightMomentum - leftMomentum;
+        if (totalMomentum == 0.0) {
+            body->setVelocity(cocos2d::Vec2(0.0, Character::_q->_recoverVel));
+        } else {
+            double targetVelocity = totalMomentum / getMass() / 3.0;
+
+            body->setVelocity(cocos2d::Vec2(targetVelocity, -_q->_sinkVel));
+        }
+    }
+}
+
 void Monkey::initJump() {
     float jumpPower = JUMP_INIT;
     if (_state == SWINGING) {
         leavingVine(false);
-
-        this->_currentState = Character::State::STANDING;
         _state = NORMAL;
         cocos2d::Vec2 vel = body->getVelocity();
         body->applyImpulse(getMass() * vel * .85); // Double the current velocity!
@@ -54,7 +72,16 @@ void Monkey::initJump() {
         } else {
             body->applyImpulse(getMass() * cocos2d::Vec2(ideal2Res(100), ideal2Res(200)));
         }
-        this->_currentState = Character::State::MID_AIR;
+        setCurrentState(Character::State::MID_AIR);
+        
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// Should this be here, or should it be handled in a separate function in Monkey?
         this->setAnimation(0, "JumpForwardFromSwing", false);
         return;
     }
@@ -64,10 +91,10 @@ void Monkey::initJump() {
     if (_state == CLIMBING) {
         std::cout << "Currently Climbing" << std::endl;
         leavingClimeable(false, true);
-        this->_currentState = Character::State::STANDING;
+        setCurrentState(Character::State::STANDING);
         jumpPower = jumpPower - ideal2Res(100);
         Character::initJump(jumpPower);
-        this->_currentState = Character::State::MID_AIR;
+        setCurrentState(Character::State::MID_AIR);
     }
 }
 
@@ -119,7 +146,7 @@ void Monkey::updateClimbingVel() {
 }
 
 void Monkey::enteringClimeable(cocos2d::PhysicsWorld *world, SceneObject *p, cocos2d::Vec2 offset, cocos2d::Vec2 upDir, bool alreadyOn) {
-   if (_currentState == Character::State::DEAD) {
+   if (getCurrentState() == Character::State::DEAD || getCurrentState() == Character::State::FROZEN) {
         return; // don't grab the vine if you are dead.
     }
     if (!alreadyOn) {
@@ -162,8 +189,6 @@ void Monkey::enteringClimeable(cocos2d::PhysicsWorld *world, SceneObject *p, coc
         } else {
             _upDir = upDir;
         }
-        //this->setAnimation(0, "ClimbIdle", true);
-        //updateClimbingVel(); // Because we're still tracking keypresses even off of the trees.
     }
     currentWorld = world;
 }
@@ -197,32 +222,11 @@ void Monkey::leavingClimeable(bool goingToReattach, bool ignoreCount) {
     }
 }
 
-void Monkey::continueMotion() {
-    if (_currentState != Character::State::FROZEN &&
-            _currentState != Character::State::QUICKSANDED &&
-            _currentState != Character::State::DEAD &&
-            _state != SWINGING &&
-            _state != CLIMBING &&
-            wallsHit == 0 && 
-            std::abs(rightMomentum - leftMomentum)/getMass() > 0.01) {
-        rebalanceImpulse();
-    } else if (_currentState == Character::State::QUICKSANDED) {
-        double totalMomentum = rightMomentum - leftMomentum;
-        if (totalMomentum == 0.0) {
-            body->setVelocity(cocos2d::Vec2(0.0, Character::_q->_recoverVel));
-        } else {
-            double targetVelocity = totalMomentum / getMass() / 3.0;
-
-            body->setVelocity(cocos2d::Vec2(targetVelocity, -_q->_sinkVel));
-        }
-    }
-}
-
 /**
  * 'alreadyOn' is only to change the animation.
  */
 void Monkey::enteringVine(cocos2d::PhysicsWorld *world, SceneObject *obj, double offset, bool alreadyOn) {
-    if (_currentState == Character::State::DEAD) {
+    if (getCurrentState() == Character::State::DEAD) {
         return; // don't grab the vine if you are dead.
     }
     leavingVine(true);
@@ -277,10 +281,12 @@ void Monkey::leavingVine(bool reattaching) {
     currentAttachedOffset = cocos2d::Vec2::ZERO;
     
     _state = NORMAL;
-    this->_currentState = Character::State::MID_AIR;
+    setCurrentState(Character::State::MID_AIR);
     body->setRotationEnable(false);
     body->setAngularVelocity(0.0);
     this->setRotation(0.0);
+    
+    std::cout << characterName << "'s rotation is " << this->getRotation() << std::endl;
 }
 
 void Monkey::moveAlongVine(float deltaP) {
@@ -298,20 +304,21 @@ Monkey::State Monkey::getMonkeyState() {
 }
 
 void Monkey::restartFromRespawn() {
-    if (_state == SWINGING) {
-        leavingVine(false);
-    } else
+    leavingVine(false);
+    std::cout << characterName << "'s rotation is " << this->getRotation() << std::endl;
     leavingClimeable(true, true);
     Character::restartFromRespawn();
     leavingClimeable(true, true);
+    std::cout << characterName << "'s rotation is " << this->getRotation() << std::endl;
 }
 
 void Monkey::die(Character::CauseOfDeath cause) {
+    std::cout << "Monkey is dying." << std::endl;
     leavingVine(false);
     leavingClimeable(true, true);
     Character::die(cause);
+    std::cout << characterName << "'s rotation is " << this->getRotation() << std::endl;
 }
-
   
 void Monkey::setBoulderBury() {
     body->setDynamic(false);

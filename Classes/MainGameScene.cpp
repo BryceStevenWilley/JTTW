@@ -75,7 +75,7 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
     if (node->getTag() == PROJECTILE_TAG || node->getTag() == INSTANT_DEATH_TAG) {
         if (begin) {
             std::cout << "Instant death for " << c->characterName << std::endl;
-            c->setToRespawn(Character::CauseOfDeath::PROJECTILE);
+            c->die(Character::CauseOfDeath::PROJECTILE);
             if (node->getTag() == PROJECTILE_TAG) {
                 node->removeFromParent();
                 deleteTimer.erase(deleteTimer.find((cocos2d::Sprite *)node));
@@ -1018,18 +1018,6 @@ void MainGameScene::update(float delta) {
     bool done = true;
     for (int i = 0; i < (int)characters.size(); i++) {
         characters[i]->updateLoop(delta);
-        if (characters[i]->_respawnNextCycle != Character::CauseOfDeath::NOT_DEAD) {
-            characters[i]->die(characters[i]->_respawnNextCycle);
-            auto wait = cocos2d::MoveBy::create(1.0, cocos2d::Vec2::ZERO);
-            auto todo = cocos2d::CallFunc::create([this, i]() {
-                characters[i]->restartFromRespawn();
-            });
-            auto seq = cocos2d::Sequence::create(wait, todo, nullptr);
-            characters[i]->runAction(seq);
-            done = false;
-            characters[i]->_respawnNextCycle = Character::CauseOfDeath::NOT_DEAD;
-            continue;
-        }
         for (auto& zone : attackZones) {
             if (zone.containsPoint(characters[i]->getPosition())) {
                 if (attacking.find(characters[i]) == attacking.end() || std::find(attacking[characters[i]].begin(), attacking[characters[i]].end(), zone.getFactory()) == attacking[characters[i]].end()) {
@@ -1051,7 +1039,7 @@ void MainGameScene::update(float delta) {
         }
         if (characters[i]->getPosition().y < ideal2Res(-100)) { // TODO: un-hardcode this.
             done = false; // don't go to the next level if all characters die at once!
-            characters[i]->setToRespawn(Character::CauseOfDeath::FALL);
+            characters[i]->die(Character::CauseOfDeath::FALL);
         }  else {
             // Quadrant stuff.
             cocos2d::Vec2 pos = characters[i]->getPosition();
@@ -1131,7 +1119,6 @@ void MainGameScene::update(float delta) {
     if (pegs.size() != 0) {
         bool allTriggered = true;
         for (auto &p: pegs) {
-            std::cout << "Peg " << p << " is set to trigger: " << p->isSetToTrigger() << std::endl;
             if (!p->isTriggered()) {
                 allTriggered = false;
             }

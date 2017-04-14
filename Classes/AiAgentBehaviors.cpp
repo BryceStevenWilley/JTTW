@@ -22,9 +22,15 @@ void AiAgent::followBehavior(Character *player, std::vector<Character *> otherCh
  * Sets the desired position to be exactly where they are.
  * Don't move an inch.
  */
+/*
 void AiAgent::stationaryBehavior(Character *player, std::vector<Character *> otherCharacters) {
     desiredVel = cocos2d::Vec2::ZERO;
     desiredPosition = _controlledCharacter->getPosition();
+}
+*/
+
+void AiAgent::noResistenceBehavior(Character *player, std::vector<Character *> otherCharacters) {
+    // Literally, do nothing.
 }
 
 /**
@@ -38,6 +44,6 @@ void AiAgent::goToPointBehavior(Character *player, std::vector<Character *> othe
     if (_controlledCharacter->getPosition() == desiredPosition) {
         // If you've reached the desired point, then stay there and switch to stationary behavior.
         std::cout << _controlledCharacter->characterName << " reached goto and is switching to stationary behavior." << std::endl;
-        _currentBehavior = &AiAgent::stationaryBehavior;
+        _currentBehavior = &AiAgent::noResistenceBehavior;
     }
 }

@@ -1,5 +1,6 @@
 #include "Peg.hpp"
 #include "Collisions.hpp"
+#include "SimpleAudioEngine.h"
 
 using namespace JTTW;
 
@@ -17,22 +18,22 @@ Peg::Peg(std::string image, cocos2d::Vec2 center, cocos2d::Size imageSize, doubl
     this->initWithFile(image);
     this->setTag(PEG_TAG);
     this->setContentSize(imageSize);
-    this->setRotation(rotation);
+    this->setRotation(_rotation);
     this->setPosition(center);
     this->addComponent(body);
 }
 
 bool Peg::triggerPeg() {
-    if (!_triggered) { // && this->getPosition().getDistance(characterCenter) < PEG_USABLE_RADIUS) {
+    if (!_triggered) {
         std::cout << "Triggering peg!" << std::endl;
         _triggered = true;
         // make all of the boulders dynamic.
         for (auto &b : _bouldersToMakeDynamic) {
             b->getBody()->setDynamic(true);
         }
-        cocos2d::Vec2 moveDirection(0, PEG_MOVE_AMOUNT);
-        moveDirection.rotate(cocos2d::Vec2::ANCHOR_MIDDLE, 3.1415926 * this->getRotation() / 180.0);
-        moveDirection.rotateByAngle(cocos2d::Vec2::ZERO, _rotation);
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/BoulderCrumble.wav");
+        cocos2d::Vec2 moveDirection(std::cos(3.1415926 * -(_rotation + 90) / 180), std::sin(3.1415926 * -(_rotation + 90) / 180));
+        moveDirection *= PEG_MOVE_AMOUNT;
         auto move = cocos2d::MoveBy::create(.3, moveDirection);
         auto fade = cocos2d::FadeOut::create(2.0);
         auto remove = cocos2d::CallFunc::create([this]() {
