@@ -48,15 +48,16 @@ protected:
     
     // Control parameters.
     double kp = 16.0;
-    double kv = 20.0;
+    double kv = 10.0;
     double b;
     double k;
 
 private:
     // The possible behaivors of the AI. All of these methods are implemented in AiAgentBehaivors.cpp.
     void followBehavior(Character *player, std::vector<Character *> otherCharacters);
-    void stationaryBehavior(Character *player, std::vector<Character *> otherCharacters);
+    //void stationaryBehavior(Character *player, std::vector<Character *> otherCharacters);
     void goToPointBehavior(Character *player, std::vector<Character *> otherCharacters);
+    void noResistenceBehavior(Character *player, std::vector<Character *> otherCharacters);
     
     cocos2d::Vec2 goToPoint;
 };

@@ -11,11 +11,11 @@ const float ERROR_DOWN = ideal2Res(5.0);
 const float MAX_HORI_VEL = ideal2Res(400);
 
 AiAgent::AiAgent(Character *controlledCharacter) :
-_controlledCharacter(controlledCharacter), _currentBehavior(&AiAgent::stationaryBehavior) {}
+_controlledCharacter(controlledCharacter), _currentBehavior(&AiAgent::noResistenceBehavior) {}
 
 void AiAgent::switchUserToHereFrom(AiAgent *previousUser) {
     // clean up any movements from the AI.
-    if (_currentBehavior == &AiAgent::stationaryBehavior) {
+    if (_currentBehavior == &AiAgent::noResistenceBehavior) {
         // Need to transfer velocity.
         previousUser->_controlledCharacter->transferVelocity(_controlledCharacter);
     } else if (_currentBehavior == &AiAgent::followBehavior || _currentBehavior == &AiAgent::goToPointBehavior) {
@@ -26,6 +26,7 @@ void AiAgent::switchUserToHereFrom(AiAgent *previousUser) {
     previousUser->_controlledCharacter->toggleToAI();
     previousUser->setPlayerPosOffset(previousUser->_controlledCharacter->getPosition() - this->_controlledCharacter->getPosition());
     previousUser->_controlledCharacter->currentCrown->setVisible(false);
+    this->_controlledCharacter->toggleToPlayer();
     this->_controlledCharacter->currentCrown->setVisible(true);
 }
 
@@ -69,7 +70,8 @@ void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeybo
             break;
         default:
             // Try the charecter's special controls.
-            _controlledCharacter->characterSpecial(code, pressed);
+            // Commented out because we want these to always be used, so they go in changeBehavior.
+            //_controlledCharacter->characterSpecial(code, pressed);
             break;
     }
     return;
@@ -93,13 +95,13 @@ void AiAgent::plan(Character *player, std::vector<Character *> otherCharacters) 
     if (dist < ideal2Res(850)) {
          (this->*_currentBehavior)(player, otherCharacters);
     } else {
-        this->stationaryBehavior(player, otherCharacters);
+        this->noResistenceBehavior(player, otherCharacters);
     }
 }
 
 void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode code, bool pressed) {
     if (pressed && code == cocos2d::EventKeyboard::KeyCode::KEY_A) { // 'A' is becoming a toggle.
-        if (_currentBehavior == &AiAgent::stationaryBehavior || _currentBehavior == &AiAgent::goToPointBehavior) {
+        if (_currentBehavior == &AiAgent::noResistenceBehavior || _currentBehavior == &AiAgent::goToPointBehavior) {
             _currentBehavior = &AiAgent::followBehavior;
             _playerPosOffset = _controlledCharacter->getPosition() - player->getPosition();
             bool wasOn = _controlledCharacter->currentCrown->isVisible();
@@ -107,7 +109,7 @@ void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode 
             _controlledCharacter->currentCrown = _controlledCharacter->followcrown;
             _controlledCharacter->currentCrown->setVisible(wasOn);
         } else if (pressed && _currentBehavior == &AiAgent::followBehavior) {
-            _currentBehavior = &AiAgent::stationaryBehavior;
+            _currentBehavior = &AiAgent::noResistenceBehavior;
               bool wasOn = _controlledCharacter->currentCrown->isVisible();
             _controlledCharacter->currentCrown->setVisible(false);
             _controlledCharacter->currentCrown = _controlledCharacter->alonecrown;
@@ -116,7 +118,7 @@ void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode 
     } else if (pressed && code == cocos2d::EventKeyboard::KeyCode::KEY_S) {
         // Random variations on the default offset of 100.
         _playerPosOffset = cocos2d::Vec2(ideal2Res(-100), 0) + cocos2d::Vec2(ideal2Res((rand() % 120)) - ideal2Res(60), 0);
-        if (_currentBehavior == &AiAgent::stationaryBehavior || _currentBehavior == &AiAgent::goToPointBehavior) {
+        if (_currentBehavior == &AiAgent::noResistenceBehavior || _currentBehavior == &AiAgent::goToPointBehavior) {
             goToPoint = player->getPosition() + _playerPosOffset;
             _currentBehavior = &AiAgent::goToPointBehavior;
         }
@@ -131,7 +133,7 @@ void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode 
  * (set by the current behavior).
  */
 void AiAgent::executeControl(float delta) {
-    if (!_controlledCharacter->shouldBeControlled()) {
+    if (!_controlledCharacter->shouldBeControlled() || _currentBehavior == &AiAgent::noResistenceBehavior) {
         return;
     }
     // Do the control stuff.

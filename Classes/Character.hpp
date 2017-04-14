@@ -46,7 +46,8 @@ public:
         FROZEN,
         HANGING,
         DEAD,
-        QUICKSANDED
+        QUICKSANDED,
+        STUCK_SAND
     };
     
     enum CauseOfDeath {
@@ -108,6 +109,7 @@ public:
     
     bool justJumped() const;
     const State getCurrentState() const;
+    void setCurrentState(State newState);
     
     const std::string characterName;
     
@@ -133,15 +135,12 @@ public:
     
     void enteringHanging(cocos2d::PhysicsWorld *world, Character *m, cocos2d::Vec2 offsetVec, bool alreadyOn);
     void leavingHanging();
-    
-    void setToRespawn(CauseOfDeath cause);
-    CauseOfDeath _respawnNextCycle = NOT_DEAD;
 
     void updateMass(); // Cocos is a god-awful piece of software.
 
 protected:
     void initJump(double force);
-    State _currentState = State::STANDING;
+    void removeFromHanging();
         
     double leftMomentum = 0.0;
     double rightMomentum = 0.0;
@@ -150,12 +149,11 @@ protected:
     // I know, there's a getMass() in the body, but due to https://github.com/BryceStevenWilley/JTTW/issues/99, I'm saving it.
     double _mass;
     
-    
     Quicksand *_q = nullptr;
     
+    double sunkInQuicksand = 0.0;
+    
 private:
-    void updateAnimation(State oldState);
-       
     cocos2d::Vec2 _respawnPosition;
 
     cocos2d::Vec2 _oldVel;
@@ -165,6 +163,7 @@ private:
     cocos2d::Size _dimensions;
 
     double _frozenTimer = 0.0;
+    double _deathTimer = 0.0;
     
     cocos2d::Vec2 _rightVector = cocos2d::Vec2(1, 0);
     
@@ -177,6 +176,8 @@ private:
     Character *currentAttached = nullptr;
     cocos2d::Vec2 currentAttachedOffset = cocos2d::Vec2::ZERO;
     cocos2d::PhysicsWorld *currentWorld;
+    
+    State _currentState = State::STANDING;
 };
 }
 #endif /* Character_hpp */

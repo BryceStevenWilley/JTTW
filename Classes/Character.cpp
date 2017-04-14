@@ -104,18 +104,18 @@ void Character::impulseLeft(double deltaVel) {
     deltaVel *= _impulseScale;
     double impulse = getMass() * deltaVel;
     leftMomentum += impulse;
-    if (_currentState != State::FROZEN &&
-        _currentState != State::HANGING &&
-        _currentState != State::DEAD &&
-        _currentState != State::QUICKSANDED) {
+    if (getCurrentState() == STANDING ||
+        getCurrentState() == MID_AIR) {
         rebalanceImpulse();
-    } else if (_currentState == State::QUICKSANDED) {
+    } else if (getCurrentState() == QUICKSANDED) {
         double totalMomentum = rightMomentum - leftMomentum;
-        if (totalMomentum == 0.0) {
+        if (totalMomentum == 0.0  && !aiControl) {
             body->setVelocity(cocos2d::Vec2(0.0, _q->_recoverVel));
-        } else {
+        } else if (!aiControl) {
             double targetVelocity = totalMomentum / getMass() / 3.0;
             body->setVelocity(cocos2d::Vec2(targetVelocity, -_q->_sinkVel));
+        }  else {
+           body->setVelocity(cocos2d::Vec2(0, -_q->_sinkVel));
         }
     }
 }
@@ -124,19 +124,19 @@ void Character::impulseRight(double deltaVel) {
     deltaVel *= _impulseScale;
     double impulse = getMass() * deltaVel;
     rightMomentum += impulse;
-    if (_currentState != State::FROZEN &&
-        _currentState != State::HANGING &&
-        _currentState != State::DEAD &&
-        _currentState != State::QUICKSANDED) {
+    if (getCurrentState() == State::STANDING ||
+        getCurrentState() == State::MID_AIR) {
         rebalanceImpulse();
-    }  else if (_currentState == State::QUICKSANDED) {
+    }  else if (getCurrentState() == State::QUICKSANDED) {
         double totalMomentum = rightMomentum - leftMomentum;
-        if (totalMomentum == 0.0) {
+        if (totalMomentum == 0.0  && !aiControl) {
             body->setVelocity(cocos2d::Vec2(0.0, _q->_recoverVel));
-        } else {
+        } else if (!aiControl) {
             double targetVelocity = totalMomentum / getMass() / 3.0;
 
             body->setVelocity(cocos2d::Vec2(targetVelocity, -_q->_sinkVel));
+        } else {
+           body->setVelocity(cocos2d::Vec2(0, -_q->_sinkVel));
         }
     }
 }
@@ -158,15 +158,16 @@ void Character::applyForceRight(double fprime_x) {
 
     // Project the force onto the right direction vector to avoid 
     // bumping into objects as much as possible.
-    if (_currentState != State::QUICKSANDED &&
-        _currentState != State::FROZEN &&
-        _currentState != State::DEAD) {
+    if (getCurrentState() == State::STANDING ||
+        getCurrentState() == State::MID_AIR) {
         body->applyForce(F_x.project(_rightVector));
-    } else if (_currentState == State::QUICKSANDED){
-        if (fprime_x < 1.0) {
+    } else if (getCurrentState() == State::QUICKSANDED){
+        if (fprime_x < 1.0 && !aiControl) {
            body->setVelocity(cocos2d::Vec2(0.0, _q->_recoverVel));
-        } else {
+        } else if (!aiControl) {
            body->setVelocity(cocos2d::Vec2(fprime_x * getMass() / 3.0, -_q->_sinkVel));
+        } else {
+           body->setVelocity(cocos2d::Vec2(0, -_q->_sinkVel));
         }
     }
     // TODO: update the animation properly!
@@ -185,22 +186,21 @@ void Character::rebalanceImpulse() {
 }
 
 void Character::continueMotion() {
-    if (_currentState != State::FROZEN &&
-            _currentState != State::HANGING &&
-            _currentState != State::QUICKSANDED &&
-            _currentState != State::DEAD &&
+    if ((getCurrentState() == State::STANDING ||
+            getCurrentState() == State::MID_AIR) &&
             //platformsStandingOn != 0 &&
             wallsHit == 0 && 
             std::abs(rightMomentum - leftMomentum)/getMass() > 0.01) {
         rebalanceImpulse();
-    } else if (_currentState == State::QUICKSANDED) {
+    } else if (getCurrentState() == State::QUICKSANDED) {
         double totalMomentum = rightMomentum - leftMomentum;
-        if (totalMomentum == 0.0) {
+        if (totalMomentum == 0.0 && !aiControl) {
             body->setVelocity(cocos2d::Vec2(0.0, _q->_recoverVel));
-        } else {
+        } else if (!aiControl) {
             double targetVelocity = totalMomentum / getMass() / 3.0;
-
             body->setVelocity(cocos2d::Vec2(targetVelocity, -_q->_sinkVel));
+        } else {
+            body->setVelocity(cocos2d::Vec2(0, -_q->_sinkVel));
         }
     }
 }
@@ -213,41 +213,141 @@ void Character::stop() {
 }
 
 void Character::die(CauseOfDeath cause) {
-    State oldState = _currentState;
-    _currentState = DEAD;
+    if (getCurrentState() == DEAD) {
+        // ignore.
+        return;
+    }
+
+    // Handle death timer.
     if (cause == CUTSCENE) {
+        _deathTimer = 1.0;
+        _currentState = DEAD; // TODOTODOTODOOTODOTOTDO: very bad, only doing it to avoid the animation of falling down.
         return; // don't play sound.
     }
+
     // TODO: separate this sound effect to the multiple ways of dying.
     CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/player_death.wav");
     if (cause == PROJECTILE) {
-        
+        _deathTimer = 1.5;
     } else if (cause == FALL) {
-    
+        _deathTimer = 0.0; // Respawn right away.
     } else if (cause == CRUSHED) {
-    
+        _deathTimer = 1.0;
     }
-    updateAnimation(oldState);
+    setCurrentState(DEAD);
+}
+
+void Character::setCurrentState(State newState) {
+    if (newState == getCurrentState()) {
+        // Is there anything to do?
+        return;
+    }
+
+    std::cout << characterName << " leaving state " << getCurrentState() << " and entering state " << newState << std::endl;
+
+    // Clean up old states.
+    switch (getCurrentState()) {
+        case QUICKSANDED:
+            if (newState == STUCK_SAND) {
+                // ignore these changes.
+                break;
+            }
+        case STUCK_SAND:
+            sunkInQuicksand = 0.0;
+            this->body->setGravityEnable(true);
+            body->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
+            body->setContactTestBitmask((int)CollisionCategory::ALL);
+            _q = nullptr;
+            body->setVelocity(cocos2d::Vec2::ZERO);
+            break;
+            
+        case HANGING:
+            if (currentAttached != nullptr) {
+                ((Monkey *)currentAttached)->setHangingCharacter(nullptr);
+            }
+            currentAttached = nullptr;
+            currentAttachedOffset = cocos2d::Vec2::ZERO;
+            body->setRotationEnable(false);
+            body->setAngularVelocity(0.0);
+            this->setRotation(0.0);
+            rebalanceImpulse();
+            break;
+            
+        //case DEAD:
+    }
+
+    switch (newState) {
+        case STANDING:
+            this->setTimeScale(1.0);
+            if (body->getVelocity().x > 10.0 || body->getVelocity().x < -10.0) {
+                // TODO: Set walk or run depending on the speed (interpolate?)
+                this->setAnimation(0, "walk", true);
+            } else { // x == 0.0
+                this->setAnimation(0, "idle", true);
+            }
+            break;
+    
+        case MID_AIR:
+            _rightVector = cocos2d::Vec2(1, 0);
+            if (getCurrentState() == STANDING || getCurrentState() == HANGING) {
+                // Slow it down so it lasts the whole time.
+                this->setAnimation(0, "jump", false);
+                this->setTimeScale(0.9);
+            } else if (getCurrentState() == State::FROZEN || getCurrentState() == State::DEAD) {
+                this->setAnimation(0, "idle", true);
+                this->setTimeScale(1.0);
+            }
+            
+            break;
+            
+        case FROZEN:
+            this->setAnimation(0, "Freeze", false);
+            body->setVelocity(cocos2d::Vec2(0.0, 0.0));
+            // TODO
+            break;
+            
+        case HANGING:
+            // TODO
+            break;
+            
+        case DEAD:
+            // TODO
+            this->setAnimation(0, "fall forwards", false);
+            break;
+        
+        case QUICKSANDED:
+            this->body->setGravityEnable(false);
+            sunkInQuicksand = 0.0;
+            break;
+            
+        case STUCK_SAND:
+            body->setVelocity(cocos2d::Vec2(0.0, 0.0));
+            this->setAnimation(0, "idle", false);
+            break;
+            
+        default:
+            std::cerr << characterName << " switched to state " << newState << ". ADD A CASE FOR IT." << std::endl;
+            break;
+            
+    }
+   _currentState = newState;
 }
 
 void Character::freeze() {
-    State oldState = _currentState;
-    _currentState = State::FROZEN;
-    updateAnimation(oldState);
+    setCurrentState(FROZEN);
     _frozenTimer = 3.0; // seconds
-    body->setVelocity(cocos2d::Vec2(0.0, 0.0));
 }
 
 // While the key is pressed, apply a force (that is decaying) under a jump time
 // amount.
 void Character::initJump(double force) {
-    if (_currentState == State::MID_AIR || _currentState == State::FROZEN || _currentState == State::QUICKSANDED) {
-        // Can't jump while you're in the air, dummy!
+    if (getCurrentState() != State::STANDING && getCurrentState() != State::HANGING) {
+        // Don't let them jump.
         return;
     }
-    if (_currentState == State::HANGING) {
+    if (getCurrentState() == State::HANGING) {
         leavingHanging();
-        return;
+        // jump in direction of motion? copy monkey code.
     }
     
     jumpForce = force * getMass();
@@ -261,11 +361,9 @@ void Character::stopJump() {
 }
 
 void Character::jumpFromForce(double fprime_y) {
-    if (_currentState == State::MID_AIR ||
-        _currentState == State::FROZEN ||
-        _currentState == State::DEAD ||
-        _currentState == State::QUICKSANDED) {
-        // Can't jump while you're in the air, dummy!
+    if (getCurrentState() != State::STANDING &&
+        getCurrentState() != State::HANGING) {
+        // Don't let them jump.
         return;
     }
 
@@ -273,7 +371,7 @@ void Character::jumpFromForce(double fprime_y) {
 }
 
 void Character::transferVelocity(Character *reciever) {
-    std::cout << characterName << " velocity x: " << body->getVelocity().x << ", giving to " << reciever->characterName << std::endl;
+    std::cout << characterName << " is giving " << body->getVelocity().x << " x vel to " << reciever->characterName << std::endl;
     double totalMomentum = rightMomentum - leftMomentum;
     double targetVelocity = totalMomentum / getMass();
     
@@ -288,28 +386,20 @@ bool Character::justJumped() const {
 void Character::landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRightDir) {
     platformsStandingOn += 1;
     
-    std::cout << characterName << " landed, on " << platformsStandingOn << " platforms." << std::endl;
     // TODO: check if we don't need to do this for plats > 2
     _rightVector = newRightDir;
     
-    if (_currentState != State::FROZEN &&
-        _currentState != State::DEAD &&
-        _currentState != State::HANGING &&
-        _currentState != State::QUICKSANDED) {
-        State oldState = _currentState;
-        _currentState = State::STANDING;
-        updateAnimation(oldState);
+    if (getCurrentState() == STANDING ||
+        getCurrentState() == MID_AIR) {
+        setCurrentState(STANDING);
     }
 }
 
 void Character::leftCallback(cocos2d::PhysicsBody *plat) {
     platformsStandingOn -= 1;
 
-    if (platformsStandingOn == 0 && _currentState != HANGING) {
-        State oldState = _currentState;
-        _currentState = State::MID_AIR;
-        _rightVector = cocos2d::Vec2(1, 0);
-        updateAnimation(oldState);
+    if (platformsStandingOn == 0 && getCurrentState() != HANGING) {
+        setCurrentState(MID_AIR);
     } else if (platformsStandingOn < 0) {
         std::cerr << "ERROR: how can " << characterName << " stand on negative platforms?!" << std::endl;
         platformsStandingOn = 0;
@@ -346,17 +436,23 @@ const Character::State Character::getCurrentState() const {
 
 void Character::updateLoop(float delta) {
     // Kinda unrelated stuff regarding frozen.
-    if (_currentState == State::FROZEN) {
+    if (getCurrentState() == State::FROZEN) {
         _frozenTimer -= delta;
         if (_frozenTimer <= 0.0) {
             std::cout << "Un-freezing" << std::endl;
-            State oldState = _currentState;
             if (platformsStandingOn > 0) {
-                _currentState = State::STANDING;
+                setCurrentState(STANDING);
             } else {
-                _currentState = State::MID_AIR;
+                setCurrentState(MID_AIR);
             }
-            updateAnimation(oldState);
+        }
+    }
+ 
+    if (getCurrentState() == DEAD) {
+        _deathTimer -= delta;
+        if (_deathTimer <= 0.0) {
+            std::cout << "Respawning " << characterName << std::endl;
+            restartFromRespawn();
         }
     }
  
@@ -370,8 +466,9 @@ void Character::updateLoop(float delta) {
     
     cocos2d::Vec2 currentRelVel;
     
-    if (_currentState == State::FROZEN ||
-        _currentState == State::DEAD) {
+    if (getCurrentState() == State::FROZEN ||
+        getCurrentState() == State::DEAD ||
+        getCurrentState() == State::STUCK_SAND) {
         return; // don't change facing direction.
     }
     if (aiControl) {
@@ -387,11 +484,25 @@ void Character::updateLoop(float delta) {
     } else { // player control
         currentRelVel = cocos2d::Vec2((rightMomentum - leftMomentum)/ getMass(), body->getVelocity().y);
     }
+    if (getCurrentState() == QUICKSANDED && currentRelVel.y == _oldVel.y) {
+        if (_oldVel.y == -_q->_sinkVel) {
+            // For at least delta time, we've been sinking at the sinking rate.
+            sunkInQuicksand += _q->_sinkVel * delta;
+        } else if (_oldVel.y == _q->_recoverVel) {
+            sunkInQuicksand -= _q->_recoverVel * delta;
+        }
+        std::cout << characterName << " is sunk: " << sunkInQuicksand << std::endl;
+    }
+    
+    if (sunkInQuicksand > 50) {
+        setCurrentState(STUCK_SAND);
+    }
+    
     if (_oldVel == currentRelVel) {
         // nothing changed.
         return;
     }
-    if (_currentState == STANDING) {
+    if (getCurrentState() == STANDING) {
         if (std::abs(_oldVel.x) >= 5 && std::abs(currentRelVel.x) < 5) {
             // Slowing down.
             this->setAnimation(0, "idle", true);
@@ -414,49 +525,12 @@ void Character::updateLoop(float delta) {
     _oldVel = currentRelVel;
 }
 
-void Character::updateAnimation(State oldState) {
-    if ((oldState == State::MID_AIR || oldState == State::FROZEN || oldState == State::DEAD) && _currentState == State::STANDING) {
-        this->setTimeScale(1.0);
-        if (body->getVelocity().x > 10.0 || body->getVelocity().x < -10.0) {
-            // TODO: Set walk or run depending on the speed (interpolate?)
-            this->setAnimation(0, "walk", true);
-            //CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/Walking.wav");
-        } else { // x == 0.0
-            this->setAnimation(0, "idle", true);
-        }
-    }
-    if (oldState == State::STANDING && _currentState == State::MID_AIR) {
-        // If the character is in mid air traveling upwards (right after jumping)
-        // then set the jump animation and slow it down so it lasts the whole time.
-        this->setAnimation(0, "jump", false);
-        this->setTimeScale(0.9);
-    } else if ((oldState == State::FROZEN || oldState == State::DEAD) && _currentState == State::MID_AIR) {
-        this->setAnimation(0, "idle", true);
-        this->setTimeScale(1.0);
-    }
-
-    if (_currentState == State::FROZEN) {
-       this->setAnimation(0, "Freeze", false);
-    }
-   
-    if (_currentState == State::DEAD) {
-       this->setAnimation(0, "fall forwards", false);
-    }
-
-    // TODO: haven't covered from frozen to mid air. (what it do?)
-}
 
 void Character::restartFromRespawn() {
     body->setVelocity(cocos2d::Vec2(0, 0));
     body->resetForces();
     this->setPosition(_respawnPosition);
-    State oldState = _currentState;
-    _currentState = MID_AIR;
-    updateAnimation(oldState);
-}
-
-void Character::setToRespawn(CauseOfDeath cause) {
-    _respawnNextCycle = cause;
+    setCurrentState(MID_AIR);
 }
 
 void Character::setNewRespawn(cocos2d::Vec2 newRespawn) {
@@ -479,12 +553,12 @@ void Character::toggleToPlayer() {
  * 'alreadyOn' is only to change the animation.
  */
 void Character::enteringHanging(cocos2d::PhysicsWorld *world, Character *m, cocos2d::Vec2 offsetVec, bool alreadyOn) {
-    leavingHanging();
+    removeFromHanging();
     offsetVec.set(0.0, offsetVec.y * .8);
-    // create a joint between you and the vine.
+    // create a joint between you and Monkey.
     pinJoint = cocos2d::PhysicsJointPin::construct(this->body, m->body, cocos2d::Vec2::ZERO, offsetVec);
     world->addJoint(pinJoint);
-    _currentState = HANGING;
+    setCurrentState(HANGING);
     
     if (!alreadyOn) {
         this->setTimeScale(2.0);
@@ -512,6 +586,11 @@ void Character::enteringHanging(cocos2d::PhysicsWorld *world, Character *m, coco
 }
 
 void Character::leavingHanging() {
+    removeFromHanging();
+    setCurrentState(MID_AIR);
+}
+
+void Character::removeFromHanging() {
     if (pinJoint != nullptr) {
         pinJoint->removeFormWorld();
         pinJoint = nullptr;
@@ -521,18 +600,6 @@ void Character::leavingHanging() {
         gearJoint->removeFormWorld();
         gearJoint = nullptr;
     }
-
-    if (currentAttached != nullptr) {
-        ((Monkey *)currentAttached)->setHangingCharacter(nullptr);
-    }
-
-    currentAttached = nullptr;
-    currentAttachedOffset = cocos2d::Vec2::ZERO;
-
-    this->_currentState = Character::State::MID_AIR;
-    body->setRotationEnable(false);
-    body->setAngularVelocity(0.0);
-    this->setRotation(0.0);
 }
 
 void Character::callHey() {
@@ -542,27 +609,29 @@ void Character::callHey() {
 }
 
 void Character::landedInQuicksand(Quicksand *q) {
-    //this->body->setDynamic(false);
-    this->body->setGravityEnable(false);
-    _q = q;
-    _currentState = QUICKSANDED;
+    if (getCurrentState() != HANGING && getCurrentState() != DEAD) {
+        std::cout << characterName << " entering quicksand." << std::endl;
+        _q = q;
+        setCurrentState(QUICKSANDED);
+    }
 }
 
 void Character::leftQuicksand() {
-    this->body->setGravityEnable(true);
-    body->setCollisionBitmask((int)CollisionCategory::PlatformAndBoulder);
-    body->setContactTestBitmask((int)CollisionCategory::ALL);
-    _q = nullptr;
-    _currentState = STANDING;
-    body->setVelocity(cocos2d::Vec2::ZERO);
+    if (getCurrentState() != QUICKSANDED && getCurrentState() != STUCK_SAND) {
+        std::cout << characterName << " ignoring leaving quicksand with state " << _currentState << std::endl;
+        // Happening because you're hanging and swung through some quicksand. Ignore.
+        return;
+    }
+    setCurrentState(STANDING);
 }
 
 bool Character::shouldBeControlled() {
-    return !(getCurrentState() == Character::HANGING);
+    return getCurrentState() != HANGING ||
+           getCurrentState() != DEAD ||
+           getCurrentState() != FROZEN ||
+           getCurrentState() != STUCK_SAND;
 }
 
 void Character::updateMass() {
     _mass = body->getMass();
 }
-
-
