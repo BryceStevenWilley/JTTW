@@ -1,6 +1,6 @@
 [submodule "cocos2d"]
 	path = cocos2d
-	url = https://github.com/BrownRiceRice/cocos2d-x
+	url = https://github.com/BryceStevenWilley/cocos2d-x
 [submodule "JTTWLevelEditor"]
 	path = JTTWLevelEditor
 	url = https://github.com/runningcrane/JTTWLevelEditor
