@@ -17,7 +17,6 @@
 		46880B8919C43A87006E1F66 /* AppDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46880B8419C43A87006E1F66 /* AppDelegate.cpp */; };
 		46880B8A19C43A87006E1F66 /* MainGameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46880B8619C43A87006E1F66 /* MainGameScene.cpp */; };
 		46880B8B19C43A87006E1F66 /* MainGameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46880B8619C43A87006E1F66 /* MainGameScene.cpp */; };
-		503AE0F817EB97AB00D1A890 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 503AE0F617EB97AB00D1A890 /* Icon.icns */; };
 		503AE10017EB989F00D1A890 /* AppController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 503AE0FB17EB989F00D1A890 /* AppController.mm */; };
 		503AE10117EB989F00D1A890 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 503AE0FC17EB989F00D1A890 /* main.m */; };
 		503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 503AE0FF17EB989F00D1A890 /* RootViewController.mm */; };
@@ -159,6 +158,7 @@
 		9FD41C101E2D55920077779E /* testCharacter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C0E1E2D55920077779E /* testCharacter.cpp */; };
 		9FD41C131E2D55C80077779E /* TestDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C111E2D55C80077779E /* TestDelegate.cpp */; };
 		9FD41C151E2D56220077779E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C141E2D56220077779E /* main.cpp */; };
+		9FDB4C781EA0469000D07CD4 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 503AE0F617EB97AB00D1A890 /* Icon.icns */; };
 		9FE1642C1E64BB5600FE4233 /* levelFiles in Resources */ = {isa = PBXBuildFile; fileRef = 9FB69E001E46E93A006325A3 /* levelFiles */; };
 		9FE1642D1E64BB5600FE4233 /* characters in Resources */ = {isa = PBXBuildFile; fileRef = 454B170A1E2F39280035467D /* characters */; };
 		BF171245129291EC00B8313A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB012928DE900B8313A /* OpenGLES.framework */; };
@@ -808,12 +808,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FDB4C781EA0469000D07CD4 /* Icon.icns in Resources */,
 				9F9A04D31E70ACA30069F934 /* assets in Resources */,
 				9F36A4D41E6D4E650016232D /* Music in Resources */,
 				9FC227041E64BA1300AA75D5 /* characters in Resources */,
 				9FB69E041E46EAE9006325A3 /* levelFiles in Resources */,
 				9FB69E021E46E944006325A3 /* UI in Resources */,
-				503AE0F817EB97AB00D1A890 /* Icon.icns in Resources */,
 				521A8EAA19F11F5000D177D7 /* fonts in Resources */,
 				9F36A4D11E6D4E650016232D /* Sound in Resources */,
 			);
