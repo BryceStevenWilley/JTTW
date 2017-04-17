@@ -2,6 +2,7 @@
 #include "Collisions.hpp"
 #include "Resolution.hpp"
 #include "Boulder.hpp"
+#include "SimpleAudioEngine.h"
 
 using namespace JTTW;
 
@@ -84,4 +85,9 @@ void Piggy::launchHeldCharacters() {
 
 bool Piggy::shouldBeControlled() {
     return Character::shouldBeControlled() && _state != Piggy::BOULDER_MODE;
+}
+
+void Piggy::callHey() {
+    Character::callHey();
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/heyPiggy.wav");
 }

@@ -108,6 +108,7 @@ private:
 
     std::string _currentLevelName;
     std::string _nextLevel;
+    std::string _endQuote;
     
     cocos2d::Vec2 levelEnd;
     int levelEndDir = 4;

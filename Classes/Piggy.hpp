@@ -35,7 +35,8 @@ public:
     void launchHeldCharacters();
     
     virtual bool shouldBeControlled() override;
-    
+        
+    virtual void callHey() override;
 private:
     State _state = NORMAL;
     

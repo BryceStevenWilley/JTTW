@@ -1,5 +1,6 @@
 #include "Sandy.hpp"
 #include "Resolution.hpp"
+#include "SimpleAudioEngine.h"
 
 using namespace JTTW;
 
@@ -14,4 +15,9 @@ void Sandy::initJump() {
 
 void Sandy::characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) {
 
+}
+
+void Sandy::callHey() {
+    Character::callHey();
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/heySandy.mp3");
 }

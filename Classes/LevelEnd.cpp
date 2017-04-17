@@ -5,23 +5,24 @@
 
 using namespace JTTW;
 
-cocos2d::Scene* LevelEnd::createScene(std::string &levelToLoad) {
+cocos2d::Scene* LevelEnd::createScene(std::string &levelToLoad, std::string &endQuote) {
+    std::cout << "Level end: new level: " << levelToLoad << ", end quote: " << endQuote << std::endl;
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::create();
-    auto layer = LevelEnd::create(levelToLoad);
+    auto layer = LevelEnd::create(levelToLoad, endQuote);
     scene->addChild(layer);
 
     return scene;
 }
 
-bool LevelEnd::init(std::string &nextLevelToLoad) {
+bool LevelEnd::init(std::string &nextLevelToLoad, std::string &endQuote) {
     _nextLevelToLoad = nextLevelToLoad;
     
     auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
     cocos2d::Vec2 origin = cocos2d::Director::getInstance()->getVisibleOrigin();
-    auto fontScaleFactor = visibleSize.width / 1560.0;;
+    auto fontScaleFactor = visibleSize.width / 1560.0;
 
-    auto textLabel = createSunriseLabel("Your journey continues...", 100, fontScaleFactor);
+    auto textLabel = createSunriseLabel(endQuote, 60, fontScaleFactor);
     if (_nextLevelToLoad == "") {
         // The journey is over!
         textLabel = createSunriseLabel("Searching means having a goal. But finding means being free. \n Mei Tan \n Melinda Crane \n Bryce Willey ", 50, fontScaleFactor);

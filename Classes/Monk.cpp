@@ -1,5 +1,6 @@
 #include "Monk.hpp"
 #include "Resolution.hpp"
+#include "SimpleAudioEngine.h"
 
 using namespace JTTW;
 
@@ -14,4 +15,9 @@ void Monk::initJump() {
 
 void Monk::characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) {
 
+}
+
+void Monk::callHey() {
+    Character::callHey();
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/hey.wav");
 }

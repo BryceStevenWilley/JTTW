@@ -50,6 +50,8 @@ public:
         
     virtual void landedInQuicksand(Quicksand *q) override;
     
+    virtual void callHey() override;
+    
 private:
     void updateClimbingVel();
     void moveAlongVine(float deltaP);

@@ -686,6 +686,10 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
         audio->playBackgroundMusic((std::string("Music/") + levelName + std::string(".mp3")).c_str(), true);
     }
     
+    if(lvl["endQuote"].is_string()) {
+        _endQuote = lvl["endQuote"];
+    }
+    
     if (lvl["levelFileName"] == "dragon") {
         Zone cutSceneZone = Zone(vp.metersToPixels(cocos2d::Vec2(28, 3)), vp.metersToPixels(cocos2d::Vec2(40, 20)), nullptr);
         cutscenes.push_back(new ZoneCutscene(Cutscene::Scene::DRAGON, vp, cutSceneZone));
@@ -806,7 +810,7 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     curtain->setCascadeOpacityEnabled(true);
     curtain->setOpacity(170);
     curtain->setVisible(false);
-    uiLayer->addChild(curtain, 10);
+    this->addChild(curtain, 9);
 
     ///////////////////////// CUT Scene stuff ////////////////
     // Set the cinematic look.
@@ -884,9 +888,6 @@ void MainGameScene::KeypressedCallback(cocos2d::EventKeyboard::KeyCode keyCode, 
         case EventKeyboard::KeyCode::KEY_SPACE:
         case EventKeyboard::KeyCode::KEY_A:
         case EventKeyboard::KeyCode::KEY_D:
-        case EventKeyboard::KeyCode::KEY_O:
-        case EventKeyboard::KeyCode::KEY_S:
-        case EventKeyboard::KeyCode::KEY_Q:
             player->plan(characters, keyCode, true);
             for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
                 if ((*xAgent) != player) {
@@ -1025,7 +1026,7 @@ void MainGameScene::nextLevelCallback() {
         this->_eventDispatcher->removeEventListener(eventListener);
         std::cout << "Starting next level, " << _nextLevel << std::endl;
         audio->stopBackgroundMusic();
-        auto end = LevelEnd::createScene(_nextLevel);
+        auto end = LevelEnd::createScene(_nextLevel, _endQuote);
         auto fade = cocos2d::TransitionFade::create(1.5, end);
         if (endScene == nullptr) {
             cocos2d::Director::getInstance()->replaceScene(fade);

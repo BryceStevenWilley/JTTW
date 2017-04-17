@@ -88,7 +88,7 @@ public:
     virtual void stopJump();
     /*void jumpFromForce(double fprime_y); */
     
-    void callHey();
+    virtual void callHey();
     
     virtual void die(CauseOfDeath cause);
     

@@ -115,8 +115,10 @@ void EndLevelCutscene::runScene(bool goToStartBlackout, cocos2d::Scene *nextScen
                 std::cout << _scene->platforms.size() << std::endl;
                 Viewpoint vp = _scene->vp;
                 createActorsInScene = cocos2d::CallFunc::create([this, characters, bodhiTree, vp]() mutable {
+                    double startX = 1462.4;
                     for (auto& c: characters) {
-                        c->setPosition(cocos2d::Vec2(ideal2Res(1462.4), ideal2Res(160.908)));
+                        c->setPosition(cocos2d::Vec2(ideal2Res(startX), ideal2Res(160.908)));
+                        startX += 30;
                     }
                     bodhiTree->body->removeFromWorld();
                     vp.followCharacter(bodhiTree, 0.1);
@@ -168,10 +170,10 @@ void EndLevelCutscene::runScene(bool goToStartBlackout, cocos2d::Scene *nextScen
                         characters[3]->setScaleX(std::abs(characters[3]->getScaleX()));
                     });
                     
-                    characters[0]->runAction(cocos2d::Sequence::create(moveRight1, pauseFor(1), stopRight1, pauseFor(1), turn1, nullptr));
-                    characters[1]->runAction(cocos2d::Sequence::create(moveRight2, pauseFor(1), stopRight2, pauseFor(3), turn2, nullptr));
+                    characters[0]->runAction(cocos2d::Sequence::create(moveRight1, pauseFor(1.1), stopRight1, pauseFor(1), turn1, nullptr));
+                    characters[1]->runAction(cocos2d::Sequence::create(moveRight2, pauseFor(.8), stopRight2, pauseFor(3), turn2, nullptr));
                     characters[2]->runAction(cocos2d::Sequence::create(moveRight3, pauseFor(3.5), stopRight3, pauseFor(4), turn3, nullptr));
-                    characters[3]->runAction(cocos2d::Sequence::create(moveRight4, pauseFor(3.5), stopRight4, pauseFor(4.78), turn4, nullptr));
+                    characters[3]->runAction(cocos2d::Sequence::create(moveRight4, pauseFor(3.3), stopRight4, pauseFor(4.78), turn4, nullptr));
                 });
                 break;
             

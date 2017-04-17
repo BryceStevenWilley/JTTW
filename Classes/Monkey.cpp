@@ -398,3 +398,8 @@ void Monkey::landedInQuicksand(Quicksand *q) {
         Character::landedInQuicksand(q);
     }
 }
+
+void Monkey::callHey() {
+    Character::callHey();
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/hey.wav");
+}

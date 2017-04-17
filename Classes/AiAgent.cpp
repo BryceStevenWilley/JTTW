@@ -63,10 +63,10 @@ void AiAgent::plan(std::vector<Character *> otherCharacters, cocos2d::EventKeybo
             }
             break;
         case KeyCode::KEY_S:
-            if (pressed) {
-                // Do animation of character calling for everyone else.
-                _controlledCharacter->callHey();
-            }
+            //if (pressed) {
+            //    // Do animation of character calling for everyone else.
+            //    _controlledCharacter->callHey();
+           // }
             break;
         default:
             // Try the charecter's special controls.
@@ -102,13 +102,13 @@ void AiAgent::plan(Character *player, std::vector<Character *> otherCharacters) 
 void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode code, bool pressed) {
     if (pressed && code == cocos2d::EventKeyboard::KeyCode::KEY_A) { // 'A' is becoming a toggle.
         if (_currentBehavior == &AiAgent::noResistenceBehavior || _currentBehavior == &AiAgent::goToPointBehavior) {
-            //if (player == _controlledCharacter) {
+            if (player == _controlledCharacter) {
                 // Do animation of character calling for everyone else.
-            //    _controlledCharacter->callHey();
-            //}
+                _controlledCharacter->callHey();
+            }
             _currentBehavior = &AiAgent::followBehavior;
-            _playerPosOffset = _controlledCharacter->getPosition() - player->getPosition();
-            //_playerPosOffset = cocos2d::Vec2(ideal2Res(-100), 0) + cocos2d::Vec2(ideal2Res((rand() % 120)) - ideal2Res(60), 0);
+            //_playerPosOffset = _controlledCharacter->getPosition() - player->getPosition();
+            _playerPosOffset = cocos2d::Vec2(ideal2Res(-100), 0) + cocos2d::Vec2(ideal2Res((rand() % 120)) - ideal2Res(60), 0);
             bool wasOn = _controlledCharacter->currentCrown->isVisible();
             _controlledCharacter->currentCrown->setVisible(false);
             _controlledCharacter->currentCrown = _controlledCharacter->followcrown;
@@ -122,11 +122,11 @@ void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode 
         }
     } else if (pressed && code == cocos2d::EventKeyboard::KeyCode::KEY_S) {
         // Random variations on the default offset of 100.
-        _playerPosOffset = cocos2d::Vec2(ideal2Res(-100), 0) + cocos2d::Vec2(ideal2Res((rand() % 120)) - ideal2Res(60), 0);
-        if (_currentBehavior == &AiAgent::noResistenceBehavior || _currentBehavior == &AiAgent::goToPointBehavior) {
-            goToPoint = player->getPosition() + _playerPosOffset;
-            _currentBehavior = &AiAgent::goToPointBehavior;
-        }
+        //_playerPosOffset = cocos2d::Vec2(ideal2Res(-100), 0) + cocos2d::Vec2(ideal2Res((rand() % 120)) - ideal2Res(60), 0);
+        //if (_currentBehavior == &AiAgent::noResistenceBehavior || _currentBehavior == &AiAgent::goToPointBehavior) {
+        //    goToPoint = player->getPosition() + _playerPosOffset;
+        //    _currentBehavior = &AiAgent::goToPointBehavior;
+        //}
     } else {
         // Try their specials.
         if (code == cocos2d::EventKeyboard::KeyCode::KEY_D ||
@@ -156,8 +156,6 @@ void AiAgent::executeControl(float delta) {
     if (fprime.x > 7000) {
         fprime.x = 7000;
     }
-    
-    std::cout << "Applying force of " << fprime.x << " to " << _controlledCharacter->characterName << std::endl;
     
     if (_controlledCharacter->getCurrentState() == Character::State::MID_AIR &&
         _controlledCharacter->body->getVelocity().getLengthSq() < 1 &&

@@ -12,7 +12,8 @@ public:
         
     virtual void initJump() override;
     virtual void characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) override;
-    
+        
+    virtual void callHey() override;
 };
 }
 #endif /* Sandy_hpp */

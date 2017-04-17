@@ -17,6 +17,7 @@ public:
     
     void addReachiblePeg(Peg *p);
     
+    virtual void callHey() override;
 private:
     Peg *reachiblePeg = nullptr;
     

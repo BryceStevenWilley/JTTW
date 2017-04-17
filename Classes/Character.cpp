@@ -626,7 +626,6 @@ void Character::removeFromHanging() {
 void Character::callHey() {
     this->setAnimation(0, "wave", false);
     this->addAnimation(0, "idle", true);
-    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/hey.wav");
 }
 
 void Character::landedInQuicksand(Quicksand *q) {

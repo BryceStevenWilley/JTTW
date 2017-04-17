@@ -8,13 +8,13 @@ namespace JTTW {
 
 class LevelEnd : public cocos2d::Layer {
 public:
-    static cocos2d::Scene* createScene(std::string &nextLevelToLoad);
-    virtual bool init(std::string &nextLevelToLoad);
+    static cocos2d::Scene* createScene(std::string &nextLevelToLoad, std::string &endQuote);
+    virtual bool init(std::string &nextLevelToLoad, std::string &endQuote);
     
     //CREATE_FUNC(LevelEnd);
-    static LevelEnd* create(std::string &nextLevelToLoad){
+    static LevelEnd* create(std::string &nextLevelToLoad, std::string &endQuote){
         LevelEnd *pRet = new LevelEnd();
-        if (pRet && pRet->init(nextLevelToLoad)) {
+        if (pRet && pRet->init(nextLevelToLoad, endQuote)) {
             pRet->autorelease();
             return pRet;
         }
