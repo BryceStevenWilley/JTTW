@@ -11,7 +11,7 @@
 using namespace JTTW;
 
 const double Character::JUMP_DECAY = ideal2Res(200);
-const double Character::VEL_LIMIT = ideal2Res(600);
+const double Character::VEL_LIMIT = ideal2Res(800);
 const double Character::JUMP_INIT_FRACTION = (7.0 / 12.0);
 const double Character::CROWN_SCALE = screenScale * .3;
 const std::array<cocos2d::Vec2, 9> Character::COL_POINTS = {
@@ -312,11 +312,12 @@ void Character::setCurrentState(State newState) {
             
         case DEAD:
             // TODO
-            this->setAnimation(0, "fall forwards", false);
+            this->setAnimation(0, "fall", false);
             break;
         
         case QUICKSANDED:
             this->body->setGravityEnable(false);
+            body->setVelocity(cocos2d::Vec2(0.0, 0.0));
             sunkInQuicksand = 0.0;
             break;
             
@@ -333,9 +334,13 @@ void Character::setCurrentState(State newState) {
    _currentState = newState;
 }
 
-void Character::freeze() {
+void Character::freeze(double duration) {
+    if (getCurrentState() == DEAD) {
+        // Ignore.
+        return;
+    }
     setCurrentState(FROZEN);
-    _frozenTimer = 3.0; // seconds
+    _frozenTimer = duration; // seconds
 }
 
 // While the key is pressed, apply a force (that is decaying) under a jump time
@@ -346,7 +351,7 @@ void Character::initJump(double force) {
         return;
     }
     if (getCurrentState() == State::HANGING) {
-        leavingHanging();
+        leavingHanging(cocos2d::Vec2::ZERO);
         // jump in direction of motion? copy monkey code.
     }
     
@@ -360,7 +365,7 @@ void Character::stopJump() {
     jumpForce = 0.0;
 }
 
-void Character::jumpFromForce(double fprime_y) {
+/*void Character::jumpFromForce(double fprime_y) {
     if (getCurrentState() != State::STANDING &&
         getCurrentState() != State::HANGING) {
         // Don't let them jump.
@@ -368,7 +373,7 @@ void Character::jumpFromForce(double fprime_y) {
     }
 
     body->applyForce(cocos2d::Vec2(0.0, fprime_y * getMass()));
-}
+} */
 
 void Character::transferVelocity(Character *reciever) {
     std::cout << characterName << " is giving " << body->getVelocity().x << " x vel to " << reciever->characterName << std::endl;
@@ -389,8 +394,13 @@ void Character::landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRigh
     // TODO: check if we don't need to do this for plats > 2
     _rightVector = newRightDir;
     
+    if (getCurrentState() == HANGING) {
+        leavingHanging(cocos2d::Vec2::ZERO);
+    }
+    
     if (getCurrentState() == STANDING ||
-        getCurrentState() == MID_AIR) {
+        getCurrentState() == MID_AIR ||
+        getCurrentState() == HANGING) {
         setCurrentState(STANDING);
     }
 }
@@ -398,7 +408,11 @@ void Character::landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRigh
 void Character::leftCallback(cocos2d::PhysicsBody *plat) {
     platformsStandingOn -= 1;
 
-    if (platformsStandingOn == 0 && getCurrentState() != HANGING) {
+    if (platformsStandingOn == 0 &&
+        getCurrentState() != HANGING &&
+        getCurrentState() != DEAD &&
+        getCurrentState() != QUICKSANDED) {
+        std::cout << "Mid air from left callback" << std::endl;
         setCurrentState(MID_AIR);
     } else if (platformsStandingOn < 0) {
         std::cerr << "ERROR: how can " << characterName << " stand on negative platforms?!" << std::endl;
@@ -426,7 +440,10 @@ bool Character::isMovingRight() const {
     return body->getVelocity().x > 0.0;
 }
 
-float Character::getMass() const {
+float Character::getMass() {
+    if (_mass > 50000) {
+        updateMass();
+    }
     return _mass;
 }
 
@@ -491,7 +508,6 @@ void Character::updateLoop(float delta) {
         } else if (_oldVel.y == _q->_recoverVel) {
             sunkInQuicksand -= _q->_recoverVel * delta;
         }
-        std::cout << characterName << " is sunk: " << sunkInQuicksand << std::endl;
     }
     
     if (sunkInQuicksand > 50) {
@@ -527,6 +543,7 @@ void Character::updateLoop(float delta) {
 
 
 void Character::restartFromRespawn() {
+    std::cout << characterName << " is respawning " << _respawnPosition.x << std::endl;
     body->setVelocity(cocos2d::Vec2(0, 0));
     body->resetForces();
     this->setPosition(_respawnPosition);
@@ -553,6 +570,10 @@ void Character::toggleToPlayer() {
  * 'alreadyOn' is only to change the animation.
  */
 void Character::enteringHanging(cocos2d::PhysicsWorld *world, Character *m, cocos2d::Vec2 offsetVec, bool alreadyOn) {
+    if (getCurrentState() == DEAD) {
+        // Ignore
+        return;
+    }
     removeFromHanging();
     offsetVec.set(0.0, offsetVec.y * .8);
     // create a joint between you and Monkey.
@@ -562,13 +583,12 @@ void Character::enteringHanging(cocos2d::PhysicsWorld *world, Character *m, coco
     
     if (!alreadyOn) {
         this->setTimeScale(2.0);
-        this->setAnimation(0, "JumpToSwing", false);
-        this->addAnimation(0, "Swing", true);
+        this->setAnimation(0, "jumptoswing", false);
     } else {
-        this->setTimeScale(2.0);
-        this->setTimeScale(1.0);
-        this->setAnimation(0, "Climb", false);
-        this->addAnimation(0, "Swing", true);
+        //this->setTimeScale(2.0);
+        //this->setTimeScale(1.0);
+        //this->setAnimation(0, "Climb", false);
+        //this->addAnimation(0, "Swing", true);
     }
     
     // set the character to rotate with the vine.
@@ -585,8 +605,9 @@ void Character::enteringHanging(cocos2d::PhysicsWorld *world, Character *m, coco
     currentWorld = world;
 }
 
-void Character::leavingHanging() {
+void Character::leavingHanging(cocos2d::Vec2 vel) {
     removeFromHanging();
+    body->setVelocity(vel);
     setCurrentState(MID_AIR);
 }
 
@@ -603,7 +624,7 @@ void Character::removeFromHanging() {
 }
 
 void Character::callHey() {
-    this->setAnimation(0, "Wave", false);
+    this->setAnimation(0, "wave", false);
     this->addAnimation(0, "idle", true);
     CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/hey.wav");
 }
@@ -617,12 +638,12 @@ void Character::landedInQuicksand(Quicksand *q) {
 }
 
 void Character::leftQuicksand() {
-    if (getCurrentState() != QUICKSANDED && getCurrentState() != STUCK_SAND) {
-        std::cout << characterName << " ignoring leaving quicksand with state " << _currentState << std::endl;
-        // Happening because you're hanging and swung through some quicksand. Ignore.
+    if (getCurrentState() == QUICKSANDED || getCurrentState() == STUCK_SAND) {
+        setCurrentState(STANDING);
         return;
     }
-    setCurrentState(STANDING);
+    std::cout << characterName << " ignoring leaving quicksand with state " << _currentState << std::endl;
+    // Happening because you're hanging and swung through some quicksand. Ignore.
 }
 
 bool Character::shouldBeControlled() {

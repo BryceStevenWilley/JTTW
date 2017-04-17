@@ -8,6 +8,7 @@ using namespace JTTW;
 ProjectileFactory::ProjectileFactory(cocos2d::Vec2 maxVel, cocos2d::Vec2 minVel, std::string assetName, std::vector<cocos2d::Vec2> points, cocos2d::Size assetSize, std::string soundName, bool dynamic, bool deadly) :
         xVelGen(minVel.x, maxVel.x),
         yVelGen(minVel.y, maxVel.y),
+        pitch(0.8, 1.2),
         _assetName(assetName),
         _soundName(soundName),
         _points(points),
@@ -41,11 +42,14 @@ cocos2d::Sprite *ProjectileFactory::getEmptyProjectile() {
         sprite->setTag(MOVEABLE_TAG);
     }
     sprite->addComponent(body);
-
     
-    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(_soundName.c_str());
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(_soundName.c_str(), false, generatePitch(), 0.0, 1.0);
     
     return sprite;
+}
+
+double ProjectileFactory::generatePitch() {
+    return pitch(rng);
 }
 
 RelativeProjectileFactory::RelativeProjectileFactory(std::string assetName, std::vector<cocos2d::Vec2> points, cocos2d::Size assetSize, std::string soundName, cocos2d::Vec2 maxVel, cocos2d::Vec2 minVel, cocos2d::Vec2 maxOffset, cocos2d::Vec2 minOffset, bool dynamic, bool deadly) :

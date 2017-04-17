@@ -8,18 +8,25 @@
 
 namespace JTTW {
 
-const int DRAGON_CUTSCENE = 1;
-
-
 class Cutscene {
 public:
-    Cutscene(int uid, Viewpoint vp, Zone z);
+    enum Scene {
+        DRAGON,
+        FLIGHT,
+        BODHI
+    };
+
+    Cutscene(Scene uid, Viewpoint vp);
 
     void initFromScene(MainGameScene *scene);
-    void runScene(bool gotoStartBlackout);
+    virtual void runScene(bool gotoStartBlackout);
     
-    bool trigger();
-private:
+    virtual bool trigger();
+protected:
+    cocos2d::ActionInterval *pauseFor(double duration) {
+        return cocos2d::ScaleBy::create(duration, 1.0);
+    }
+
     std::map<std::string, cocos2d::Vec2> charactersStart;
     std::map<std::string, cocos2d::Vec2> charactersEnd;
     
@@ -34,7 +41,7 @@ private:
     std::map<cocos2d::EventKeyboard::KeyCode, bool> _haveReleased;
     cocos2d::EventDispatcher *_eventDispatcher;
     
-    Zone _triggerZone;
+    Scene which;
 };
 }
 

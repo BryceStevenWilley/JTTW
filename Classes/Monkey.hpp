@@ -32,7 +32,7 @@ public:
     void leavingClimeable(bool goingToReattach, bool ignoreCount);
     
     void enteringVine(cocos2d::PhysicsWorld *world, SceneObject *vine, double offset, bool alreadyOn);
-    void leavingVine(bool reattaching);
+    void leavingVine(bool reattaching, cocos2d::Vec2 vel);
     
     virtual void restartFromRespawn() override;
     virtual void die(Character::CauseOfDeath cause) override;
@@ -45,11 +45,17 @@ public:
     bool hasHangingCharacter();
     
     virtual bool shouldBeControlled() override;
+        
+    virtual void landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRightDir) override;
+        
+    virtual void landedInQuicksand(Quicksand *q) override;
     
 private:
     void updateClimbingVel();
     void moveAlongVine(float deltaP);
     void moveAlongClimbable(cocos2d::Vec2 up);
+ 
+    void removeFromVine();
 
     State _state;
     

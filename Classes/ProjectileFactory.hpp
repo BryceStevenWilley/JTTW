@@ -12,6 +12,7 @@ class ProjectileFactory {
 public:
     ProjectileFactory(cocos2d::Vec2 maxVel, cocos2d::Vec2 minVel, std::string assetName, std::vector<cocos2d::Vec2> points, cocos2d::Size assetsSize, std::string soundName, bool dynamic, bool deadly);
     virtual cocos2d::Sprite *generateProjectile(cocos2d::Vec2 targetCenter) = 0;
+    double generatePitch();
     
 protected:
     virtual cocos2d::Sprite *getEmptyProjectile();
@@ -19,6 +20,7 @@ protected:
     std::mt19937 rng;
     std::uniform_real_distribution<double> xVelGen;
     std::uniform_real_distribution<double> yVelGen;
+    std::uniform_real_distribution<double> pitch;
     
 private:
     std::string _assetName;

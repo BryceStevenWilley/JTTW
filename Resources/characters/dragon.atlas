@@ -1,0 +1,33 @@
+
+dragon.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+body
+  rotate: false
+  xy: 2, 2
+  size: 820, 495
+  orig: 820, 495
+  offset: 0, 0
+  index: -1
+tail
+  rotate: true
+  xy: 2, 499
+  size: 431, 877
+  orig: 431, 877
+  offset: 0, 0
+  index: -1
+
+dragon2.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+head
+  rotate: false
+  xy: 2, 2
+  size: 733, 976
+  orig: 733, 976
+  offset: 0, 0
+  index: -1

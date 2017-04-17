@@ -63,7 +63,6 @@ void Monkey::continueMotion() {
 void Monkey::initJump() {
     float jumpPower = JUMP_INIT;
     if (_state == SWINGING) {
-        leavingVine(false);
         _state = NORMAL;
         cocos2d::Vec2 vel = body->getVelocity();
         body->applyImpulse(getMass() * vel * .85); // Double the current velocity!
@@ -72,17 +71,10 @@ void Monkey::initJump() {
         } else {
             body->applyImpulse(getMass() * cocos2d::Vec2(ideal2Res(100), ideal2Res(200)));
         }
+        leavingVine(false, body->getVelocity());
         setCurrentState(Character::State::MID_AIR);
-        
-// TODO
-// TODO
-// TODO
-// TODO
-// TODO
-// TODO
-// TODO
-// Should this be here, or should it be handled in a separate function in Monkey?
-        this->setAnimation(0, "JumpForwardFromSwing", false);
+        this->setAnimation(0, "jumpfromswing", false);
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/Jump.wav");
         return;
     }
     if (_state == NORMAL) {
@@ -229,7 +221,7 @@ void Monkey::enteringVine(cocos2d::PhysicsWorld *world, SceneObject *obj, double
     if (getCurrentState() == Character::State::DEAD) {
         return; // don't grab the vine if you are dead.
     }
-    leavingVine(true);
+    removeFromVine();
     // create a joint between you and the vine.
     cocos2d::Vec2 offsetVec = cocos2d::Vec2(0, ideal2Res(offset));
     pinJoint = cocos2d::PhysicsJointPin::construct(this->body, obj->getPhysicsBody(), cocos2d::Vec2::ZERO, offsetVec);
@@ -238,7 +230,7 @@ void Monkey::enteringVine(cocos2d::PhysicsWorld *world, SceneObject *obj, double
     
     if (!alreadyOn) {
         this->setTimeScale(2.0);
-        this->setAnimation(0, "JumpToSwing", false);
+        this->setAnimation(0, "jumptoswing", false);
         this->addAnimation(0, "Swing", true);
     } else {
         this->setTimeScale(2.0);
@@ -261,7 +253,7 @@ void Monkey::enteringVine(cocos2d::PhysicsWorld *world, SceneObject *obj, double
     currentWorld = world;
 }
 
-void Monkey::leavingVine(bool reattaching) {
+void Monkey::removeFromVine() {
     if (pinJoint != nullptr) {
         pinJoint->removeFormWorld();
         pinJoint = nullptr;
@@ -271,22 +263,19 @@ void Monkey::leavingVine(bool reattaching) {
         gearJoint->removeFormWorld();
         gearJoint = nullptr;
     }
-    
-    if (_hangingCharacter != nullptr && !reattaching) {
-        _hangingCharacter->leavingHanging();
-        _hangingCharacter = nullptr;
-    }
+}
 
+void Monkey::leavingVine(bool reattaching, cocos2d::Vec2 vel) {
+    removeFromVine();
     currentAttached = nullptr;
     currentAttachedOffset = cocos2d::Vec2::ZERO;
     
     _state = NORMAL;
+    std::cout << "Mid air from leaving Vine" << std::endl;
     setCurrentState(Character::State::MID_AIR);
     body->setRotationEnable(false);
     body->setAngularVelocity(0.0);
     this->setRotation(0.0);
-    
-    std::cout << characterName << "'s rotation is " << this->getRotation() << std::endl;
 }
 
 void Monkey::moveAlongVine(float deltaP) {
@@ -304,7 +293,7 @@ Monkey::State Monkey::getMonkeyState() {
 }
 
 void Monkey::restartFromRespawn() {
-    leavingVine(false);
+    leavingVine(false, cocos2d::Vec2::ZERO);
     std::cout << characterName << "'s rotation is " << this->getRotation() << std::endl;
     leavingClimeable(true, true);
     Character::restartFromRespawn();
@@ -313,18 +302,20 @@ void Monkey::restartFromRespawn() {
 }
 
 void Monkey::die(Character::CauseOfDeath cause) {
+    if (getCurrentState() == Character::State::DEAD) {
+        return; //ignore.
+    }
     std::cout << "Monkey is dying." << std::endl;
-    leavingVine(false);
+    leavingVine(false, cocos2d::Vec2::ZERO);
     leavingClimeable(true, true);
     Character::die(cause);
-    std::cout << characterName << "'s rotation is " << this->getRotation() << std::endl;
 }
   
 void Monkey::setBoulderBury() {
     body->setDynamic(false);
     body->setGravityEnable(false);
     body->setRotationEnable(false);
-    freeze();
+    //freeze();
     findSlot("Body")->a = 0.0;
     findSlot("L Arm")->a = 0.0;
     findSlot("L Calf")->a = 0.0;
@@ -375,6 +366,9 @@ void Monkey::setBoulderUnbury() {
 }
 
 void Monkey::setHangingCharacter(Character *c) {
+    if (c == nullptr) {
+    
+    }
     _hangingCharacter = c;
 }
 
@@ -384,4 +378,23 @@ bool Monkey::hasHangingCharacter() {
 
 bool Monkey::shouldBeControlled() {
     return  Character::shouldBeControlled() && _state != Monkey::SWINGING;
+}
+
+    
+void Monkey::landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRightDir) {
+    if (_hangingCharacter != nullptr) {
+        _hangingCharacter->leavingHanging(cocos2d::Vec2::ZERO);
+        _hangingCharacter = nullptr;
+    }
+    Character::landedCallback(plat, newRightDir);
+}
+
+void Monkey::landedInQuicksand(Quicksand *q) {
+    if (_hangingCharacter != nullptr) {
+        _hangingCharacter->leavingHanging(cocos2d::Vec2::ZERO);
+        _hangingCharacter = nullptr;
+    }
+    if (_state != SWINGING) {
+        Character::landedInQuicksand(q);
+    }
 }

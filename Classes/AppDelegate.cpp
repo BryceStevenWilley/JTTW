@@ -76,7 +76,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // Audio!
     auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
     audio->preloadBackgroundMusic("Music/MenuScreen.mp3");
-    audio->playBackgroundMusic("Music/MenuScreen.mp3");
+    audio->playBackgroundMusic("Music/MenuScreen.mp3", true);
     
     return true;
 }

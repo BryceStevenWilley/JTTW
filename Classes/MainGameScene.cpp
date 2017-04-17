@@ -16,7 +16,10 @@
 #include <fstream>
 #include <algorithm>
 #include <string>
+#include <chrono>
 #include "Cutscene.hpp"
+#include "ZoneCutscene.hpp"
+#include "EndLevelCutscene.hpp"
 #include "SquishObject.hpp"
 #include "SinkObject.hpp"
 #include "Quicksand.hpp"
@@ -37,7 +40,7 @@ cocos2d::Scene* MainGameScene::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::createWithPhysics();
     scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, GRAVITY));
-    scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
+    //scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = MainGameScene::create(levelToLoad, scene->getPhysicsWorld());
     if (layer == NULL) {
         return NULL;
@@ -88,7 +91,6 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
             // Add peg to Monk's peg hitting thing.
             Peg *peg = (Peg *)node;
             peg->setToTrigger();
-            std::cout << "Set peg " << peg << " to trigger" << std::endl;
             return false;
         }
     }
@@ -99,6 +101,7 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
         } else {
             c->leftQuicksand();
         }
+        return false;
     }
 
     if (node->getTag() == CHARACTER_TAG) {
@@ -408,6 +411,10 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
     
     for (int i = 0; i < 4; i++) {
         if (characterStruct[charNames[i]]["book"]["boolList"]["Present"]) {
+            auto strList = characterStruct[charNames[i]]["book"]["strList"];
+            if (strList["after"].is_string() && strList["after"] != "") {
+                
+            }
             double startX = vp.metersToPixels((double)characterStruct[charNames[i]]["centerXM"]);
             double startY = vp.metersToPixels((double)characterStruct[charNames[i]]["centerYM"]);
 
@@ -676,12 +683,20 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
     
         // Audio!
         audio->stopBackgroundMusic();
-        audio->playBackgroundMusic((std::string("Music/") + levelName + std::string(".mp3")).c_str());
+        audio->playBackgroundMusic((std::string("Music/") + levelName + std::string(".mp3")).c_str(), true);
     }
     
     if (lvl["levelFileName"] == "dragon") {
         Zone cutSceneZone = Zone(vp.metersToPixels(cocos2d::Vec2(28, 3)), vp.metersToPixels(cocos2d::Vec2(40, 20)), nullptr);
-        cutscenes.push_back(new Cutscene(1, vp, cutSceneZone));
+        cutscenes.push_back(new ZoneCutscene(Cutscene::Scene::DRAGON, vp, cutSceneZone));
+    }
+    
+    if (lvl["levelFileName"] == "GardenEscape") {
+        endScene = new EndLevelCutscene(Cutscene::Scene::FLIGHT, vp);
+    }
+    
+    if (lvl["levelFileName"] == "bodhi") {
+        endScene = new EndLevelCutscene(Cutscene::Scene::BODHI, vp);
     }
     
     return levelLayer;
@@ -701,7 +716,7 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
     std::cout << "VisibleSize: " << visibleSize.width << ", " << visibleSize.height << std::endl;
     std::cout << "Resolution Size: " << actualResolution.width << ", " << actualResolution.height << std::endl;
-    cocos2d::Vec2 origin = Director::getInstance()->getVisibleOrigin();
+    cocos2d::Vec2 origin = cocos2d::Director::getInstance()->getVisibleOrigin();
 
     // Creates the camera, or viewpoint for this scene.
     // 1.7/130.0 means that 1.7 meters in the game world (average human male height) is represented by 130 pixels on screen.
@@ -717,7 +732,7 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
         if (lvl["VERSION"].is_null()) {
             std::cout << "We no longer support this old file format." << std::endl;
         } else if (lvl["VERSION"].is_number() && (int)lvl["VERSION"] == 2) {
-            layer = parseLevelFromJsonV2(lvl, debugOn);
+            layer = parseLevelFromJsonV2(lvl, true);
         }
     /*}
     catch (std::domain_error ex) {
@@ -814,17 +829,28 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
         cutscene->initFromScene(this);
     }
     
+    if (endScene != nullptr) {
+        endScene->initFromScene(this);
+    }
+    
     upVisible = cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (23.0/24.0)) * 1.0 / screenScale;
     downVisible = cocos2d::Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/24.0)) * 1.0 / screenScale;
 
-    uiLayer->addChild(blackBarUp, 10);
-    uiLayer->addChild(blackBarDown, 10);
+    this->addChild(blackBarUp, 10);
+    this->addChild(blackBarDown, 10);
 
     this->scheduleUpdate();
     return true;
 }
 
 void MainGameScene::KeypressedCallback(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
+    if (_keylogging) {
+        auto now = std::chrono::system_clock::now();
+        std::time_t ttp = std::chrono::system_clock::to_time_t(now);
+
+        std::cout << "Key " << (int)keyCode << " was pressed at " << std::ctime(&ttp) << std::endl;
+        std::cout << "Player position: " << player->_controlledCharacter->getPosition().x << ", " << player->_controlledCharacter->getPosition().y << std::endl;
+    }
     if (firstTouch) {
         for(auto &c : characters) {
             c->updateMass();
@@ -881,10 +907,21 @@ void MainGameScene::KeypressedCallback(cocos2d::EventKeyboard::KeyCode keyCode, 
         }
 
         case EventKeyboard::KeyCode::KEY_9:
-            std::cout << "Starting key logging. (NOT REALLY, FIX)" << std::endl;
-            // TODO: start key logging.
+            _keylogging = !_keylogging;
+            std::cout << "Key logging: " << _keylogging << std::endl;
             break;
-
+            
+        case EventKeyboard::KeyCode::KEY_8:
+            seeEndCutsceneCallback();
+            break;
+            
+        // TODO: turn this into a separate function.
+        case EventKeyboard::KeyCode::KEY_0:
+            blackBarUp->runAction(cocos2d::MoveTo::create(1.0, upVisible));
+            blackBarDown->runAction(cocos2d::MoveTo::create(1.0, downVisible));
+            uiLayer->setVisible(false);
+            break;
+          
         default:
             // do nothing.
             break;
@@ -892,6 +929,12 @@ void MainGameScene::KeypressedCallback(cocos2d::EventKeyboard::KeyCode keyCode, 
 }
 
 void MainGameScene::KeyreleasedCallback(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
+    if (_keylogging) {
+        auto now = std::chrono::system_clock::now();
+        std::time_t ttp = std::chrono::system_clock::to_time_t(now);
+        std::cout << "Key " << (int)keyCode << " was released at " << std::ctime(&ttp) << std::endl;
+        std::cout << "Player position: " << player->_controlledCharacter->getPosition().x << ", " << player->_controlledCharacter->getPosition().y << std::endl;
+    }
     if (haveReleased[keyCode]) {
         player->plan(characters, keyCode, false);
         for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
@@ -968,7 +1011,7 @@ void MainGameScene::switchToCharacter(int charIndex) {
 void MainGameScene::menuCloseCallback() {
     audio->stopBackgroundMusic();
     audio->preloadBackgroundMusic("Music/MenuScreen.mp3");
-    audio->playBackgroundMusic("Music/MenuScreen.mp3");
+    audio->playBackgroundMusic("Music/MenuScreen.mp3", true);
     auto startScene = MainMenu::createScene();
     this->_eventDispatcher->removeEventListener(pauseListener);
     this->_eventDispatcher->removeEventListener(eventListener);
@@ -983,35 +1026,61 @@ void MainGameScene::nextLevelCallback() {
         std::cout << "Starting next level, " << _nextLevel << std::endl;
         audio->stopBackgroundMusic();
         auto end = LevelEnd::createScene(_nextLevel);
-        auto fade = cocos2d::TransitionFade::create(3.0, end);
-        cocos2d::Director::getInstance()->replaceScene(fade);
+        auto fade = cocos2d::TransitionFade::create(1.5, end);
+        if (endScene == nullptr) {
+            cocos2d::Director::getInstance()->replaceScene(fade);
+        } else {
+            endScene->runScene(true, fade);
+        }
+        nextLevelStarting = true;
+    }
+}
+
+void MainGameScene::seeEndCutsceneCallback() {
+    if (!nextLevelStarting) {
+        this->_eventDispatcher->removeEventListener(eventListener);
+        audio->stopBackgroundMusic();
+        auto menu = MainMenu::createScene();
+        auto fade = cocos2d::TransitionFade::create(1.5, menu);
+        if (endScene == nullptr) {
+            cocos2d::Director::getInstance()->replaceScene(fade);
+        } else {
+            endScene->runScene(true, fade);
+        }
         nextLevelStarting = true;
     }
 }
 
 void MainGameScene::update(float delta) {
-    std::vector<cocos2d::Sprite *> timersToRemove;
-    for (auto x = deleteTimer.begin(); x != deleteTimer.end(); x++) {
-        deleteTimer[x->first] -= delta;
-        if (deleteTimer[x->first] <= 0.0) {
-            if (x->first->getParent() != NULL) {
-                x->first->removeFromParent();
-                timersToRemove.push_back(x->first);
+    if (!m->isVisible()) {
+        std::vector<cocos2d::Sprite *> timersToRemove;
+        for (auto x = deleteTimer.begin(); x != deleteTimer.end(); x++) {
+            deleteTimer[x->first] -= delta;
+            if (deleteTimer[x->first] <= 0.0) {
+                if (x->first->getParent() != NULL) {
+                    x->first->removeFromParent();
+                    timersToRemove.push_back(x->first);
+                }
             }
         }
-    }
     
-    for (auto &r: timersToRemove) {
-        deleteTimer.erase(deleteTimer.find(r));
+        for (auto &r: timersToRemove) {
+            deleteTimer.erase(deleteTimer.find(r));
+        }
     }
-    
 
-    for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
-        if ((*xAgent) != player) {
-            (*xAgent)->plan(player->_controlledCharacter, characters);
-            (*xAgent)->executeControl(delta);
-        } else {
-            (*xAgent)->_controlledCharacter->continueMotion();
+    if (!nextLevelStarting) {
+        for (auto& xAgent : agents) {
+            if (xAgent == player) {
+                xAgent->_controlledCharacter->continueMotion();
+            } else {
+                xAgent->plan(player->_controlledCharacter, characters);
+                xAgent->executeControl(delta);
+            }
+        }
+    } else {
+        for (auto& xAgent : agents) {
+            xAgent->_controlledCharacter->continueMotion();
         }
     }
     
@@ -1022,8 +1091,8 @@ void MainGameScene::update(float delta) {
             if (zone.containsPoint(characters[i]->getPosition())) {
                 if (attacking.find(characters[i]) == attacking.end() || std::find(attacking[characters[i]].begin(), attacking[characters[i]].end(), zone.getFactory()) == attacking[characters[i]].end()) {
                     std::cout << "Attacking " << characters[i]->characterName << "!" << std::endl;
-                    attacking[characters[i]].push_back(zone.getFactory());
-                    attackCountdown[characters[i]] = -1;
+                    FactoryAndTimer fAndT(zone.getFactory(), -1);
+                    attacking[characters[i]].push_back(fAndT);
                 }
             } else {
                 auto x = std::find(attacking[characters[i]].begin(), attacking[characters[i]].end(), zone.getFactory());
@@ -1053,7 +1122,7 @@ void MainGameScene::update(float delta) {
     }
     if (done) {
         for (auto &c: characters) {
-            c->stop();
+            //c->stop();
         }
         nextLevelCallback();
     }
@@ -1062,16 +1131,23 @@ void MainGameScene::update(float delta) {
         m->move(delta);
     }
     
-    for (auto entry = attacking.begin(); entry != attacking.end(); entry++) {
-        if (attackCountdown[entry->first] <= 0) {
-            attackCountdown[entry->first] = 5.0;
-            for (auto attackingZone = entry->second.begin(); attackingZone != entry->second.end(); attackingZone++) {
-                auto sprite = (*attackingZone)->generateProjectile(entry->first->getPosition());
-                layer->addChild(sprite, 8);
-                deleteTimer[sprite] = 4.5;
+    if (!m->isVisible()) {
+        // Game is not paused
+        for (auto charUnderAttack = attacking.begin(); charUnderAttack != attacking.end(); charUnderAttack++) {
+            auto activeZones = charUnderAttack->second;
+            for (size_t i = 0; i < activeZones.size(); i++) {
+                if (activeZones[i].countdown <= 0) {
+                    std::cout << "Shooting projectile from " << i<< std::endl;
+                    attacking[charUnderAttack->first][i].countdown = 5.0;
+                    auto sprite = activeZones[i].factory->generateProjectile(charUnderAttack->first->getPosition());
+                    layer->addChild(sprite, 8);
+                    deleteTimer[sprite] = 4.5;
+                    std::cout << "Wait another " << activeZones[i].countdown << std::endl;
+                } else {
+                    attacking[charUnderAttack->first][i].countdown -= delta;
+                }
             }
         }
-        attackCountdown[entry->first] = attackCountdown[entry->first] - delta;
     }
     
     // Trigger any traps, but don't trigger them again.
@@ -1082,12 +1158,12 @@ void MainGameScene::update(float delta) {
                 std::cout << "Trap triggered!" << std::endl;
                 switch (trap->characterReaction()) {
                     case FREEZE:
-                        character->freeze();
+                        character->freeze(3.0);
                         break;
                     
                     case FALL:
-                        character->freeze();
-                        character->setAnimation(0, "fall forwards", false);
+                        character->freeze(10.0);
+                        character->setAnimation(0, "fall", false);
                         break;
                     
                     default:
@@ -1140,7 +1216,10 @@ void MainGameScene::update(float delta) {
         }
     }
 
-    vp.followCharacter(player->_controlledCharacter, delta);
+    if (!nextLevelStarting) {
+        // Gives us camera control during cutscenes.
+        vp.followCharacter(player->_controlledCharacter, delta);
+    }
 }
 
 ////////// Pause menu stuff. ///////////////////

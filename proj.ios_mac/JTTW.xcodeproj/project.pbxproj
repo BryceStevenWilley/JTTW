@@ -96,6 +96,9 @@
 		9F666E581E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F666E571E31D89500F9BB90 /* AiAgentBehaviors.cpp */; };
 		9F666E591E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F666E571E31D89500F9BB90 /* AiAgentBehaviors.cpp */; };
 		9F666E5A1E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F666E571E31D89500F9BB90 /* AiAgentBehaviors.cpp */; };
+		9F8621721EA1405B00E82DC1 /* EndLevelCutscene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8621701EA1405B00E82DC1 /* EndLevelCutscene.cpp */; };
+		9F8621731EA1405B00E82DC1 /* EndLevelCutscene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8621701EA1405B00E82DC1 /* EndLevelCutscene.cpp */; };
+		9F8621741EA1405B00E82DC1 /* EndLevelCutscene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8621701EA1405B00E82DC1 /* EndLevelCutscene.cpp */; };
 		9F8E654D1E3BB3C60058958F /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC4C2ED1E39293F00ABD648 /* Platform.cpp */; };
 		9F8E656F1E3DA0060058958F /* MoveablePlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */; };
 		9F8E65701E3DA0060058958F /* MoveablePlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */; };
@@ -108,6 +111,12 @@
 		9F9A04D21E70ACA30069F934 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A04D11E70ACA30069F934 /* assets */; };
 		9F9A04D31E70ACA30069F934 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A04D11E70ACA30069F934 /* assets */; };
 		9F9A04D41E70ACA30069F934 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A04D11E70ACA30069F934 /* assets */; };
+		9F9D46001EA4778500624B10 /* ZoneCutscene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9D45FE1EA4778500624B10 /* ZoneCutscene.cpp */; };
+		9F9D46011EA4778500624B10 /* ZoneCutscene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9D45FE1EA4778500624B10 /* ZoneCutscene.cpp */; };
+		9F9D46021EA4778500624B10 /* ZoneCutscene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9D45FE1EA4778500624B10 /* ZoneCutscene.cpp */; };
+		9F9D46061EA48B3D00624B10 /* FShake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9D46051EA48B3D00624B10 /* FShake.cpp */; };
+		9F9D46071EA48B3D00624B10 /* FShake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9D46051EA48B3D00624B10 /* FShake.cpp */; };
+		9F9D46081EA48B3D00624B10 /* FShake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9D46051EA48B3D00624B10 /* FShake.cpp */; };
 		9F9EDA661E92201000C264FF /* Cutscene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9EDA641E92201000C264FF /* Cutscene.cpp */; };
 		9F9EDA671E92201000C264FF /* Cutscene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9EDA641E92201000C264FF /* Cutscene.cpp */; };
 		9F9EDA681E92201000C264FF /* Cutscene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9EDA641E92201000C264FF /* Cutscene.cpp */; };
@@ -297,12 +306,18 @@
 		9F4E120B1E9582E100DE9D31 /* SquishObject.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SquishObject.hpp; sourceTree = "<group>"; };
 		9F666E451E30201C00F9BB90 /* AiAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AiAgent.cpp; sourceTree = "<group>"; };
 		9F666E571E31D89500F9BB90 /* AiAgentBehaviors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AiAgentBehaviors.cpp; sourceTree = "<group>"; };
+		9F8621701EA1405B00E82DC1 /* EndLevelCutscene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EndLevelCutscene.cpp; sourceTree = "<group>"; };
+		9F8621711EA1405B00E82DC1 /* EndLevelCutscene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EndLevelCutscene.hpp; sourceTree = "<group>"; };
 		9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoveablePlatform.cpp; sourceTree = "<group>"; };
 		9F8E656E1E3DA0060058958F /* MoveablePlatform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MoveablePlatform.hpp; sourceTree = "<group>"; };
 		9F9298E01E6FDC7B00959F53 /* DisappearingPlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisappearingPlatform.cpp; sourceTree = "<group>"; };
 		9F98AF8F1E2C99E2009559C7 /* Viewpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Viewpoint.cpp; sourceTree = "<group>"; };
 		9F98AF901E2C99E2009559C7 /* Viewpoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Viewpoint.hpp; sourceTree = "<group>"; };
 		9F9A04D11E70ACA30069F934 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
+		9F9D45FE1EA4778500624B10 /* ZoneCutscene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZoneCutscene.cpp; sourceTree = "<group>"; };
+		9F9D45FF1EA4778500624B10 /* ZoneCutscene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ZoneCutscene.hpp; sourceTree = "<group>"; };
+		9F9D46041EA48B3D00624B10 /* FShake.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FShake.h; sourceTree = "<group>"; };
+		9F9D46051EA48B3D00624B10 /* FShake.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FShake.cpp; sourceTree = "<group>"; };
 		9F9EDA641E92201000C264FF /* Cutscene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cutscene.cpp; sourceTree = "<group>"; };
 		9F9EDA651E92201000C264FF /* Cutscene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Cutscene.hpp; sourceTree = "<group>"; };
 		9F9EDA6A1E92404E00C264FF /* Zone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Zone.cpp; sourceTree = "<group>"; };
@@ -502,20 +517,26 @@
 		46880B8319C43A87006E1F66 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				9F9D46041EA48B3D00624B10 /* FShake.h */,
+				9F9D46051EA48B3D00624B10 /* FShake.cpp */,
 				9F16FC131E54CCF600D9DBCA /* Characters */,
 				9FC97C8A1E54384500EF6C31 /* Scenes */,
 				9F8E656C1E3D9F8A0058958F /* Objects */,
+				9F666E561E31CB6100F9BB90 /* AI */,
 				9FC4C2F61E3B9BF200ABD648 /* json.hpp */,
 				46880B8419C43A87006E1F66 /* AppDelegate.cpp */,
 				46880B8519C43A87006E1F66 /* AppDelegate.h */,
 				9F98AF8F1E2C99E2009559C7 /* Viewpoint.cpp */,
 				9F98AF901E2C99E2009559C7 /* Viewpoint.hpp */,
-				9F666E561E31CB6100F9BB90 /* AI */,
 				9FF673A31E81F491004BC426 /* Resolution.hpp */,
 				9F9EDA641E92201000C264FF /* Cutscene.cpp */,
 				9F9EDA651E92201000C264FF /* Cutscene.hpp */,
 				9F9EDA6A1E92404E00C264FF /* Zone.cpp */,
 				9F9EDA6B1E92404E00C264FF /* Zone.hpp */,
+				9F8621701EA1405B00E82DC1 /* EndLevelCutscene.cpp */,
+				9F8621711EA1405B00E82DC1 /* EndLevelCutscene.hpp */,
+				9F9D45FE1EA4778500624B10 /* ZoneCutscene.cpp */,
+				9F9D45FF1EA4778500624B10 /* ZoneCutscene.hpp */,
 			);
 			name = Classes;
 			path = ../Classes;
@@ -849,10 +870,12 @@
 				9F06DB8F1E834F2300B1080A /* ProjectileFactory.cpp in Sources */,
 				46880B8A19C43A87006E1F66 /* MainGameScene.cpp in Sources */,
 				9FB69E071E46EE88006325A3 /* LevelSelectScene.cpp in Sources */,
+				9F8621721EA1405B00E82DC1 /* EndLevelCutscene.cpp in Sources */,
 				9F98AF911E2C99E2009559C7 /* Viewpoint.cpp in Sources */,
 				9F158C0D1E6A06FE002D21A6 /* CageTrap.cpp in Sources */,
 				9FB69DE21E46D93D006325A3 /* MainMenuScene.cpp in Sources */,
 				9F4E120C1E9582E100DE9D31 /* SquishObject.cpp in Sources */,
+				9F9D46061EA48B3D00624B10 /* FShake.cpp in Sources */,
 				503AE10017EB989F00D1A890 /* AppController.mm in Sources */,
 				9FC4C2EF1E39293F00ABD648 /* Platform.cpp in Sources */,
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,
@@ -868,6 +891,7 @@
 				9FB69DDB1E459B90006325A3 /* Character.cpp in Sources */,
 				9F666E461E30201C00F9BB90 /* AiAgent.cpp in Sources */,
 				9F9298E11E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */,
+				9F9D46001EA4778500624B10 /* ZoneCutscene.cpp in Sources */,
 				9F16FC061E54CCA500D9DBCA /* Monk.cpp in Sources */,
 				9F8E656F1E3DA0060058958F /* MoveablePlatform.cpp in Sources */,
 			);
@@ -898,11 +922,14 @@
 				9F15D9191E5FD4D300F77DF6 /* Boulder.cpp in Sources */,
 				503AE10517EB98FF00D1A890 /* main.cpp in Sources */,
 				46880B8B19C43A87006E1F66 /* MainGameScene.cpp in Sources */,
+				9F9D46071EA48B3D00624B10 /* FShake.cpp in Sources */,
+				9F9D46011EA4778500624B10 /* ZoneCutscene.cpp in Sources */,
 				9F666E591E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */,
 				9F16FC071E54CCA500D9DBCA /* Monk.cpp in Sources */,
 				9F192EB81E5B634A001FE88A /* Vine.cpp in Sources */,
 				9FB69DE31E46D93D006325A3 /* MainMenuScene.cpp in Sources */,
 				9F9298E21E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */,
+				9F8621731EA1405B00E82DC1 /* EndLevelCutscene.cpp in Sources */,
 				9F9EDA671E92201000C264FF /* Cutscene.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -911,6 +938,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F8621741EA1405B00E82DC1 /* EndLevelCutscene.cpp in Sources */,
+				9F9D46081EA48B3D00624B10 /* FShake.cpp in Sources */,
 				9F16FC021E54CC5F00D9DBCA /* Monkey.cpp in Sources */,
 				9F15D91A1E5FD4D300F77DF6 /* Boulder.cpp in Sources */,
 				9F4E120E1E9582E100DE9D31 /* SquishObject.cpp in Sources */,
@@ -933,6 +962,7 @@
 				9F192EB91E5B634A001FE88A /* Vine.cpp in Sources */,
 				9F16FC0D1E54CCC200D9DBCA /* Sandy.cpp in Sources */,
 				9F16FC121E54CCDB00D9DBCA /* Piggy.cpp in Sources */,
+				9F9D46021EA4778500624B10 /* ZoneCutscene.cpp in Sources */,
 				9F666E5A1E31D89500F9BB90 /* AiAgentBehaviors.cpp in Sources */,
 				9F8E65711E3DA0060058958F /* MoveablePlatform.cpp in Sources */,
 				9FB69DDD1E459B90006325A3 /* Character.cpp in Sources */,

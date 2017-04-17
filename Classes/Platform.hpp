@@ -6,6 +6,8 @@
 #include "SceneObject.hpp"
 
 namespace JTTW {
+
+class EndLevelCutscene;
     
 // Forward declaration of Viewpoint.
 class Viewpoint;
@@ -18,6 +20,7 @@ struct VertexLink {
     
     
 class Platform: public SceneObject {
+friend class EndLevelCutscene;
 public:
     Platform();
 

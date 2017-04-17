@@ -81,12 +81,12 @@ public:
     // Stops the character by applying an impulse that sets the velocity to 0.
     virtual void stop();
 
-    void freeze();
+    void freeze(double duration);
     
     // Allows the character to jump.
     virtual void initJump() = 0;
     virtual void stopJump();
-    void jumpFromForce(double fprime_y);
+    /*void jumpFromForce(double fprime_y); */
     
     void callHey();
     
@@ -97,12 +97,12 @@ public:
     bool isMovingLeft() const;
     bool isMovingRight() const;
     
-    void landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRightDir);
+    virtual void landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRightDir);
     void leftCallback(cocos2d::PhysicsBody *plat);
     void wallHitCallback(cocos2d::PhysicsBody *wall);
     void wallLeftCallback(cocos2d::PhysicsBody *wall);
     
-    void landedInQuicksand(Quicksand *q);
+    virtual void landedInQuicksand(Quicksand *q);
     void leftQuicksand();
     
     void transferVelocity(Character *reciever);
@@ -113,7 +113,7 @@ public:
     
     const std::string characterName;
     
-    float getMass() const;
+    float getMass();
     cocos2d::Size getSize();
     
     cocos2d::Sprite *followcrown;
@@ -134,7 +134,7 @@ public:
     virtual bool shouldBeControlled();
     
     void enteringHanging(cocos2d::PhysicsWorld *world, Character *m, cocos2d::Vec2 offsetVec, bool alreadyOn);
-    void leavingHanging();
+    void leavingHanging(cocos2d::Vec2 vel);
 
     void updateMass(); // Cocos is a god-awful piece of software.
 

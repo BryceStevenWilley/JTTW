@@ -102,8 +102,13 @@ void AiAgent::plan(Character *player, std::vector<Character *> otherCharacters) 
 void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode code, bool pressed) {
     if (pressed && code == cocos2d::EventKeyboard::KeyCode::KEY_A) { // 'A' is becoming a toggle.
         if (_currentBehavior == &AiAgent::noResistenceBehavior || _currentBehavior == &AiAgent::goToPointBehavior) {
+            //if (player == _controlledCharacter) {
+                // Do animation of character calling for everyone else.
+            //    _controlledCharacter->callHey();
+            //}
             _currentBehavior = &AiAgent::followBehavior;
             _playerPosOffset = _controlledCharacter->getPosition() - player->getPosition();
+            //_playerPosOffset = cocos2d::Vec2(ideal2Res(-100), 0) + cocos2d::Vec2(ideal2Res((rand() % 120)) - ideal2Res(60), 0);
             bool wasOn = _controlledCharacter->currentCrown->isVisible();
             _controlledCharacter->currentCrown->setVisible(false);
             _controlledCharacter->currentCrown = _controlledCharacter->followcrown;
@@ -124,7 +129,12 @@ void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode 
         }
     } else {
         // Try their specials.
-        _controlledCharacter->characterSpecial(code, pressed);
+        if (code == cocos2d::EventKeyboard::KeyCode::KEY_D ||
+            (player->getCurrentState() == Character::State::HANGING &&
+             _controlledCharacter->characterName == "Monkey") ||
+             player->characterName == "Monkey") {
+            _controlledCharacter->characterSpecial(code, pressed);
+        }
     }
 }
 
@@ -142,6 +152,20 @@ void AiAgent::executeControl(float delta) {
     
     cocos2d::Vec2 fprime = errorPosition * kp + errorVelocity * kv;
     
+    // Cap the force applied.
+    if (fprime.x > 7000) {
+        fprime.x = 7000;
+    }
+    
+    std::cout << "Applying force of " << fprime.x << " to " << _controlledCharacter->characterName << std::endl;
+    
+    if (_controlledCharacter->getCurrentState() == Character::State::MID_AIR &&
+        _controlledCharacter->body->getVelocity().getLengthSq() < 1 &&
+        std::abs(fprime.x) > 1000) {
+        std::cout << _controlledCharacter->characterName << " is stuck in mid air against a wall." << std::endl;
+        // TODO: Stop, jump, get to peak, and continue? 
+    }
+    
     _controlledCharacter->applyForceRight(fprime.x);
     
     // Cap the character at the maximum horizontal velocity (negative or positive).
@@ -153,6 +177,7 @@ void AiAgent::executeControl(float delta) {
         _controlledCharacter->body->setVelocity(cocos2d::Vec2(MAX_HORI_VEL * sign, _controlledCharacter->body->getVelocity().y));
     }
     if (errorPosition.y > ERROR_UP) {
+        //_controlledCharacter
         _controlledCharacter->initJump();
     } else if (errorPosition.y < ERROR_DOWN) {
         _controlledCharacter->stopJump();

@@ -2,10 +2,11 @@
 
 using namespace JTTW;
 
-Cutscene::Cutscene(int uid, Viewpoint vp, Zone z) : _triggerZone(z) {
+Cutscene::Cutscene(Cutscene::Scene uid, Viewpoint vp) {
     // Just find the unique cutscene id, and hand-load it. Dumb, but works.
+    which = uid;
     switch (uid) {
-        case DRAGON_CUTSCENE: {
+        case DRAGON: {
             //charactersStart
             charactersEnd["Monkey"] = cocos2d::Vec2(5460.93, 356.097);
             charactersEnd["Monk"] = cocos2d::Vec2(5652.92, 333.034);
@@ -17,17 +18,8 @@ Cutscene::Cutscene(int uid, Viewpoint vp, Zone z) : _triggerZone(z) {
 }
 
 bool Cutscene::trigger() {
-    bool trigger = true;
-    
-    for (auto &tc : triggeringCharacters) {
-        trigger = trigger && _triggerZone.containsPoint(_characters[tc]->getPosition());
-    }
-    
-    if (trigger) {
-        runScene(true);
-        return true;
-    }
-    return false;
+    runScene(true);
+    return true;
 }
 
 void Cutscene::initFromScene(MainGameScene *scene) {
