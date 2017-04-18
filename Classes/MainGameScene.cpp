@@ -1001,11 +1001,9 @@ void MainGameScene::switchToCharacter(int charIndex) {
     player = nextPlayer;
     vp.panToCharacter(player->_controlledCharacter);
     
-    // Set all of the offsets correctly.
-    for (auto xAgent = agents.begin(); xAgent != agents.end(); xAgent++) {
-        if ((*xAgent) != player) {
-            (*xAgent)->adjustOffset(player->_controlledCharacter);
-        }
+    // Turn off ever.
+    for (auto &xAgent : agents) {
+        xAgent->equipNoResistenceBehavior(player->_controlledCharacter);
     }
 }
 
@@ -1122,9 +1120,6 @@ void MainGameScene::update(float delta) {
         }
     }
     if (done) {
-        for (auto &c: characters) {
-            //c->stop();
-        }
         nextLevelCallback();
     }
     

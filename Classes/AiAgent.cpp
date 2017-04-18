@@ -99,34 +99,39 @@ void AiAgent::plan(Character *player, std::vector<Character *> otherCharacters) 
     }
 }
 
+    
+void AiAgent::equipFollowBehavior(Character *player) {
+    if (player == _controlledCharacter) {
+        // Do animation of character calling for everyone else.
+        _controlledCharacter->callHey();
+    }
+    _currentBehavior = &AiAgent::followBehavior;
+    if (player->characterName == "Monkey" && ((Monkey *)player)->getMonkeyState() == Monkey::State::SWINGING) {
+        _playerPosOffset = cocos2d::Vec2(0, 0) + cocos2d::Vec2(ideal2Res((rand() % 120)) - ideal2Res(60), 0);
+    } else {
+        _playerPosOffset = cocos2d::Vec2(ideal2Res(-100), 0) + cocos2d::Vec2(ideal2Res((rand() % 120)) - ideal2Res(60), 0);
+    }
+    bool wasOn = _controlledCharacter->currentCrown->isVisible();
+    _controlledCharacter->currentCrown->setVisible(false);
+    _controlledCharacter->currentCrown = _controlledCharacter->followcrown;
+    _controlledCharacter->currentCrown->setVisible(wasOn);
+}
+
+void AiAgent::equipNoResistenceBehavior(Character *player) {
+    _currentBehavior = &AiAgent::noResistenceBehavior;
+    bool wasOn = _controlledCharacter->currentCrown->isVisible();
+    _controlledCharacter->currentCrown->setVisible(false);
+    _controlledCharacter->currentCrown = _controlledCharacter->alonecrown;
+    _controlledCharacter->currentCrown->setVisible(wasOn);
+}
+
 void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode code, bool pressed) {
     if (pressed && code == cocos2d::EventKeyboard::KeyCode::KEY_A) { // 'A' is becoming a toggle.
         if (_currentBehavior == &AiAgent::noResistenceBehavior || _currentBehavior == &AiAgent::goToPointBehavior) {
-            if (player == _controlledCharacter) {
-                // Do animation of character calling for everyone else.
-                _controlledCharacter->callHey();
-            }
-            _currentBehavior = &AiAgent::followBehavior;
-            //_playerPosOffset = _controlledCharacter->getPosition() - player->getPosition();
-            _playerPosOffset = cocos2d::Vec2(ideal2Res(-100), 0) + cocos2d::Vec2(ideal2Res((rand() % 120)) - ideal2Res(60), 0);
-            bool wasOn = _controlledCharacter->currentCrown->isVisible();
-            _controlledCharacter->currentCrown->setVisible(false);
-            _controlledCharacter->currentCrown = _controlledCharacter->followcrown;
-            _controlledCharacter->currentCrown->setVisible(wasOn);
+            equipFollowBehavior(player);
         } else if (pressed && _currentBehavior == &AiAgent::followBehavior) {
-            _currentBehavior = &AiAgent::noResistenceBehavior;
-              bool wasOn = _controlledCharacter->currentCrown->isVisible();
-            _controlledCharacter->currentCrown->setVisible(false);
-            _controlledCharacter->currentCrown = _controlledCharacter->alonecrown;
-            _controlledCharacter->currentCrown->setVisible(wasOn);
+            equipNoResistenceBehavior(player);
         }
-    } else if (pressed && code == cocos2d::EventKeyboard::KeyCode::KEY_S) {
-        // Random variations on the default offset of 100.
-        //_playerPosOffset = cocos2d::Vec2(ideal2Res(-100), 0) + cocos2d::Vec2(ideal2Res((rand() % 120)) - ideal2Res(60), 0);
-        //if (_currentBehavior == &AiAgent::noResistenceBehavior || _currentBehavior == &AiAgent::goToPointBehavior) {
-        //    goToPoint = player->getPosition() + _playerPosOffset;
-        //    _currentBehavior = &AiAgent::goToPointBehavior;
-        //}
     } else {
         // Try their specials.
         if (code == cocos2d::EventKeyboard::KeyCode::KEY_D ||
@@ -144,6 +149,7 @@ void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode 
  */
 void AiAgent::executeControl(float delta) {
     if (!_controlledCharacter->shouldBeControlled() || _currentBehavior == &AiAgent::noResistenceBehavior) {
+        std::cout << "Not controlling " << _controlledCharacter->characterName << std::endl;
         return;
     }
     // Do the control stuff.
@@ -175,7 +181,6 @@ void AiAgent::executeControl(float delta) {
         _controlledCharacter->body->setVelocity(cocos2d::Vec2(MAX_HORI_VEL * sign, _controlledCharacter->body->getVelocity().y));
     }
     if (errorPosition.y > ERROR_UP) {
-        //_controlledCharacter
         _controlledCharacter->initJump();
     } else if (errorPosition.y < ERROR_DOWN) {
         _controlledCharacter->stopJump();

@@ -32,6 +32,9 @@ public:
     void changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode code, bool pressed);
     void executeControl(float delta);
     
+    void equipFollowBehavior(Character *player);
+    void equipNoResistenceBehavior(Character *player);
+    
     cocos2d::Vec2 getPlayerPosOffset() const;
     void setPlayerPosOffset(cocos2d::Vec2 playerPosOffset);
     

@@ -350,6 +350,7 @@ void Character::initJump(double force) {
         // Don't let them jump.
         return;
     }
+    std::cout << characterName << " is jumping." << std::endl;
     if (getCurrentState() == State::HANGING) {
         leavingHanging(cocos2d::Vec2::ZERO);
         // jump in direction of motion? copy monkey code.
@@ -359,6 +360,7 @@ void Character::initJump(double force) {
     
     CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/Jump.wav");
     body->applyImpulse(cocos2d::Vec2(0, jumpForce * JUMP_INIT_FRACTION));
+    setCurrentState(MID_AIR);
 }
 
 void Character::stopJump() {
@@ -606,6 +608,7 @@ void Character::enteringHanging(cocos2d::PhysicsWorld *world, Character *m, coco
 }
 
 void Character::leavingHanging(cocos2d::Vec2 vel) {
+    std::cout << characterName << " is leaving hanging." << std::endl;
     removeFromHanging();
     body->setVelocity(vel);
     setCurrentState(MID_AIR);
@@ -646,9 +649,9 @@ void Character::leftQuicksand() {
 }
 
 bool Character::shouldBeControlled() {
-    return getCurrentState() != HANGING ||
-           getCurrentState() != DEAD ||
-           getCurrentState() != FROZEN ||
+    return getCurrentState() != HANGING &&
+           getCurrentState() != DEAD &&
+           getCurrentState() != FROZEN &&
            getCurrentState() != STUCK_SAND;
 }
 
