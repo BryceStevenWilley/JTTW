@@ -1,5 +1,9 @@
-# JTTW
-Journey to the West: 2D Game for 460
+# Bodhi
+A 2D platformer inspired by “Journey to the West”, by Wu Cheng’en.
+
+![Bodhi’s Main Menu](/Bodhi_Menu.png)
+
+Made by Bryce Willey, Mei Tan, and Melinda Crane for the Rice undergraduate course, COMP 460.
 
 # Building and Running the Game
 
@@ -8,10 +12,10 @@ Journey to the West: 2D Game for 460
 Open Terminal.app or the equivalent, change to the desired directory, and type the following.
 
 ```bash
-git clone https://github.com/BrownRiceRice/JTTW 
+git clone https://github.com/BryceStevenWilley/JTTW 
 cd JTTW
 git submodule init && git submodule update
-cocos2d/download_deps.py # respond to the question with no 
+cocos2d/download_deps.py -r yes
 ```
 
 Then, open proj.ios\_mac/JTTW.xcodeproj with Xcode. Once open, 
@@ -20,13 +24,50 @@ run the "JTTW-desktop target" on "My Mac".
 After a long compile time, the game will run. Don't worry though,
 when you build again, the compile time will be much faster.
 
-## Explainitation
+## Linux
 
-Journey to the West is built using the cocos2d-x game engine.
-As in every cocos2d-x game, a copy of the entire cocos2d library
-is required when building and running the game. However, the library
-contains many precompiled libraries, headers, and other items that
-would generally be excluded by a gitignore.
+Open a terminal window, and run the following code:
 
-To solve this, the cocos2d-x library is a submodule, or a link to
-another git repository. 
+```bash
+git clone https://github.com/BryceStevenWilley/JTTW 
+cd JTTW
+git submodule init && git submodule update
+cocos2d/download_deps.py -r yes
+mkdir linux-build && cd linux-build
+cmake .. && make -j4
+```
+
+## Common Issues
+
+#### “Can’t find cocos2d.h”
+
+Any error similar to this probably means you didn’t run `git submodule init && git submodule update`,
+as the compiler can’t find anything in the cocos2d directory. 
+
+#### “error: no such file or directory: ‘/…/JTTW/cocos2d/external/…”
+
+This one means the compiler’s not finding anything in the cocos2d/external folder, which is populated when
+you run `cocos2d/download_deps.py`. 
+
+
+# Credits:
+
+## Programming:
+
+Bryce Willey, Lead Developer
+Melinda Crane, [Tooling](https://github.com/runningcrane/JTTWLevelEditor)
+
+[Cocos2d-x](https://github.com/cocos2d/cocos2d-x)
+[JSON for Modern C++](https://github.com/nlohmann/json)
+[FrozaxShake-v3](https://github.com/tankorsmash/FrozaxShake-v3)
+
+## Art
+
+Mei Tan, Artist and Animator
+
+[Spine](http://esotericsoftware.com/)
+[Krita](https://krita.org/en/)
+
+## Music
+
+

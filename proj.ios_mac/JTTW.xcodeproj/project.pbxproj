@@ -167,9 +167,6 @@
 		9FD41BFF1E2D54490077779E /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D44C620B132DFF330009C878 /* OpenAL.framework */; };
 		9FD41C001E2D54490077779E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D44C620D132DFF430009C878 /* AVFoundation.framework */; };
 		9FD41C011E2D54490077779E /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D44C620F132DFF4E0009C878 /* AudioToolbox.framework */; };
-		9FD41C101E2D55920077779E /* testCharacter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C0E1E2D55920077779E /* testCharacter.cpp */; };
-		9FD41C131E2D55C80077779E /* TestDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C111E2D55C80077779E /* TestDelegate.cpp */; };
-		9FD41C151E2D56220077779E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD41C141E2D56220077779E /* main.cpp */; };
 		9FDB4C781EA0469000D07CD4 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 503AE0F617EB97AB00D1A890 /* Icon.icns */; };
 		9FE1642C1E64BB5600FE4233 /* levelFiles in Resources */ = {isa = PBXBuildFile; fileRef = 9FB69E001E46E93A006325A3 /* levelFiles */; };
 		9FE1642D1E64BB5600FE4233 /* characters in Resources */ = {isa = PBXBuildFile; fileRef = 454B170A1E2F39280035467D /* characters */; };
@@ -345,11 +342,6 @@
 		9FC97C861E540E0300EF6C31 /* LevelEnd.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LevelEnd.hpp; sourceTree = "<group>"; };
 		9FD41C051E2D54490077779E /* JTTW-desktop-tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "JTTW-desktop-tests.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FD41C071E2D544A0077779E /* JTTW-desktop copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "JTTW-desktop copy-Info.plist"; path = "/Users/brycewilley/Developer/JTTW/proj.ios_mac/JTTW-desktop copy-Info.plist"; sourceTree = "<absolute>"; };
-		9FD41C0E1E2D55920077779E /* testCharacter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = testCharacter.cpp; path = ../Tests/testCharacter.cpp; sourceTree = SOURCE_ROOT; };
-		9FD41C0F1E2D55920077779E /* catch.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = catch.hpp; path = ../Tests/catch.hpp; sourceTree = SOURCE_ROOT; };
-		9FD41C111E2D55C80077779E /* TestDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestDelegate.cpp; path = ../Tests/TestDelegate.cpp; sourceTree = SOURCE_ROOT; };
-		9FD41C121E2D55C80077779E /* TestDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestDelegate.h; path = ../Tests/TestDelegate.h; sourceTree = SOURCE_ROOT; };
-		9FD41C141E2D56220077779E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../Tests/main.cpp; sourceTree = SOURCE_ROOT; };
 		9FF673A31E81F491004BC426 /* Resolution.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Resolution.hpp; sourceTree = "<group>"; };
 		9FFAAC711E62A74300AF523E /* Trap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Trap.hpp; sourceTree = "<group>"; };
 		BF170DB012928DE900B8313A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -464,7 +456,6 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				9FD41C081E2D550D0077779E /* Tests */,
 				46880B8319C43A87006E1F66 /* Classes */,
 				46880B7519C43A67006E1F66 /* Resources */,
 				1AC6FAE5180E9839004C840B /* cocos2d_libs.xcodeproj */,
@@ -669,18 +660,6 @@
 				46880B8719C43A87006E1F66 /* MainGameScene.h */,
 			);
 			name = Scenes;
-			sourceTree = "<group>";
-		};
-		9FD41C081E2D550D0077779E /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				9FD41C111E2D55C80077779E /* TestDelegate.cpp */,
-				9FD41C121E2D55C80077779E /* TestDelegate.h */,
-				9FD41C0E1E2D55920077779E /* testCharacter.cpp */,
-				9FD41C0F1E2D55920077779E /* catch.hpp */,
-				9FD41C141E2D56220077779E /* main.cpp */,
-			);
-			name = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -960,13 +939,10 @@
 				9FBDAC6C1E9BB840000CE85F /* Quicksand.cpp in Sources */,
 				9F9EDA6E1E92404E00C264FF /* Zone.cpp in Sources */,
 				9F9103131EA6FCA300C75154 /* Dragon.cpp in Sources */,
-				9FD41C151E2D56220077779E /* main.cpp in Sources */,
 				9FB69DE41E46D93D006325A3 /* MainMenuScene.cpp in Sources */,
 				9F9298E31E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */,
-				9FD41C131E2D55C80077779E /* TestDelegate.cpp in Sources */,
 				9F06DB911E834F2300B1080A /* ProjectileFactory.cpp in Sources */,
 				9F1020FD1E98003F001374D3 /* SinkObject.cpp in Sources */,
-				9FD41C101E2D55920077779E /* testCharacter.cpp in Sources */,
 				9FC97C891E540E0300EF6C31 /* LevelEnd.cpp in Sources */,
 				9FD41BF31E2D54490077779E /* MainGameScene.cpp in Sources */,
 				9F192EB91E5B634A001FE88A /* Vine.cpp in Sources */,
