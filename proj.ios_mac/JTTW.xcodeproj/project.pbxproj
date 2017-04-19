@@ -103,6 +103,9 @@
 		9F8E656F1E3DA0060058958F /* MoveablePlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */; };
 		9F8E65701E3DA0060058958F /* MoveablePlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */; };
 		9F8E65711E3DA0060058958F /* MoveablePlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */; };
+		9F9103111EA6FCA300C75154 /* Dragon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F91030F1EA6FCA300C75154 /* Dragon.cpp */; };
+		9F9103121EA6FCA300C75154 /* Dragon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F91030F1EA6FCA300C75154 /* Dragon.cpp */; };
+		9F9103131EA6FCA300C75154 /* Dragon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F91030F1EA6FCA300C75154 /* Dragon.cpp */; };
 		9F9298E11E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9298E01E6FDC7B00959F53 /* DisappearingPlatform.cpp */; };
 		9F9298E21E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9298E01E6FDC7B00959F53 /* DisappearingPlatform.cpp */; };
 		9F9298E31E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9298E01E6FDC7B00959F53 /* DisappearingPlatform.cpp */; };
@@ -310,6 +313,8 @@
 		9F8621711EA1405B00E82DC1 /* EndLevelCutscene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EndLevelCutscene.hpp; sourceTree = "<group>"; };
 		9F8E656D1E3DA0060058958F /* MoveablePlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoveablePlatform.cpp; sourceTree = "<group>"; };
 		9F8E656E1E3DA0060058958F /* MoveablePlatform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MoveablePlatform.hpp; sourceTree = "<group>"; };
+		9F91030F1EA6FCA300C75154 /* Dragon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Dragon.cpp; sourceTree = "<group>"; };
+		9F9103101EA6FCA300C75154 /* Dragon.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Dragon.hpp; sourceTree = "<group>"; };
 		9F9298E01E6FDC7B00959F53 /* DisappearingPlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisappearingPlatform.cpp; sourceTree = "<group>"; };
 		9F98AF8F1E2C99E2009559C7 /* Viewpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Viewpoint.cpp; sourceTree = "<group>"; };
 		9F98AF901E2C99E2009559C7 /* Viewpoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Viewpoint.hpp; sourceTree = "<group>"; };
@@ -602,6 +607,8 @@
 				9F16FC0A1E54CCC200D9DBCA /* Sandy.hpp */,
 				9F16FC0E1E54CCDB00D9DBCA /* Piggy.cpp */,
 				9F16FC0F1E54CCDB00D9DBCA /* Piggy.hpp */,
+				9F91030F1EA6FCA300C75154 /* Dragon.cpp */,
+				9F9103101EA6FCA300C75154 /* Dragon.hpp */,
 			);
 			name = Characters;
 			sourceTree = "<group>";
@@ -890,6 +897,7 @@
 				9FBDAC6A1E9BB840000CE85F /* Quicksand.cpp in Sources */,
 				9FB69DDB1E459B90006325A3 /* Character.cpp in Sources */,
 				9F666E461E30201C00F9BB90 /* AiAgent.cpp in Sources */,
+				9F9103111EA6FCA300C75154 /* Dragon.cpp in Sources */,
 				9F9298E11E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */,
 				9F9D46001EA4778500624B10 /* ZoneCutscene.cpp in Sources */,
 				9F16FC061E54CCA500D9DBCA /* Monk.cpp in Sources */,
@@ -903,6 +911,7 @@
 			files = (
 				9F36A4CB1E6D0AEF0016232D /* Peg.cpp in Sources */,
 				9F158C0E1E6A071E002D21A6 /* CageTrap.cpp in Sources */,
+				9F9103121EA6FCA300C75154 /* Dragon.cpp in Sources */,
 				9F8E654D1E3BB3C60058958F /* Platform.cpp in Sources */,
 				46880B8919C43A87006E1F66 /* AppDelegate.cpp in Sources */,
 				9F16FC011E54CC5F00D9DBCA /* Monkey.cpp in Sources */,
@@ -950,6 +959,7 @@
 				9FB69E091E46EE88006325A3 /* LevelSelectScene.cpp in Sources */,
 				9FBDAC6C1E9BB840000CE85F /* Quicksand.cpp in Sources */,
 				9F9EDA6E1E92404E00C264FF /* Zone.cpp in Sources */,
+				9F9103131EA6FCA300C75154 /* Dragon.cpp in Sources */,
 				9FD41C151E2D56220077779E /* main.cpp in Sources */,
 				9FB69DE41E46D93D006325A3 /* MainMenuScene.cpp in Sources */,
 				9F9298E31E6FDC7B00959F53 /* DisappearingPlatform.cpp in Sources */,

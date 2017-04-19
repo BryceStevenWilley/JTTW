@@ -1,7 +1,7 @@
 #ifndef Character_hpp
 #define Character_hpp
 
-#include <stdio.h>
+#include <iostream>
 #include <spine/spine-cocos2dx.h>
 #include "SceneObject.hpp"
 #include "Quicksand.hpp"

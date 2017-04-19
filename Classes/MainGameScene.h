@@ -16,6 +16,7 @@
 #include "Peg.hpp"
 #include "SimpleAudioEngine.h"
 #include "ProjectileFactory.hpp"
+#include "Dragon.hpp"
 #include "Zone.hpp"
 
 namespace JTTW {
@@ -84,6 +85,8 @@ private:
 
     Viewpoint vp = Viewpoint(cocos2d::Size(1.0, 1.0), 1.0);
     std::vector<Character *> characters = std::vector<Character *>();
+    Dragon *dragon = nullptr;
+    
     std::vector<AiAgent *> agents = std::vector<AiAgent *>();
     AiAgent *player = nullptr;
     

@@ -23,17 +23,25 @@ bool LevelEnd::init(std::string &nextLevelToLoad, std::string &endQuote) {
     auto fontScaleFactor = visibleSize.width / 1560.0;
 
     auto textLabel = createSunriseLabel(endQuote, 60, fontScaleFactor);
+    auto smallLabel = createSunriseLabel("Press any key to continue", 40, fontScaleFactor);
     if (_nextLevelToLoad == "") {
         // The journey is over!
-        textLabel = createSunriseLabel("Searching means having a goal. But finding means being free. \n Mei Tan \n Melinda Crane \n Bryce Willey ", 50, fontScaleFactor);
+        textLabel = createSunriseLabel("Thanks for Playing!", 50, fontScaleFactor);
+        smallLabel = createSunriseLabel("Press any key for menu", 40, fontScaleFactor);
+        CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("Music/Credits.mp3");
+    } else {
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/Gong.wav");
     }
     textLabel->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (3.0 / 4.0));
     this->addChild(textLabel);
-    
-    auto smallLabel = createSunriseLabel("Press any key to continue", 40, fontScaleFactor);
+
     smallLabel->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.0/4.0));
     this->addChild(smallLabel);
-    
+    return true;
+}
+
+void LevelEnd::onEnterTransitionDidFinish() {
+    std::cout << "Actually entering level end scene." << std::endl;
     keyListener = cocos2d::EventListenerKeyboard::create();
     keyListener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) {
         menuCallback();
@@ -42,19 +50,15 @@ bool LevelEnd::init(std::string &nextLevelToLoad, std::string &endQuote) {
     mouseListener->onMouseUp = [this](cocos2d::EventMouse *mouseCode) {
         menuCallback();
     };
-    
     this->_eventDispatcher->addEventListenerWithFixedPriority(keyListener, 3);
     this->_eventDispatcher->addEventListenerWithFixedPriority(mouseListener, 3);
-    
-    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sound/Gong.wav");
-    
-    return true;
 }
 
 void LevelEnd::menuCallback() {
     this->_eventDispatcher->removeEventListener(keyListener);
     this->_eventDispatcher->removeEventListener(mouseListener);
     if (_nextLevelToLoad == "") {
+        //CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
         auto mainmenu = MainMenu::createScene();
         cocos2d::Director::getInstance()->replaceScene(mainmenu);
         return;

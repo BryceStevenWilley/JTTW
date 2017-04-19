@@ -30,7 +30,7 @@ using namespace JTTW;
 const int UI_LAYER_Z_IDX = 2;
 const int LVL_LAYER_Z_IDX = 1;
 
-const double MASS_TO_SINK_CLOUD = 10000;
+const double MASS_TO_SINK_CLOUD = 8500;
 
 const int GRAVITY = ideal2Res(-750);
 const cocos2d::Vec2 UI_HEAD_START = cocos2d::Vec2(ideal2Res(40.0), ideal2Res(40.0));
@@ -472,6 +472,16 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
         }
     }
     
+    if (characterStruct["Dragon"].is_object()) {
+        if (characterStruct["Dragon"]["book"]["boolList"]["Present"]) {
+            // Add the dragon to the level.
+            double startX = vp.metersToPixels((double)characterStruct["Dragon"]["centerXM"]);
+            double startY = vp.metersToPixels((double)characterStruct["Dragon"]["centerYM"]);
+            dragon = new Dragon(cocos2d::Vec2(startX, startY), cocos2d::Size(vp.metersToPixels(16), vp.metersToPixels(8)));
+            levelLayer->addChild(dragon, CHARACTER_Z - 5);
+        }
+    }
+    
     if (agents.size() == 0) {
         // Handle Error!
         std::cout << "You cant have a level with no characters!" << std::endl;
@@ -691,7 +701,7 @@ cocos2d::Layer *MainGameScene::parseLevelFromJsonV2(nlohmann::json lvl, bool deb
     }
     
     if (lvl["levelFileName"] == "dragon") {
-        Zone cutSceneZone = Zone(vp.metersToPixels(cocos2d::Vec2(28, 3)), vp.metersToPixels(cocos2d::Vec2(40, 20)), nullptr);
+        Zone cutSceneZone = Zone(vp.metersToPixels(cocos2d::Vec2(25, 3)), vp.metersToPixels(cocos2d::Vec2(40, 20)), nullptr);
         cutscenes.push_back(new ZoneCutscene(Cutscene::Scene::DRAGON, vp, cutSceneZone));
     }
     
@@ -773,6 +783,11 @@ bool MainGameScene::init(std::string levelToLoad, cocos2d::PhysicsWorld *w) {
     contactListener->onContactSeparate = CC_CALLBACK_1(MainGameScene::onContactEnd, this);
     contactListener->onContactPostSolve = CC_CALLBACK_2(MainGameScene::onContactPostSolve, this);
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
+    
+    auto restartNode = createSunriseLabel("r = restart", 30, JTTW::screenScale);
+    restartNode->setAnchorPoint(cocos2d::Vec2::ANCHOR_BOTTOM_RIGHT);
+    restartNode->setPosition(origin.x + visibleSize.width * (19.0/20.0), origin.y + ideal2Res(20));
+    this->addChild(restartNode, LVL_LAYER_Z_IDX + 2);
     
     ///////////////////// Setup pause menu. ///////////////////
     auto continueNode = createSunriseLabel("Continue", 100, JTTW::screenScale);
@@ -922,6 +937,11 @@ void MainGameScene::KeypressedCallback(cocos2d::EventKeyboard::KeyCode keyCode, 
             blackBarDown->runAction(cocos2d::MoveTo::create(1.0, downVisible));
             uiLayer->setVisible(false);
             break;
+        case EventKeyboard::KeyCode::KEY_1:
+            blackBarUp->runAction(cocos2d::MoveTo::create(1.0, upStart));
+            blackBarDown->runAction(cocos2d::MoveTo::create(1.0, downStart));
+            uiLayer->setVisible(true);
+            break;
           
         default:
             // do nothing.
@@ -1027,6 +1047,7 @@ void MainGameScene::nextLevelCallback() {
         auto end = LevelEnd::createScene(_nextLevel, _endQuote);
         auto fade = cocos2d::TransitionFade::create(1.5, end);
         if (endScene == nullptr) {
+            auto fade = cocos2d::TransitionFade::create(4.0, end);
             cocos2d::Director::getInstance()->replaceScene(fade);
         } else {
             endScene->runScene(true, fade);

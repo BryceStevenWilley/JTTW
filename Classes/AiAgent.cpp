@@ -149,7 +149,6 @@ void AiAgent::changeBehavior(Character *player, cocos2d::EventKeyboard::KeyCode 
  */
 void AiAgent::executeControl(float delta) {
     if (!_controlledCharacter->shouldBeControlled() || _currentBehavior == &AiAgent::noResistenceBehavior) {
-        std::cout << "Not controlling " << _controlledCharacter->characterName << std::endl;
         return;
     }
     // Do the control stuff.

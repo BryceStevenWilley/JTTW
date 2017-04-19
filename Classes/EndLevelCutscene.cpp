@@ -1,6 +1,7 @@
 #include "EndLevelCutscene.hpp"
 #include "FShake.h"
 #include "Viewpoint.hpp"
+#include "MainMenuScene.hpp"
 
 using namespace JTTW;
 
@@ -41,10 +42,10 @@ void EndLevelCutscene::runScene(bool goToStartBlackout, cocos2d::Scene *nextScen
                 break;
                 
             case BODHI:
-                fadeToBlackDuration = 0.5;
-                revealDuration = 1.5;
-                waitDuration = 10.0;
-                endFadeDuration = 3.0;
+                fadeToBlackDuration = 2.5;
+                revealDuration = 2.5;
+                waitDuration = 25.0;
+                endFadeDuration = 4.0;
                 break;
             
             default:
@@ -53,8 +54,6 @@ void EndLevelCutscene::runScene(bool goToStartBlackout, cocos2d::Scene *nextScen
         }
         
         auto fadeToBlack = cocos2d::FadeIn::create(fadeToBlackDuration);
-        auto showCutsceneBars = cocos2d::CallFunc::create([this]() {
-        });
         auto revealScene = cocos2d::FadeOut::create(revealDuration);
         auto wait = cocos2d::ScaleBy::create(waitDuration, 1.0);
         auto fadeOutOfLevel = cocos2d::FadeIn::create(endFadeDuration);
@@ -124,7 +123,7 @@ void EndLevelCutscene::runScene(bool goToStartBlackout, cocos2d::Scene *nextScen
                     vp.followCharacter(bodhiTree, 0.1);
                 });
                 
-                moveActorsInScene = cocos2d::CallFunc::create([this, characters, vp, bodhiTree]() mutable{
+                moveActorsInScene = cocos2d::CallFunc::create([this, characters, vp, bodhiTree, origin, visibleSize]() mutable{
                     _scene->layer->runAction(cocos2d::ScaleBy::create(3.0, 1.25));
                     _scene->layer->runAction(cocos2d::MoveBy::create(3.0, cocos2d::Vec2(-ideal2Res(400), 0.0)));
                     cocos2d::CallFunc *moveRight1 = cocos2d::CallFunc::create([characters]() {
@@ -174,6 +173,49 @@ void EndLevelCutscene::runScene(bool goToStartBlackout, cocos2d::Scene *nextScen
                     characters[1]->runAction(cocos2d::Sequence::create(moveRight2, pauseFor(.8), stopRight2, pauseFor(3), turn2, nullptr));
                     characters[2]->runAction(cocos2d::Sequence::create(moveRight3, pauseFor(3.5), stopRight3, pauseFor(4), turn3, nullptr));
                     characters[3]->runAction(cocos2d::Sequence::create(moveRight4, pauseFor(3.3), stopRight4, pauseFor(4.78), turn4, nullptr));
+                    
+                    auto quote = createSunriseLabel("Searching means having a goal. But finding means being free.", 50, JTTW::screenScale);
+                    auto bryce = createSunriseLabel("Bryce Willey - Lead Developer", 50, JTTW::screenScale);
+                    auto mei = createSunriseLabel("Mei Tan - Art and Animation", 50,
+                        JTTW::screenScale);
+                    auto melinda = createSunriseLabel("Melinda Crane - Tooling and QA", 50, JTTW::screenScale);
+                    
+                    quote->setCascadeOpacityEnabled(true);
+                    quote->setOpacity(0);
+                    bryce->setCascadeOpacityEnabled(true);
+                    bryce->setOpacity(0);
+                    mei->setCascadeOpacityEnabled(true);
+                    mei->setOpacity(0);
+                    melinda->setCascadeOpacityEnabled(true);
+                    melinda->setOpacity(0);
+                    quote->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (3.0 / 4.0));
+                    bryce->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (2.5 / 4.0));
+                    mei->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (2.0 / 4.0));
+                    melinda->setPosition(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height * (1.5 / 4.0));
+                    
+                    _scene->addChild(quote, 11);
+                    _scene->addChild(bryce, 11);
+                    _scene->addChild(mei, 11);
+                    _scene->addChild(melinda, 11);
+                    
+                    auto fadeQuote = cocos2d::CallFunc::create([quote]() {
+                       quote->runAction(cocos2d::FadeIn::create(5.0));
+                    });
+                    
+                    auto fadeBryce = cocos2d::CallFunc::create([bryce]() {
+                       bryce->runAction(cocos2d::FadeIn::create(5.0));
+                    });
+                    
+                    auto fadeMei = cocos2d::CallFunc::create([mei]() {
+                       mei->runAction(cocos2d::FadeIn::create(5.0));
+                    });
+                    
+                    auto fadeMelinda = cocos2d::CallFunc::create([melinda]() {
+                       melinda->runAction(cocos2d::FadeIn::create(5.0));
+                    });
+                    
+                    characters[0]->runAction(cocos2d::Sequence::create(pauseFor(3.0), fadeQuote, pauseFor(4.5), fadeBryce, pauseFor(4.5), fadeMei, pauseFor(4.5), fadeMelinda, nullptr));
+
                 });
                 break;
             

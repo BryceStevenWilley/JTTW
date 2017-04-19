@@ -10,7 +10,7 @@ class LevelEnd : public cocos2d::Layer {
 public:
     static cocos2d::Scene* createScene(std::string &nextLevelToLoad, std::string &endQuote);
     virtual bool init(std::string &nextLevelToLoad, std::string &endQuote);
-    
+    virtual void onEnterTransitionDidFinish();
     //CREATE_FUNC(LevelEnd);
     static LevelEnd* create(std::string &nextLevelToLoad, std::string &endQuote){
         LevelEnd *pRet = new LevelEnd();
