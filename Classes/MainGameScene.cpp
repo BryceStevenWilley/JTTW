@@ -30,7 +30,7 @@ using namespace JTTW;
 const int UI_LAYER_Z_IDX = 2;
 const int LVL_LAYER_Z_IDX = 1;
 
-const double MASS_TO_SINK_CLOUD = 8500;
+const double MASS_TO_SINK_CLOUD = ideal2Res(ideal2Res(8500));
 
 const int GRAVITY = ideal2Res(-750);
 const cocos2d::Vec2 UI_HEAD_START = cocos2d::Vec2(ideal2Res(40.0), ideal2Res(40.0));
@@ -40,7 +40,7 @@ cocos2d::Scene* MainGameScene::createScene(std::string levelToLoad) {
     // 'scene' and layer are autorelease objects.
     auto scene = cocos2d::Scene::createWithPhysics();
     scene->getPhysicsWorld()->setGravity(cocos2d::Vec2(0, GRAVITY));
-    //scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
+    scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = MainGameScene::create(levelToLoad, scene->getPhysicsWorld());
     if (layer == NULL) {
         return NULL;
@@ -56,17 +56,21 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
         Monkey *m = (Monkey *)c;
         if (begin) {
              cocos2d::Vec2 collisionPosition = m->getPosition();
-             float distFromCenter = collisionPosition.distance(v->getPosition());
-             float distFromRotCenter = collisionPosition.distance(v->getRotationCenter());
-             float halfLength = v->getRotationCenter().distance(v->getPosition());
+             float distFromCenter = ideal2Res(collisionPosition.distance(v->getPosition()));
+             float distFromRotCenter = ideal2Res(collisionPosition.distance(v->getRotationCenter()));
+             float halfLength = ideal2Res(v->getRotationCenter().distance(v->getPosition()));
              float offset;
              if (distFromRotCenter > halfLength && distFromCenter < halfLength) {
+                 std::cout << "Entering vine at the bottom of the vine." << std::endl;
                  offset = -distFromCenter;
              } else if (distFromRotCenter < halfLength && distFromCenter < halfLength) {
+                 std::cout << "Entering vine from the top of the vine." << std::endl;
                  offset = distFromCenter;
              } else {
                  // IDK what's happening?
-                 offset = -(halfLength - 5);
+                 std::cout << "distFromCenter" << distFromCenter << ", from rot center: " << distFromRotCenter << ", half length: " << halfLength << std::endl;
+                 std::cout << "Too far below or above, offset is now " << -(halfLength - ideal2Res(5)) << std::endl;
+                 offset = -(halfLength - ideal2Res(5));
              }
              m->enteringVine(this->getScene()->getPhysicsWorld(), v, offset, false);
              return true;
@@ -151,6 +155,7 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
             if (node->getTag() == SINKABLE_TAG) {
                 SinkObject *sink = (SinkObject *) node;
                 std::cout << c->characterName << "'s mass is " << c->getMass() << std::endl;
+                std::cout << "Needs to be " << MASS_TO_SINK_CLOUD << std::endl;
                 if (c->getMass() > MASS_TO_SINK_CLOUD) {
                     sink->landedCallback();
                 }
@@ -1017,14 +1022,15 @@ void MainGameScene::switchToCharacter(int charIndex) {
     if (nextPlayer == player) {
         return; // don't do anything.
     }
-    nextPlayer->switchUserToHereFrom(player);
-    player = nextPlayer;
-    vp.panToCharacter(player->_controlledCharacter);
     
     // Turn off ever.
     for (auto &xAgent : agents) {
         xAgent->equipNoResistenceBehavior(player->_controlledCharacter);
     }
+    
+    nextPlayer->switchUserToHereFrom(player);
+    player = nextPlayer;
+    vp.panToCharacter(player->_controlledCharacter);
 }
 
 void MainGameScene::menuCloseCallback() {

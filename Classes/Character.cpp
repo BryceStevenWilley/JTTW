@@ -367,19 +367,9 @@ void Character::stopJump() {
     jumpForce = 0.0;
 }
 
-/*void Character::jumpFromForce(double fprime_y) {
-    if (getCurrentState() != State::STANDING &&
-        getCurrentState() != State::HANGING) {
-        // Don't let them jump.
-        return;
-    }
-
-    body->applyForce(cocos2d::Vec2(0.0, fprime_y * getMass()));
-} */
-
 void Character::transferVelocity(Character *reciever) {
     std::cout << characterName << " is giving " << body->getVelocity().x << " x vel to " << reciever->characterName << std::endl;
-    double totalMomentum = rightMomentum - leftMomentum;
+    double totalMomentum = (rightMomentum - leftMomentum) / _impulseScale;
     double targetVelocity = totalMomentum / getMass();
     
     reciever->impulseRight(targetVelocity);
@@ -413,7 +403,8 @@ void Character::leftCallback(cocos2d::PhysicsBody *plat) {
     if (platformsStandingOn == 0 &&
         getCurrentState() != HANGING &&
         getCurrentState() != DEAD &&
-        getCurrentState() != QUICKSANDED) {
+        getCurrentState() != QUICKSANDED &&
+        getCurrentState() != STUCK_SAND) {
         std::cout << "Mid air from left callback" << std::endl;
         setCurrentState(MID_AIR);
     } else if (platformsStandingOn < 0) {
@@ -432,14 +423,6 @@ void Character::wallLeftCallback(cocos2d::PhysicsBody *wall) {
         std::cerr << "ERROR: can't be in contact with negative walls, " << characterName << std::endl;
         wallsHit = 0;
     }
-}
-
-bool Character::isMovingLeft() const {
-    return body->getVelocity().x < 0.0;
-}
-
-bool Character::isMovingRight() const {
-    return body->getVelocity().x > 0.0;
 }
 
 float Character::getMass() {

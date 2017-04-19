@@ -9,10 +9,13 @@
 # TODO: Flight
 # TODO: Menu Screen
 # TODO: Breakout
-# TODO: Paradise
+wget http://agnello-pecora.chu.jp/CAMeLIA/mus/h10_-_-_Rin_-.mp3
+mv h10_-_-_Rin_-.mp3 Paradise.mp3
 # TODO: Harmony
 # TODO: Bodhi
 # TODO: Golden Temple
-# TODO: Freedom
+wget http://agnello-pecora.chu.jp/CAMeLIA/mus/a8.mp3
+mv a8.mp3 Freedom.mp3
 # TODO: TrucePt2
 # TODO: Secret Garden
+wget    tw043_-_storage_of_forest.mp3

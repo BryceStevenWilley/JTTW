@@ -86,16 +86,12 @@ public:
     // Allows the character to jump.
     virtual void initJump() = 0;
     virtual void stopJump();
-    /*void jumpFromForce(double fprime_y); */
     
     virtual void callHey();
     
     virtual void die(CauseOfDeath cause);
     
     virtual void characterSpecial(cocos2d::EventKeyboard::KeyCode code, bool pressed) = 0;
-    
-    bool isMovingLeft() const;
-    bool isMovingRight() const;
     
     virtual void landedCallback(cocos2d::PhysicsBody *plat, cocos2d::Vec2 newRightDir);
     void leftCallback(cocos2d::PhysicsBody *plat);

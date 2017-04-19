@@ -57,6 +57,8 @@ void Monkey::continueMotion() {
 
             body->setVelocity(cocos2d::Vec2(targetVelocity, -_q->_sinkVel));
         }
+    } else if (getCurrentState() == Character::State::STUCK_SAND) {
+        body->setVelocity(cocos2d::Vec2(0.0, Character::_q->_recoverVel));
     }
 }
 
@@ -223,7 +225,7 @@ void Monkey::enteringVine(cocos2d::PhysicsWorld *world, SceneObject *obj, double
     }
     removeFromVine();
     // create a joint between you and the vine.
-    cocos2d::Vec2 offsetVec = cocos2d::Vec2(0, ideal2Res(offset));
+    cocos2d::Vec2 offsetVec = cocos2d::Vec2(0, offset);
     pinJoint = cocos2d::PhysicsJointPin::construct(this->body, obj->getPhysicsBody(), cocos2d::Vec2::ZERO, offsetVec);
     world->addJoint(pinJoint);
     _state = SWINGING;
@@ -280,8 +282,13 @@ void Monkey::leavingVine(bool reattaching, cocos2d::Vec2 vel) {
 
 void Monkey::moveAlongVine(float deltaP) {
     double minDown = -currentAttached->getYRange() * (1.0 / 2.0) - ideal2Res(50);
+    std::cout << "minDown: " << minDown << std::endl;
+    std::cout << "half yrange: " << currentAttached->getYRange() / 2.0 << std::endl;
+    std::cout << "current down: " << currentAttachedOffset.y << std::endl;
+    std::cout << "deltaP: " << deltaP << std::endl;
+    std::cout << "new down: (should be < half yrange and > minDown) " << (currentAttachedOffset + cocos2d::Vec2(0, deltaP)).y << std::endl;
     if ((currentAttachedOffset + cocos2d::Vec2(0, deltaP)).y > minDown &&
-        (currentAttachedOffset + cocos2d::Vec2(0, deltaP)).y < currentAttached->getYRange() / 2.0) {
+        std::abs((currentAttachedOffset + cocos2d::Vec2(0, deltaP)).y) < currentAttached->getYRange() / 2.0) {
         enteringVine(currentWorld, currentAttached, (currentAttachedOffset + cocos2d::Vec2(0, deltaP)).y, true);
     } else if ((currentAttachedOffset + cocos2d::Vec2(0, deltaP)).y < minDown) {
         // TODO: add tail down animation here.

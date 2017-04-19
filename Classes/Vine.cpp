@@ -1,10 +1,11 @@
 #include "Vine.hpp"
 #include "Collisions.hpp"
+#include "Resolution.hpp"
 
 using namespace JTTW;
 
 Vine::Vine(std::string fileName, cocos2d::Vec2 rotCenter, double width, double length, double startingAngVel) :
-     SceneObject(), rotCenter(rotCenter), _length(length) {
+     SceneObject(), rotCenter(rotCenter), _length(ideal2Res(length)) {
     
     this->initWithFile(fileName);
     cocos2d::Size imageSize = cocos2d::Size(width, length);
