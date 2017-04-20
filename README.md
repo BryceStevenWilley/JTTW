@@ -49,38 +49,38 @@ as the compiler can’t find anything in the cocos2d directory.
 #### “error: no such file or directory: ‘/…/JTTW/cocos2d/external/…”
 
 This one means the compiler’s not finding anything in the cocos2d/external folder, which is populated when
-you run `cocos2d/download_deps.py`. 
+you run `cocos2d/download_deps.py`. Make sure this script succeeds.
 
 
 # Credits:
 
 ## Programming:
 
-Bryce Willey, Lead Developer
-Melinda Crane, [Tooling](https://github.com/runningcrane/JTTWLevelEditor)
+* Bryce Willey, Lead Developer
+* Melinda Crane, [Tooling](https://github.com/runningcrane/JTTWLevelEditor)
 
-[Cocos2d-x](https://github.com/cocos2d/cocos2d-x)
-[JSON for Modern C++](https://github.com/nlohmann/json)
-[FrozaxShake-v3](https://github.com/tankorsmash/FrozaxShake-v3)
+* [Cocos2d-x](https://github.com/cocos2d/cocos2d-x)
+* [JSON for Modern C++](https://github.com/nlohmann/json)
+* [FrozaxShake-v3](https://github.com/tankorsmash/FrozaxShake-v3)
 
 ## Art
 
-Mei Tan, Artist and Animator
+* Mei Tan, Artist and Animator
 
-[Spine](http://esotericsoftware.com/)
-[Krita](https://krita.org/en/)
+* [Spine](http://esotericsoftware.com/)
+* [Krita](https://krita.org/en/)
 
 ## Music
 
-[CAMeLIA](http://agnello-pecora.chu.jp/CAMeLIA/)
-[Hagall](http://hagall.hacca.jp/music)
-[Music Egg](http://ontama-m.com/index.html)
-[MusMus](http://musmus.main.jp/english.html)
-[Timelessberry](http://timelessberry.com/material/)
-[Takashiya Takashi/ DOVA-Syndrome](http://dova-s.jp/bgm/play109.html)
+* [CAMeLIA](http://agnello-pecora.chu.jp/CAMeLIA/)
+* [Hagall](http://hagall.hacca.jp/music)
+* [Music Egg](http://ontama-m.com/index.html)
+* [MusMus](http://musmus.main.jp/english.html)
+* [Timelessberry](http://timelessberry.com/material/)
+* [Takashiya Takashi/ DOVA-Syndrome](http://dova-s.jp/bgm/play109.html)
 
 ## Sound
 
-[Mike Koenig](http://soundbible.com/1221-Pig-Oink.html)
-SoundBible.com
-Freesound.org
+* [Mike Koenig](http://soundbible.com/1221-Pig-Oink.html)
+* SoundBible.com
+* Freesound.org
