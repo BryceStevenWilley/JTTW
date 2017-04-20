@@ -16,6 +16,7 @@ git clone https://github.com/BryceStevenWilley/JTTW
 cd JTTW
 git submodule init && git submodule update
 cocos2d/download_deps.py -r yes
+cd Resources/Music && ./download_music.bash && ../../
 ```
 
 Then, open proj.ios\_mac/JTTW.xcodeproj with Xcode. Once open, 
@@ -33,6 +34,7 @@ git clone https://github.com/BryceStevenWilley/JTTW
 cd JTTW
 git submodule init && git submodule update
 cocos2d/download_deps.py -r yes
+cd Resources/Music && ./download_music.bash && ../../
 mkdir linux-build && cd linux-build
 cmake .. && make -j4
 ```
@@ -70,4 +72,15 @@ Mei Tan, Artist and Animator
 
 ## Music
 
+[CAMeLIA](http://agnello-pecora.chu.jp/CAMeLIA/)
+[Hagall](http://hagall.hacca.jp/music)
+[Music Egg](http://ontama-m.com/index.html)
+[MusMus](http://musmus.main.jp/english.html)
+[Timelessberry](http://timelessberry.com/material/)
+[Takashiya Takashi/ DOVA-Syndrome](http://dova-s.jp/bgm/play109.html)
 
+## Sound
+
+[Mike Koenig](http://soundbible.com/1221-Pig-Oink.html)
+SoundBible.com
+Freesound.org
