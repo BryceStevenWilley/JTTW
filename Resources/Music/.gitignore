@@ -1,0 +1,3 @@
+# Ignore Music files that aren't allow to be hosted externally.
+
+*.mp3

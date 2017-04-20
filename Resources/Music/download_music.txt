@@ -1,0 +1,13 @@
+http://timelessberry.com/material/item/sao1/chapter0-pr.mp3 -O Credits.mp3
+http://hagall.hacca.jp/music/mp3/rai_bokyaku.mp3 -O Greed.mp3
+http://ontama-m.com/midi/data/mp3_file/original/chinkou.mp3 -O Truce.mp3
+https://dova4.heteml.jp/dova/mp3/109.mp3 -O Flight.mp3
+http://ontama-m.com/midi/data/mp3_file/original/amami.mp3 -O MenuScreen.mp3
+http://ontama-m.com/midi/data/mp3_file/original/fortune.mp3 -O Breakout.mp3
+http://agnello-pecora.chu.jp/CAMeLIA/mus/h10.mp3 -O Paradise.mp3
+http://hagall.hacca.jp/music/mp3/rai_tabi.mp3 -O Harmony.mp3
+http://agnello-pecora.chu.jp/CAMeLIA/mus/s13.mp3 -O Bodhi.mp3
+http://agnello-pecora.chu.jp/CAMeLIA/mus/1a.mp3 -O Golden\ Temple.mp3
+http://agnello-pecora.chu.jp/CAMeLIA/mus/a8.mp3 -O Freedom.mp3
+http://agnello-pecora.chu.jp/CAMeLIA/mus/s17.mp3 -O TrucePt2.mp3
+http://musmus.main.jp/music/tw043.mp3 -O Secret\ Garden.mp3
