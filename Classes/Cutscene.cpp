@@ -31,7 +31,9 @@ void Cutscene::initFromScene(MainGameScene *scene) {
      for (auto &c : scene->characters) {
          _characters[c->characterName] = c;
      }
-     charactersStart["Sandy"] = _characters["Sandy"]->getPosition();
+     if (which == DRAGON) {
+         charactersStart["Sandy"] = _characters["Sandy"]->getPosition();
+     }
      _scene = scene;
      _curtain = scene->curtain;
      _listener = scene->eventListener;

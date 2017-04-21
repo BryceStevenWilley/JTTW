@@ -141,7 +141,7 @@ void Monkey::updateClimbingVel() {
 
 void Monkey::enteringClimeable(cocos2d::PhysicsWorld *world, SceneObject *p, cocos2d::Vec2 offset, cocos2d::Vec2 upDir, bool alreadyOn) {
    if (getCurrentState() == Character::State::DEAD || getCurrentState() == Character::State::FROZEN) {
-        return; // don't grab the vine if you are dead.
+        return; // don't grab the tree if you are dead.
     }
     if (!alreadyOn) {
         climbingCount += 1;

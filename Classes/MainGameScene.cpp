@@ -124,7 +124,9 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
             }
             if (m->getMonkeyState() == Monkey::SWINGING && !m->hasHangingCharacter()) {
                 m->setHangingCharacter(other);
-                other->enteringHanging(this->getScene()->getPhysicsWorld(), m, other->getPosition() - m->getPosition(), false);
+                auto vec = other->getPosition() - m->getPosition();
+                
+                other->enteringHanging(this->getScene()->getPhysicsWorld(), m, cocos2d::Vec2(ideal2Res(vec.x), ideal2Res(vec.y)), false);
                 return true;
             }
         }
@@ -175,7 +177,7 @@ bool MainGameScene::characterCollision(cocos2d::PhysicsContact& contact, bool be
         if (begin) {
             std::cout << "Monkey hit tree" << std::endl;
             cocos2d::Vec2 collisionPosition = m->getPosition();
-            m->enteringClimeable(this->getScene()->getPhysicsWorld(), p, (collisionPosition - p->getPosition()) / 1.5, normal.getPerp(), false);
+            m->enteringClimeable(this->getScene()->getPhysicsWorld(), p, (collisionPosition - p->getPosition()) / 1.7, normal.getPerp(), false);
         } else {
             std::cout << "Monkey is jumping off of the tree!" << std::endl;
             m->leavingClimeable(false, false);
